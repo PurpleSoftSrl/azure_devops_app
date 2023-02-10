@@ -1,0 +1,59 @@
+name: 'azure_devops'
+version: 1.0.0+9
+description: 'Azure DevOps unofficial mobile app'
+homepage: 'homepage'
+publish_to: 'none'
+
+environment:
+  sdk: '>=2.18.6 <3.0.0'
+
+dependencies:
+  flutter: { sdk: flutter }
+  google_fonts:
+  http:
+  shared_preferences:
+  pull_to_refresh_flutter3: 
+  intl:
+  url_launcher:
+  share:
+  sentry_flutter:
+  cached_network_image:
+  package_info_plus:
+  flutter_markdown:
+  simple_html_css:
+  purple_theme:
+   git:
+    url: https://github.com/PurpleSoftSrl/flutter_theme_manager
+    ref: main
+
+dev_dependencies:
+  flutter_test: { sdk: flutter }
+  flutter_launcher_icons:
+  purple_lints:
+    git:
+      url: https://github.com/PurpleSoftSrl/flutter_lints
+      ref: main
+
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/app_icon/
+    - assets/illustrations/
+    - assets/fonts/
+    - assets/logos/
+
+  fonts:
+    - family: DevOpsIcons
+      fonts:
+        - asset: assets/fonts/DevOpsIcons.ttf
+
+
+flutter_icons:
+  android: true
+  ios: true 
+  image_path: "assets/app_icon/app_icon_ios.png"
+  adaptive_icon_background: "#201F1E"
+  adaptive_icon_foreground: "assets/app_icon/app_icon_android.png"
+  remove_alpha_ios: true

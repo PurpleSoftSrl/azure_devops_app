@@ -1,0 +1,254 @@
+import 'package:azure_devops/src/models/commit.dart';
+import 'package:azure_devops/src/models/commit_detail.dart';
+import 'package:azure_devops/src/models/organization.dart';
+import 'package:azure_devops/src/models/pipeline.dart';
+import 'package:azure_devops/src/models/project.dart';
+import 'package:azure_devops/src/models/project_languages.dart';
+import 'package:azure_devops/src/models/pull_request.dart';
+import 'package:azure_devops/src/models/repository.dart';
+import 'package:azure_devops/src/models/team_member.dart';
+import 'package:azure_devops/src/models/user.dart';
+import 'package:azure_devops/src/models/work_item.dart';
+import 'package:azure_devops/src/services/azure_api_service.dart';
+import 'package:azure_devops/src/services/storage_service.dart';
+
+class AzureApiServiceMock implements AzureApiService {
+  @override
+  String get accessToken => throw UnimplementedError();
+
+  @override
+  String get basePath => throw UnimplementedError();
+
+  @override
+  List<GraphUser> get allUsers => [];
+
+  @override
+  Future<ApiResponse<Pipeline>> cancelPipeline({required int buildId, required String projectId}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<CommitDetail>> getCommitDetail({
+    required String projectId,
+    required String repositoryId,
+    required String commitId,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<Pipeline>>> getRecentPipelines({
+    PipelineResult result = PipelineResult.all,
+    PipelineStatus status = PipelineStatus.all,
+    String? triggeredBy,
+  }) async {
+    final emptyPipe = Pipeline.empty();
+    final firstPipe = emptyPipe
+        .copyWithStatus(PipelineStatus.completed)
+        .copyWithResult(PipelineResult.succeeded)
+        .copyWithRequestedFor('Test User 1');
+    final secondPipe = emptyPipe.copyWithStatus(PipelineStatus.inProgress).copyWithRequestedFor('Test User 2');
+    final thirdPipe = emptyPipe.copyWithStatus(PipelineStatus.notStarted).copyWithRequestedFor('Test User 3');
+    return ApiResponse.ok([firstPipe, secondPipe, thirdPipe]);
+  }
+
+  @override
+  Future<ApiResponse<List<Commit>>> getRecentCommits({Project? project, String? author, int? maxCount}) async {
+    final emptyCommit = Commit.empty();
+    final firstCommit = emptyCommit.copyWithDateAndAuthorName(DateTime(2000, 2, 3), 'Test User 1');
+    final secondCommit = emptyCommit.copyWithDateAndAuthorName(DateTime(2000, 2, 5), 'Test User 2');
+    final thirdCommit = emptyCommit.copyWithDateAndAuthorName(DateTime(2000, 2, 4), 'Test User 3');
+    return ApiResponse.ok([firstCommit, secondCommit, thirdCommit]);
+  }
+
+  @override
+  Future<ApiResponse<List<Organization>>> getOrganizations() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<Pipeline>>> getProjectPipelines({
+    required String projectName,
+    required int top,
+    required DateTime to,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<PullRequest>>> getProjectPullRequests({required String projectName}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<GitRepository>>> getProjectRepositories({required String projectName}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<TeamMember>>> getProjectTeams({required String projectId}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<Project>>> getProjects() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<PullRequest>>> getPullRequests({
+    required PullRequestState filter,
+    GraphUser? creator,
+    Project? project,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<Commit>>> getRepositoryCommits({
+    required String projectName,
+    required String repoName,
+    required int top,
+    required int skip,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String getUserAvatarUrl(String userDescriptor) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<GraphUser>> getUserFromEmail({required String email}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<GraphUser>> getUserFromDescriptor({required String descriptor}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<WorkItem>>> getWorkItems() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Map<String, String>? get headers => throw UnimplementedError();
+
+  @override
+  Future<LoginStatus> login(String accessToken) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> logout() {
+    throw UnimplementedError();
+  }
+
+  @override
+  String get organization => 'PurpleSoft S.r.l';
+
+  @override
+  Future<ApiResponse<Pipeline>> rerunPipeline({
+    required int definitionId,
+    required String projectId,
+    required String branch,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  void setChosenProjects(List<Project> chosenProjects) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> setOrganization(String org) {
+    throw UnimplementedError();
+  }
+
+  @override
+  UserMe? get user => throw UnimplementedError();
+
+  @override
+  Future<ApiResponse<WorkItemDetail>> getWorkItemDetail({
+    required String projectName,
+    required int workItemId,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<Pipeline>> getPipeline({required String projectName, required int id}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<PullRequest>> getPullRequest({required String projectName, required int id}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<Project>> getProject({required String projectName}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<LanguageBreakdown>>> getProjectLanguages({required String projectName}) {
+    throw UnimplementedError();
+  }
+}
+
+class StorageServiceMock implements StorageService {
+  @override
+  void clearNoToken() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Iterable<Project> getChosenProjects() {
+    return [];
+  }
+
+  @override
+  String getOrganization() {
+    throw UnimplementedError();
+  }
+
+  @override
+  String getThemeMode() {
+    throw UnimplementedError();
+  }
+
+  @override
+  String getToken() {
+    throw UnimplementedError();
+  }
+
+  @override
+  void setChosenProjects(Iterable<Project> projects) {
+    throw UnimplementedError();
+  }
+
+  @override
+  void setOrganization(String organization) {
+    throw UnimplementedError();
+  }
+
+  @override
+  void setThemeMode(String mode) {
+    throw UnimplementedError();
+  }
+
+  @override
+  void setToken(String accessToken) {
+    throw UnimplementedError();
+  }
+
+  @override
+  void clear() {
+    throw UnimplementedError();
+  }
+}
