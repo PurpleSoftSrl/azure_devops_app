@@ -89,7 +89,8 @@ class _PipelineDetailController {
 
   Future<void> _cancelBuild() async {
     final confirm = await AlertService.confirm(
-      'Do you really want to cancel this pipeline?',
+      'Attention',
+      description: 'Do you really want to cancel this pipeline?',
     );
     if (!confirm) return;
 
@@ -104,7 +105,8 @@ class _PipelineDetailController {
 
   Future<void> _rerunBuild() async {
     final confirm = await AlertService.confirm(
-      'Do you really want to rerun this pipeline?',
+      'Attention',
+      description: 'Do you really want to rerun this pipeline?',
     );
     if (!confirm) return;
 
