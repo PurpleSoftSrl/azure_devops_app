@@ -28,6 +28,8 @@ class _PipelineDetailController {
 
   final buildDetail = ValueNotifier<ApiResponse<Pipeline?>?>(null);
 
+  final pipeStages = ValueNotifier<List<_PipeStage>?>(null);
+
   void dispose() {
     instance = null;
     _instances.remove(pipeline.hashCode);
@@ -36,6 +38,41 @@ class _PipelineDetailController {
   Future<void> init() async {
     final res = await apiService.getPipeline(projectName: pipeline.project!.name!, id: pipeline.id!);
     buildDetail.value = res;
+
+    final logs = await apiService.getPipelineTimeline(projectName: pipeline.project!.name!, id: pipeline.id!);
+
+    final realLogs = logs.data!.where((r) => r.order != null && r.order! < 1000);
+
+    final stages = realLogs.where((r) => r.type == 'Stage').sorted((a, b) => a.order!.compareTo(b.order!));
+    final phases = realLogs.where((r) => r.type == 'Phase').sorted((a, b) => a.order!.compareTo(b.order!));
+    final jobs = realLogs.where((r) => r.type == 'Job').sorted((a, b) => a.order!.compareTo(b.order!));
+    final tasks = realLogs.where((r) => r.type == 'Task').sorted((a, b) => a.order!.compareTo(b.order!));
+
+    final timeline = <_PipeStage>[];
+
+    for (final stage in stages) {
+      timeline.add(
+        _PipeStage(
+          stage: stage,
+          phases: phases
+              .where((p) => p.parentId == stage.id)
+              .map(
+                (p) => _Phase(
+                  phase: p,
+                  jobs: jobs
+                      .where((j) => j.parentId == p.id)
+                      .map(
+                        (j) => _Job(job: j, tasks: tasks.where((t) => t.parentId == j.id).toList()),
+                      )
+                      .toList(),
+                ),
+              )
+              .toList(),
+        ),
+      );
+    }
+
+    pipeStages.value = timeline;
   }
 
   Future<void> getActionFromStatus() async {
@@ -138,4 +175,43 @@ class _PipelineDetailController {
 
     AppRouter.goToCommitDetail(commit);
   }
+
+  void seeLogs(Record t) {
+    if (t.log == null) {
+      AlertService.error('Error', description: 'Logs not ready yet');
+      return;
+    }
+
+    AppRouter.goToPipelineLogs(PipelineLogsArgs(pipeline: pipeline, task: t));
+  }
+}
+
+class _PipeStage {
+  _PipeStage({
+    required this.stage,
+    required this.phases,
+  });
+
+  final Record stage;
+  final List<_Phase> phases;
+}
+
+class _Phase {
+  _Phase({
+    required this.phase,
+    required this.jobs,
+  });
+
+  final Record phase;
+  final List<_Job> jobs;
+}
+
+class _Job {
+  _Job({
+    required this.job,
+    required this.tasks,
+  });
+
+  final Record job;
+  final List<Record> tasks;
 }

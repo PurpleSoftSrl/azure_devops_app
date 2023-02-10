@@ -7,6 +7,7 @@ import 'package:azure_devops/src/extensions/pipeline_extension.dart';
 import 'package:azure_devops/src/extensions/pipeline_result_extension.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
+import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/alert_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
@@ -18,6 +19,7 @@ import 'package:azure_devops/src/widgets/member_avatar.dart';
 import 'package:azure_devops/src/widgets/pipeline_in_progress_animated_icon.dart';
 import 'package:azure_devops/src/widgets/project_and_repo_chips.dart';
 import 'package:azure_devops/src/widgets/text_title_description.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 

@@ -13,6 +13,7 @@ import 'package:azure_devops/src/models/pull_request.dart';
 import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_member.dart';
+import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/user_entitlements.dart';
 import 'package:azure_devops/src/models/work_item.dart';
@@ -98,6 +99,14 @@ abstract class AzureApiService {
   });
 
   Future<ApiResponse<Pipeline>> getPipeline({required String projectName, required int id});
+
+  Future<ApiResponse<List<Record>>> getPipelineTimeline({required String projectName, required int id});
+
+  Future<ApiResponse<String>> getPipelineTaskLogs({
+    required String projectName,
+    required int pipelineId,
+    required int logId,
+  });
 
   Future<ApiResponse<Pipeline>> cancelPipeline({required int buildId, required String projectId});
 
@@ -505,7 +514,29 @@ class AzureApiServiceImpl implements AzureApiService {
 
     if (pipelineRes.isError) return ApiResponse.error();
 
-    return ApiResponse.ok(Pipeline.fromJson(jsonDecode(pipelineRes.body) as Map<String, dynamic>));
+    final pipeline = Pipeline.fromJson(jsonDecode(pipelineRes.body) as Map<String, dynamic>);
+
+    return ApiResponse.ok(pipeline);
+  }
+
+  @override
+  Future<ApiResponse<List<Record>>> getPipelineTimeline({required String projectName, required int id}) async {
+    final timelineRes = await _get('$_basePath/$projectName/_apis/build/builds/$id/timeline?$_apiVersion');
+    if (timelineRes.isError) return ApiResponse.error();
+
+    return ApiResponse.ok(GetTimelineResponse.fromRawJson(timelineRes.body).records);
+  }
+
+  @override
+  Future<ApiResponse<String>> getPipelineTaskLogs({
+    required String projectName,
+    required int pipelineId,
+    required int logId,
+  }) async {
+    final logsRes = await _get('$_basePath/$projectName/_apis/build/builds/$pipelineId/logs/$logId?$_apiVersion');
+    if (logsRes.isError) return ApiResponse.error();
+
+    return ApiResponse.ok(logsRes.body);
   }
 
   @override

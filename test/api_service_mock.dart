@@ -7,6 +7,7 @@ import 'package:azure_devops/src/models/project_languages.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
 import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/team_member.dart';
+import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/work_item.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
@@ -197,6 +198,20 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<List<LanguageBreakdown>>> getProjectLanguages({required String projectName}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<Record>>> getPipelineTimeline({required String projectName, required int id}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<String>> getPipelineTaskLogs({
+    required String projectName,
+    required int pipelineId,
+    required int logId,
+  }) {
     throw UnimplementedError();
   }
 }

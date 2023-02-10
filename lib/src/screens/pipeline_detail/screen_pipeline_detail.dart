@@ -145,6 +145,77 @@ class _PipelineDetailScreen extends StatelessWidget {
             const SizedBox(
               height: 40,
             ),
+            Text(
+              'Timeline:',
+              style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            ValueListenableBuilder<List<_PipeStage>?>(
+              valueListenable: ctrl.pipeStages,
+              builder: (_, records, __) => records == null
+                  ? const CircularProgressIndicator()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: records
+                          .map(
+                            (stage) => Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (stage.stage.name != '__default') Text('${stage.stage.name} (${stage.stage.type})'),
+                                ...stage.phases.expand((phase) => phase.jobs).map(
+                                      (job) => Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(' - ${job.job.name} (${job.job.type})'),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          ...job.tasks.map(
+                                            (task) => InkWell(
+                                              onTap: () => ctrl.seeLogs(task),
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(bottom: 5, left: 20),
+                                                child: Row(
+                                                  children: [
+                                                    if (task.state == TaskStatus.inProgress)
+                                                      InProgressPipelineIcon(
+                                                        child: task.state.icon,
+                                                      )
+                                                    else
+                                                      task.state.icon,
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                        task.name,
+                                                        style: context.textTheme.titleSmall!
+                                                            .copyWith(decoration: TextDecoration.underline),
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                              ],
+                            ),
+                          )
+                          .toList(),
+                    ),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
             if (pipeline.status != PipelineStatus.cancelling)
               LoadingButton(
                 onPressed: ctrl.getActionFromStatus,

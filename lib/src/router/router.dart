@@ -1,6 +1,7 @@
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
+import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/work_item.dart';
 import 'package:azure_devops/src/screens/choose_projects/base_choose_projects.dart';
 import 'package:azure_devops/src/screens/commit_detail/base_commit_detail.dart';
@@ -9,6 +10,7 @@ import 'package:azure_devops/src/screens/home/base_home.dart';
 import 'package:azure_devops/src/screens/login/base_login.dart';
 import 'package:azure_devops/src/screens/member_detail/base_member_detail.dart';
 import 'package:azure_devops/src/screens/pipeline_detail/base_pipeline_detail.dart';
+import 'package:azure_devops/src/screens/pipeline_logs/base_pipeline_logs.dart';
 import 'package:azure_devops/src/screens/pipelines/base_pipelines.dart';
 import 'package:azure_devops/src/screens/profile/base_profile.dart';
 import 'package:azure_devops/src/screens/project_detail/base_project_detail.dart';
@@ -44,7 +46,8 @@ class AppRouter {
   static const _workItems = '/workItems';
   static const _pullRequests = '/pullRequests';
 
-  static const _pipelineDetail = '/build-detail';
+  static const _pipelineDetail = '/pipeline-detail';
+  static const _pipelineLogs = '/pipeline-logs';
   static const _commitDetail = '/commit-detail';
   static const _projectDetail = '/project-detail';
   static const _repoDetail = '/repo-detail';
@@ -106,6 +109,14 @@ class AppRouter {
 
   static Pipeline getPipelineDetailArgs(BuildContext context) {
     return ModalRoute.of(context)!.settings.arguments as Pipeline;
+  }
+
+  static Future<void> goToPipelineLogs(PipelineLogsArgs pipeline) async {
+    await _currentNavigator!.pushNamed(_pipelineLogs, arguments: pipeline);
+  }
+
+  static PipelineLogsArgs getPipelineLogsArgs(BuildContext context) {
+    return ModalRoute.of(context)!.settings.arguments as PipelineLogsArgs;
   }
 
   static Future<void> goToCommits() async {
@@ -192,6 +203,7 @@ class AppRouter {
     _workItems: (_) => WorkItemsPage(),
     _pullRequests: (_) => PullRequestsPage(),
     _pipelineDetail: (_) => PipelineDetailPage(),
+    _pipelineLogs: (_) => PipelineLogsPage(),
     _commitDetail: (_) => CommitDetailPage(),
     _projectDetail: (_) => ProjectDetailPage(),
     _repoDetail: (_) => RepositoryDetailPage(),
@@ -227,4 +239,14 @@ class RepoDetailArgs {
 
   @override
   int get hashCode => projectName.hashCode ^ repositoryName.hashCode;
+}
+
+class PipelineLogsArgs {
+  PipelineLogsArgs({
+    required this.pipeline,
+    required this.task,
+  });
+
+  final Pipeline pipeline;
+  final Record task;
 }
