@@ -59,7 +59,7 @@ class _LoginController {
           "it's not stored anywhere else.\n\n"
           "Check that your PAT has access to all the organizations, otherwise it won't work.\n\n"
           'You can create a new PAT at this link:\n'
-          'https://dev.azure.com/<your-organization>/_usersSettings/tokens',
+          'https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate',
     );
   }
 }
