@@ -152,7 +152,7 @@ class _PipelineDetailScreen extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            ValueListenableBuilder<List<_PipeStage>?>(
+            ValueListenableBuilder<List<_Stage>?>(
               valueListenable: ctrl.pipeStages,
               builder: (_, records, __) => records == null
                   ? const CircularProgressIndicator()
@@ -163,12 +163,46 @@ class _PipelineDetailScreen extends StatelessWidget {
                             (stage) => Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (stage.stage.name != '__default') Text('${stage.stage.name} (${stage.stage.type})'),
+                                if (stage.stage.name != '__default')
+                                  Row(
+                                    children: [
+                                      if (stage.stage.state == TaskStatus.inProgress)
+                                        InProgressPipelineIcon(
+                                          child: stage.stage.state.icon,
+                                        )
+                                      else
+                                        stage.stage.state == TaskStatus.completed && stage.stage.result != null
+                                            ? stage.stage.result!.icon
+                                            : stage.stage.state.icon,
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Expanded(child: Text('${stage.stage.name} (${stage.stage.type})')),
+                                    ],
+                                  ),
                                 ...stage.phases.expand((phase) => phase.jobs).map(
                                       (job) => Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text(' - ${job.job.name} (${job.job.type})'),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 10, top: 5),
+                                            child: Row(
+                                              children: [
+                                                if (job.job.state == TaskStatus.inProgress)
+                                                  InProgressPipelineIcon(
+                                                    child: job.job.state.icon,
+                                                  )
+                                                else
+                                                  job.job.state == TaskStatus.completed && job.job.result != null
+                                                      ? job.job.result!.icon
+                                                      : job.job.state.icon,
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Expanded(child: Text('${job.job.name} (${job.job.type})')),
+                                              ],
+                                            ),
+                                          ),
                                           const SizedBox(
                                             height: 5,
                                           ),
@@ -184,7 +218,9 @@ class _PipelineDetailScreen extends StatelessWidget {
                                                         child: task.state.icon,
                                                       )
                                                     else
-                                                      task.state.icon,
+                                                      task.state == TaskStatus.completed && task.result != null
+                                                          ? task.result!.icon
+                                                          : task.state.icon,
                                                     const SizedBox(
                                                       width: 10,
                                                     ),

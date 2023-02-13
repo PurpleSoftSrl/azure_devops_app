@@ -16,7 +16,7 @@ class _PipelineLogsScreen extends StatelessWidget {
       onEmpty: (_) => Text('No logs found'),
       builder: (logs) => SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: Text(logs ?? ''),
+        child: Text(logs!),
       ),
     );
   }

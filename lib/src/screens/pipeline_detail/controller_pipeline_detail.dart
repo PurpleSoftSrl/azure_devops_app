@@ -28,7 +28,7 @@ class _PipelineDetailController {
 
   final buildDetail = ValueNotifier<ApiResponse<Pipeline?>?>(null);
 
-  final pipeStages = ValueNotifier<List<_PipeStage>?>(null);
+  final pipeStages = ValueNotifier<List<_Stage>?>(null);
 
   void dispose() {
     instance = null;
@@ -39,7 +39,11 @@ class _PipelineDetailController {
     final res = await apiService.getPipeline(projectName: pipeline.project!.name!, id: pipeline.id!);
     buildDetail.value = res;
 
+    if (buildDetail.value?.isError ?? true) return;
+
     final logs = await apiService.getPipelineTimeline(projectName: pipeline.project!.name!, id: pipeline.id!);
+
+    if (logs.data == null) return;
 
     final realLogs = logs.data!.where((r) => r.order != null && r.order! < 1000);
 
@@ -48,11 +52,11 @@ class _PipelineDetailController {
     final jobs = realLogs.where((r) => r.type == 'Job').sorted((a, b) => a.order!.compareTo(b.order!));
     final tasks = realLogs.where((r) => r.type == 'Task').sorted((a, b) => a.order!.compareTo(b.order!));
 
-    final timeline = <_PipeStage>[];
+    final timeline = <_Stage>[];
 
     for (final stage in stages) {
       timeline.add(
-        _PipeStage(
+        _Stage(
           stage: stage,
           phases: phases
               .where((p) => p.parentId == stage.id)
@@ -62,7 +66,10 @@ class _PipelineDetailController {
                   jobs: jobs
                       .where((j) => j.parentId == p.id)
                       .map(
-                        (j) => _Job(job: j, tasks: tasks.where((t) => t.parentId == j.id).toList()),
+                        (j) => _Job(
+                          job: j,
+                          tasks: tasks.where((t) => t.parentId == j.id).toList(),
+                        ),
                       )
                       .toList(),
                 ),
@@ -188,8 +195,8 @@ class _PipelineDetailController {
   }
 }
 
-class _PipeStage {
-  _PipeStage({
+class _Stage {
+  _Stage({
     required this.stage,
     required this.phases,
   });

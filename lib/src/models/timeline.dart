@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:azure_devops/src/extensions/context_extension.dart';
+import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:flutter/material.dart';
 
@@ -60,7 +62,7 @@ class Record {
         currentOperation: json['currentOperation'],
         percentComplete: json['percentComplete'] as int?,
         state: TaskStatus.fromString(json['state'] as String),
-        result: json['result'] as String?,
+        result: json['result'] == null ? null : TaskResult.fromString(json['result'] as String),
         resultCode: json['resultCode'],
         changeId: json['changeId'] as int,
         lastModified: DateTime.parse(json['lastModified'] as String),
@@ -119,7 +121,7 @@ class Record {
   final dynamic currentOperation;
   final int? percentComplete;
   final TaskStatus state;
-  final String? result;
+  final TaskResult? result;
   final dynamic resultCode;
   final int changeId;
   final DateTime lastModified;
@@ -301,6 +303,75 @@ enum TaskStatus {
         return Icon(
           DevOpsIcons.queued,
           color: Colors.blue,
+          size: size,
+        );
+    }
+  }
+}
+
+/// The result of a task/job/stage.
+enum TaskResult {
+  abandoned('abandoned'),
+  canceled('canceled'),
+  failed('failed'),
+  skipped('skipped'),
+  succeeded('succeeded'),
+  succeededWithIssues('succeededWithIssues');
+
+  const TaskResult(this.stringValue);
+
+  final String stringValue;
+
+  static TaskResult fromString(String str) {
+    return values.firstWhere((v) => v.stringValue == str);
+  }
+
+  @override
+  String toString() {
+    switch (this) {
+      case TaskResult.abandoned:
+        return 'Abandoned';
+      case TaskResult.canceled:
+        return 'Canceled';
+      case TaskResult.failed:
+        return 'Failed';
+      case TaskResult.skipped:
+        return 'Skipped';
+      case TaskResult.succeeded:
+        return 'Succeeded';
+      case TaskResult.succeededWithIssues:
+        return 'Succeeded with issues';
+    }
+  }
+
+  Icon get icon {
+    final size = 15.0;
+
+    switch (this) {
+      case TaskResult.abandoned:
+      case TaskResult.canceled:
+        return Icon(
+          DevOpsIcons.cancelled,
+          color: AppRouter.rootNavigator!.context.colorScheme.onBackground,
+          size: size,
+        );
+      case TaskResult.failed:
+        return Icon(
+          DevOpsIcons.failed,
+          color: Colors.red,
+          size: size,
+        );
+      case TaskResult.skipped:
+        return Icon(
+          DevOpsIcons.cancelled, // TODO fix icon
+          color: AppRouter.rootNavigator!.context.colorScheme.onBackground,
+          size: size,
+        );
+      case TaskResult.succeeded:
+      case TaskResult.succeededWithIssues:
+        return Icon(
+          DevOpsIcons.success,
+          color: Colors.green,
           size: size,
         );
     }
