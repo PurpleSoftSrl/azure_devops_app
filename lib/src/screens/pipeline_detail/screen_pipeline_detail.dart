@@ -137,7 +137,7 @@ class _PipelineDetailScreen extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            if (pipeline.finishTime != null)
+            if (pipeline.finishTime != null && pipeline.startTime != null)
               TextTitleDescription(
                 title: 'Finished at: ',
                 description: '${pipeline.finishTime!.toSimpleDate()} (run for ${ctrl.getRunTime().toMinutes})',
