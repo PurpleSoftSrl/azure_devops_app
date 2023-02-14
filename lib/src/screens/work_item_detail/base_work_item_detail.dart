@@ -12,7 +12,7 @@ import 'package:azure_devops/src/widgets/member_avatar.dart';
 import 'package:azure_devops/src/widgets/project_and_repo_chips.dart';
 import 'package:azure_devops/src/widgets/text_title_description.dart';
 import 'package:flutter/material.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:simple_html_css/simple_html_css.dart';
 
 part 'components_work_item_detail.dart';

@@ -1,5 +1,5 @@
 name: 'azure_devops'
-version: 1.0.0+9
+version: 1.0.0+11
 description: 'Azure DevOps unofficial mobile app'
 homepage: 'homepage'
 publish_to: 'none'
@@ -15,7 +15,7 @@ dependencies:
   pull_to_refresh_flutter3: 
   intl:
   url_launcher:
-  share:
+  share_plus:
   sentry_flutter:
   cached_network_image:
   package_info_plus:

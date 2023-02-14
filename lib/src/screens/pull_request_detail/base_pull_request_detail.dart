@@ -15,7 +15,7 @@ import 'package:azure_devops/src/widgets/section_header.dart';
 import 'package:azure_devops/src/widgets/text_title_description.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 
 part 'components_pull_request_detail.dart';
 part 'controller_pull_request_detail.dart';
