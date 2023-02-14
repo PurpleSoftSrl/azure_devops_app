@@ -18,7 +18,7 @@ extension PipelineStatusExt on PipelineStatus? {
       case PipelineStatus.inProgress:
       case PipelineStatus.cancelling:
         icon = Icon(
-          DevOpsIcons.running2,
+          DevOpsIcons.running,
           color: Colors.blue,
         );
         break;

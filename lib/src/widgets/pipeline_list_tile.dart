@@ -32,7 +32,7 @@ class PipelineListTile extends StatelessWidget {
               if (pipe.status == PipelineStatus.inProgress)
                 InProgressPipelineIcon(
                   child: Icon(
-                    DevOpsIcons.running2,
+                    DevOpsIcons.running,
                     color: Colors.blue,
                   ),
                 )

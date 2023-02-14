@@ -17,7 +17,7 @@ class _WorkItemsScreen extends StatelessWidget {
         IconButton(
           onPressed: ctrl.createWorkItem,
           icon: Icon(
-            Icons.add,
+            DevOpsIcons.plus,
             size: 24,
           ),
         ),

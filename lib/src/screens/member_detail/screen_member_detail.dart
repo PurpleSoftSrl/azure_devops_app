@@ -46,7 +46,7 @@ class _MemberDetailScreen extends StatelessWidget {
                     const SizedBox(
                       width: 20,
                     ),
-                    Icon(DevOpsIcons.mail_01),
+                    Icon(DevOpsIcons.mail),
                   ],
                 ),
               ),

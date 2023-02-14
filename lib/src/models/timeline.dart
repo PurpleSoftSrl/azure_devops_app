@@ -289,7 +289,7 @@ enum TaskStatus {
     switch (this) {
       case TaskStatus.inProgress:
         return Icon(
-          DevOpsIcons.running2,
+          DevOpsIcons.running,
           color: Colors.blue,
           size: size,
         );
@@ -363,7 +363,7 @@ enum TaskResult {
         );
       case TaskResult.skipped:
         return Icon(
-          DevOpsIcons.cancelled, // TODO fix icon
+          DevOpsIcons.skipped,
           color: AppRouter.rootNavigator!.context.colorScheme.onBackground,
           size: size,
         );

@@ -51,7 +51,7 @@ class _PipelineDetailScreen extends StatelessWidget {
                 if (pipeline.status == PipelineStatus.inProgress)
                   InProgressPipelineIcon(
                     child: Icon(
-                      DevOpsIcons.running2,
+                      DevOpsIcons.running,
                       color: Colors.blue,
                     ),
                   )
