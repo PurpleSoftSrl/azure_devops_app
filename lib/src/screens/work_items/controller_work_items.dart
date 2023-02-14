@@ -222,20 +222,18 @@ class _WorkItemsController {
                       const SizedBox(
                         height: 40,
                       ),
-                      Text('Work item title'),
-                      TextFormField(
+                      DevOpsFormField(
                         onChanged: (value) => newWorkItemTitle = value,
-                        validator: (s) => s!.isEmpty ? 'Fill this field' : null,
+                        label: 'Work item title',
                       ),
                       const SizedBox(
                         height: 40,
                       ),
-                      Text('Work item description'),
-                      TextFormField(
+                      DevOpsFormField(
                         onChanged: (value) => newWorkItemDescription = value,
+                        label: 'Work item description',
                         maxLines: 3,
-                        validator: (s) => s!.isEmpty ? 'Fill this field' : null,
-                        onFieldSubmitted: (_) => AppRouter.popRoute(),
+                        onFieldSubmitted: AppRouter.popRoute,
                       ),
                       const SizedBox(
                         height: 60,

@@ -45,12 +45,6 @@ class _LoginController {
     await AppRouter.goToChooseProjects();
   }
 
-  String? validateToken(String? value) {
-    if (value!.isEmpty) return 'PAT must not be empty';
-
-    return null;
-  }
-
   void showInfo() {
     AlertService.error(
       'Info',

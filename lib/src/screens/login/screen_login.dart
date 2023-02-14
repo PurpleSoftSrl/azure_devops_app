@@ -37,14 +37,11 @@ class _LoginScreen extends StatelessWidget {
             Form(
               child: Column(
                 children: [
-                  TextFormField(
-                    key: ctrl.formFieldKey,
+                  DevOpsFormField(
+                    formFieldKey: ctrl.formFieldKey,
                     onChanged: (value) => ctrl.pat = value,
-                    decoration: InputDecoration(
-                      hintText: 'Personal Access Token',
-                    ),
-                    onFieldSubmitted: (value) => ctrl.login(),
-                    validator: ctrl.validateToken,
+                    hint: 'Personal Access Token',
+                    onFieldSubmitted: ctrl.login,
                   ),
                   const SizedBox(
                     height: 100,
