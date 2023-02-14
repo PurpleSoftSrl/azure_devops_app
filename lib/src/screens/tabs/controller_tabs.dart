@@ -9,23 +9,7 @@ class _TabsController {
 
   static _TabsController? instance;
 
-  List<_NavPage> navPages = <_NavPage>[
-    _NavPage(
-      pageName: AppRouter.home,
-      icon: DevOpsIcons.home,
-      key: GlobalKey<NavigatorState>(),
-    ),
-    _NavPage(
-      pageName: AppRouter.profile,
-      icon: DevOpsIcons.profile,
-      key: GlobalKey<NavigatorState>(),
-    ),
-    _NavPage(
-      pageName: AppRouter.settings,
-      icon: DevOpsIcons.settings,
-      key: GlobalKey<NavigatorState>(),
-    ),
-  ];
+  late List<_TabPage> navPages = _getTabPages();
 
   final GlobalKey<NavigatorState> tabKey = GlobalKey<NavigatorState>(debugLabel: 'tab_bar_key');
 
@@ -38,23 +22,7 @@ class _TabsController {
   };
 
   void init() {
-    navPages = <_NavPage>[
-      _NavPage(
-        pageName: AppRouter.home,
-        icon: DevOpsIcons.home,
-        key: GlobalKey<NavigatorState>(),
-      ),
-      _NavPage(
-        pageName: AppRouter.profile,
-        icon: DevOpsIcons.profile,
-        key: GlobalKey<NavigatorState>(),
-      ),
-      _NavPage(
-        pageName: AppRouter.settings,
-        icon: DevOpsIcons.settings,
-        key: GlobalKey<NavigatorState>(),
-      ),
-    ];
+    navPages = _getTabPages();
 
     AppRouter.setTabKeys(navPages.map((e) => e.key).toList());
     AppRouter.index = 0;
@@ -86,10 +54,30 @@ class _TabsController {
   void goToTab(int index) {
     switchTab(index);
   }
+
+  List<_TabPage> _getTabPages() {
+    return <_TabPage>[
+      _TabPage(
+        pageName: AppRouter.home,
+        icon: DevOpsIcons.home,
+        key: GlobalKey<NavigatorState>(),
+      ),
+      _TabPage(
+        pageName: AppRouter.profile,
+        icon: DevOpsIcons.profile,
+        key: GlobalKey<NavigatorState>(),
+      ),
+      _TabPage(
+        pageName: AppRouter.settings,
+        icon: DevOpsIcons.settings,
+        key: GlobalKey<NavigatorState>(),
+      ),
+    ];
+  }
 }
 
-class _NavPage {
-  _NavPage({
+class _TabPage {
+  _TabPage({
     required this.pageName,
     required this.icon,
     required this.key,
