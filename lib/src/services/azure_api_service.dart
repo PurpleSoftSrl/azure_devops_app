@@ -59,6 +59,15 @@ abstract class AzureApiService {
     required int workItemId,
   });
 
+  // ignore: long-parameter-list
+  Future<ApiResponse<WorkItemDetail>> createWorkItem({
+    required String projectName,
+    required WorkItemType type,
+    required GraphUser? assignedTo,
+    required String title,
+    required String description,
+  });
+
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
     required PullRequestState filter,
     GraphUser? creator,
@@ -167,7 +176,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
   @override
   Map<String, String>? get headers => {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json-patch+json',
         'Authorization': 'Basic ${base64.encode(utf8.encode(':$_accessToken'))}',
       };
 
@@ -208,7 +217,20 @@ class AzureApiServiceImpl implements AzureApiService {
     return res;
   }
 
-  Future<Response> _post(String url, {Map<String, String>? body}) async {
+  Future<Response> _post(String url, {Map<String, dynamic>? body}) async {
+    print('POST $url');
+    final res = await _client.post(
+      Uri.parse(url),
+      headers: headers,
+      body: jsonEncode(body),
+    );
+
+    _addSentryBreadcrumb(url, 'POST', res);
+
+    return res;
+  }
+
+  Future<Response> _postList(String url, {List<Map<String, dynamic>>? body}) async {
     print('POST $url');
     final res = await _client.post(
       Uri.parse(url),
@@ -339,6 +361,42 @@ class AzureApiServiceImpl implements AzureApiService {
     if (workItemRes.isError) return ApiResponse.error();
 
     return ApiResponse.ok(WorkItemDetail.fromJson(jsonDecode(workItemRes.body) as Map<String, dynamic>));
+  }
+
+  @override
+  // ignore: long-parameter-list
+  Future<ApiResponse<WorkItemDetail>> createWorkItem({
+    required String projectName,
+    required WorkItemType type,
+    required GraphUser? assignedTo,
+    required String title,
+    required String description,
+  }) async {
+    final createRes = await _postList(
+      '$_basePath/$projectName/_apis/wit/workitems/\$$type?$_apiVersion-preview',
+      body: [
+        {
+          'op': 'add',
+          'value': title,
+          'path': '/fields/System.Title',
+        },
+        {
+          'op': 'add',
+          'value': description,
+          'path': '/fields/System.Description',
+        },
+        if (assignedTo != null)
+          {
+            'op': 'add',
+            'value': assignedTo.displayName,
+            'path': '/fields/System.AssignedTo',
+          },
+      ],
+    );
+
+    if (createRes.isError) return ApiResponse.error();
+
+    return ApiResponse.ok(WorkItemDetail.fromJson(jsonDecode(createRes.body) as Map<String, dynamic>));
   }
 
   @override

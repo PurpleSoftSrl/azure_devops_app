@@ -214,6 +214,17 @@ class AzureApiServiceMock implements AzureApiService {
   }) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<ApiResponse<WorkItemDetail>> createWorkItem({
+    required String projectName,
+    required WorkItemType type,
+    required GraphUser? assignedTo,
+    required String title,
+    required String description,
+  }) {
+    throw UnimplementedError();
+  }
 }
 
 class StorageServiceMock implements StorageService {

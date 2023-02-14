@@ -13,6 +13,15 @@ class _WorkItemsScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: 'Work items',
       notifier: ctrl.workItems,
+      actions: [
+        IconButton(
+          onPressed: ctrl.createWorkItem,
+          icon: Icon(
+            Icons.add,
+            size: 24,
+          ),
+        ),
+      ],
       onEmpty: (onRetry) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
