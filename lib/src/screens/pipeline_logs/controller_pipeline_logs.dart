@@ -27,4 +27,10 @@ class _PipelineLogsController {
 
     logs.value = res;
   }
+
+  String trimDate(String line) {
+    return line.length >= 28 && DateTime.tryParse(line.substring(0, 28)) != null
+        ? line.replaceRange(0, 11, '').replaceRange(8, 17, '')
+        : line;
+  }
 }
