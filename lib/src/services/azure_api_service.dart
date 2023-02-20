@@ -68,6 +68,16 @@ abstract class AzureApiService {
     required String description,
   });
 
+  // ignore: long-parameter-list
+  Future<ApiResponse<WorkItemDetail>> editWorkItem({
+    required String projectName,
+    required int id,
+    WorkItemType? type,
+    GraphUser? assignedTo,
+    String? title,
+    String? description,
+  });
+
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
     required PullRequestState filter,
     GraphUser? creator,
@@ -205,6 +215,19 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   Future<Response> _patch(String url, {Map<String, String>? body}) async {
+    print('PATCH $url');
+    final res = await _client.patch(
+      Uri.parse(url),
+      headers: headers,
+      body: jsonEncode(body),
+    );
+
+    _addSentryBreadcrumb(url, 'PATCH', res);
+
+    return res;
+  }
+
+  Future<Response> _patchList(String url, {List<Map<String, dynamic>>? body}) async {
     print('PATCH $url');
     final res = await _client.patch(
       Uri.parse(url),
@@ -390,6 +413,51 @@ class AzureApiServiceImpl implements AzureApiService {
             'op': 'add',
             'value': assignedTo.displayName,
             'path': '/fields/System.AssignedTo',
+          },
+      ],
+    );
+
+    if (createRes.isError) return ApiResponse.error();
+
+    return ApiResponse.ok(WorkItemDetail.fromJson(jsonDecode(createRes.body) as Map<String, dynamic>));
+  }
+
+  @override
+  // ignore: long-parameter-list
+  Future<ApiResponse<WorkItemDetail>> editWorkItem({
+    required String projectName,
+    required int id,
+    WorkItemType? type,
+    GraphUser? assignedTo,
+    String? title,
+    String? description,
+  }) async {
+    final createRes = await _patchList(
+      '$_basePath/$projectName/_apis/wit/workitems/$id?$_apiVersion-preview',
+      body: [
+        if (title != null)
+          {
+            'op': 'replace',
+            'value': title,
+            'path': '/fields/System.Title',
+          },
+        if (description != null)
+          {
+            'op': 'replace',
+            'value': description,
+            'path': '/fields/System.Description',
+          },
+        if (assignedTo != null)
+          {
+            'op': 'replace',
+            'value': assignedTo.displayName,
+            'path': '/fields/System.AssignedTo',
+          },
+        if (type != null)
+          {
+            'op': 'replace',
+            'value': type.toString(),
+            'path': '/fields/System.WorkItemType',
           },
       ],
     );

@@ -1,21 +1,25 @@
 part of work_item_detail;
 
 class _WorkItemDetailController {
-  factory _WorkItemDetailController({required WorkItem item, required AzureApiService apiService}) {
+  factory _WorkItemDetailController({
+    required WorkItem item,
+    required AzureApiService apiService,
+    required StorageService storageService,
+  }) {
     // handle page already in memory with a different work item
     if (_instances[item.hashCode] != null) {
       return _instances[item.hashCode]!;
     }
 
     if (instance != null && instance!.item != item) {
-      instance = _WorkItemDetailController._(item, apiService, forceRefresh: true);
+      instance = _WorkItemDetailController._(item, apiService, forceRefresh: true, storageService);
     }
 
-    instance ??= _WorkItemDetailController._(item, apiService);
+    instance ??= _WorkItemDetailController._(item, apiService, storageService);
     return _instances.putIfAbsent(item.hashCode, () => instance!);
   }
 
-  _WorkItemDetailController._(this.item, this.apiService, {bool forceRefresh = false}) {
+  _WorkItemDetailController._(this.item, this.apiService, this.storageService, {bool forceRefresh = false}) {
     if (forceRefresh) init();
   }
 
@@ -27,9 +31,28 @@ class _WorkItemDetailController {
 
   final AzureApiService apiService;
 
+  final StorageService storageService;
+
   final itemDetail = ValueNotifier<ApiResponse<WorkItemDetail?>?>(null);
 
   String get itemWebUrl => '${apiService.basePath}/${item.teamProject}/_workitems/edit/${item.id}';
+
+  final _userNone = GraphUser(
+    subjectKind: '',
+    domain: '',
+    principalName: '',
+    mailAddress: '',
+    origin: '',
+    originId: '',
+    displayName: 'Assigned to',
+    links: null,
+    url: '',
+    descriptor: '',
+    metaType: '',
+    directoryAlias: '',
+  );
+
+  List<GraphUser> users = [];
 
   void dispose() {
     instance = null;
@@ -39,6 +62,11 @@ class _WorkItemDetailController {
   Future<void> init() async {
     final res = await apiService.getWorkItemDetail(projectName: item.teamProject, workItemId: item.id);
     itemDetail.value = res;
+
+    users = apiService.allUsers
+        .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
+        .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
+        .toList();
   }
 
   void shareWorkItem() {
@@ -47,5 +75,146 @@ class _WorkItemDetailController {
 
   void goToProject() {
     AppRouter.goToProjectDetail(item.teamProject);
+  }
+
+  // ignore: long-method
+  Future<void> editWorkItem() async {
+    final fields = itemDetail.value!.data!.fields;
+
+    var newWorkItemType = WorkItemType.fromString(fields.systemWorkItemType);
+    var newWorkItemAssignedTo =
+        users.firstWhereOrNull((u) => u.displayName == fields.systemAssignedTo?.displayName) ?? _userNone;
+    var newWorkItemTitle = fields.systemTitle;
+    var newWorkItemDescription = fields.systemDescription ?? '';
+
+    await showModalBottomSheet(
+      context: AppRouter.rootNavigator!.context,
+      backgroundColor: Colors.transparent,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        height: context.height * .9,
+        decoration: BoxDecoration(
+          color: context.colorScheme.background,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(12),
+            topRight: const Radius.circular(12),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Scaffold(
+            body: Column(
+              children: [
+                Text(
+                  'Create a new work item',
+                  style: context.textTheme.titleLarge,
+                ),
+                Expanded(
+                  child: ListView(
+                    children: [
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      StatefulBuilder(
+                        builder: (_, setState) => Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Type'),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            FilterMenu<WorkItemType>(
+                              title: 'Type',
+                              values: WorkItemType.values.where((t) => t != WorkItemType.all).toList(),
+                              currentFilter: newWorkItemType,
+                              onSelected: (f) {
+                                setState(() {
+                                  newWorkItemType = f;
+                                });
+                              },
+                              isDefaultFilter: newWorkItemType == WorkItemType.all,
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Text('Assigned to'),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            FilterMenu<GraphUser>.user(
+                              title: 'Assigned to',
+                              values: users,
+                              currentFilter: newWorkItemAssignedTo,
+                              onSelected: (u) {
+                                setState(() {
+                                  newWorkItemAssignedTo = u;
+                                });
+                              },
+                              formatLabel: (u) => u.displayName!,
+                              isDefaultFilter: newWorkItemAssignedTo.displayName == 'Assigned to',
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      DevOpsFormField(
+                        initialValue: newWorkItemTitle,
+                        onChanged: (value) => newWorkItemTitle = value,
+                        label: 'Work item title',
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      DevOpsFormField(
+                        initialValue: newWorkItemDescription,
+                        onChanged: (value) => newWorkItemDescription = value,
+                        label: 'Work item description',
+                        maxLines: 3,
+                        onFieldSubmitted: AppRouter.popRoute,
+                      ),
+                      const SizedBox(
+                        height: 60,
+                      ),
+                      LoadingButton(
+                        onPressed: AppRouter.popRoute,
+                        text: 'Confirm',
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    if (newWorkItemType.toString() == fields.systemWorkItemType &&
+        newWorkItemTitle == fields.systemTitle &&
+        newWorkItemAssignedTo.displayName == fields.systemAssignedTo?.displayName &&
+        newWorkItemDescription == fields.systemDescription) {
+      return;
+    }
+
+    final res = await apiService.editWorkItem(
+      projectName: item.teamProject,
+      id: item.id,
+      type: newWorkItemType,
+      title: newWorkItemTitle,
+      assignedTo: newWorkItemAssignedTo.displayName == 'Assigned to' ? null : newWorkItemAssignedTo,
+      description: newWorkItemDescription,
+    );
+
+    if (res.isError) {
+      return AlertService.error('Error', description: 'Work item not edited');
+    }
+
+    await init();
   }
 }

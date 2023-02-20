@@ -16,9 +16,52 @@ class _WorkItemDetailScreen extends StatelessWidget {
       notifier: ctrl.itemDetail,
       onEmpty: (_) => Text('No work item found'),
       actions: [
-        IconButton(
-          onPressed: ctrl.shareWorkItem,
-          icon: Icon(DevOpsIcons.share),
+        PopupMenuButton<void>(
+          key: ValueKey('Popup menu work item detail'),
+          itemBuilder: (_) => [
+            PopupMenuItem<void>(
+              onTap: ctrl.shareWorkItem,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              height: 30,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Share',
+                    style: context.textTheme.titleSmall,
+                  ),
+                  Icon(DevOpsIcons.share),
+                ],
+              ),
+            ),
+            const PopupMenuDivider(),
+            PopupMenuItem<void>(
+              onTap: ctrl.editWorkItem,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              height: 30,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Edit',
+                    style: context.textTheme.titleSmall,
+                  ),
+                  Icon(DevOpsIcons.edit),
+                ],
+              ),
+            ),
+          ],
+          elevation: 0,
+          tooltip: 'Work item actions',
+          offset: const Offset(0, 40),
+          shape: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          child: Icon(DevOpsIcons.dots_horizontal),
+        ),
+        const SizedBox(
+          width: 8,
         ),
       ],
       builder: (detail) => DefaultTextStyle(

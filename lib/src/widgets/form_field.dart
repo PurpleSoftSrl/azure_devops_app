@@ -9,6 +9,7 @@ class DevOpsFormField extends StatelessWidget {
     required this.onChanged,
     this.onFieldSubmitted,
     this.maxLines,
+    this.initialValue,
   });
 
   final VoidCallback? onFieldSubmitted;
@@ -17,6 +18,7 @@ class DevOpsFormField extends StatelessWidget {
   final String? label;
   final int? maxLines;
   final GlobalKey<FormFieldState<dynamic>>? formFieldKey;
+  final String? initialValue;
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +27,13 @@ class DevOpsFormField extends StatelessWidget {
       onChanged: onChanged,
       validator: (s) => s!.isEmpty ? 'Fill this field' : null,
       maxLines: maxLines,
+      initialValue: initialValue,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
-        contentPadding: EdgeInsets.only(left: 20),
+        contentPadding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
         hintText: hint,
         hintStyle: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSurface.withOpacity(.4)),
         fillColor: context.colorScheme.surface,
