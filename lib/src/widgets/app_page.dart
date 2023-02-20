@@ -84,6 +84,7 @@ class AppPageListenable<T extends Object?> extends StatefulWidget {
     this.refreshController,
     this.safeAreaBottom = true,
     this.header,
+    this.padding,
   });
 
   final Widget Function(T) builder;
@@ -97,6 +98,7 @@ class AppPageListenable<T extends Object?> extends StatefulWidget {
   final RefreshController? refreshController;
   final bool safeAreaBottom;
   final Widget Function()? header;
+  final EdgeInsets? padding;
 
   @override
   State<AppPageListenable<T>> createState() => _AppPageStateListenable<T>();
@@ -221,7 +223,7 @@ class _AppPageStateListenable<T> extends State<AppPageListenable<T>> {
                       ),
                     if (response?.data != null)
                       SliverPadding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
                         sliver: SliverToBoxAdapter(child: widget.builder(widget.notifier.value!.data!)),
                       ),
                     SliverToBoxAdapter(

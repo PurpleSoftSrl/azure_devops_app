@@ -14,9 +14,30 @@ class _PipelineLogsScreen extends StatelessWidget {
       title: 'Pipeline logs',
       notifier: ctrl.logs,
       onEmpty: (_) => Text('No logs found'),
+      padding: const EdgeInsets.only(left: 8),
       builder: (logs) => SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: Text(logs!),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              DateTime.parse(logs!.trim().substring(0, 28)).toDate(),
+              style: context.textTheme.titleSmall!.copyWith(fontWeight: FontWeight.normal),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Text(
+              logs
+                  .split('\n')
+                  .map(
+                    (l) => l.length < 28 ? l : l.replaceRange(0, 11, '').replaceRange(8, 17, ''),
+                  )
+                  .join('\n'),
+              style: context.textTheme.bodySmall!.copyWith(fontWeight: FontWeight.normal),
+            ),
+          ],
+        ),
       ),
     );
   }
