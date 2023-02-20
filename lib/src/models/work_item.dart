@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:flutter/material.dart';
 
@@ -489,5 +491,58 @@ class GetWorkItemDetailResponseLinks {
         'html': html.toJson(),
         'workItemType': workItemType.toJson(),
         'fields': fields.toJson(),
+      };
+}
+
+class GetWorkItemStatusesResponse {
+  GetWorkItemStatusesResponse({
+    required this.count,
+    required this.statuses,
+  });
+
+  factory GetWorkItemStatusesResponse.fromRawJson(String str) =>
+      GetWorkItemStatusesResponse.fromJson(json.decode(str) as Map<String, dynamic>);
+
+  factory GetWorkItemStatusesResponse.fromJson(Map<String, dynamic> json) => GetWorkItemStatusesResponse(
+        count: json['count'] as int,
+        statuses: List<WorkItemStatus>.from(
+          (json['value'] as List<dynamic>).map((x) => WorkItemStatus.fromJson(x as Map<String, dynamic>)),
+        ),
+      );
+
+  final int count;
+  final List<WorkItemStatus> statuses;
+
+  Map<String, dynamic> toJson() => {
+        'count': count,
+        'value': List<dynamic>.from(statuses.map((x) => x.toJson())),
+      };
+}
+
+class WorkItemStatus {
+  WorkItemStatus({
+    required this.name,
+    required this.color,
+    required this.category,
+  });
+
+  factory WorkItemStatus.fromRawJson(String str) => WorkItemStatus.fromJson(json.decode(str) as Map<String, dynamic>);
+
+  factory WorkItemStatus.fromJson(Map<String, dynamic> json) => WorkItemStatus(
+        name: json['name'] as String,
+        color: json['color'] as String,
+        category: json['category'] as String,
+      );
+
+  String toRawJson() => json.encode(toJson());
+
+  final String name;
+  final String color;
+  final String category;
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'color': color,
+        'category': category,
       };
 }

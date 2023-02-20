@@ -59,6 +59,8 @@ abstract class AzureApiService {
     required int workItemId,
   });
 
+  Future<ApiResponse<List<WorkItemStatus>>> getWorkItemStatuses({required String projectName, required String type});
+
   // ignore: long-parameter-list
   Future<ApiResponse<WorkItemDetail>> createWorkItem({
     required String projectName,
@@ -76,6 +78,7 @@ abstract class AzureApiService {
     GraphUser? assignedTo,
     String? title,
     String? description,
+    String? status,
   });
 
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
@@ -387,6 +390,19 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
+  Future<ApiResponse<List<WorkItemStatus>>> getWorkItemStatuses({
+    required String projectName,
+    required String type,
+  }) async {
+    final statusesRes = await _get('$_basePath/$projectName/_apis/wit/workitemtypes/$type/states?$_apiVersion');
+    if (statusesRes.isError) return ApiResponse.error();
+
+    return ApiResponse.ok(
+      GetWorkItemStatusesResponse.fromJson(jsonDecode(statusesRes.body) as Map<String, dynamic>).statuses,
+    );
+  }
+
+  @override
   // ignore: long-parameter-list
   Future<ApiResponse<WorkItemDetail>> createWorkItem({
     required String projectName,
@@ -431,6 +447,7 @@ class AzureApiServiceImpl implements AzureApiService {
     GraphUser? assignedTo,
     String? title,
     String? description,
+    String? status,
   }) async {
     final createRes = await _patchList(
       '$_basePath/$projectName/_apis/wit/workitems/$id?$_apiVersion-preview',
@@ -458,6 +475,12 @@ class AzureApiServiceImpl implements AzureApiService {
             'op': 'replace',
             'value': type.toString(),
             'path': '/fields/System.WorkItemType',
+          },
+        if (status != null)
+          {
+            'op': 'replace',
+            'value': status,
+            'path': '/fields/System.State',
           },
       ],
     );

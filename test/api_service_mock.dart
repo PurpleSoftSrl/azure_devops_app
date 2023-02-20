@@ -234,7 +234,13 @@ class AzureApiServiceMock implements AzureApiService {
     GraphUser? assignedTo,
     String? title,
     String? description,
+    String? status,
   }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<WorkItemStatus>>> getWorkItemStatuses({required String projectName, required String type}) {
     throw UnimplementedError();
   }
 }

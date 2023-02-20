@@ -80,6 +80,11 @@ class _WorkItemDetailScreen extends StatelessWidget {
                   width: 10,
                 ),
                 Text(detail.id.toString()),
+                const Spacer(),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(detail.fields.systemState),
               ],
             ),
             const SizedBox(
@@ -106,10 +111,6 @@ class _WorkItemDetailScreen extends StatelessWidget {
                 ],
                 const Spacer(),
                 Text(detail.fields.systemCreatedDate.minutesAgo),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(detail.fields.systemState),
               ],
             ),
             const SizedBox(

@@ -54,6 +54,8 @@ class _WorkItemDetailController {
 
   List<GraphUser> users = [];
 
+  List<WorkItemStatus> statuses = [];
+
   void dispose() {
     instance = null;
     _instances.remove(item.hashCode);
@@ -67,6 +69,10 @@ class _WorkItemDetailController {
         .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
         .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
         .toList();
+
+    final statusesRes =
+        await apiService.getWorkItemStatuses(projectName: item.teamProject, type: item.workItemType.toString());
+    statuses = statusesRes.data ?? [];
   }
 
   void shareWorkItem() {
@@ -81,11 +87,14 @@ class _WorkItemDetailController {
   Future<void> editWorkItem() async {
     final fields = itemDetail.value!.data!.fields;
 
+    var newWorkItemStatus = fields.systemState;
     var newWorkItemType = WorkItemType.fromString(fields.systemWorkItemType);
     var newWorkItemAssignedTo =
         users.firstWhereOrNull((u) => u.displayName == fields.systemAssignedTo?.displayName) ?? _userNone;
     var newWorkItemTitle = fields.systemTitle;
     var newWorkItemDescription = fields.systemDescription ?? '';
+
+    var shouldEdit = false;
 
     await showModalBottomSheet(
       context: AppRouter.rootNavigator!.context,
@@ -120,6 +129,24 @@ class _WorkItemDetailController {
                         builder: (_, setState) => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Text('Status'),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            FilterMenu<String>(
+                              title: 'Status',
+                              values: statuses.map((s) => s.name).toList(),
+                              currentFilter: newWorkItemStatus,
+                              onSelected: (f) {
+                                setState(() {
+                                  newWorkItemStatus = f;
+                                });
+                              },
+                              isDefaultFilter: false,
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
                             Text('Type'),
                             const SizedBox(
                               height: 5,
@@ -179,7 +206,10 @@ class _WorkItemDetailController {
                         height: 60,
                       ),
                       LoadingButton(
-                        onPressed: AppRouter.popRoute,
+                        onPressed: () {
+                          shouldEdit = true;
+                          AppRouter.popRoute();
+                        },
                         text: 'Confirm',
                       ),
                       const SizedBox(
@@ -195,7 +225,10 @@ class _WorkItemDetailController {
       ),
     );
 
+    if (!shouldEdit) return;
+
     if (newWorkItemType.toString() == fields.systemWorkItemType &&
+        newWorkItemStatus == fields.systemState &&
         newWorkItemTitle == fields.systemTitle &&
         newWorkItemAssignedTo.displayName == fields.systemAssignedTo?.displayName &&
         newWorkItemDescription == fields.systemDescription) {
@@ -209,6 +242,7 @@ class _WorkItemDetailController {
       title: newWorkItemTitle,
       assignedTo: newWorkItemAssignedTo.displayName == 'Assigned to' ? null : newWorkItemAssignedTo,
       description: newWorkItemDescription,
+      status: newWorkItemStatus,
     );
 
     if (res.isError) {
