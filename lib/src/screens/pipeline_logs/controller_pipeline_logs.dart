@@ -33,4 +33,16 @@ class _PipelineLogsController {
         ? line.replaceRange(0, 11, '').replaceRange(8, 17, '')
         : line;
   }
+
+  Color? logColor(String l) {
+    if (!l.contains('##')) return null;
+
+    if (l.contains('##[warning]')) return Colors.orange;
+    if (l.contains('##[error]')) return Colors.red;
+    if (l.contains('##[section]')) return Colors.green;
+    if (l.contains('##[debug]')) return Colors.purple;
+    if (l.contains('##[command]')) return Colors.lightBlue;
+
+    return null;
+  }
 }

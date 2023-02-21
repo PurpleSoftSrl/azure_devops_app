@@ -27,10 +27,15 @@ class _PipelineLogsScreen extends StatelessWidget {
             const SizedBox(
               height: 5,
             ),
-            Text(
-              logs.split('\n').map(ctrl.trimDate).join('\n'),
-              style: context.textTheme.bodySmall!.copyWith(fontWeight: FontWeight.normal),
-            ),
+            ...logs.split('\n').map(ctrl.trimDate).map(
+                  (l) => Text(
+                    l.replaceAll('##[section]', ''),
+                    style: context.textTheme.bodySmall!.copyWith(
+                      fontWeight: FontWeight.normal,
+                      color: ctrl.logColor(l),
+                    ),
+                  ),
+                ),
           ],
         ),
       ),
