@@ -15,9 +15,52 @@ class _PipelineDetailScreen extends StatelessWidget {
       notifier: ctrl.buildDetail,
       onEmpty: (_) => Text('No pipeline found'),
       actions: [
-        IconButton(
-          onPressed: ctrl.shareBuild,
-          icon: Icon(DevOpsIcons.share),
+        PopupMenuButton<void>(
+          key: ValueKey('Popup menu pipeline detail'),
+          itemBuilder: (_) => [
+            PopupMenuItem<void>(
+              onTap: ctrl.shareBuild,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              height: 30,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Share',
+                    style: context.textTheme.titleSmall,
+                  ),
+                  Icon(DevOpsIcons.share),
+                ],
+              ),
+            ),
+            const PopupMenuDivider(),
+            PopupMenuItem<void>(
+              onTap: ctrl.getActionFromStatus,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              height: 30,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    ctrl.getActionTextFromStatus(),
+                    style: context.textTheme.titleSmall,
+                  ),
+                  Icon(ctrl.getActionIconFromStatus()),
+                ],
+              ),
+            ),
+          ],
+          elevation: 0,
+          tooltip: 'Pipeline actions',
+          offset: const Offset(0, 40),
+          shape: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          child: Icon(DevOpsIcons.dots_horizontal),
+        ),
+        const SizedBox(
+          width: 8,
         ),
       ],
       builder: (pipeline) => DefaultTextStyle(
@@ -155,7 +198,10 @@ class _PipelineDetailScreen extends StatelessWidget {
             ValueListenableBuilder<List<_Stage>?>(
               valueListenable: ctrl.pipeStages,
               builder: (_, records, __) => records == null
-                  ? const CircularProgressIndicator()
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Center(child: const CircularProgressIndicator()),
+                    )
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: records
@@ -249,14 +295,6 @@ class _PipelineDetailScreen extends StatelessWidget {
                           .toList(),
                     ),
             ),
-            const SizedBox(
-              height: 40,
-            ),
-            if (pipeline.status != PipelineStatus.cancelling)
-              LoadingButton(
-                onPressed: ctrl.getActionFromStatus,
-                text: ctrl.getActionTextFromStatus(),
-              ),
           ],
         ),
       ),

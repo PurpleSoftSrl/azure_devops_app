@@ -94,6 +94,10 @@ class _PipelineDetailController {
     return pipeline.status == PipelineStatus.completed ? 'Rerun pipeline' : 'Cancel pipeline';
   }
 
+  IconData getActionIconFromStatus() {
+    return pipeline.status == PipelineStatus.completed ? DevOpsIcons.running : DevOpsIcons.cancelled;
+  }
+
   Future<void> _cancelBuild() async {
     final confirm = await AlertService.confirm(
       'Attention',
