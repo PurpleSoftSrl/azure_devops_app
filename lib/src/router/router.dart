@@ -6,6 +6,7 @@ import 'package:azure_devops/src/models/work_item.dart';
 import 'package:azure_devops/src/screens/choose_projects/base_choose_projects.dart';
 import 'package:azure_devops/src/screens/commit_detail/base_commit_detail.dart';
 import 'package:azure_devops/src/screens/commits/base_commits.dart';
+import 'package:azure_devops/src/screens/file_diff/base_file_diff.dart';
 import 'package:azure_devops/src/screens/home/base_home.dart';
 import 'package:azure_devops/src/screens/login/base_login.dart';
 import 'package:azure_devops/src/screens/member_detail/base_member_detail.dart';
@@ -49,6 +50,7 @@ class AppRouter {
   static const _pipelineDetail = '/pipeline-detail';
   static const _pipelineLogs = '/pipeline-logs';
   static const _commitDetail = '/commit-detail';
+  static const _fileDiff = '/file-diff';
   static const _projectDetail = '/project-detail';
   static const _repoDetail = '/repo-detail';
   static const _memberDetail = '/member-detail';
@@ -131,6 +133,14 @@ class AppRouter {
     return ModalRoute.of(context)!.settings.arguments as Commit;
   }
 
+  static Future<void> goToFileDiff(FileDiffArgs args) async {
+    await _currentNavigator!.pushNamed(_fileDiff, arguments: args);
+  }
+
+  static FileDiffArgs getCommitDiffArgs(BuildContext context) {
+    return ModalRoute.of(context)!.settings.arguments as FileDiffArgs;
+  }
+
   static Future<void> goToProjectDetail(String projectName) async {
     await _currentNavigator!.pushNamed(_projectDetail, arguments: projectName);
   }
@@ -205,6 +215,7 @@ class AppRouter {
     _pipelineDetail: (_) => PipelineDetailPage(),
     _pipelineLogs: (_) => PipelineLogsPage(),
     _commitDetail: (_) => CommitDetailPage(),
+    _fileDiff: (_) => FileDiffPage(),
     _projectDetail: (_) => ProjectDetailPage(),
     _repoDetail: (_) => RepositoryDetailPage(),
     _memberDetail: (_) => MemberDetailPage(),
@@ -249,4 +260,16 @@ class PipelineLogsArgs {
 
   final Pipeline pipeline;
   final Record task;
+}
+
+class FileDiffArgs {
+  FileDiffArgs({
+    required this.commit,
+    required this.filePath,
+    required this.isAdded,
+  });
+
+  final Commit commit;
+  final String filePath;
+  final bool isAdded;
 }

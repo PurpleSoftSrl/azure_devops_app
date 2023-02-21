@@ -118,11 +118,15 @@ class _CommitDetailScreen extends StatelessWidget {
                 style: context.textTheme.titleLarge,
               ),
               ...ctrl.addedFiles.map(
-                (c2) => Padding(
-                  padding: const EdgeInsets.only(left: 10, bottom: 10),
-                  child: Text(
-                    c2!.item!.path!.startsWith('/') ? c2.item!.path!.substring(1) : c2.item!.path!,
-                    style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                (c2) => InkWell(
+                  onTap: () => ctrl.goToFileDiff(filePath: c2.item!.path!, isAdded: true),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      c2!.item!.path!.startsWith('/') ? c2.item!.path!.substring(1) : c2.item!.path!,
+                      style: context.textTheme.titleSmall!
+                          .copyWith(color: context.colorScheme.onSecondary, decoration: TextDecoration.underline),
+                    ),
                   ),
                 ),
               ),
@@ -133,11 +137,15 @@ class _CommitDetailScreen extends StatelessWidget {
                 style: context.textTheme.titleLarge,
               ),
               ...ctrl.editedFiles.map(
-                (c2) => Padding(
-                  padding: const EdgeInsets.only(left: 10, bottom: 10),
-                  child: Text(
-                    c2!.item!.path!.startsWith('/') ? c2.item!.path!.substring(1) : c2.item!.path!,
-                    style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                (c2) => InkWell(
+                  onTap: () => ctrl.goToFileDiff(filePath: c2.item!.path!, isAdded: false),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      c2!.item!.path!.startsWith('/') ? c2.item!.path!.substring(1) : c2.item!.path!,
+                      style: context.textTheme.titleSmall!
+                          .copyWith(color: context.colorScheme.onSecondary, decoration: TextDecoration.underline),
+                    ),
                   ),
                 ),
               ),
@@ -149,7 +157,7 @@ class _CommitDetailScreen extends StatelessWidget {
               ),
               ...ctrl.deletedFiles.map(
                 (c2) => Padding(
-                  padding: const EdgeInsets.only(left: 10, bottom: 10),
+                  padding: const EdgeInsets.only(bottom: 10),
                   child: Text(
                     c2!.item!.path!.startsWith('/') ? c2.item!.path!.substring(1) : c2.item!.path!,
                     style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),

@@ -1,5 +1,6 @@
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
+import 'package:azure_devops/src/models/file_diff.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/project.dart';
@@ -33,6 +34,15 @@ class AzureApiServiceMock implements AzureApiService {
     required String projectId,
     required String repositoryId,
     required String commitId,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<Diff>> getCommitDiff({
+    required Commit commit,
+    required String filePath,
+    required bool isAdded,
   }) {
     throw UnimplementedError();
   }

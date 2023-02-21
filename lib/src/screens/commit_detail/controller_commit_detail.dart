@@ -76,4 +76,14 @@ class _CommitDetailController {
       RepoDetailArgs(projectName: commit.projectName, repositoryName: commit.repositoryName),
     );
   }
+
+  void goToFileDiff({required String filePath, required bool isAdded}) {
+    AppRouter.goToFileDiff(
+      FileDiffArgs(
+        commit: commit,
+        filePath: filePath,
+        isAdded: isAdded,
+      ),
+    );
+  }
 }

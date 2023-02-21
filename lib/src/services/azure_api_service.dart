@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:azure_devops/src/extensions/commit_extension.dart';
 import 'package:azure_devops/src/extensions/reponse_extension.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
+import 'package:azure_devops/src/models/file_diff.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/project.dart';
@@ -114,6 +116,12 @@ abstract class AzureApiService {
     required String commitId,
   });
 
+  Future<ApiResponse<Diff>> getCommitDiff({
+    required Commit commit,
+    required String filePath,
+    required bool isAdded,
+  });
+
   Future<ApiResponse<List<Pipeline>>> getRecentPipelines({
     PipelineResult result,
     PipelineStatus status,
@@ -189,7 +197,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
   @override
   Map<String, String>? get headers => {
-        'Content-Type': 'application/json-patch+json',
+        'Content-Type': 'application/json',
         'Authorization': 'Basic ${base64.encode(utf8.encode(':$_accessToken'))}',
       };
 
@@ -256,11 +264,13 @@ class AzureApiServiceImpl implements AzureApiService {
     return res;
   }
 
-  Future<Response> _postList(String url, {List<Map<String, dynamic>>? body}) async {
+  Future<Response> _postList(String url, {List<Map<String, dynamic>>? body, String? contentType}) async {
     print('POST $url');
+    final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
+
     final res = await _client.post(
       Uri.parse(url),
-      headers: headers,
+      headers: realHeaders,
       body: jsonEncode(body),
     );
 
@@ -431,6 +441,7 @@ class AzureApiServiceImpl implements AzureApiService {
             'path': '/fields/System.AssignedTo',
           },
       ],
+      contentType: 'application/json-patch+json',
     );
 
     if (createRes.isError) return ApiResponse.error();
@@ -738,6 +749,48 @@ class AzureApiServiceImpl implements AzureApiService {
     if (commitDetail.isError) return ApiResponse.error();
 
     return ApiResponse.ok(CommitDetail.fromJson(jsonDecode(commitDetail.body) as Map<String, dynamic>));
+  }
+
+  @override
+  Future<ApiResponse<Diff>> getCommitDiff({
+    required Commit commit,
+    required String filePath,
+    required bool isAdded,
+  }) async {
+    final prevCommitRes = await _get(
+      '$_basePath/${commit.projectId}/_apis/git/repositories/${commit.repositoryId}/commits?searchCriteria.toDate=${commit.author!.date}&searchCriteria.\$top=1&searchCriteria.\$skip=1&$_apiVersion',
+    );
+    if (prevCommitRes.isError) return ApiResponse.error();
+
+    final prevCommit = GetCommitsResponse.fromJson(jsonDecode(prevCommitRes.body) as Map<String, dynamic>);
+    final prevCommitId = prevCommit.commits.firstOrNull?.commitId;
+
+    if (prevCommitId == null) return ApiResponse.error();
+
+    final repoId = commit.repositoryId;
+    final diffRes = await _post(
+      '$_basePath/_apis/contribution/hierarchyQuery/project/${commit.projectId}?$_apiVersion-preview',
+      body: {
+        'contributionIds': ['ms.vss-code-web.file-diff-data-provider'],
+        'dataProviderContext': {
+          'properties': {
+            'repositoryId': repoId,
+            'diffParameters': {
+              'includeCharDiffs': true,
+              'modifiedPath': filePath,
+              'modifiedVersion': 'GC${commit.commitId}',
+              if (!isAdded) 'originalPath': filePath,
+              if (!isAdded) 'originalVersion': 'GC$prevCommitId',
+              'partialDiff': true,
+              'forceLoad': false,
+            },
+          },
+        },
+      },
+    );
+    if (diffRes.isError) return ApiResponse.error();
+
+    return ApiResponse.ok(GetFileDiffResponse.fromRawJson(diffRes.body).data.diff);
   }
 
   @override
