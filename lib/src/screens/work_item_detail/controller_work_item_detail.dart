@@ -116,7 +116,7 @@ class _WorkItemDetailController {
             body: Column(
               children: [
                 Text(
-                  'Create a new work item',
+                  'Edit work item',
                   style: context.textTheme.titleLarge,
                 ),
                 Expanded(
