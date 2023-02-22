@@ -83,6 +83,8 @@ abstract class AzureApiService {
     String? status,
   });
 
+  Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id});
+
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
     required PullRequestState filter,
     GraphUser? creator,
@@ -277,6 +279,18 @@ class AzureApiServiceImpl implements AzureApiService {
     );
 
     _addSentryBreadcrumb(url, 'POST', res);
+
+    return res;
+  }
+
+  Future<Response> _delete(String url) async {
+    print('DELETE $url');
+    final res = await _client.delete(
+      Uri.parse(url),
+      headers: headers,
+    );
+
+    _addSentryBreadcrumb(url, 'DELETE', res);
 
     return res;
   }
@@ -502,6 +516,14 @@ class AzureApiServiceImpl implements AzureApiService {
     if (createRes.isError) return ApiResponse.error();
 
     return ApiResponse.ok(WorkItemDetail.fromJson(jsonDecode(createRes.body) as Map<String, dynamic>));
+  }
+
+  @override
+  Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id}) async {
+    final deleteRes = await _delete('$_basePath/$projectName/_apis/wit/workitems/$id?$_apiVersion');
+    if (deleteRes.isError) return ApiResponse.error();
+
+    return ApiResponse.ok(true);
   }
 
   @override

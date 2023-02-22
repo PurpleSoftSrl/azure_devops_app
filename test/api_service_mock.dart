@@ -253,6 +253,11 @@ class AzureApiServiceMock implements AzureApiService {
   Future<ApiResponse<List<WorkItemStatus>>> getWorkItemStatuses({required String projectName, required String type}) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id}) {
+    throw UnimplementedError();
+  }
 }
 
 class StorageServiceMock implements StorageService {

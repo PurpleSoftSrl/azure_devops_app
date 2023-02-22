@@ -260,4 +260,16 @@ class _WorkItemDetailController {
 
     await init();
   }
+
+  Future<void> deleteWorkItem() async {
+    final conf = await AlertService.confirm('Attention', description: 'Do you really want to delete this work item?');
+    if (!conf) return;
+
+    final res = await apiService.deleteWorkItem(projectName: item.teamProject, id: item.id);
+    if (!(res.data ?? false)) {
+      return AlertService.error('Error', description: 'Work item not deleted');
+    }
+
+    AppRouter.pop();
+  }
 }
