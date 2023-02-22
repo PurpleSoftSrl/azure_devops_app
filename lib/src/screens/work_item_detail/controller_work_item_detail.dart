@@ -70,8 +70,12 @@ class _WorkItemDetailController {
         .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
         .toList();
 
+    await _getStatuses(item.workItemType);
+  }
+
+  Future<void> _getStatuses(WorkItemType workItemType) async {
     final statusesRes =
-        await apiService.getWorkItemStatuses(projectName: item.teamProject, type: item.workItemType.toString());
+        await apiService.getWorkItemStatuses(projectName: item.teamProject, type: workItemType.toString());
     statuses = statusesRes.data ?? [];
   }
 
@@ -155,10 +159,15 @@ class _WorkItemDetailController {
                               title: 'Type',
                               values: WorkItemType.values.where((t) => t != WorkItemType.all).toList(),
                               currentFilter: newWorkItemType,
-                              onSelected: (f) {
-                                setState(() {
-                                  newWorkItemType = f;
-                                });
+                              onSelected: (f) async {
+                                newWorkItemType = f;
+                                await _getStatuses(newWorkItemType);
+                                if (!statuses.map((e) => e.name).contains(newWorkItemStatus)) {
+                                  // change status if new type doesn't support current status
+                                  newWorkItemStatus = statuses.firstOrNull?.name ?? newWorkItemStatus;
+                                }
+
+                                setState(() => true);
                               },
                               isDefaultFilter: newWorkItemType == WorkItemType.all,
                             ),
