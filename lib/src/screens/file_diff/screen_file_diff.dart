@@ -20,6 +20,7 @@ class _FileDiffScreen extends StatelessWidget {
       ],
       notifier: ctrl.diff,
       onEmpty: (_) => Text('No diff found'),
+      padding: EdgeInsets.zero,
       builder: (diff) => SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: ConstrainedBox(
@@ -29,39 +30,55 @@ class _FileDiffScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(diff!.modifiedFile.contentMetadata.fileName),
-                Text(
-                  diff.modifiedFile.serverItem,
-                  style:
-                      context.textTheme.labelSmall!.copyWith(color: context.colorScheme.onBackground.withOpacity(.6)),
-                ),
-                Row(
-                  children: [
-                    if (diff.originalFile != null &&
-                        diff.blocks.fold(0, (a, b) => a + (ctrl.isNotRealChange(b) ? 0 : b.oLines!.length)) > 0) ...[
-                      Icon(
-                        Icons.remove,
-                        size: 15,
-                        color: Colors.red,
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(diff!.modifiedFile.contentMetadata.fileName),
                       Text(
-                        diff.blocks.fold(0, (a, b) => a + (ctrl.isNotRealChange(b) ? 0 : b.oLines!.length)).toString(),
-                        style: context.textTheme.titleSmall!.copyWith(color: Colors.red),
+                        diff.modifiedFile.serverItem,
+                        style: context.textTheme.labelSmall!
+                            .copyWith(color: context.colorScheme.onBackground.withOpacity(.6)),
                       ),
-                      const SizedBox(
-                        width: 10,
+                      Row(
+                        children: [
+                          if (diff.originalFile != null &&
+                              diff.blocks.fold(0, (a, b) => a + (ctrl.isNotRealChange(b) ? 0 : b.oLines!.length)) >
+                                  0) ...[
+                            Icon(
+                              Icons.remove,
+                              size: 15,
+                              color: Colors.red,
+                            ),
+                            Text(
+                              diff.blocks
+                                  .fold(0, (a, b) => a + (ctrl.isNotRealChange(b) ? 0 : b.oLines!.length))
+                                  .toString(),
+                              style: context.textTheme.titleSmall!.copyWith(color: Colors.red),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                          ],
+                          if (diff.blocks.fold(0, (a, b) => a + (ctrl.isNotRealChange(b) ? 0 : b.mLines.length)) >
+                              0) ...[
+                            Icon(
+                              DevOpsIcons.plus,
+                              size: 15,
+                              color: Colors.green,
+                            ),
+                            Text(
+                              diff.blocks
+                                  .fold(0, (a, b) => a + (ctrl.isNotRealChange(b) ? 0 : b.mLines.length))
+                                  .toString(),
+                              style: context.textTheme.titleSmall!.copyWith(color: Colors.green),
+                            ),
+                          ],
+                        ],
                       ),
                     ],
-                    Icon(
-                      DevOpsIcons.plus,
-                      size: 15,
-                      color: Colors.green,
-                    ),
-                    Text(
-                      diff.blocks.fold(0, (a, b) => a + (ctrl.isNotRealChange(b) ? 0 : b.mLines.length)).toString(),
-                      style: context.textTheme.titleSmall!.copyWith(color: Colors.green),
-                    ),
-                  ],
+                  ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +103,8 @@ class _FileDiffScreen extends StatelessWidget {
                                         alignment: Alignment.centerRight,
                                         child: Text(
                                           '${oldLineNumber++}',
-                                          style: context.textTheme.labelSmall,
+                                          style: context.textTheme.labelSmall!
+                                              .copyWith(color: context.colorScheme.onSecondary),
                                         ),
                                       ),
                                     ),
@@ -119,7 +137,8 @@ class _FileDiffScreen extends StatelessWidget {
                                                     alignment: Alignment.centerRight,
                                                     child: Text(
                                                       '${oldLineNumber++}',
-                                                      style: context.textTheme.labelSmall,
+                                                      style: context.textTheme.labelSmall!
+                                                          .copyWith(color: context.colorScheme.onSecondary),
                                                     ),
                                                   ),
                                                 ),
@@ -130,7 +149,7 @@ class _FileDiffScreen extends StatelessWidget {
                                                   width: 10,
                                                   child: Icon(
                                                     Icons.remove,
-                                                    size: 15,
+                                                    size: 12,
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -160,7 +179,8 @@ class _FileDiffScreen extends StatelessWidget {
                                                   alignment: Alignment.centerRight,
                                                   child: Text(
                                                     '${newLineNumber++}',
-                                                    style: context.textTheme.labelSmall,
+                                                    style: context.textTheme.labelSmall!
+                                                        .copyWith(color: context.colorScheme.onSecondary),
                                                   ),
                                                 ),
                                               ),
@@ -171,7 +191,7 @@ class _FileDiffScreen extends StatelessWidget {
                                                 width: 10,
                                                 child: Icon(
                                                   DevOpsIcons.plus,
-                                                  size: 15,
+                                                  size: 12,
                                                 ),
                                               ),
                                               const SizedBox(
