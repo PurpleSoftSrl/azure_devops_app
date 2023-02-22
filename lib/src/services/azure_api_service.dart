@@ -238,11 +238,13 @@ class AzureApiServiceImpl implements AzureApiService {
     return res;
   }
 
-  Future<Response> _patchList(String url, {List<Map<String, dynamic>>? body}) async {
+  Future<Response> _patchList(String url, {List<Map<String, dynamic>>? body, String? contentType}) async {
     print('PATCH $url');
+    final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
+
     final res = await _client.patch(
       Uri.parse(url),
-      headers: headers,
+      headers: realHeaders,
       body: jsonEncode(body),
     );
 
@@ -494,6 +496,7 @@ class AzureApiServiceImpl implements AzureApiService {
             'path': '/fields/System.State',
           },
       ],
+      contentType: 'application/json-patch+json',
     );
 
     if (createRes.isError) return ApiResponse.error();
