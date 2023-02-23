@@ -64,8 +64,12 @@ class _InternalChip extends StatelessWidget {
             width: 8,
           ),
           Flexible(
-            child: Chip(
-              label: Text(text),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Text(
+                text,
+                style: context.textTheme.titleSmall!.copyWith(decoration: TextDecoration.underline),
+              ),
             ),
           ),
         ],
