@@ -227,7 +227,7 @@ class AppRouter {
   };
 
   static Future<bool> askBeforeClosingApp() async {
-    final shouldPop = await AlertService.confirm('Do you really want to close the app?');
+    final shouldPop = await AlertService.confirm('Attention', description: 'Do you really want to close the app?');
     return shouldPop;
   }
 }
