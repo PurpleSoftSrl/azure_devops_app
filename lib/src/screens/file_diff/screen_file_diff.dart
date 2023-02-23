@@ -24,7 +24,7 @@ class _FileDiffScreen extends StatelessWidget {
       builder: (diff) => SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 2000),
+          constraints: BoxConstraints(maxWidth: 2000, minHeight: context.height),
           child: DefaultTextStyle(
             style: context.textTheme.titleSmall!,
             child: Column(
@@ -37,7 +37,9 @@ class _FileDiffScreen extends StatelessWidget {
                     children: [
                       Text(diff!.modifiedFile.contentMetadata.fileName),
                       Text(
-                        diff.modifiedFile.serverItem,
+                        diff.modifiedFile.serverItem.startsWith('/')
+                            ? diff.modifiedFile.serverItem.substring(1)
+                            : diff.modifiedFile.serverItem,
                         style: context.textTheme.labelSmall!
                             .copyWith(color: context.colorScheme.onBackground.withOpacity(.6)),
                       ),
@@ -48,7 +50,7 @@ class _FileDiffScreen extends StatelessWidget {
                                   0) ...[
                             Icon(
                               Icons.remove,
-                              size: 15,
+                              size: 12,
                               color: Colors.red,
                             ),
                             Text(
@@ -65,7 +67,7 @@ class _FileDiffScreen extends StatelessWidget {
                               0) ...[
                             Icon(
                               DevOpsIcons.plus,
-                              size: 15,
+                              size: 12,
                               color: Colors.green,
                             ),
                             Text(
