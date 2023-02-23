@@ -55,6 +55,7 @@ class _InternalChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             title,
