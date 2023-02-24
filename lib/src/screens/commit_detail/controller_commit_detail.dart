@@ -77,22 +77,22 @@ class _CommitDetailController {
   }
 
   String get diffUrl =>
-      '${apiService.basePath}/${commit.projectName}/_git/${commit.repositoryName}/commit/${commit.commitId}';
+      '${apiService.basePath}/${commitDetail!.projectName}/_git/${commitDetail!.repositoryName}/commit/${commitDetail!.commitId}';
 
   void goToProject() {
-    AppRouter.goToProjectDetail(commit.projectName);
+    AppRouter.goToProjectDetail(commitDetail!.projectName);
   }
 
   Future<void> goToRepo() async {
     await AppRouter.goToRepositoryDetail(
-      RepoDetailArgs(projectName: commit.projectName, repositoryName: commit.repositoryName),
+      RepoDetailArgs(projectName: commitDetail!.projectName, repositoryName: commitDetail!.repositoryName),
     );
   }
 
   void goToFileDiff({required String filePath, required bool isAdded}) {
     AppRouter.goToFileDiff(
       FileDiffArgs(
-        commit: commit,
+        commit: commitDetail!,
         filePath: filePath,
         isAdded: isAdded,
       ),
