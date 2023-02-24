@@ -26,12 +26,14 @@ class _CommitDetailController {
   final Commit commit;
   final AzureApiService apiService;
 
-  final commitDetail = ValueNotifier<ApiResponse<CommitDetail?>?>(null);
+  final commitChanges = ValueNotifier<ApiResponse<CommitChanges?>?>(null);
+
+  Commit? commitDetail;
 
   GraphUser? author;
 
   Iterable<Change?> get changedFiles =>
-      commitDetail.value?.data!.changes!.where((c) => c!.item!.gitObjectType == 'blob') ?? [];
+      commitChanges.value?.data!.changes!.where((c) => c!.item!.gitObjectType == 'blob') ?? [];
 
   Iterable<Change?> get addedFiles => changedFiles.where((f) => f!.changeType == 'add');
   int get addedFilesCount => addedFiles.length;
@@ -48,16 +50,26 @@ class _CommitDetailController {
   }
 
   Future<void> init() async {
+    final changesRes = await apiService.getCommitChanges(
+      projectId: commit.projectName,
+      repositoryId: commit.repositoryName,
+      commitId: commit.commitId!,
+    );
+
     final detailRes = await apiService.getCommitDetail(
       projectId: commit.projectName,
       repositoryId: commit.repositoryName,
       commitId: commit.commitId!,
     );
 
-    final authorRes = await apiService.getUserFromEmail(email: commit.author!.email!);
-    author = authorRes.data;
+    commitDetail = detailRes.data;
 
-    commitDetail.value = detailRes;
+    if (commitDetail != null) {
+      final authorRes = await apiService.getUserFromEmail(email: commitDetail!.author!.email!);
+      author = authorRes.data;
+    }
+
+    commitChanges.value = changesRes;
   }
 
   void shareDiff() {

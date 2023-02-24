@@ -27,7 +27,8 @@ class Commit {
         author: Author.fromJson(json['author'] as Map<String, dynamic>),
         committer: Author.fromJson(json['committer'] as Map<String, dynamic>),
         comment: json['comment'] as String?,
-        changeCounts: _ChangeCounts.fromJson(json['changeCounts'] as Map<String, dynamic>),
+        changeCounts:
+            json['changeCounts'] == null ? null : _ChangeCounts.fromJson(json['changeCounts'] as Map<String, dynamic>),
         url: json['url'] as String?,
         remoteUrl: json['remoteUrl'] as String?,
       );

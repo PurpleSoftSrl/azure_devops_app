@@ -8,7 +8,7 @@ class _CommitDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageListenable<CommitDetail?>(
+    return AppPageListenable<CommitChanges?>(
       onRefresh: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Commit detail',
@@ -18,7 +18,7 @@ class _CommitDetailScreen extends StatelessWidget {
           icon: Icon(DevOpsIcons.share),
         ),
       ],
-      notifier: ctrl.commitDetail,
+      notifier: ctrl.commitChanges,
       onEmpty: (_) => Text('No commit found'),
       padding: const EdgeInsets.only(left: 16),
       builder: (detail) => DefaultTextStyle(
@@ -31,31 +31,32 @@ class _CommitDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        'Author: ',
-                        style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                      ),
-                      Text(
-                        ctrl.commit.author!.name!,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      if (ctrl.apiService.organization.isNotEmpty && ctrl.author?.descriptor != null) ...[
-                        const SizedBox(
-                          width: 20,
+                  if (ctrl.author != null)
+                    Row(
+                      children: [
+                        Text(
+                          'Author: ',
+                          style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                         ),
-                        MemberAvatar(
-                          userDescriptor: ctrl.author!.descriptor!,
+                        Text(
+                          ctrl.commitDetail!.author!.name!,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
+                        if (ctrl.apiService.organization.isNotEmpty && ctrl.author!.descriptor != null) ...[
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          MemberAvatar(
+                            userDescriptor: ctrl.author!.descriptor!,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                        ],
+                        const Spacer(),
+                        Text(ctrl.commitDetail!.author!.date!.minutesAgo),
                       ],
-                      const Spacer(),
-                      Text(ctrl.commit.author!.date!.minutesAgo),
-                    ],
-                  ),
+                    ),
                   const SizedBox(
                     height: 20,
                   ),

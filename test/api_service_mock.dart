@@ -31,7 +31,16 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<CommitDetail>> getCommitDetail({
+  Future<ApiResponse<Commit>> getCommitDetail({
+    required String projectId,
+    required String repositoryId,
+    required String commitId,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<CommitChanges>> getCommitChanges({
     required String projectId,
     required String repositoryId,
     required String commitId,

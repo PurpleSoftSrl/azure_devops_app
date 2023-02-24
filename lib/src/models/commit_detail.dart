@@ -1,5 +1,5 @@
-class CommitDetail {
-  factory CommitDetail.fromJson(Map<String, dynamic> json) => CommitDetail(
+class CommitChanges {
+  factory CommitChanges.fromJson(Map<String, dynamic> json) => CommitChanges(
         changeCounts: _ChangeCounts.fromJson(json['changeCounts'] as Map<String, dynamic>),
         changes: json['changes'] == null
             ? []
@@ -7,7 +7,7 @@ class CommitDetail {
                 (json['changes'] as List<dynamic>).map((e) => Change.fromJson(e as Map<String, dynamic>)),
               ),
       );
-  CommitDetail({
+  CommitChanges({
     required this.changeCounts,
     required this.changes,
   });

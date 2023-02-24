@@ -126,7 +126,13 @@ abstract class AzureApiService {
 
   Future<ApiResponse<List<Commit>>> getRecentCommits({Project? project, String? author, int? maxCount});
 
-  Future<ApiResponse<CommitDetail>> getCommitDetail({
+  Future<ApiResponse<Commit>> getCommitDetail({
+    required String projectId,
+    required String repositoryId,
+    required String commitId,
+  });
+
+  Future<ApiResponse<CommitChanges>> getCommitChanges({
     required String projectId,
     required String repositoryId,
     required String commitId,
@@ -816,16 +822,29 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<CommitDetail>> getCommitDetail({
+  Future<ApiResponse<CommitChanges>> getCommitChanges({
     required String projectId,
     required String repositoryId,
     required String commitId,
   }) async {
-    final commitDetail =
+    final changesRes =
         await _get('$_basePath/$projectId/_apis/git/repositories/$repositoryId/commits/$commitId/changes?$_apiVersion');
-    if (commitDetail.isError) return ApiResponse.error();
+    if (changesRes.isError) return ApiResponse.error();
 
-    return ApiResponse.ok(CommitDetail.fromJson(jsonDecode(commitDetail.body) as Map<String, dynamic>));
+    return ApiResponse.ok(CommitChanges.fromJson(jsonDecode(changesRes.body) as Map<String, dynamic>));
+  }
+
+  @override
+  Future<ApiResponse<Commit>> getCommitDetail({
+    required String projectId,
+    required String repositoryId,
+    required String commitId,
+  }) async {
+    final detailRes =
+        await _get('$_basePath/$projectId/_apis/git/repositories/$repositoryId/commits/$commitId?$_apiVersion');
+    if (detailRes.isError) return ApiResponse.error();
+
+    return ApiResponse.ok(Commit.fromJson(jsonDecode(detailRes.body) as Map<String, dynamic>));
   }
 
   @override
