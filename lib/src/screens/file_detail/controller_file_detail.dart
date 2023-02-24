@@ -23,6 +23,7 @@ class _FileDetailController {
       projectName: args.projectName,
       repoName: args.repositoryName,
       path: args.filePath ?? '/',
+      branch: args.branch,
     );
 
     fileContent.value = fileRes;

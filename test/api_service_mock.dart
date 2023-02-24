@@ -7,6 +7,7 @@ import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
 import 'package:azure_devops/src/models/repository.dart';
+import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/team_member.dart';
 import 'package:azure_devops/src/models/timeline.dart';
@@ -274,6 +275,15 @@ class AzureApiServiceMock implements AzureApiService {
     required String projectName,
     required String repoName,
     required String path,
+    String? branch,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<Branch>>> getRepositoryBranches({
+    required String projectName,
+    required String repoName,
   }) {
     throw UnimplementedError();
   }
@@ -283,6 +293,7 @@ class AzureApiServiceMock implements AzureApiService {
     required String projectName,
     required String repoName,
     required String path,
+    String? branch,
   }) {
     throw UnimplementedError();
   }

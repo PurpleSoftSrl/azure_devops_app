@@ -13,6 +13,7 @@ import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
 import 'package:azure_devops/src/models/repository.dart';
+import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_member.dart';
@@ -115,12 +116,19 @@ abstract class AzureApiService {
     required String projectName,
     required String repoName,
     required String path,
+    String? branch,
+  });
+
+  Future<ApiResponse<List<Branch>>> getRepositoryBranches({
+    required String projectName,
+    required String repoName,
   });
 
   Future<ApiResponse<String>> getFileDetail({
     required String projectName,
     required String repoName,
     required String path,
+    String? branch,
   });
 
   Future<ApiResponse<List<Commit>>> getRecentCommits({Project? project, String? author, int? maxCount});
@@ -672,13 +680,29 @@ class AzureApiServiceImpl implements AzureApiService {
     required String projectName,
     required String repoName,
     required String path,
+    String? branch,
   }) async {
-    final res = await _get(
-      '$_basePath/$projectName/_apis/git/repositories/$repoName/items?scopePath=$path&recursionLevel=oneLevel&includeContentMetadata=true&includeContent=true&$_apiVersion',
-    );
-    if (res.isError) return ApiResponse.error();
+    final branchQuery = branch != null ? 'versionDescriptor.version=$branch&versionDescriptor.versionType=branch&' : '';
 
-    return ApiResponse.ok(GetRepoItemsResponse.fromRawJson(res.body).repoItems);
+    final itemsRes = await _get(
+      '$_basePath/$projectName/_apis/git/repositories/$repoName/items?scopePath=$path&recursionLevel=oneLevel&includeContentMetadata=true&includeContent=true&$branchQuery$_apiVersion',
+    );
+    if (itemsRes.isError) return ApiResponse.error();
+
+    return ApiResponse.ok(GetRepoItemsResponse.fromRawJson(itemsRes.body).repoItems);
+  }
+
+  @override
+  Future<ApiResponse<List<Branch>>> getRepositoryBranches({
+    required String projectName,
+    required String repoName,
+  }) async {
+    final branchesRes = await _get(
+      '$_basePath/$projectName/_apis/git/repositories/$repoName/stats/branches?$_apiVersion',
+    );
+    if (branchesRes.isError) return ApiResponse.error();
+
+    return ApiResponse.ok(RepositoryBranchesResponse.fromRawJson(branchesRes.body).branches);
   }
 
   @override
@@ -686,9 +710,12 @@ class AzureApiServiceImpl implements AzureApiService {
     required String projectName,
     required String repoName,
     required String path,
+    String? branch,
   }) async {
+    final branchQuery = branch != null ? 'versionDescriptor.version=$branch&versionDescriptor.versionType=branch&' : '';
+
     final res = await _get(
-      '$_basePath/$projectName/_apis/git/repositories/$repoName/items?path=$path&includeContentMetadata=true&includeContent=true&$_apiVersion',
+      '$_basePath/$projectName/_apis/git/repositories/$repoName/items?path=$path&includeContentMetadata=true&includeContent=true&$branchQuery$_apiVersion',
     );
     if (res.isError) return ApiResponse.error();
 

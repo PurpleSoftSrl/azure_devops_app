@@ -248,11 +248,13 @@ class RepoDetailArgs {
     required this.projectName,
     required this.repositoryName,
     this.filePath,
+    this.branch,
   });
 
   final String projectName;
   final String repositoryName;
   final String? filePath;
+  final String? branch;
 
   @override
   bool operator ==(Object other) {
@@ -261,29 +263,31 @@ class RepoDetailArgs {
     return other is RepoDetailArgs &&
         other.projectName == projectName &&
         other.repositoryName == repositoryName &&
-        other.filePath == filePath;
+        other.filePath == filePath &&
+        other.branch == branch;
   }
 
   @override
   int get hashCode {
-    return projectName.hashCode ^ repositoryName.hashCode ^ filePath.hashCode;
+    return projectName.hashCode ^ repositoryName.hashCode ^ filePath.hashCode ^ branch.hashCode;
   }
 
   @override
   String toString() {
-    return 'RepoDetailArgs(projectName: $projectName, repositoryName: $repositoryName, filePath: $filePath)';
+    return 'RepoDetailArgs(projectName: $projectName, repositoryName: $repositoryName, filePath: $filePath, branch: $branch)';
   }
 
   RepoDetailArgs copyWith({
     String? projectName,
     String? repositoryName,
     String? filePath,
-    bool? isFolder,
+    String? branch,
   }) {
     return RepoDetailArgs(
       projectName: projectName ?? this.projectName,
       repositoryName: repositoryName ?? this.repositoryName,
       filePath: filePath ?? this.filePath,
+      branch: branch ?? this.branch,
     );
   }
 }

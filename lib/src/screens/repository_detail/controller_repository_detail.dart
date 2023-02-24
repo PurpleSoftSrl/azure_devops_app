@@ -29,16 +29,36 @@ class _RepositoryDetailController {
 
   final repoItems = ValueNotifier<ApiResponse<List<RepoItem>>?>(null);
 
+  List<Branch> branches = [];
+
+  Branch? currentBranch;
+
   void dispose() {
     instance = null;
     _instances.remove(args.hashCode);
   }
 
   Future<void> init() async {
+    final branchesRes = await apiService.getRepositoryBranches(
+      projectName: args.projectName,
+      repoName: args.repositoryName,
+    );
+
+    branches = branchesRes.data ?? [];
+
+    if (branches.isNotEmpty) {
+      currentBranch = branches.firstWhereOrNull((b) => b.isBaseVersion);
+    }
+
+    await _getRepoItems();
+  }
+
+  Future<void> _getRepoItems() async {
     final itemsRes = await apiService.getRepositoryItems(
       projectName: args.projectName,
       repoName: args.repositoryName,
       path: args.filePath ?? '/',
+      branch: currentBranch?.name,
     );
 
     repoItems.value = itemsRes;
@@ -49,12 +69,16 @@ class _RepositoryDetailController {
   }
 
   void goToItem(RepoItem i) {
+    final newArgs = args.copyWith(filePath: i.path, branch: currentBranch?.name);
     if (i.isFolder) {
-      final newArgs = args.copyWith(isFolder: true, filePath: i.path);
       AppRouter.goToRepositoryDetail(newArgs);
     } else {
-      final newArgs = args.copyWith(filePath: i.path);
       AppRouter.goToFileDetail(newArgs);
     }
+  }
+
+  void changeBranch(Branch? b) {
+    currentBranch = b;
+    _getRepoItems();
   }
 }
