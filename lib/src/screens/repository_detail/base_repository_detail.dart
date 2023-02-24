@@ -1,12 +1,12 @@
 library repository_detail;
 
+import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/models/commit.dart';
+import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
-import 'package:azure_devops/src/widgets/commit_list_tile.dart';
-import 'package:azure_devops/src/widgets/section_header.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 

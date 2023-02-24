@@ -99,7 +99,9 @@ class _ProjectDetailController {
   }
 
   void goToRepoDetail(GitRepository repo) {
-    AppRouter.goToRepositoryDetail(RepoDetailArgs(projectName: projectName, repositoryName: repo.name!));
+    AppRouter.goToRepositoryDetail(
+      RepoDetailArgs(projectName: projectName, repositoryName: repo.name!, isFolder: true),
+    );
   }
 
   void goToPipelineDetail(Pipeline build) {

@@ -6,6 +6,7 @@ import 'package:azure_devops/src/models/work_item.dart';
 import 'package:azure_devops/src/screens/choose_projects/base_choose_projects.dart';
 import 'package:azure_devops/src/screens/commit_detail/base_commit_detail.dart';
 import 'package:azure_devops/src/screens/commits/base_commits.dart';
+import 'package:azure_devops/src/screens/file_detail/base_file_detail.dart';
 import 'package:azure_devops/src/screens/file_diff/base_file_diff.dart';
 import 'package:azure_devops/src/screens/home/base_home.dart';
 import 'package:azure_devops/src/screens/login/base_login.dart';
@@ -53,6 +54,7 @@ class AppRouter {
   static const _fileDiff = '/file-diff';
   static const _projectDetail = '/project-detail';
   static const _repoDetail = '/repo-detail';
+  static const _fileDetail = '/file-detail';
   static const _memberDetail = '/member-detail';
   static const _workItemDetail = '/workitem-detail';
   static const _pullRequestDetail = '/pullrequest-detail';
@@ -181,6 +183,14 @@ class AppRouter {
     return ModalRoute.of(context)!.settings.arguments as RepoDetailArgs;
   }
 
+  static Future<void> goToFileDetail(RepoDetailArgs args) async {
+    await _currentNavigator!.pushNamed(_fileDetail, arguments: args);
+  }
+
+  static RepoDetailArgs getFileDetailArgs(BuildContext context) {
+    return ModalRoute.of(context)!.settings.arguments as RepoDetailArgs;
+  }
+
   static Future<void> goToMemberDetail(String userDescriptor) async {
     await _currentNavigator!.pushNamed(_memberDetail, arguments: userDescriptor);
   }
@@ -218,6 +228,7 @@ class AppRouter {
     _fileDiff: (_) => FileDiffPage(),
     _projectDetail: (_) => ProjectDetailPage(),
     _repoDetail: (_) => RepositoryDetailPage(),
+    _fileDetail: (_) => FileDetailPage(),
     _memberDetail: (_) => MemberDetailPage(),
     _workItemDetail: (_) => WorkItemDetailPage(),
     _pullRequestDetail: (_) => PullRequestDetailPage(),
@@ -236,20 +247,49 @@ class RepoDetailArgs {
   RepoDetailArgs({
     required this.projectName,
     required this.repositoryName,
+    this.filePath,
+    this.isFolder = false,
   });
 
   final String projectName;
   final String repositoryName;
+  final String? filePath;
+  final bool isFolder;
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is RepoDetailArgs && other.projectName == projectName && other.repositoryName == repositoryName;
+    return other is RepoDetailArgs &&
+        other.projectName == projectName &&
+        other.repositoryName == repositoryName &&
+        other.filePath == filePath &&
+        other.isFolder == isFolder;
   }
 
   @override
-  int get hashCode => projectName.hashCode ^ repositoryName.hashCode;
+  int get hashCode {
+    return projectName.hashCode ^ repositoryName.hashCode ^ filePath.hashCode ^ isFolder.hashCode;
+  }
+
+  @override
+  String toString() {
+    return 'RepoDetailArgs(projectName: $projectName, repositoryName: $repositoryName, filePath: $filePath, isFolder: $isFolder)';
+  }
+
+  RepoDetailArgs copyWith({
+    String? projectName,
+    String? repositoryName,
+    String? filePath,
+    bool? isFolder,
+  }) {
+    return RepoDetailArgs(
+      projectName: projectName ?? this.projectName,
+      repositoryName: repositoryName ?? this.repositoryName,
+      filePath: filePath ?? this.filePath,
+      isFolder: isFolder ?? this.isFolder,
+    );
+  }
 }
 
 class PipelineLogsArgs {

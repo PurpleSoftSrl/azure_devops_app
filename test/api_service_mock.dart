@@ -7,6 +7,7 @@ import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
 import 'package:azure_devops/src/models/repository.dart';
+import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/team_member.dart';
 import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
@@ -256,6 +257,25 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<RepoItem>>> getRepositoryItems({
+    required String projectName,
+    required String repoName,
+    required String path,
+    bool isFolder = true,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<String>> getFileDetail({
+    required String projectName,
+    required String repoName,
+    required String path,
+  }) {
     throw UnimplementedError();
   }
 }

@@ -8,29 +8,53 @@ class _RepositoryDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageListenable<List<Commit>?>(
+    return AppPageListenable<List<RepoItem>?>(
       onRefresh: ctrl.init,
-      onLoading: ctrl.loadMore,
       dispose: ctrl.dispose,
-      title: ctrl.args.repositoryName,
-      notifier: ctrl.commits,
-      onEmpty: (_) => Text('No project found'),
-      builder: (commits) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionHeader.noMargin(
-            text: 'Recent commits',
-          ),
-          ...commits!.map(
-            (c) => CommitListTile(
-              commit: c,
-              showRepo: false,
-              onTap: () => ctrl.goToCommitDetail(c),
-              isLast: c == commits.last,
-            ),
-          ),
-        ],
-      ),
+      title: (ctrl.args.filePath?.startsWith('/') ?? false ? ctrl.args.filePath?.substring(1) : ctrl.args.filePath) ??
+          ctrl.args.repositoryName,
+      notifier: ctrl.repoItems,
+      onEmpty: (_) => Text('No repo found'),
+      builder: (items) {
+        final pathPrefix = ctrl.args.filePath != null ? '${ctrl.args.filePath}' : '';
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...items!
+                .where((i) => i.isFolder && i.path != pathPrefix && i.path != '/')
+                .sorted((a, b) => a.path.compareTo(b.path))
+                .where((i) => i.isFolder)
+                .followedBy(
+                  items.where((i) => !i.isFolder).sorted((a, b) => a.path.compareTo(b.path)),
+                )
+                .map(
+                  (i) => InkWell(
+                    onTap: () => ctrl.goToItem(i),
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: i.isFolder ? context.colorScheme.surface : null,
+                        borderRadius: BorderRadius.circular(AppTheme.radius),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              i.path.replaceFirst('$pathPrefix/', ''),
+                              style: context.textTheme.titleSmall!
+                                  .copyWith(decoration: i.isFolder ? null : TextDecoration.underline),
+                            ),
+                          ),
+                          Icon(Icons.arrow_forward_ios),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+          ],
+        );
+      },
     );
   }
 }

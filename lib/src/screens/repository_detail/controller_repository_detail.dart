@@ -27,11 +27,7 @@ class _RepositoryDetailController {
 
   final AzureApiService apiService;
 
-  final commits = ValueNotifier<ApiResponse<List<Commit>?>?>(null);
-
-  final now = DateTime.now();
-  static const _top = 10;
-  var _skip = 0;
+  final repoItems = ValueNotifier<ApiResponse<List<RepoItem>>?>(null);
 
   void dispose() {
     instance = null;
@@ -39,40 +35,27 @@ class _RepositoryDetailController {
   }
 
   Future<void> init() async {
-    _skip = 0;
-
-    final commitsRes = await _getData();
-    commits.value = commitsRes;
-  }
-
-  Future<bool> loadMore() async {
-    _skip += _top;
-
-    final nextDayData = await _getData();
-
-    if ((nextDayData.data?.length ?? 0) <= 0) {
-      return false;
-    }
-
-    nextDayData.data?.sort((a, b) => b.author!.date!.compareTo(a.author!.date!));
-
-    commits.value = nextDayData..data!.insertAll(0, commits.value!.data!);
-
-    return true;
-  }
-
-  Future<ApiResponse<List<Commit>>> _getData() async {
-    final res = await apiService.getRepositoryCommits(
+    final itemsRes = await apiService.getRepositoryItems(
       projectName: args.projectName,
       repoName: args.repositoryName,
-      top: _top,
-      skip: _skip,
+      path: args.filePath ?? '/',
+      isFolder: args.isFolder,
     );
 
-    return res..data?.sorted((a, b) => b.author!.date!.compareTo(a.author!.date!));
+    repoItems.value = itemsRes;
   }
 
   void goToCommitDetail(Commit commit) {
     AppRouter.goToCommitDetail(commit);
+  }
+
+  void goToItem(RepoItem i) {
+    if (i.isFolder) {
+      final newArgs = args.copyWith(isFolder: true, filePath: i.path);
+      AppRouter.goToRepositoryDetail(newArgs);
+    } else {
+      final newArgs = args.copyWith(filePath: i.path);
+      AppRouter.goToFileDetail(newArgs);
+    }
   }
 }

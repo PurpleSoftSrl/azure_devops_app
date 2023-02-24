@@ -13,6 +13,7 @@ import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
 import 'package:azure_devops/src/models/repository.dart';
+import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_member.dart';
 import 'package:azure_devops/src/models/timeline.dart';
@@ -108,6 +109,19 @@ abstract class AzureApiService {
     required String repoName,
     required int top,
     required int skip,
+  });
+
+  Future<ApiResponse<List<RepoItem>>> getRepositoryItems({
+    required String projectName,
+    required String repoName,
+    bool isFolder = true,
+    required String path,
+  });
+
+  Future<ApiResponse<String>> getFileDetail({
+    required String projectName,
+    required String repoName,
+    required String path,
   });
 
   Future<ApiResponse<List<Commit>>> getRecentCommits({Project? project, String? author, int? maxCount});
@@ -643,9 +657,47 @@ class AzureApiServiceImpl implements AzureApiService {
     );
     if (commitsRes.isError) return ApiResponse.error();
 
-    return ApiResponse.ok(
-      GetCommitsResponse.fromJson(jsonDecode(commitsRes.body) as Map<String, dynamic>).commits.toList(),
+    final commits = GetCommitsResponse.fromJson(jsonDecode(commitsRes.body) as Map<String, dynamic>).commits.toList();
+
+    return ApiResponse.ok(commits);
+  }
+
+  @override
+  Future<ApiResponse<List<RepoItem>>> getRepositoryItems({
+    required String projectName,
+    required String repoName,
+    required String path,
+    bool isFolder = true,
+  }) async {
+    final Response res;
+
+    if (isFolder) {
+      res = await _get(
+        '$_basePath/$projectName/_apis/git/repositories/$repoName/items?scopePath=$path&recursionLevel=oneLevel&includeContentMetadata=true&includeContent=true&$_apiVersion',
+      );
+      if (res.isError) return ApiResponse.error();
+    } else {
+      res = await _get(
+        '$_basePath/$projectName/_apis/git/repositories/$repoName/items?path=$path&includeContentMetadata=true&includeContent=true&$_apiVersion',
+      );
+      if (res.isError) return ApiResponse.error();
+    }
+
+    return ApiResponse.ok(GetRepoItemsResponse.fromRawJson(res.body).repoItems);
+  }
+
+  @override
+  Future<ApiResponse<String>> getFileDetail({
+    required String projectName,
+    required String repoName,
+    required String path,
+  }) async {
+    final res = await _get(
+      '$_basePath/$projectName/_apis/git/repositories/$repoName/items?path=$path&includeContentMetadata=true&includeContent=true&$_apiVersion',
     );
+    if (res.isError) return ApiResponse.error();
+
+    return ApiResponse.ok(res.body);
   }
 
   @override
