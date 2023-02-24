@@ -39,7 +39,6 @@ class _RepositoryDetailController {
       projectName: args.projectName,
       repoName: args.repositoryName,
       path: args.filePath ?? '/',
-      isFolder: args.isFolder,
     );
 
     repoItems.value = itemsRes;

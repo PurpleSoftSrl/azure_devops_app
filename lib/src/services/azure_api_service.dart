@@ -114,7 +114,6 @@ abstract class AzureApiService {
   Future<ApiResponse<List<RepoItem>>> getRepositoryItems({
     required String projectName,
     required String repoName,
-    bool isFolder = true,
     required String path,
   });
 
@@ -673,21 +672,11 @@ class AzureApiServiceImpl implements AzureApiService {
     required String projectName,
     required String repoName,
     required String path,
-    bool isFolder = true,
   }) async {
-    final Response res;
-
-    if (isFolder) {
-      res = await _get(
-        '$_basePath/$projectName/_apis/git/repositories/$repoName/items?scopePath=$path&recursionLevel=oneLevel&includeContentMetadata=true&includeContent=true&$_apiVersion',
-      );
-      if (res.isError) return ApiResponse.error();
-    } else {
-      res = await _get(
-        '$_basePath/$projectName/_apis/git/repositories/$repoName/items?path=$path&includeContentMetadata=true&includeContent=true&$_apiVersion',
-      );
-      if (res.isError) return ApiResponse.error();
-    }
+    final res = await _get(
+      '$_basePath/$projectName/_apis/git/repositories/$repoName/items?scopePath=$path&recursionLevel=oneLevel&includeContentMetadata=true&includeContent=true&$_apiVersion',
+    );
+    if (res.isError) return ApiResponse.error();
 
     return ApiResponse.ok(GetRepoItemsResponse.fromRawJson(res.body).repoItems);
   }

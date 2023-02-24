@@ -274,7 +274,6 @@ class AzureApiServiceMock implements AzureApiService {
     required String projectName,
     required String repoName,
     required String path,
-    bool isFolder = true,
   }) {
     throw UnimplementedError();
   }

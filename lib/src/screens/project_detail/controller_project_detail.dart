@@ -100,7 +100,7 @@ class _ProjectDetailController {
 
   void goToRepoDetail(GitRepository repo) {
     AppRouter.goToRepositoryDetail(
-      RepoDetailArgs(projectName: projectName, repositoryName: repo.name!, isFolder: true),
+      RepoDetailArgs(projectName: projectName, repositoryName: repo.name!),
     );
   }
 
