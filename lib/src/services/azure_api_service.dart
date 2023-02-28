@@ -124,7 +124,7 @@ abstract class AzureApiService {
     required String repoName,
   });
 
-  Future<ApiResponse<String>> getFileDetail({
+  Future<ApiResponse<FileDetailResponse>> getFileDetail({
     required String projectName,
     required String repoName,
     required String path,
@@ -706,7 +706,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<String>> getFileDetail({
+  Future<ApiResponse<FileDetailResponse>> getFileDetail({
     required String projectName,
     required String repoName,
     required String path,
@@ -719,7 +719,9 @@ class AzureApiServiceImpl implements AzureApiService {
     );
     if (res.isError) return ApiResponse.error();
 
-    return ApiResponse.ok(res.body);
+    final isBinary = res.body.contains('\u0000');
+
+    return ApiResponse.ok(FileDetailResponse(content: res.body, isBinary: isBinary));
   }
 
   @override
@@ -1025,4 +1027,14 @@ class ApiResponse<T extends Object?> {
       data: data ?? this.data,
     );
   }
+}
+
+class FileDetailResponse {
+  FileDetailResponse({
+    required this.content,
+    required this.isBinary,
+  });
+
+  final String content;
+  final bool isBinary;
 }

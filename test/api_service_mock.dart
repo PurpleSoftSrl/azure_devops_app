@@ -289,7 +289,7 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<String>> getFileDetail({
+  Future<ApiResponse<FileDetailResponse>> getFileDetail({
     required String projectName,
     required String repoName,
     required String path,

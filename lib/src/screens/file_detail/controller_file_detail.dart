@@ -12,7 +12,7 @@ class _FileDetailController {
   final AzureApiService apiService;
   final RepoDetailArgs args;
 
-  final fileContent = ValueNotifier<ApiResponse<String>?>(null);
+  final fileContent = ValueNotifier<ApiResponse<FileDetailResponse>?>(null);
 
   void dispose() {
     instance = null;
