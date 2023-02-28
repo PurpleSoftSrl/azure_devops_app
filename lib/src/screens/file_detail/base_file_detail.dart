@@ -7,6 +7,7 @@ import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 part 'components_file_detail.dart';
 part 'controller_file_detail.dart';

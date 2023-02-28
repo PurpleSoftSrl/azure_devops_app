@@ -19,19 +19,24 @@ class _FileDetailScreen extends StatelessWidget {
           ? Image.memory(
               Uint8List.fromList(res!.content.codeUnits),
             )
-          : res!.isBinary
-              ? Center(
-                  child: const Text('Cannot display binary data'),
+          : ctrl.args.filePath!.isMd
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: MarkdownBody(data: res!.content),
                 )
-              : SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Text(
-                    res.content,
-                    style: context.textTheme.bodySmall!.copyWith(
-                      fontWeight: FontWeight.normal,
+              : res!.isBinary
+                  ? Center(
+                      child: const Text('Cannot display binary data'),
+                    )
+                  : SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Text(
+                        res.content,
+                        style: context.textTheme.bodySmall!.copyWith(
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
     );
   }
 }
@@ -40,5 +45,10 @@ extension on String {
   bool get isImage {
     final extension = split('.').last.toLowerCase().trim();
     return ['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp'].contains(extension);
+  }
+
+  bool get isMd {
+    final extension = split('.').last.toLowerCase().trim();
+    return extension == 'md';
   }
 }
