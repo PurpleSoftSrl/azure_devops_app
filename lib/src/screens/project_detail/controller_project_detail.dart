@@ -99,6 +99,11 @@ class _ProjectDetailController {
   }
 
   void goToRepoDetail(GitRepository repo) {
+    if (repo.defaultBranch == null) {
+      AlertService.error('Error', description: 'This repo seems empty.');
+      return;
+    }
+
     AppRouter.goToRepositoryDetail(
       RepoDetailArgs(projectName: projectName, repositoryName: repo.name!),
     );
