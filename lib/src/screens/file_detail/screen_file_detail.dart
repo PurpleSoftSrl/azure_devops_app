@@ -15,6 +15,7 @@ class _FileDetailScreen extends StatelessWidget {
       notifier: ctrl.fileContent,
       onEmpty: (_) => Text('No file found'),
       padding: EdgeInsets.zero,
+      showScrollbar: true,
       builder: (res) => ctrl.args.filePath!.isImage
           ? Image.memory(
               Uint8List.fromList(res!.content.codeUnits),
@@ -36,7 +37,7 @@ class _FileDetailScreen extends StatelessWidget {
                           res.content,
                           language: ctrl.args.filePath!.split('.').last,
                           theme: _customTheme(context),
-                          padding: const EdgeInsets.only(left: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
                           textStyle: context.textTheme.bodySmall!.copyWith(
                             fontWeight: FontWeight.normal,
                           ),

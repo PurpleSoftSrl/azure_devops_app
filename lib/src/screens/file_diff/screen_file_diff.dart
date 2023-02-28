@@ -21,6 +21,7 @@ class _FileDiffScreen extends StatelessWidget {
       notifier: ctrl.diff,
       onEmpty: (_) => Text('No diff found'),
       padding: EdgeInsets.zero,
+      showScrollbar: true,
       builder: (diff) => SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: ConstrainedBox(

@@ -85,6 +85,7 @@ class AppPageListenable<T extends Object?> extends StatefulWidget {
     this.safeAreaBottom = true,
     this.header,
     this.padding,
+    this.showScrollbar = false,
   });
 
   final Widget Function(T) builder;
@@ -99,6 +100,7 @@ class AppPageListenable<T extends Object?> extends StatefulWidget {
   final bool safeAreaBottom;
   final Widget Function()? header;
   final EdgeInsets? padding;
+  final bool showScrollbar;
 
   @override
   State<AppPageListenable<T>> createState() => _AppPageStateListenable<T>();
@@ -154,101 +156,110 @@ class _AppPageStateListenable<T> extends State<AppPageListenable<T>> {
   Widget build(BuildContext context) {
     final actions = <Widget>[...widget.actions ?? [], if (widget.actions != null) const SizedBox(width: 4)];
     final paddingTop = (widget.header != null ? 50.0 : 0.0) + 50.0;
+    final scrollController = ScrollController();
+
     return Scaffold(
       body: ValueListenableBuilder<ApiResponse<T?>?>(
         valueListenable: widget.notifier,
-        builder: (_, response, __) => Stack(
-          alignment: Alignment.center,
-          children: [
-            SafeArea(
-              bottom: widget.safeAreaBottom,
-              child: SmartRefresher(
-                controller: _refreshController,
-                onRefresh: _onRefresh,
-                onLoading: _onLoading,
-                enablePullUp: widget.onLoading != null,
-                footer: CustomFooter(
-                  builder: (context, mode) {
-                    var loadText = '';
-                    switch (mode) {
-                      case LoadStatus.canLoading:
-                        loadText = 'Load more';
-                        break;
-                      case LoadStatus.idle:
-                        loadText = 'Idle';
-                        break;
-                      case LoadStatus.loading:
-                        loadText = 'Loading';
-                        break;
-                      case LoadStatus.noMore:
-                      case LoadStatus.failed:
-                      default:
-                        break;
-                    }
-                    return SizedBox(
-                      height: 48,
-                      child: Center(child: Text(loadText)),
-                    );
-                  },
-                ),
-                child: CustomScrollView(
-                  slivers: [
-                    SliverAppBar(
-                      title: Text(widget.title),
-                      floating: true,
-                      snap: true,
-                      actions: actions,
-                      expandedHeight: 50,
-                      bottom: widget.header == null
-                          ? null
-                          : _Header(
-                              child: Column(
-                                children: [
-                                  const SizedBox(
-                                    height: 10,
+        builder: (_, response, __) {
+          return Stack(
+            alignment: Alignment.center,
+            children: [
+              SafeArea(
+                bottom: widget.safeAreaBottom,
+                child: SmartRefresher(
+                  controller: _refreshController,
+                  onRefresh: _onRefresh,
+                  onLoading: _onLoading,
+                  enablePullUp: widget.onLoading != null,
+                  footer: CustomFooter(
+                    builder: (context, mode) {
+                      var loadText = '';
+                      switch (mode) {
+                        case LoadStatus.canLoading:
+                          loadText = 'Load more';
+                          break;
+                        case LoadStatus.idle:
+                          loadText = 'Idle';
+                          break;
+                        case LoadStatus.loading:
+                          loadText = 'Loading';
+                          break;
+                        case LoadStatus.noMore:
+                        case LoadStatus.failed:
+                        default:
+                          break;
+                      }
+                      return SizedBox(
+                        height: 48,
+                        child: Center(child: Text(loadText)),
+                      );
+                    },
+                  ),
+                  child: Scrollbar(
+                    controller: scrollController,
+                    thickness: widget.showScrollbar ? null : 0,
+                    child: CustomScrollView(
+                      controller: scrollController,
+                      slivers: [
+                        SliverAppBar(
+                          title: Text(widget.title),
+                          floating: true,
+                          snap: true,
+                          actions: actions,
+                          expandedHeight: 50,
+                          bottom: widget.header == null
+                              ? null
+                              : _Header(
+                                  child: Column(
+                                    children: [
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      widget.header!(),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                    ],
                                   ),
-                                  widget.header!(),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                ],
-                              ),
-                            ),
-                    ),
-                    if (widget.header == null)
-                      SliverToBoxAdapter(
-                        child: const SizedBox(
-                          height: 20,
+                                ),
                         ),
-                      ),
-                    if (response?.data != null)
-                      SliverPadding(
-                        padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
-                        sliver: SliverToBoxAdapter(child: widget.builder(widget.notifier.value!.data!)),
-                      ),
-                    SliverToBoxAdapter(
-                      child: const SizedBox(
-                        height: 40,
-                      ),
+                        if (widget.header == null)
+                          SliverToBoxAdapter(
+                            child: const SizedBox(
+                              height: 20,
+                            ),
+                          ),
+                        if (response?.data != null)
+                          SliverPadding(
+                            padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
+                            sliver: SliverToBoxAdapter(child: widget.builder(widget.notifier.value!.data!)),
+                          ),
+                        SliverToBoxAdapter(
+                          child: const SizedBox(
+                            height: 40,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-            if (response != null && response.isError)
-              ErrorPage(description: 'Something went wrong', onRetry: widget.onRefresh)
-            else if (response == null)
-              Padding(
-                padding: EdgeInsets.only(top: paddingTop),
-                child: const CircularProgressIndicator(),
-              )
-            else if ((response.data is List) && (response.data as List).isEmpty)
-              Padding(
-                padding: EdgeInsets.only(top: paddingTop),
-                child: Center(child: widget.onEmpty(_onRefresh)),
-              ),
-          ],
-        ),
+              if (response != null && response.isError)
+                ErrorPage(description: 'Something went wrong', onRetry: widget.onRefresh)
+              else if (response == null)
+                Padding(
+                  padding: EdgeInsets.only(top: paddingTop),
+                  child: const CircularProgressIndicator(),
+                )
+              else if ((response.data is List) && (response.data as List).isEmpty)
+                Padding(
+                  padding: EdgeInsets.only(top: paddingTop),
+                  child: Center(child: widget.onEmpty(_onRefresh)),
+                ),
+            ],
+          );
+        },
       ),
     );
   }
