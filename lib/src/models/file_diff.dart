@@ -53,8 +53,11 @@ class Diff {
         blocks:
             List<Block>.from((json['blocks'] as List<dynamic>).map((l) => Block.fromJson(l as Map<String, dynamic>))),
         lineCharBlocks: List<LineCharBlock>.from(
-          (json['lineCharBlocks'] as List<dynamic>).map((l) => LineCharBlock.fromJson(l as Map<String, dynamic>)),
+          (json['lineCharBlocks'] as List<dynamic>?)?.map((l) => LineCharBlock.fromJson(l as Map<String, dynamic>)) ??
+              [],
         ),
+        binaryContent: json['binaryContent'] as bool? ?? false,
+        imageComparison: json['imageComparison'] as bool? ?? false,
       );
 
   Diff({
@@ -62,12 +65,16 @@ class Diff {
     required this.modifiedFile,
     required this.blocks,
     required this.lineCharBlocks,
+    this.binaryContent = false,
+    this.imageComparison = false,
   });
 
   final ModifiedFileClass? originalFile;
   final ModifiedFileClass modifiedFile;
   final List<Block> blocks;
   final List<LineCharBlock> lineCharBlocks;
+  final bool binaryContent;
+  final bool imageComparison;
 
   String toRawJson() => json.encode(toJson());
 
@@ -76,6 +83,8 @@ class Diff {
         'modifiedFile': modifiedFile.toJson(),
         'blocks': List<dynamic>.from(blocks.map((x) => x.toJson())),
         'lineCharBlocks': List<dynamic>.from(lineCharBlocks.map((x) => x.toJson())),
+        'isBinary': binaryContent,
+        'isImage': imageComparison,
       };
 }
 
