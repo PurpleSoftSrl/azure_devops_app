@@ -13,6 +13,7 @@ class _PipelinesScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: 'Pipelines',
       notifier: ctrl.pipelines,
+      showScrollbar: true,
       onEmpty: (onRetry) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

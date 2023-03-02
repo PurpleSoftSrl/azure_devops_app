@@ -13,6 +13,7 @@ class _WorkItemsScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: 'Work items',
       notifier: ctrl.workItems,
+      showScrollbar: true,
       actions: [
         IconButton(
           onPressed: ctrl.createWorkItem,

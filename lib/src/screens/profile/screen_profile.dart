@@ -14,6 +14,7 @@ class _ProfileScreen extends StatelessWidget {
       title: 'Profile',
       notifier: ctrl.recentCommits,
       onEmpty: (_) => Text('No commits found'),
+      showScrollbar: true,
       builder: (commits) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

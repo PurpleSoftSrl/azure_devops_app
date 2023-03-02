@@ -13,6 +13,7 @@ class _PullRequestsScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: 'Pull requests',
       notifier: ctrl.pullRequests,
+      showScrollbar: true,
       onEmpty: (onRetry) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

@@ -17,6 +17,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
           notifier: ctrl.chosenProjects,
           onEmpty: (_) => Text('No commits found'),
           safeAreaBottom: false,
+          showScrollbar: true,
           builder: (projects) => Column(
             children: [
               Padding(

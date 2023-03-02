@@ -13,6 +13,7 @@ class _CommitsScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: 'Commits',
       notifier: ctrl.recentCommits,
+      showScrollbar: true,
       onEmpty: (onRetry) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
