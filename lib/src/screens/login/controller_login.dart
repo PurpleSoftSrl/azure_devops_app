@@ -19,7 +19,7 @@ class _LoginController {
     instance = null;
   }
 
-  void init() {
+  Future<void> init() async {
     print('$_LoginController initialized');
   }
 

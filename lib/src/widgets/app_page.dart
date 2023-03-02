@@ -6,101 +6,56 @@ import 'package:flutter/material.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-class AppPage extends StatefulWidget {
-  const AppPage.empty({
+class AppPageListenable<T extends Object?> extends StatefulWidget {
+  const AppPageListenable.empty({
     super.key,
-    required this.child,
-    required this.init,
+    required this.builder,
+    required this.onRefresh,
     required this.dispose,
   })  : title = '',
         actions = null,
+        header = null,
+        notifier = null,
+        onEmpty = null,
+        onLoading = null,
+        padding = null,
+        refreshController = null,
+        safeAreaBottom = true,
+        showScrollbar = false,
         _isEmpty = true;
 
-  const AppPage({
-    super.key,
-    required this.child,
-    required this.init,
-    required this.dispose,
-    required this.title,
-    this.actions,
-  }) : _isEmpty = false;
-
-  final Widget child;
-  final VoidCallback init;
-  final VoidCallback dispose;
-  final String title;
-  final List<Widget>? actions;
-
-  final bool _isEmpty;
-
-  @override
-  State<AppPage> createState() => _AppPageState();
-}
-
-class _AppPageState extends State<AppPage> {
-  @override
-  void initState() {
-    super.initState();
-    widget.init();
-  }
-
-  @override
-  void dispose() {
-    widget.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget._isEmpty) {
-      return widget.child;
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        actions: (widget.actions?..add(const SizedBox(width: 10))) ?? [],
-      ),
-      resizeToAvoidBottomInset: true,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: widget.child,
-      ),
-    );
-  }
-}
-
-class AppPageListenable<T extends Object?> extends StatefulWidget {
   const AppPageListenable({
     super.key,
     required this.builder,
-    required this.onEmpty,
+    this.onEmpty,
     required this.onRefresh,
     this.onLoading,
     required this.dispose,
     required this.title,
-    required this.notifier,
+    this.notifier,
     this.actions,
     this.refreshController,
     this.safeAreaBottom = true,
     this.header,
     this.padding,
     this.showScrollbar = false,
-  });
+  }) : _isEmpty = false;
 
   final Widget Function(T) builder;
-  final Widget Function(VoidCallback) onEmpty;
+  final Widget Function(VoidCallback)? onEmpty;
   final Future<dynamic> Function() onRefresh;
   final Future<bool> Function()? onLoading;
   final VoidCallback dispose;
   final String title;
   final List<Widget>? actions;
-  final ValueNotifier<ApiResponse<T>?> notifier;
+  final ValueNotifier<ApiResponse<T>?>? notifier;
   final RefreshController? refreshController;
   final bool safeAreaBottom;
   final Widget Function()? header;
   final EdgeInsets? padding;
   final bool showScrollbar;
+
+  final bool _isEmpty;
 
   @override
   State<AppPageListenable<T>> createState() => _AppPageStateListenable<T>();
@@ -118,7 +73,9 @@ class _AppPageStateListenable<T> extends State<AppPageListenable<T>> {
     widget.onRefresh().onError(
       (e, s) {
         print('Exception on init: $e');
-        widget.notifier.value = widget.notifier.value?.copyWith(isError: true) ?? ApiResponse.error();
+        if (widget.notifier != null) {
+          widget.notifier!.value = widget.notifier!.value?.copyWith(isError: true) ?? ApiResponse.error();
+        }
         Sentry.captureException(e, stackTrace: s, hint: 'Page ${widget.title} init exception');
       },
     );
@@ -129,7 +86,9 @@ class _AppPageStateListenable<T> extends State<AppPageListenable<T>> {
         await widget.onRefresh();
       } catch (e, s) {
         print('Exception on refresh: $e');
-        widget.notifier.value = widget.notifier.value?.copyWith(isError: true);
+        if (widget.notifier != null) {
+          widget.notifier!.value = widget.notifier!.value?.copyWith(isError: true);
+        }
         unawaited(Sentry.captureException(e, stackTrace: s, hint: 'Page ${widget.title} refresh exception'));
       }
       _refreshController.refreshCompleted();
@@ -154,13 +113,67 @@ class _AppPageStateListenable<T> extends State<AppPageListenable<T>> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget._isEmpty) {
+      return widget.builder(null as T);
+    }
+
     final actions = <Widget>[...widget.actions ?? [], if (widget.actions != null) const SizedBox(width: 4)];
     final paddingTop = (widget.header != null ? 50.0 : 0.0) + 50.0;
     final scrollController = ScrollController();
 
+    if (widget.notifier == null) {
+      return Scaffold(
+        body: SafeArea(
+          bottom: widget.safeAreaBottom,
+          child: CustomScrollView(
+            controller: scrollController,
+            slivers: [
+              SliverAppBar(
+                title: Text(widget.title),
+                floating: true,
+                snap: true,
+                actions: actions,
+                expandedHeight: 50,
+                bottom: widget.header == null
+                    ? null
+                    : _Header(
+                        child: Column(
+                          children: [
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            widget.header!(),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
+              if (widget.header == null)
+                SliverToBoxAdapter(
+                  child: const SizedBox(
+                    height: 20,
+                  ),
+                ),
+              SliverPadding(
+                padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
+                sliver: SliverToBoxAdapter(child: widget.builder(null as T)),
+              ),
+              SliverToBoxAdapter(
+                child: const SizedBox(
+                  height: 40,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       body: ValueListenableBuilder<ApiResponse<T?>?>(
-        valueListenable: widget.notifier,
+        valueListenable: widget.notifier!,
         builder: (_, response, __) {
           return Stack(
             alignment: Alignment.center,
@@ -233,7 +246,7 @@ class _AppPageStateListenable<T> extends State<AppPageListenable<T>> {
                         if (response?.data != null)
                           SliverPadding(
                             padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
-                            sliver: SliverToBoxAdapter(child: widget.builder(widget.notifier.value!.data!)),
+                            sliver: SliverToBoxAdapter(child: widget.builder(widget.notifier!.value!.data!)),
                           ),
                         SliverToBoxAdapter(
                           child: const SizedBox(
@@ -255,7 +268,7 @@ class _AppPageStateListenable<T> extends State<AppPageListenable<T>> {
               else if ((response.data is List) && (response.data as List).isEmpty)
                 Padding(
                   padding: EdgeInsets.only(top: paddingTop),
-                  child: Center(child: widget.onEmpty(_onRefresh)),
+                  child: Center(child: widget.onEmpty?.call(_onRefresh)),
                 ),
             ],
           );

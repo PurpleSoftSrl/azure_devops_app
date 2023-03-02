@@ -10,10 +10,10 @@ class _SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ColoredBox(
       color: context.colorScheme.background,
-      child: AppPage.empty(
-        init: ctrl.init,
+      child: AppPageListenable.empty(
+        onRefresh: ctrl.init,
         dispose: ctrl.dispose,
-        child: Center(
+        builder: (_) => Center(
           child: Image.asset(
             'assets/logos/logo.png',
             height: 250,

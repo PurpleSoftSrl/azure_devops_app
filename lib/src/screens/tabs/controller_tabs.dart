@@ -21,7 +21,7 @@ class _TabsController {
     for (final p in navPages) p.pageName: ValueNotifier(navPages.indexOf(p) == 0),
   };
 
-  void init() {
+  Future<void> init() async {
     navPages = _getTabPages();
 
     AppRouter.setTabKeys(navPages.map((e) => e.key).toList());

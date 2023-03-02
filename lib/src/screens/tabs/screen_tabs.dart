@@ -21,10 +21,10 @@ class _TabsScreen extends StatelessWidget {
       },
       child: ScrollConfiguration(
         behavior: ScrollBehavior(),
-        child: AppPage.empty(
-          init: ctrl.init,
+        child: AppPageListenable.empty(
+          onRefresh: ctrl.init,
           dispose: ctrl.dispose,
-          child: CupertinoTabScaffold(
+          builder: (_) => CupertinoTabScaffold(
             controller: ctrl.tabController,
             tabBar: CupertinoTabBar(
               backgroundColor: context.colorScheme.background,

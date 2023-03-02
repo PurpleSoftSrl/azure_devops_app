@@ -9,11 +9,12 @@ class _SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final transparentBorder = OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent));
-    return AppPage(
-      init: ctrl.init,
+    return AppPageListenable(
+      onRefresh: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Settings',
-      child: ListView(
+      builder: (_) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SectionHeader(
             text: 'Personal info',
