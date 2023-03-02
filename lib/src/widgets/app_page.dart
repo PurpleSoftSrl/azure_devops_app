@@ -167,38 +167,38 @@ class _AppPageStateListenable<T> extends State<AppPageListenable<T>> {
             children: [
               SafeArea(
                 bottom: widget.safeAreaBottom,
-                child: SmartRefresher(
-                  controller: _refreshController,
-                  onRefresh: _onRefresh,
-                  onLoading: _onLoading,
-                  enablePullUp: widget.onLoading != null,
-                  footer: CustomFooter(
-                    builder: (context, mode) {
-                      var loadText = '';
-                      switch (mode) {
-                        case LoadStatus.canLoading:
-                          loadText = 'Load more';
-                          break;
-                        case LoadStatus.idle:
-                          loadText = 'Idle';
-                          break;
-                        case LoadStatus.loading:
-                          loadText = 'Loading';
-                          break;
-                        case LoadStatus.noMore:
-                        case LoadStatus.failed:
-                        default:
-                          break;
-                      }
-                      return SizedBox(
-                        height: 48,
-                        child: Center(child: Text(loadText)),
-                      );
-                    },
-                  ),
-                  child: Scrollbar(
-                    controller: scrollController,
-                    thickness: widget.showScrollbar ? null : 0,
+                child: Scrollbar(
+                  controller: scrollController,
+                  thickness: widget.showScrollbar ? null : 0,
+                  child: SmartRefresher(
+                    controller: _refreshController,
+                    onRefresh: _onRefresh,
+                    onLoading: _onLoading,
+                    enablePullUp: widget.onLoading != null,
+                    footer: CustomFooter(
+                      builder: (context, mode) {
+                        var loadText = '';
+                        switch (mode) {
+                          case LoadStatus.canLoading:
+                            loadText = 'Load more';
+                            break;
+                          case LoadStatus.idle:
+                            loadText = 'Idle';
+                            break;
+                          case LoadStatus.loading:
+                            loadText = 'Loading';
+                            break;
+                          case LoadStatus.noMore:
+                          case LoadStatus.failed:
+                          default:
+                            break;
+                        }
+                        return SizedBox(
+                          height: 48,
+                          child: Center(child: Text(loadText)),
+                        );
+                      },
+                    ),
                     child: CustomScrollView(
                       controller: scrollController,
                       slivers: [
