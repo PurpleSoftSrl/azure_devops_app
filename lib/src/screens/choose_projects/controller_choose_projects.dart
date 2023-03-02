@@ -76,7 +76,7 @@ class _ChooseProjectsController {
       );
     }
 
-    apiService.setChosenProjects(chosenProjects.value!.data!.projects);
+    apiService.setChosenProjects(chosenProjects.value!.data!.projects..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)));
 
     if (removeRoutes) {
       unawaited(AppRouter.goToTabs());
