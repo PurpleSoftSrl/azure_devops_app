@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-class AppPageListenable<T extends Object?> extends StatefulWidget {
-  const AppPageListenable.empty({
+class AppPage<T extends Object?> extends StatefulWidget {
+  const AppPage.empty({
     super.key,
     required this.builder,
-    required this.onRefresh,
+    required this.init,
     required this.dispose,
   })  : title = '',
         actions = null,
@@ -24,11 +24,11 @@ class AppPageListenable<T extends Object?> extends StatefulWidget {
         showScrollbar = false,
         _isEmpty = true;
 
-  const AppPageListenable({
+  const AppPage({
     super.key,
     required this.builder,
     this.onEmpty,
-    required this.onRefresh,
+    required this.init,
     this.onLoading,
     required this.dispose,
     required this.title,
@@ -43,7 +43,7 @@ class AppPageListenable<T extends Object?> extends StatefulWidget {
 
   final Widget Function(T) builder;
   final Widget Function(VoidCallback)? onEmpty;
-  final Future<dynamic> Function() onRefresh;
+  final Future<dynamic> Function() init;
   final Future<bool> Function()? onLoading;
   final VoidCallback dispose;
   final String title;
@@ -58,10 +58,10 @@ class AppPageListenable<T extends Object?> extends StatefulWidget {
   final bool _isEmpty;
 
   @override
-  State<AppPageListenable<T>> createState() => _AppPageStateListenable<T>();
+  State<AppPage<T>> createState() => _AppPageStateListenable<T>();
 }
 
-class _AppPageStateListenable<T> extends State<AppPageListenable<T>> {
+class _AppPageStateListenable<T> extends State<AppPage<T>> {
   late RefreshController _refreshController;
   late VoidCallback _onRefresh;
   late VoidCallback _onLoading;
@@ -70,7 +70,7 @@ class _AppPageStateListenable<T> extends State<AppPageListenable<T>> {
   void initState() {
     super.initState();
 
-    widget.onRefresh().onError(
+    widget.init().onError(
       (e, s) {
         print('Exception on init: $e');
         if (widget.notifier != null) {
@@ -83,7 +83,7 @@ class _AppPageStateListenable<T> extends State<AppPageListenable<T>> {
     _refreshController = widget.refreshController ?? RefreshController();
     _onRefresh = () async {
       try {
-        await widget.onRefresh();
+        await widget.init();
       } catch (e, s) {
         print('Exception on refresh: $e');
         if (widget.notifier != null) {
@@ -259,7 +259,7 @@ class _AppPageStateListenable<T> extends State<AppPageListenable<T>> {
                 ),
               ),
               if (response != null && response.isError)
-                ErrorPage(description: 'Something went wrong', onRetry: widget.onRefresh)
+                ErrorPage(description: 'Something went wrong', onRetry: widget.init)
               else if (response == null)
                 Padding(
                   padding: EdgeInsets.only(top: paddingTop),

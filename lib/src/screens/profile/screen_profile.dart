@@ -8,8 +8,8 @@ class _ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageListenable<List<Commit>?>(
-      onRefresh: ctrl.init,
+    return AppPage<List<Commit>?>(
+      init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Profile',
       notifier: ctrl.recentCommits,

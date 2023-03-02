@@ -9,9 +9,9 @@ class _HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var i = 0;
-    return AppPageListenable<List<Project>>(
+    return AppPage<List<Project>>(
       notifier: ctrl.projects,
-      onRefresh: ctrl.init,
+      init: ctrl.init,
       dispose: ctrl.dispose,
       title: ctrl.apiService.organization,
       onEmpty: (onRetry) => Column(

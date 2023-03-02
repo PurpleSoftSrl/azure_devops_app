@@ -9,8 +9,8 @@ class _WorkItemDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final item = ctrl.item;
-    return AppPageListenable<WorkItemDetail?>(
-      onRefresh: ctrl.init,
+    return AppPage<WorkItemDetail?>(
+      init: ctrl.init,
       dispose: ctrl.dispose,
       title: '${item.workItemType.name} ${item.id}',
       notifier: ctrl.itemDetail,

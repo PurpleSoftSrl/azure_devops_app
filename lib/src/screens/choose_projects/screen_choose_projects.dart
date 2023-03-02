@@ -10,8 +10,8 @@ class _ChooseProjectsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        AppPageListenable<GetProjectsResponse?>(
-          onRefresh: ctrl.init,
+        AppPage<GetProjectsResponse?>(
+          init: ctrl.init,
           dispose: ctrl.dispose,
           title: 'Choose projects',
           notifier: ctrl.chosenProjects,

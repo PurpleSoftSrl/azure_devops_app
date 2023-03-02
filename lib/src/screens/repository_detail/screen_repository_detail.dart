@@ -8,8 +8,8 @@ class _RepositoryDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageListenable<List<RepoItem>?>(
-      onRefresh: ctrl.init,
+    return AppPage<List<RepoItem>?>(
+      init: ctrl.init,
       dispose: ctrl.dispose,
       title: (ctrl.args.filePath?.startsWith('/') ?? false ? ctrl.args.filePath?.substring(1) : ctrl.args.filePath) ??
           ctrl.args.repositoryName,

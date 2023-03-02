@@ -8,8 +8,8 @@ class _FileDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageListenable<FileDetailResponse?>(
-      onRefresh: ctrl.init,
+    return AppPage<FileDetailResponse?>(
+      init: ctrl.init,
       dispose: ctrl.dispose,
       title: ctrl.args.filePath!.startsWith('/') ? ctrl.args.filePath!.substring(1) : ctrl.args.filePath!,
       notifier: ctrl.fileContent,

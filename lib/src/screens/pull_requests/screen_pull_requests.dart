@@ -8,8 +8,8 @@ class _PullRequestsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageListenable<List<PullRequest>?>(
-      onRefresh: ctrl.init,
+    return AppPage<List<PullRequest>?>(
+      init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Pull requests',
       notifier: ctrl.pullRequests,

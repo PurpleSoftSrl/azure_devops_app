@@ -8,8 +8,8 @@ class _CommitDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageListenable<CommitChanges?>(
-      onRefresh: ctrl.init,
+    return AppPage<CommitChanges?>(
+      init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Commit detail',
       actions: [

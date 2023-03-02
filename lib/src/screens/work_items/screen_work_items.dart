@@ -8,8 +8,8 @@ class _WorkItemsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageListenable<List<WorkItem>?>(
-      onRefresh: ctrl.init,
+    return AppPage<List<WorkItem>?>(
+      init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Work items',
       notifier: ctrl.workItems,

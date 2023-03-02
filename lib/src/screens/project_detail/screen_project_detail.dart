@@ -8,8 +8,8 @@ class _ProjectDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageListenable<Project?>(
-      onRefresh: ctrl.init,
+    return AppPage<Project?>(
+      init: ctrl.init,
       onLoading: ctrl.loadMore,
       dispose: ctrl.dispose,
       title: ctrl.projectName,

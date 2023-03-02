@@ -8,8 +8,8 @@ class _MemberDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageListenable<GraphUser?>(
-      onRefresh: ctrl.init,
+    return AppPage<GraphUser?>(
+      init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'User detail',
       notifier: ctrl.user,

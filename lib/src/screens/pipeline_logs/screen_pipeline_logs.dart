@@ -8,8 +8,8 @@ class _PipelineLogsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageListenable<String?>(
-      onRefresh: ctrl.init,
+    return AppPage<String?>(
+      init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Pipeline logs',
       notifier: ctrl.logs,

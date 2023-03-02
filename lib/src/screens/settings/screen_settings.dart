@@ -9,8 +9,8 @@ class _SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final transparentBorder = OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent));
-    return AppPageListenable(
-      onRefresh: ctrl.init,
+    return AppPage(
+      init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Settings',
       builder: (_) => Column(

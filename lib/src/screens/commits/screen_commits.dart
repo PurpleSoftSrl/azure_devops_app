@@ -8,8 +8,8 @@ class _CommitsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageListenable<List<Commit>?>(
-      onRefresh: ctrl.init,
+    return AppPage<List<Commit>?>(
+      init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Commits',
       notifier: ctrl.recentCommits,

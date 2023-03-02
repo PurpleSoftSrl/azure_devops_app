@@ -8,8 +8,8 @@ class _FileDiffScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageListenable<Diff?>(
-      onRefresh: ctrl.init,
+    return AppPage<Diff?>(
+      init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'File diff',
       actions: [

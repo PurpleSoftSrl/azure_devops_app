@@ -8,8 +8,8 @@ class _PullRequestDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageListenable<PullRequest?>(
-      onRefresh: ctrl.init,
+    return AppPage<PullRequest?>(
+      init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Pull request',
       notifier: ctrl.prDetail,
