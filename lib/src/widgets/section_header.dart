@@ -27,6 +27,7 @@ class SectionHeader extends StatelessWidget {
     Widget body = Text(
       text,
       style: context.textTheme.headlineSmall,
+      overflow: TextOverflow.ellipsis,
     );
 
     if (icon != null) {
@@ -36,7 +37,7 @@ class SectionHeader extends StatelessWidget {
           const SizedBox(
             width: 12,
           ),
-          body,
+          Expanded(child: body),
         ],
       );
     }
