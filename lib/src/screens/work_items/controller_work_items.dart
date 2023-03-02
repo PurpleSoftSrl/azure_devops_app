@@ -124,11 +124,13 @@ class _WorkItemsController {
 
   // ignore: long-method
   Future<void> createWorkItem() async {
-    var newWorkItemProject = allProject;
+    var newWorkItemProject = projects.firstWhereOrNull((p) => p.id != '-1') ?? allProject;
     var newWorkItemType = WorkItemType.bug;
     var newWorkItemAssignedTo = _userNone;
     var newWorkItemTitle = '';
     var newWorkItemDescription = '';
+
+    final titleFieldKey = GlobalKey<FormFieldState<dynamic>>();
 
     await showModalBottomSheet(
       context: AppRouter.rootNavigator!.context,
@@ -225,6 +227,7 @@ class _WorkItemsController {
                       DevOpsFormField(
                         onChanged: (value) => newWorkItemTitle = value,
                         label: 'Work item title',
+                        formFieldKey: titleFieldKey,
                       ),
                       const SizedBox(
                         height: 40,
@@ -239,7 +242,11 @@ class _WorkItemsController {
                         height: 60,
                       ),
                       LoadingButton(
-                        onPressed: AppRouter.popRoute,
+                        onPressed: () {
+                          if (titleFieldKey.currentState!.validate()) {
+                            AppRouter.popRoute();
+                          }
+                        },
                         text: 'Confirm',
                       ),
                       const SizedBox(
@@ -257,8 +264,7 @@ class _WorkItemsController {
 
     if (newWorkItemProject == allProject ||
         newWorkItemType == WorkItemType.all ||
-        newWorkItemTitle.isEmpty ||
-        newWorkItemDescription.isEmpty) {
+        newWorkItemTitle.isEmpty) {
       return;
     }
 

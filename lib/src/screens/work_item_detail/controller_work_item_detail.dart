@@ -100,6 +100,8 @@ class _WorkItemDetailController {
 
     var shouldEdit = false;
 
+    final titleFieldKey = GlobalKey<FormFieldState<dynamic>>();
+
     await showModalBottomSheet(
       context: AppRouter.rootNavigator!.context,
       backgroundColor: Colors.transparent,
@@ -200,6 +202,7 @@ class _WorkItemDetailController {
                         initialValue: newWorkItemTitle,
                         onChanged: (value) => newWorkItemTitle = value,
                         label: 'Work item title',
+                        formFieldKey: titleFieldKey,
                       ),
                       const SizedBox(
                         height: 40,
@@ -216,8 +219,10 @@ class _WorkItemDetailController {
                       ),
                       LoadingButton(
                         onPressed: () {
-                          shouldEdit = true;
-                          AppRouter.popRoute();
+                          if (titleFieldKey.currentState!.validate()) {
+                            shouldEdit = true;
+                            AppRouter.popRoute();
+                          }
                         },
                         text: 'Confirm',
                       ),
