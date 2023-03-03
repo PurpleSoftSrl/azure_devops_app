@@ -12,7 +12,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
     return AppPage<WorkItemDetail?>(
       init: ctrl.init,
       dispose: ctrl.dispose,
-      title: '${item.workItemType.name} ${item.id}',
+      title: '${item.workItemType} ${item.id}',
       notifier: ctrl.itemDetail,
       onEmpty: (_) => Text('No work item found'),
       actions: [
@@ -87,7 +87,18 @@ class _WorkItemDetailScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                WorkItemType.fromString(detail!.fields.systemWorkItemType).icon,
+                WorkItem(
+                  assignedTo: null,
+                  id: -1,
+                  workItemType: detail!.fields.systemWorkItemType,
+                  title: '',
+                  state: '',
+                  changedDate: DateTime.now(),
+                  teamProject: '',
+                  activityDate: DateTime.now(),
+                  activityType: '',
+                  identityId: '',
+                ).workItemTypeIcon,
                 const SizedBox(
                   width: 20,
                 ),

@@ -52,6 +52,8 @@ class _WorkItemsController {
   late GraphUser userFilter = _userNone;
   List<GraphUser> users = [];
 
+  late List<WorkItemType> allWorkItemTypes = [typeFilter];
+
   void dispose() {
     instance = null;
   }
@@ -60,6 +62,8 @@ class _WorkItemsController {
     statusFilter = _workItemStateAll;
     typeFilter = WorkItemType.all;
 
+    allWorkItemTypes = [typeFilter];
+
     users = apiService.allUsers
         .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
         .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
@@ -67,6 +71,11 @@ class _WorkItemsController {
 
     projectFilter = allProject;
     projects = [allProject];
+
+    final types = await apiService.getWorkItemTypes();
+    if (!types.isError) {
+      allWorkItemTypes.addAll(types.data!.values.expand((ts) => ts).toSet());
+    }
 
     await _getData();
 
@@ -102,8 +111,9 @@ class _WorkItemsController {
     if (statusFilter == _workItemStateAll && typeFilter == WorkItemType.all && projectFilter == allProject) {
       workItems.value = res;
     } else {
-      final filteredByTypeItems =
-          typeFilter == WorkItemType.all ? res.data : res.data?.where((i) => i.workItemType == typeFilter).toList();
+      final filteredByTypeItems = typeFilter == WorkItemType.all
+          ? res.data
+          : res.data?.where((i) => i.workItemType == typeFilter.name).toList();
 
       final filteredByStatusItems = statusFilter == _workItemStateAll
           ? filteredByTypeItems
@@ -125,7 +135,9 @@ class _WorkItemsController {
   // ignore: long-method
   Future<void> createWorkItem() async {
     var newWorkItemProject = projects.firstWhereOrNull((p) => p.id != '-1') ?? allProject;
-    var newWorkItemType = WorkItemType.bug;
+
+    var newWorkItemType = allWorkItemTypes.first;
+
     var newWorkItemAssignedTo = _userNone;
     var newWorkItemTitle = '';
     var newWorkItemDescription = '';
@@ -171,7 +183,7 @@ class _WorkItemsController {
                             ),
                             FilterMenu<WorkItemType>(
                               title: 'Type',
-                              values: WorkItemType.values.where((t) => t != WorkItemType.all).toList(),
+                              values: allWorkItemTypes.where((t) => t.name != 'All').toList(),
                               currentFilter: newWorkItemType,
                               onSelected: (f) {
                                 setState(() {
@@ -262,9 +274,7 @@ class _WorkItemsController {
       ),
     );
 
-    if (newWorkItemProject == allProject ||
-        newWorkItemType == WorkItemType.all ||
-        newWorkItemTitle.isEmpty) {
+    if (newWorkItemProject == allProject || newWorkItemType == WorkItemType.all || newWorkItemTitle.isEmpty) {
       return;
     }
 

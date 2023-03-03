@@ -13,6 +13,7 @@ import 'package:azure_devops/src/models/team_member.dart';
 import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/work_item.dart';
+import 'package:azure_devops/src/models/work_item_type.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 
@@ -25,6 +26,9 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   List<GraphUser> get allUsers => [];
+
+  @override
+  Map<String, List<WorkItemType>> get workItemTypes => {};
 
   @override
   Future<ApiResponse<Pipeline>> cancelPipeline({required int buildId, required String projectId}) {
@@ -153,6 +157,11 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<List<WorkItem>>> getWorkItems() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes() {
     throw UnimplementedError();
   }
 

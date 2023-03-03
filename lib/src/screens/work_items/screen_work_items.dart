@@ -48,10 +48,11 @@ class _WorkItemsScreen extends StatelessWidget {
           ),
           FilterMenu<WorkItemType>(
             title: 'Type',
-            values: WorkItemType.values,
+            values: ctrl.allWorkItemTypes,
+            formatLabel: (t) => t.name,
             currentFilter: ctrl.typeFilter,
             onSelected: ctrl.filterByType,
-            isDefaultFilter: ctrl.typeFilter == WorkItemType.all,
+            isDefaultFilter: ctrl.typeFilter.name == 'All',
           ),
           FilterMenu<Project>(
             title: 'Project',

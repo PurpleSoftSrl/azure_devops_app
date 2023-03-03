@@ -1,6 +1,6 @@
-import 'dart:ui';
-
 import 'package:azure_devops/src/models/work_item.dart';
+import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
+import 'package:flutter/material.dart';
 
 extension WorkItemExt on WorkItem {
   Color get stateColor {
@@ -39,4 +39,28 @@ extension WorkItemExt on WorkItem {
         'Done',
         'Approved',
       ];
+
+  Icon get workItemTypeIcon {
+    switch (workItemType) {
+      case 'Bug':
+        return Icon(DevOpsIcons.bug, color: Colors.red);
+      case 'Epic':
+        return Icon(DevOpsIcons.epic, color: Colors.orange);
+      case 'Feature':
+        return Icon(DevOpsIcons.feature, color: Colors.purple);
+      case 'Issue':
+        return Icon(DevOpsIcons.issue, color: Colors.pink);
+      case 'Task':
+        return Icon(DevOpsIcons.task, color: Colors.amber);
+      case 'Test Case':
+        return Icon(DevOpsIcons.testcase, color: Colors.grey);
+      case 'User Story':
+        return Icon(DevOpsIcons.userstory, color: Colors.lightBlue);
+      case 'Product Backlog Item':
+        return Icon(DevOpsIcons.task, color: Colors.amber);
+      case 'All':
+      default:
+        return Icon(DevOpsIcons.userstory, color: Colors.transparent);
+    }
+  }
 }

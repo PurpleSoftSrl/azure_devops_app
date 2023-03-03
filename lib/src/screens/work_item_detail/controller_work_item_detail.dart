@@ -73,9 +73,8 @@ class _WorkItemDetailController {
     await _getStatuses(item.workItemType);
   }
 
-  Future<void> _getStatuses(WorkItemType workItemType) async {
-    final statusesRes =
-        await apiService.getWorkItemStatuses(projectName: item.teamProject, type: workItemType.toString());
+  Future<void> _getStatuses(String workItemType) async {
+    final statusesRes = await apiService.getWorkItemStatuses(projectName: item.teamProject, type: workItemType);
     statuses = statusesRes.data ?? [];
   }
 
@@ -91,8 +90,10 @@ class _WorkItemDetailController {
   Future<void> editWorkItem() async {
     final fields = itemDetail.value!.data!.fields;
 
+    final projectWorkItemTypes = apiService.workItemTypes[fields.systemTeamProject]!;
+
     var newWorkItemStatus = fields.systemState;
-    var newWorkItemType = WorkItemType.fromString(fields.systemWorkItemType);
+    var newWorkItemType = projectWorkItemTypes.firstWhere((t) => t.name == fields.systemWorkItemType);
     var newWorkItemAssignedTo =
         users.firstWhereOrNull((u) => u.displayName == fields.systemAssignedTo?.displayName) ?? _userNone;
     var newWorkItemTitle = fields.systemTitle;
@@ -159,11 +160,12 @@ class _WorkItemDetailController {
                             ),
                             FilterMenu<WorkItemType>(
                               title: 'Type',
-                              values: WorkItemType.values.where((t) => t != WorkItemType.all).toList(),
+                              values: projectWorkItemTypes.where((t) => t.name != 'All').toList(),
                               currentFilter: newWorkItemType,
+                              formatLabel: (t) => t.name,
                               onSelected: (f) async {
                                 newWorkItemType = f;
-                                await _getStatuses(newWorkItemType);
+                                await _getStatuses(newWorkItemType.name);
                                 if (!statuses.map((e) => e.name).contains(newWorkItemStatus)) {
                                   // change status if new type doesn't support current status
                                   newWorkItemStatus = statuses.firstOrNull?.name ?? newWorkItemStatus;
@@ -241,11 +243,11 @@ class _WorkItemDetailController {
 
     if (!shouldEdit) return;
 
-    if (newWorkItemType.toString() == fields.systemWorkItemType &&
+    if (newWorkItemType.name == fields.systemWorkItemType &&
         newWorkItemStatus == fields.systemState &&
         newWorkItemTitle == fields.systemTitle &&
-        newWorkItemAssignedTo.displayName == fields.systemAssignedTo?.displayName &&
-        newWorkItemDescription == fields.systemDescription) {
+        newWorkItemAssignedTo.displayName == (fields.systemAssignedTo?.displayName ?? _userNone.displayName) &&
+        newWorkItemDescription == (fields.systemDescription ?? '')) {
       return;
     }
 

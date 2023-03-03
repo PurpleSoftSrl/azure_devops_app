@@ -1,8 +1,5 @@
 import 'dart:convert';
 
-import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
-import 'package:flutter/material.dart';
-
 class GetWorkItemsResponse {
   factory GetWorkItemsResponse.fromJson(Map<String, dynamic> json) => GetWorkItemsResponse(
         count: json['count'] as int,
@@ -31,7 +28,7 @@ class WorkItem {
   factory WorkItem.fromJson(Map<String, dynamic> json) => WorkItem(
         assignedTo: json['assignedTo'] != null ? AssignedTo.fromJson(json['assignedTo'] as Map<String, dynamic>) : null,
         id: json['id'] as int,
-        workItemType: WorkItemType.fromString(json['workItemType'] as String),
+        workItemType: json['workItemType'] as String,
         title: json['title'] as String,
         state: json['state'] as String,
         changedDate: DateTime.parse(json['changedDate'] as String).toLocal(),
@@ -56,7 +53,7 @@ class WorkItem {
 
   final AssignedTo? assignedTo;
   final int id;
-  final WorkItemType workItemType;
+  final String workItemType;
   final String title;
   final String state;
   final DateTime changedDate;
@@ -165,88 +162,6 @@ class AssignedTo {
   @override
   int get hashCode {
     return id.hashCode ^ name.hashCode ^ displayName.hashCode ^ uniqueName.hashCode ^ descriptor.hashCode;
-  }
-}
-
-enum WorkItemType {
-  all,
-  bug,
-  epic,
-  feature,
-  issue,
-  task,
-  testCase,
-  userStory,
-  productBacklogItem;
-
-  Icon get icon {
-    switch (this) {
-      case WorkItemType.bug:
-        return Icon(DevOpsIcons.bug, color: Colors.red);
-      case WorkItemType.epic:
-        return Icon(DevOpsIcons.epic, color: Colors.orange);
-      case WorkItemType.feature:
-        return Icon(DevOpsIcons.feature, color: Colors.purple);
-      case WorkItemType.issue:
-        return Icon(DevOpsIcons.issue, color: Colors.pink);
-      case WorkItemType.task:
-        return Icon(DevOpsIcons.task, color: Colors.amber);
-      case WorkItemType.testCase:
-        return Icon(DevOpsIcons.testcase, color: Colors.grey);
-      case WorkItemType.userStory:
-        return Icon(DevOpsIcons.userstory, color: Colors.lightBlue);
-      case WorkItemType.productBacklogItem:
-        return Icon(DevOpsIcons.task, color: Colors.amber);
-      case WorkItemType.all:
-        return Icon(DevOpsIcons.userstory, color: Colors.transparent);
-    }
-  }
-
-  static WorkItemType fromString(String str) {
-    switch (str) {
-      case 'Bug':
-        return WorkItemType.bug;
-      case 'Task':
-        return WorkItemType.task;
-      case 'Epic':
-        return WorkItemType.epic;
-      case 'Feature':
-        return WorkItemType.feature;
-      case 'Issue':
-        return WorkItemType.issue;
-      case 'Test Case':
-        return WorkItemType.testCase;
-      case 'User Story':
-        return WorkItemType.userStory;
-      case 'Product Backlog Item':
-        return WorkItemType.productBacklogItem;
-      default:
-        throw 'Unexpected enum value: $str';
-    }
-  }
-
-  @override
-  String toString() {
-    switch (this) {
-      case WorkItemType.bug:
-        return 'Bug';
-      case WorkItemType.epic:
-        return 'Epic';
-      case WorkItemType.feature:
-        return 'Feature';
-      case WorkItemType.issue:
-        return 'Issue';
-      case WorkItemType.task:
-        return 'Task';
-      case WorkItemType.testCase:
-        return 'Test Case';
-      case WorkItemType.userStory:
-        return 'User Story';
-      case WorkItemType.productBacklogItem:
-        return 'Product Backlog Item';
-      case WorkItemType.all:
-        return 'All';
-    }
   }
 }
 

@@ -22,7 +22,7 @@ class _WorkItemListTile extends StatelessWidget {
             leading: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                item.workItemType.icon,
+                item.workItemTypeIcon,
               ],
             ),
             contentPadding: EdgeInsets.zero,

@@ -21,6 +21,7 @@ import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/user_entitlements.dart';
 import 'package:azure_devops/src/models/work_item.dart';
+import 'package:azure_devops/src/models/work_item_type.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -42,6 +43,8 @@ abstract class AzureApiService {
 
   List<GraphUser> get allUsers;
 
+  Map<String, List<WorkItemType>> get workItemTypes;
+
   String getUserAvatarUrl(String userDescriptor);
 
   Future<LoginStatus> login(String accessToken);
@@ -57,6 +60,8 @@ abstract class AzureApiService {
   Future<ApiResponse<Project>> getProject({required String projectName});
 
   Future<ApiResponse<List<WorkItem>>> getWorkItems();
+
+  Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes();
 
   Future<ApiResponse<WorkItemDetail>> getWorkItemDetail({
     required String projectName,
@@ -232,6 +237,10 @@ class AzureApiServiceImpl implements AzureApiService {
 
   List<Project> _projects = [];
   Iterable<Project>? _chosenProjects;
+
+  @override
+  Map<String, List<WorkItemType>> get workItemTypes => _workItemTypes;
+  final Map<String, List<WorkItemType>> _workItemTypes = {};
 
   void dispose() {
     instance = null;
@@ -423,12 +432,31 @@ class AzureApiServiceImpl implements AzureApiService {
     if (workItemsRes.isError) return ApiResponse.error();
 
     final projects = StorageServiceCore().getChosenProjects();
+
     return ApiResponse.ok(
       GetWorkItemsResponse.fromJson(jsonDecode(workItemsRes.body) as Map<String, dynamic>)
           .workItems
           .where((i) => projects.map((p) => p.name!.toLowerCase()).contains(i.teamProject.toLowerCase()))
           .toList(),
     );
+  }
+
+  @override
+  Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes() async {
+    if (_workItemTypes.isNotEmpty) return ApiResponse.ok(_workItemTypes);
+
+    final projects = StorageServiceCore().getChosenProjects();
+
+    await Future.wait([
+      for (final p in projects)
+        _get('$_basePath/${p.id}/_apis/wit/workitemtypes?$_apiVersion').then(
+          (value) {
+            _workItemTypes.putIfAbsent(p.name!, () => WorkItemTypesResponse.fromRawJson(value.body).types);
+          },
+        ),
+    ]);
+
+    return ApiResponse.ok(_workItemTypes);
   }
 
   @override
@@ -503,7 +531,7 @@ class AzureApiServiceImpl implements AzureApiService {
     String? description,
     String? status,
   }) async {
-    final createRes = await _patchList(
+    final editRes = await _patchList(
       '$_basePath/$projectName/_apis/wit/workitems/$id?$_apiVersion-preview',
       body: [
         if (title != null)
@@ -527,7 +555,7 @@ class AzureApiServiceImpl implements AzureApiService {
         if (type != null)
           {
             'op': 'replace',
-            'value': type.toString(),
+            'value': type.name,
             'path': '/fields/System.WorkItemType',
           },
         if (status != null)
@@ -540,9 +568,9 @@ class AzureApiServiceImpl implements AzureApiService {
       contentType: 'application/json-patch+json',
     );
 
-    if (createRes.isError) return ApiResponse.error();
+    if (editRes.isError) return ApiResponse.error();
 
-    return ApiResponse.ok(WorkItemDetail.fromJson(jsonDecode(createRes.body) as Map<String, dynamic>));
+    return ApiResponse.ok(WorkItemDetail.fromJson(jsonDecode(editRes.body) as Map<String, dynamic>));
   }
 
   @override
