@@ -51,9 +51,7 @@ class _LoginController {
       description:
           'Your PAT is stored on your device and is only used as an http header to communicate with Azure API, '
           "it's not stored anywhere else.\n\n"
-          "Check that your PAT has access to all the organizations, otherwise it won't work.\n\n"
-          'You can create a new PAT at this link:\n'
-          'https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate',
+          "Check that your PAT has access to all the organizations, otherwise it won't work.",
     );
   }
 }

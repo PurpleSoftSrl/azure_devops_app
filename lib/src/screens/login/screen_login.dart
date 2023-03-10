@@ -45,6 +45,25 @@ class _LoginScreen extends StatelessWidget {
                     hint: 'Personal Access Token',
                     onFieldSubmitted: ctrl.login,
                   ),
+                  Link(
+                    uri: Uri.parse(
+                      'https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate',
+                    ),
+                    builder: (_, link) => SizedBox(
+                      height: 48,
+                      child: InkWell(
+                        onTap: link,
+                        child: Row(
+                          children: [
+                            Text(
+                              'PAT documentation link',
+                              style: context.textTheme.titleSmall!.copyWith(decoration: TextDecoration.underline),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(
                     height: 100,
                   ),
