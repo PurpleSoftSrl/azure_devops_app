@@ -63,7 +63,7 @@ SPEC CHECKSUMS:
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_foundation: c68054786f1b4f3343858c1e1d0caaded73f0be9
   Sentry: 4c9babff9034785067c896fd580b1f7de44da020
-  sentry_flutter: b10ae7a5ddcbc7f04648eeb2672b5747230172f1
+  sentry_flutter: 1346a880b24c0240807b53b10cf50ddad40f504e
   share_plus: 056a1e8ac890df3e33cb503afffaf1e9b4fbae68
   shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
