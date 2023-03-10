@@ -23,7 +23,10 @@ class _FileDetailScreen extends StatelessWidget {
           : ctrl.args.filePath!.isMd
               ? Padding(
                   padding: const EdgeInsets.only(left: 8),
-                  child: MarkdownBody(data: res!.content),
+                  child: MarkdownBody(
+                    data: res!.content,
+                    styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
+                  ),
                 )
               : res!.isBinary
                   ? Center(
