@@ -1,6 +1,7 @@
 library settings;
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/router/router.dart';
@@ -14,6 +15,7 @@ import 'package:azure_devops/src/widgets/section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:purple_theme/purple_theme.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/link.dart';
 
 part 'components_settings.dart';

@@ -13,6 +13,12 @@ class _SettingsScreen extends StatelessWidget {
       init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Settings',
+      actions: [
+        IconButton(
+          onPressed: ctrl.shareApp,
+          icon: Icon(DevOpsIcons.share),
+        ),
+      ],
       builder: (_) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -29,6 +29,14 @@ class _SettingsController {
     appVersion.value = info.version;
   }
 
+  void shareApp() {
+    final appUrl = Platform.isAndroid
+        ? 'https://play.google.com/store/apps/details?id=io.purplesoft.azuredevops'
+        : 'https://apps.apple.com/app/apple-store/id1666994628?pt=120276127&ct=app&mt=8';
+
+    Share.share(appUrl);
+  }
+
   Future<void> logout() async {
     final confirm = await AlertService.confirm(
       'Do you really want to logout?',
