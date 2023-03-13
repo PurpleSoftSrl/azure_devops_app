@@ -344,8 +344,8 @@ class AzureApiServiceImpl implements AzureApiService {
           breadcrumbs: [breadcrumb],
           message: SentryMessage(res.reasonPhrase ?? ''),
         ),
-    );
-  }
+      );
+    }
   }
 
   @override
@@ -462,7 +462,10 @@ class AzureApiServiceImpl implements AzureApiService {
       for (final p in projects)
         _get('$_basePath/${p.id}/_apis/wit/workitemtypes?$_apiVersion').then(
           (value) {
-            _workItemTypes.putIfAbsent(p.name!, () => WorkItemTypesResponse.fromRawJson(value.body).types);
+            _workItemTypes.putIfAbsent(
+              p.name!,
+              () => WorkItemTypesResponse.fromRawJson(value.body).types.where((t) => !t.isDisabled).toList(),
+            );
           },
         ),
     ]);
@@ -504,7 +507,7 @@ class AzureApiServiceImpl implements AzureApiService {
     required String description,
   }) async {
     final createRes = await _postList(
-      '$_basePath/$projectName/_apis/wit/workitems/\$$type?$_apiVersion-preview',
+      '$_basePath/$projectName/_apis/wit/workitems/\$${type.name}?$_apiVersion-preview',
       body: [
         {
           'op': 'add',

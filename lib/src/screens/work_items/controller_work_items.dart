@@ -185,6 +185,7 @@ class _WorkItemsController {
                               title: 'Type',
                               values: allWorkItemTypes.where((t) => t.name != 'All').toList(),
                               currentFilter: newWorkItemType,
+                              formatLabel: (t) => t.name,
                               onSelected: (f) {
                                 setState(() {
                                   newWorkItemType = f;
