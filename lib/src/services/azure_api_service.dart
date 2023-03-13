@@ -332,9 +332,20 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   void _addSentryBreadcrumb(String url, String method, Response res) {
-    Sentry.addBreadcrumb(
-      Breadcrumb.http(url: Uri.parse(url), method: method, reason: res.reasonPhrase, statusCode: res.statusCode),
+    final breadcrumb =
+        Breadcrumb.http(url: Uri.parse(url), method: method, reason: res.reasonPhrase, statusCode: res.statusCode);
+
+    Sentry.addBreadcrumb(breadcrumb);
+
+    if (res.isError) {
+      Sentry.captureEvent(
+        SentryEvent(
+          level: SentryLevel.warning,
+          breadcrumbs: [breadcrumb],
+          message: SentryMessage(res.reasonPhrase ?? ''),
+        ),
     );
+  }
   }
 
   @override

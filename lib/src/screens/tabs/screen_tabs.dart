@@ -55,7 +55,6 @@ class _TabsScreen extends StatelessWidget {
               builder: (_) => Navigator(
                 key: ctrl.navPages[i].key,
                 observers: [
-                  HeroController(),
                   SentryNavigatorObserver(),
                 ],
                 onGenerateRoute: (route) => MaterialPageRoute(
