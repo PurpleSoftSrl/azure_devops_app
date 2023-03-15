@@ -222,10 +222,11 @@ class GetWorkItemDetailResponseFields {
         systemBoardColumnDone: (json['System.BoardColumnDone'] as bool?) ?? false,
         microsoftVstsCommonStateChangeDate:
             DateTime.parse(json['Microsoft.VSTS.Common.StateChangeDate']!.toString()).toLocal(),
-        microsoftVstsCommonPriority: json['Microsoft.VSTS.Common.Priority'] as int,
+        microsoftVstsCommonPriority: json['Microsoft.VSTS.Common.Priority'] as int?,
         microsoftVstsCommonValueArea: json['Microsoft.VSTS.Common.ValueArea'] as String?,
         systemDescription: json['System.Description'] as String?,
       );
+
   GetWorkItemDetailResponseFields({
     required this.systemAreaPath,
     required this.systemTeamProject,
@@ -264,7 +265,7 @@ class GetWorkItemDetailResponseFields {
   final String? systemBoardColumn;
   final bool systemBoardColumnDone;
   final DateTime microsoftVstsCommonStateChangeDate;
-  final int microsoftVstsCommonPriority;
+  final int? microsoftVstsCommonPriority;
   final String? microsoftVstsCommonValueArea;
   final String? systemDescription;
 
@@ -306,6 +307,7 @@ class System {
         imageUrl: json['imageUrl'] as String,
         descriptor: json['descriptor'] as String,
       );
+
   System({
     required this.displayName,
     required this.url,
@@ -344,6 +346,7 @@ class SystemAssignedToLinks {
   factory SystemAssignedToLinks.fromJson(Map<String, dynamic> json) => SystemAssignedToLinks(
         avatar: HtmlClass.fromJson(json['avatar'] as Map<String, dynamic>),
       );
+
   SystemAssignedToLinks({
     required this.avatar,
   });
@@ -359,6 +362,7 @@ class HtmlClass {
   factory HtmlClass.fromJson(Map<String, dynamic> json) => HtmlClass(
         href: json['href'] as String,
       );
+
   HtmlClass({
     required this.href,
   });
@@ -380,6 +384,7 @@ class GetWorkItemDetailResponseLinks {
         workItemType: HtmlClass.fromJson(json['workItemType'] as Map<String, dynamic>),
         fields: HtmlClass.fromJson(json['fields'] as Map<String, dynamic>),
       );
+      
   GetWorkItemDetailResponseLinks({
     required this.self,
     required this.workItemUpdates,
