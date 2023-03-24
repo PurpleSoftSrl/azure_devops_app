@@ -76,35 +76,37 @@ class _ProjectDetailScreen extends StatelessWidget {
                   .toList(),
             ),
           ],
-          SectionHeader.withIcon(
-            text: 'Languages',
-            icon: DevOpsIcons.languages,
-          ),
-          Wrap(
-            children: ctrl.meaningfulLanguages
-                .map(
-                  (r) => Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: Chip(
-                      label: Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '${r.name}    ',
-                              style: context.textTheme.labelMedium!.copyWith(color: context.colorScheme.onBackground),
-                            ),
-                            TextSpan(
-                              text: '${r.languagePercentage?.round()}%',
-                              style: context.textTheme.labelMedium!.copyWith(color: Colors.green),
-                            ),
-                          ],
+          if (ctrl.meaningfulLanguages.isNotEmpty) ...[
+            SectionHeader.withIcon(
+              text: 'Languages',
+              icon: DevOpsIcons.languages,
+            ),
+            Wrap(
+              children: ctrl.meaningfulLanguages
+                  .map(
+                    (r) => Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Chip(
+                        label: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: '${r.name}    ',
+                                style: context.textTheme.labelMedium!.copyWith(color: context.colorScheme.onBackground),
+                              ),
+                              TextSpan(
+                                text: '${r.languagePercentage?.round()}%',
+                                style: context.textTheme.labelMedium!.copyWith(color: Colors.green),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                )
-                .toList(),
-          ),
+                  )
+                  .toList(),
+            ),
+          ],
           SectionHeader.withIcon(
             text: 'Repositories',
             icon: DevOpsIcons.repository,
