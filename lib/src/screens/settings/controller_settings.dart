@@ -38,7 +38,7 @@ class _SettingsController {
   }
 
   Future<void> logout() async {
-    final confirm = await AlertService.confirm(
+    final confirm = await OverlayService.confirm(
       'Do you really want to logout?',
       description: 'You will have to insert your PAT again',
     );
@@ -83,7 +83,7 @@ class _SettingsController {
 
     if (res == LoginStatus.failed || res == LoginStatus.unauthorized) {
       patTextFieldController.text = pat;
-      return AlertService.error(
+      return OverlayService.error(
         'Login failed',
         description: 'Check that the Personal Access Token is valid and retry',
       );

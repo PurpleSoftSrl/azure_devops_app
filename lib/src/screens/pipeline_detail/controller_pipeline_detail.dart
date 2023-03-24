@@ -99,7 +99,7 @@ class _PipelineDetailController {
   }
 
   Future<void> _cancelBuild() async {
-    final confirm = await AlertService.confirm(
+    final confirm = await OverlayService.confirm(
       'Attention',
       description: 'Do you really want to cancel this pipeline?',
     );
@@ -108,14 +108,14 @@ class _PipelineDetailController {
     final res = await apiService.cancelPipeline(buildId: pipeline.id!, projectId: pipeline.project!.id!);
 
     if (res.isError) {
-      return AlertService.error('Build not canceled', description: 'Try again');
+      return OverlayService.error('Build not canceled', description: 'Try again');
     }
 
     AppRouter.pop();
   }
 
   Future<void> _rerunBuild() async {
-    final confirm = await AlertService.confirm(
+    final confirm = await OverlayService.confirm(
       'Attention',
       description: 'Do you really want to rerun this pipeline?',
     );
@@ -128,7 +128,7 @@ class _PipelineDetailController {
     );
 
     if (res.isError) {
-      return AlertService.error('Build not rerun', description: 'Try again');
+      return OverlayService.error('Build not rerun', description: 'Try again');
     }
 
     AppRouter.pop();
@@ -191,7 +191,7 @@ class _PipelineDetailController {
 
   void seeLogs(Record t) {
     if (t.log == null) {
-      AlertService.error('Error', description: 'Logs not ready yet');
+      OverlayService.error('Error', description: 'Logs not ready yet');
       return;
     }
 

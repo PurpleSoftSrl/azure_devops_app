@@ -288,7 +288,7 @@ class _WorkItemsController {
     );
 
     if (res.isError) {
-      return AlertService.error('Error', description: 'Work item not created');
+      return OverlayService.error('Error', description: 'Work item not created');
     }
 
     await init();

@@ -52,7 +52,7 @@ class _SplashController {
 
     if (_isLogged == LoginStatus.unauthorized) {
       // token is expired
-      await AlertService.error('Error', description: 'Token expired');
+      await OverlayService.error('Error', description: 'Token expired');
       await apiService.logout();
       unawaited(AppRouter.goToLogin());
       return;

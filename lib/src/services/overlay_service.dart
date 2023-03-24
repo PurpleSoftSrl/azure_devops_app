@@ -3,8 +3,8 @@ import 'package:azure_devops/src/router/router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class AlertService {
-  AlertService._();
+class OverlayService {
+  OverlayService._();
 
   // ignore: long-method
   static Future<bool> confirm(String title, {String? description}) async {
@@ -14,6 +14,7 @@ class AlertService {
 
     await showCupertinoDialog(
       context: context,
+      routeSettings: RouteSettings(name: 'alert_$title'),
       builder: (ctx) => Center(
         child: AlertDialog(
           title: Text(
@@ -85,6 +86,7 @@ class AlertService {
 
     await showCupertinoDialog(
       context: context,
+      routeSettings: RouteSettings(name: 'alert_$title'),
       builder: (ctx) => Center(
         child: AlertDialog(
           title: Text(

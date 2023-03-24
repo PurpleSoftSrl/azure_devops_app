@@ -29,14 +29,14 @@ class _LoginController {
 
     final isLogged = await apiService.login(pat);
     if (isLogged == LoginStatus.failed) {
-      return AlertService.error(
+      return OverlayService.error(
         'Login error',
         description: 'Check that your PAT is correct and retry',
       );
     }
 
     if (isLogged == LoginStatus.unauthorized) {
-      return AlertService.error(
+      return OverlayService.error(
         'Unauthorized',
         description: 'Check that your PAT is correct and has permissions for all organizations',
       );
@@ -46,7 +46,7 @@ class _LoginController {
   }
 
   void showInfo() {
-    AlertService.error(
+    OverlayService.error(
       'Info',
       description:
           'Your PAT is stored on your device and is only used as an http header to communicate with Azure API, '

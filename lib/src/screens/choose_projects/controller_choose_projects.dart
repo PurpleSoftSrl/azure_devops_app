@@ -70,7 +70,7 @@ class _ChooseProjectsController {
 
   Future<void> goToHome() async {
     if (chosenProjects.value!.data!.projects.isEmpty) {
-      return AlertService.error(
+      return OverlayService.error(
         'No projects chosen',
         description: 'You have to choose at least one project',
       );
@@ -89,7 +89,7 @@ class _ChooseProjectsController {
   Future<void> _chooseOrg() async {
     final orgsRes = await apiService.getOrganizations();
     if (orgsRes.isError) {
-      return AlertService.error(
+      return OverlayService.error(
         'Error trying to get your organizations',
         description: "Check that your token has 'All accessible organizations' option enabled",
       );
@@ -98,7 +98,7 @@ class _ChooseProjectsController {
     final orgs = orgsRes.data!;
 
     if (orgs.isEmpty) {
-      return AlertService.error(
+      return OverlayService.error(
         'No organizations found for your account',
         description: "Check that your token has 'All accessible organizations' option enabled",
       );

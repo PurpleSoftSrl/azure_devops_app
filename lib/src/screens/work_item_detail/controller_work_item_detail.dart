@@ -262,19 +262,19 @@ class _WorkItemDetailController {
     );
 
     if (res.isError) {
-      return AlertService.error('Error', description: 'Work item not edited');
+      return OverlayService.error('Error', description: 'Work item not edited');
     }
 
     await init();
   }
 
   Future<void> deleteWorkItem() async {
-    final conf = await AlertService.confirm('Attention', description: 'Do you really want to delete this work item?');
+    final conf = await OverlayService.confirm('Attention', description: 'Do you really want to delete this work item?');
     if (!conf) return;
 
     final res = await apiService.deleteWorkItem(projectName: item.teamProject, id: item.id);
     if (!(res.data ?? false)) {
-      return AlertService.error('Error', description: 'Work item not deleted');
+      return OverlayService.error('Error', description: 'Work item not deleted');
     }
 
     AppRouter.pop();

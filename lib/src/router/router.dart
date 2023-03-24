@@ -23,7 +23,7 @@ import 'package:azure_devops/src/screens/settings/base_settings.dart';
 import 'package:azure_devops/src/screens/tabs/base_tabs.dart';
 import 'package:azure_devops/src/screens/work_item_detail/base_work_item_detail.dart';
 import 'package:azure_devops/src/screens/work_items/base_work_items.dart';
-import 'package:azure_devops/src/services/alert_service.dart';
+import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/widgets/error_page.dart';
 import 'package:flutter/material.dart';
 
@@ -238,7 +238,7 @@ class AppRouter {
   };
 
   static Future<bool> askBeforeClosingApp() async {
-    final shouldPop = await AlertService.confirm('Attention', description: 'Do you really want to close the app?');
+    final shouldPop = await OverlayService.confirm('Attention', description: 'Do you really want to close the app?');
     return shouldPop;
   }
 }
