@@ -126,4 +126,23 @@ class OverlayService {
       ),
     );
   }
+
+  static Future<void> bottomsheet({
+    required WidgetBuilder builder,
+    bool isDismissible = true,
+    bool isScrollControlled = false,
+    required String title,
+  }) async {
+    final context = AppRouter.rootNavigator!.context;
+
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: context.colorScheme.background,
+      useRootNavigator: true,
+      isDismissible: isDismissible,
+      isScrollControlled: isScrollControlled,
+      routeSettings: RouteSettings(name: 'bs_$title'),
+      builder: builder,
+    );
+  }
 }

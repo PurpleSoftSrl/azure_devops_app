@@ -76,7 +76,9 @@ class _ChooseProjectsController {
       );
     }
 
-    apiService.setChosenProjects(chosenProjects.value!.data!.projects..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)));
+    apiService.setChosenProjects(
+      chosenProjects.value!.data!.projects..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)),
+    );
 
     if (removeRoutes) {
       unawaited(AppRouter.goToTabs());
@@ -111,10 +113,9 @@ class _ChooseProjectsController {
 
     Organization? selectedOrg;
 
-    await showModalBottomSheet(
-      context: AppRouter.rootNavigator!.context,
-      backgroundColor: AppRouter.rootNavigator!.context.colorScheme.background,
+    await OverlayService.bottomsheet(
       isDismissible: false,
+      title: 'Select your organization',
       builder: (context) => Padding(
         padding: const EdgeInsets.all(15),
         child: Column(

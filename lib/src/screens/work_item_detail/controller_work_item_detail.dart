@@ -103,11 +103,9 @@ class _WorkItemDetailController {
 
     final titleFieldKey = GlobalKey<FormFieldState<dynamic>>();
 
-    await showModalBottomSheet(
-      context: AppRouter.rootNavigator!.context,
-      backgroundColor: Colors.transparent,
-      useRootNavigator: true,
+    await OverlayService.bottomsheet(
       isScrollControlled: true,
+      title: 'Edit work item',
       builder: (context) => Container(
         height: context.height * .9,
         decoration: BoxDecoration(

@@ -1,6 +1,7 @@
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/router/router.dart';
+import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
 import 'package:flutter/material.dart';
@@ -103,11 +104,9 @@ class FilterMenu<T> extends StatelessWidget {
     if (isUsers) {
       return InkWell(
         onTap: () {
-          showModalBottomSheet(
-            context: context,
-            backgroundColor: Colors.transparent,
-            useRootNavigator: true,
+          OverlayService.bottomsheet(
             isScrollControlled: true,
+            title: 'Users filter menu',
             builder: (context) => Container(
               height: context.height * .8,
               decoration: BoxDecoration(
