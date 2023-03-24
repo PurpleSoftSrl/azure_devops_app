@@ -27,7 +27,7 @@ class _RepositoryDetailController {
 
   final AzureApiService apiService;
 
-  final repoItems = ValueNotifier<ApiResponse<List<RepoItem>>?>(null);
+  final repoItems = ValueNotifier<ApiResponse<List<RepoItem>?>?>(null);
 
   List<Branch> branches = [];
 
