@@ -669,7 +669,11 @@ class AzureApiServiceImpl implements AzureApiService {
     if (teamsRes.isError) return ApiResponse.error();
 
     final teams = GetTeamsResponse.fromJson(jsonDecode(teamsRes.body) as Map<String, dynamic>).teams!;
-    final team = teams.firstWhere((t) => t!.projectId == projectId || t.projectName == projectId)!;
+    final team = teams.firstWhereOrNull((t) => t!.projectId == projectId || t.projectName == projectId);
+
+    if (team == null) {
+      return ApiResponse.error();
+    }
 
     final membersRes = await _get('$_basePath/_apis/projects/$projectId/teams/${team.id}/members?$_apiVersion');
     if (membersRes.isError) return ApiResponse.error();

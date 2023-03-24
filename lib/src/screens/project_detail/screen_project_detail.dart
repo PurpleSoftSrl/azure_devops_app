@@ -46,35 +46,36 @@ class _ProjectDetailScreen extends StatelessWidget {
               text: project.defaultTeam!.name,
               icon: DevOpsIcons.users,
             ),
-          ] else
+          ] else if (ctrl.members.isNotEmpty) ...[
             SectionHeader.noMargin(
               text: project.defaultTeam!.name,
               icon: DevOpsIcons.users,
             ),
-          Wrap(
-            children: ctrl.members
-                .map(
-                  (m) => Padding(
-                    padding: const EdgeInsets.only(right: 12, bottom: 12),
-                    child: Column(
-                      children: [
-                        MemberAvatar(
-                          userDescriptor: m.identity!.descriptor!,
-                          radius: 50,
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          m.identity!.displayName!.split(' ').first,
-                          style: context.textTheme.labelSmall,
-                        ),
-                      ],
+            Wrap(
+              children: ctrl.members
+                  .map(
+                    (m) => Padding(
+                      padding: const EdgeInsets.only(right: 12, bottom: 12),
+                      child: Column(
+                        children: [
+                          MemberAvatar(
+                            userDescriptor: m.identity!.descriptor!,
+                            radius: 50,
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            m.identity!.displayName!.split(' ').first,
+                            style: context.textTheme.labelSmall,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                )
-                .toList(),
-          ),
+                  )
+                  .toList(),
+            ),
+          ],
           SectionHeader.withIcon(
             text: 'Languages',
             icon: DevOpsIcons.languages,
