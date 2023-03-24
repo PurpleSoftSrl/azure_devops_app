@@ -26,7 +26,7 @@ class WorkItemType {
   factory WorkItemType.fromJson(Map<String, dynamic> json) => WorkItemType(
         name: json['name'] as String,
         referenceName: json['referenceName'] as String,
-        description: json['description'] as String,
+        description: json['description'] as String?,
         color: json['color'] as String,
         isDisabled: json['isDisabled'] as bool,
         states:
@@ -46,7 +46,7 @@ class WorkItemType {
 
   final String name;
   final String referenceName;
-  final String description;
+  final String? description;
   final String color;
   final bool isDisabled;
   final List<State> states;
