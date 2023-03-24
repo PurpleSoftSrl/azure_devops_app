@@ -28,6 +28,7 @@ class _ProjectDetailScreen extends StatelessWidget {
                           imageUrl:
                               '${ctrl.apiService.basePath}/_apis/GraphProfile/MemberAvatars/${project!.data!.defaultTeam!.id}?overrideDisplayName=${project.data!.name}&size=large',
                           httpHeaders: ctrl.apiService.headers,
+                          errorWidget: (_, __, ___) => const SizedBox(),
                         ),
                       )
                     : const SizedBox(),

@@ -1,5 +1,6 @@
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
+import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -34,6 +35,7 @@ class MemberAvatar extends StatelessWidget {
                 height: radius,
                 width: radius,
                 httpHeaders: apiService.headers,
+                errorWidget: (_, __, ___) => Icon(DevOpsIcons.failed),
                 fit: BoxFit.cover,
               ),
       ),
