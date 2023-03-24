@@ -11,6 +11,7 @@ import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:flutter/material.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 part 'components_splash.dart';
 part 'controller_splash.dart';

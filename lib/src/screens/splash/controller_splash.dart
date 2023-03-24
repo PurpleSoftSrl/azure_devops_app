@@ -68,6 +68,21 @@ class _SplashController {
       return;
     }
 
+    _configureSentryScope();
+
     unawaited(AppRouter.goToTabs());
+  }
+
+  void _configureSentryScope() {
+    Sentry.configureScope((sc) async {
+      final user = apiService.user;
+      await sc.setUser(
+        SentryUser(
+          id: user?.id ?? 'user-not-logged-id',
+          email: user?.emailAddress ?? 'user-not-logged-email',
+        ),
+      );
+      await sc.setTag('org', apiService.organization);
+    });
   }
 }

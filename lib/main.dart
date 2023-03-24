@@ -38,7 +38,7 @@ Future<void> main(List<String> args) async {
             return 1;
           }
           ..beforeSend = (evt, {hint}) {
-            print('[sentry] ${evt.exceptions![0].value}');
+            print('[sentry] ${evt.exceptions?[0].value}');
             if (kDebugMode) return null;
             return evt..tags?.putIfAbsent('hint', () => hint.toString());
           };
