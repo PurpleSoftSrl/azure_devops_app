@@ -37,7 +37,7 @@ class _LoadingButtonState extends State<LoadingButton> {
             print(e);
           }
 
-          setState(() => _isLoading = false);
+          if (mounted) setState(() => _isLoading = false);
         },
         child: _isLoading
             ? CircularProgressIndicator(
