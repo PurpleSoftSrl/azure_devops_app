@@ -32,6 +32,7 @@ Future<void> main(List<String> args) async {
           ..enableAppLifecycleBreadcrumbs = true
           ..enableAutoNativeBreadcrumbs = false
           ..enableUserInteractionBreadcrumbs = true
+          ..maxBreadcrumbs = 500
           ..attachScreenshot = true
           ..tracesSampler = (samplingContext) {
             if (kDebugMode) return null;
