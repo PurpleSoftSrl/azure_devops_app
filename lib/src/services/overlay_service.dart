@@ -1,10 +1,16 @@
+import 'dart:async';
+
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/router/router.dart';
+import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
+import 'package:azure_devops/src/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class OverlayService {
   OverlayService._();
+
+  static final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   // ignore: long-method
   static Future<bool> confirm(String title, {String? description}) async {
@@ -143,6 +149,49 @@ class OverlayService {
       isScrollControlled: isScrollControlled,
       routeSettings: RouteSettings(name: 'bs_$title'),
       builder: builder,
+    );
+  }
+
+  /// Debouncer to avoid showing too many snackbars.
+  static bool _isShowingSnackbar = false;
+
+  static void snackbar(String title, {bool isError = false}) {
+    if (_isShowingSnackbar) return;
+
+    _isShowingSnackbar = true;
+    Timer(Duration(seconds: 2), () => _isShowingSnackbar = false);
+
+    scaffoldMessengerKey.currentState!.showMaterialBanner(
+      MaterialBanner(
+        content: InkWell(
+          onTap: scaffoldMessengerKey.currentState!.hideCurrentMaterialBanner,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              color: isError
+                  ? AppRouter.rootNavigator!.context.colorScheme.error
+                  : AppRouter.rootNavigator!.context.colorScheme.surface,
+              borderRadius: BorderRadius.circular(AppTheme.radius),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(child: Text(title * 10)),
+                const SizedBox(
+                  width: 10,
+                ),
+                Icon(isError ? DevOpsIcons.failed : DevOpsIcons.success),
+              ],
+            ),
+          ),
+        ),
+        actions: [Text('')],
+        elevation: 5,
+        onVisible: () =>
+            Timer(Duration(seconds: 3), () => scaffoldMessengerKey.currentState!.hideCurrentMaterialBanner()),
+        backgroundColor: Colors.transparent,
+      ),
     );
   }
 }

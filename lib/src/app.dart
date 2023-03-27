@@ -1,6 +1,7 @@
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/screens/splash/base_splash.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
+import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/lifecycle_listener.dart';
@@ -29,6 +30,7 @@ class AzureDevOps extends StatelessWidget {
                     theme: AppTheme.lightTheme,
                     darkTheme: AppTheme.darkTheme,
                     debugShowCheckedModeBanner: false,
+                    scaffoldMessengerKey: OverlayService.scaffoldMessengerKey,
                     navigatorObservers: [
                       SentryNavigatorObserver(),
                     ],

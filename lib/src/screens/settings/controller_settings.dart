@@ -59,19 +59,8 @@ class _SettingsController {
 
   void clearLocalStorage() {
     StorageServiceCore().clearNoToken();
-    ScaffoldMessenger.of(AppRouter.rootNavigator!.context).showSnackBar(
-      SnackBar(
-        content: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Cache cleared!'),
-            Icon(DevOpsIcons.success),
-          ],
-        ),
-        margin: EdgeInsets.fromLTRB(20, 0, 20, AppRouter.rootNavigator!.context.height - 180),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+
+    OverlayService.snackbar('Cache cleared!');
 
     AppRouter.goToChooseProjects(removeRoutes: false);
   }
