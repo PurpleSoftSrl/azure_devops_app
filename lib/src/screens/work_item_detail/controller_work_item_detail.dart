@@ -90,10 +90,20 @@ class _WorkItemDetailController {
   Future<void> editWorkItem() async {
     final fields = itemDetail.value!.data!.fields;
 
-    final projectWorkItemTypes = apiService.workItemTypes[fields.systemTeamProject]!;
+    final projectWorkItemTypes = apiService.workItemTypes[fields.systemTeamProject] ?? <WorkItemType>[];
 
     var newWorkItemStatus = fields.systemState;
-    var newWorkItemType = projectWorkItemTypes.firstWhere((t) => t.name == fields.systemWorkItemType);
+    var newWorkItemType = projectWorkItemTypes.firstWhereOrNull((t) => t.name == fields.systemWorkItemType) ??
+        WorkItemType(
+          name: fields.systemWorkItemType,
+          description: '',
+          referenceName: fields.systemWorkItemType,
+          color: '',
+          isDisabled: false,
+          states: [],
+          url: '',
+        );
+        
     var newWorkItemAssignedTo =
         users.firstWhereOrNull((u) => u.displayName == fields.systemAssignedTo?.displayName) ?? _userNone;
     var newWorkItemTitle = fields.systemTitle;
