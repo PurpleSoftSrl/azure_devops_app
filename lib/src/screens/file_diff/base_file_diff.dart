@@ -1,5 +1,7 @@
 library file_diff;
 
+import 'dart:math';
+
 import 'package:azure_devops/src/extensions/commit_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/models/file_diff.dart';

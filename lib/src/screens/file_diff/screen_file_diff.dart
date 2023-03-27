@@ -27,7 +27,10 @@ class _FileDiffScreen extends StatelessWidget {
           : SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 2000, minHeight: context.height),
+                constraints: BoxConstraints(
+                  maxWidth: max(ctrl.diffMaxLength.toDouble() + 55, MediaQuery.of(context).size.width),
+                  minHeight: context.height,
+                ),
                 child: DefaultTextStyle(
                   style: context.textTheme.titleSmall!,
                   child: Column(
@@ -131,8 +134,7 @@ class _FileDiffScreen extends StatelessWidget {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         if (diff.originalFile != null)
-                                          Container(
-                                            width: double.maxFinite,
+                                          DecoratedBox(
                                             decoration: BoxDecoration(
                                               color: Colors.red.withOpacity(.4),
                                             ),
@@ -178,8 +180,7 @@ class _FileDiffScreen extends StatelessWidget {
                                               ],
                                             ),
                                           ),
-                                        Container(
-                                          width: double.maxFinite,
+                                        DecoratedBox(
                                           decoration: BoxDecoration(
                                             color: Colors.green.withOpacity(.4),
                                           ),

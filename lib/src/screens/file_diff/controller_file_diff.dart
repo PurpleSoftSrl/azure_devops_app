@@ -17,6 +17,9 @@ class _FileDiffController {
   String get diffUrl =>
       '${apiService.basePath}/${args.commit.projectName}/_git/${args.commit.repositoryName}/commit/${args.commit.commitId}';
 
+  /// Used to calculate text width to avoid layout issues.
+  int diffMaxLength = -1;
+
   void dispose() {
     instance = null;
   }
@@ -28,6 +31,22 @@ class _FileDiffController {
       isAdded: args.isAdded,
     );
 
+    if (res.data != null) {
+      final maxLengthM = res.data!.blocks.map((e) => e.mLines).expand((l) => l).fold(0, (a, b) {
+        final size = _getTextWidth(b);
+        return a > size ? a : size;
+      });
+
+      final maxLengthO = res.data!.blocks.map((e) => e.oLines).expand((l) => l ?? <String>[]).fold(0, (a, b) {
+        final size = _getTextWidth(b);
+        return a > size ? a : size;
+      });
+
+      final maxLength = max(maxLengthM, maxLengthO);
+
+      diffMaxLength = maxLength;
+    }
+
     diff.value = res;
   }
 
@@ -37,5 +56,17 @@ class _FileDiffController {
 
   void shareDiff() {
     Share.share(diffUrl);
+  }
+
+  int _getTextWidth(String b) {
+    return (TextPainter(
+      text: TextSpan(text: b.trimRight(), style: AppRouter.navigatorKey.currentContext!.textTheme.titleSmall!),
+      maxLines: 1,
+      textScaleFactor: MediaQuery.of(AppRouter.navigatorKey.currentContext!).textScaleFactor,
+      textDirection: TextDirection.ltr,
+    )..layout())
+        .size
+        .width
+        .toInt();
   }
 }
