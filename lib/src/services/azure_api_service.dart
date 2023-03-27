@@ -355,6 +355,8 @@ class AzureApiServiceImpl implements AzureApiService {
 
   @override
   Future<LoginStatus> login(String accessToken) async {
+    if (accessToken.isEmpty) return LoginStatus.unauthorized;
+
     final oldToken = _accessToken;
 
     _accessToken = accessToken;
@@ -378,11 +380,12 @@ class AzureApiServiceImpl implements AzureApiService {
 
     _organization = StorageServiceCore().getOrganization();
 
-    unawaited(_getUsers());
 
     if (_organization.isEmpty) {
       return LoginStatus.orgNotSet;
     }
+
+    unawaited(_getUsers());
 
     _chosenProjects = StorageServiceCore().getChosenProjects();
 
@@ -398,6 +401,8 @@ class AzureApiServiceImpl implements AzureApiService {
     _organization = org.endsWith('/') ? org.substring(0, org.length - 1) : org;
 
     StorageServiceCore.instance!.setOrganization(_organization);
+
+    unawaited(_getUsers());
   }
 
   @override
