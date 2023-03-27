@@ -23,6 +23,10 @@ class _LoginController {
     print('$_LoginController initialized');
   }
 
+  void setPat(String value) {
+    pat = value;
+  }
+
   Future<void> login() async {
     final isValid = formFieldKey.currentState!.validate();
     if (!isValid) return;

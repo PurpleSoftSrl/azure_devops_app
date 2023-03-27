@@ -117,8 +117,19 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<Project>>> getProjects() {
-    throw UnimplementedError();
+  Future<ApiResponse<List<Project>>> getProjects() async {
+    return ApiResponse.ok([
+      Project(
+        id: '0',
+        name: 'p1',
+        description: 'p1 desc',
+        url: '',
+        state: '',
+        revision: 0,
+        visibility: '',
+        lastUpdateTime: null,
+      ),
+    ]);
   }
 
   @override
@@ -169,8 +180,11 @@ class AzureApiServiceMock implements AzureApiService {
   Map<String, String>? get headers => throw UnimplementedError();
 
   @override
-  Future<LoginStatus> login(String accessToken) {
-    throw UnimplementedError();
+  Future<LoginStatus> login(String accessToken) async {
+    if (accessToken == 'validToken') return LoginStatus.ok;
+    if (accessToken == 'singleOrgToken') return LoginStatus.unauthorized;
+
+    return LoginStatus.failed;
   }
 
   @override
@@ -321,7 +335,7 @@ class StorageServiceMock implements StorageService {
 
   @override
   String getOrganization() {
-    throw UnimplementedError();
+    return 'org';
   }
 
   @override

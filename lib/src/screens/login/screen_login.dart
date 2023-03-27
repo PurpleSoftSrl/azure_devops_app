@@ -41,7 +41,7 @@ class _LoginScreen extends StatelessWidget {
                 children: [
                   DevOpsFormField(
                     formFieldKey: ctrl.formFieldKey,
-                    onChanged: (value) => ctrl.pat = value,
+                    onChanged: ctrl.setPat,
                     hint: 'Personal Access Token',
                     onFieldSubmitted: ctrl.login,
                   ),

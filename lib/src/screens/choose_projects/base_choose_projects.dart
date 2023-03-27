@@ -31,7 +31,12 @@ class ChooseProjectsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final removeRoutes = AppRouter.getChooseProjectArgs(context);
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final ctrl = _ChooseProjectsController(apiService: apiService, removeRoutes: removeRoutes);
+    final storageService = StorageServiceInherited.of(context).storageService;
+    final ctrl = _ChooseProjectsController(
+      apiService: apiService,
+      removeRoutes: removeRoutes,
+      storageService: storageService,
+    );
     return LayoutBuilder(
       builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
           ? _ChooseProjectsScreen(ctrl, _smartphoneParameters)

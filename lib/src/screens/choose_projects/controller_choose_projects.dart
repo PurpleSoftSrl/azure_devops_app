@@ -1,16 +1,21 @@
 part of choose_projects;
 
 class _ChooseProjectsController {
-  factory _ChooseProjectsController({required AzureApiService apiService, required bool removeRoutes}) {
-    return instance ??= _ChooseProjectsController._(apiService, removeRoutes);
+  factory _ChooseProjectsController({
+    required AzureApiService apiService,
+    required bool removeRoutes,
+    required StorageService storageService,
+  }) {
+    return instance ??= _ChooseProjectsController._(apiService, removeRoutes, storageService);
   }
 
-  _ChooseProjectsController._(this.apiService, this.removeRoutes);
+  _ChooseProjectsController._(this.apiService, this.removeRoutes, this.storageService);
 
   static _ChooseProjectsController? instance;
 
   final AzureApiService apiService;
   final bool removeRoutes;
+  final StorageService storageService;
 
   final chosenProjects = ValueNotifier<ApiResponse<GetProjectsResponse?>?>(null);
   List<Project> allProjects = <Project>[];
@@ -22,7 +27,7 @@ class _ChooseProjectsController {
   }
 
   Future<void> init() async {
-    final org = StorageServiceCore().getOrganization();
+    final org = storageService.getOrganization();
     if (org.isEmpty) {
       await _chooseOrg();
     }
@@ -32,7 +37,7 @@ class _ChooseProjectsController {
     final projectsRes = await apiService.getProjects();
     final projects = projectsRes.data ?? [];
 
-    final alreadyChosenProjects = StorageServiceCore().getChosenProjects();
+    final alreadyChosenProjects = storageService.getChosenProjects();
 
     // sort projects by last change date, already chosen projects go first.
     if (alreadyChosenProjects.isNotEmpty) {
