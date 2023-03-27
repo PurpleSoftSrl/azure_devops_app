@@ -92,7 +92,6 @@ class _ChooseProjectsController {
     }
   }
 
-  // ignore: long-method
   Future<void> _chooseOrg() async {
     final orgsRes = await apiService.getOrganizations();
     if (orgsRes.isError) {
@@ -116,6 +115,14 @@ class _ChooseProjectsController {
       return;
     }
 
+    final selectedOrg = await _selectOrganization(orgs);
+
+    if (selectedOrg == null) return;
+
+    await apiService.setOrganization(selectedOrg.accountName!);
+  }
+
+  Future<Organization?> _selectOrganization(List<Organization> orgs) async {
     Organization? selectedOrg;
 
     await OverlayService.bottomsheet(
@@ -151,9 +158,6 @@ class _ChooseProjectsController {
         ),
       ),
     );
-
-    if (selectedOrg == null) return;
-
-    await apiService.setOrganization(selectedOrg!.accountName!);
+    return selectedOrg;
   }
 }
