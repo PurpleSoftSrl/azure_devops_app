@@ -22,6 +22,7 @@ import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/user_entitlements.dart';
 import 'package:azure_devops/src/models/work_item.dart';
 import 'package:azure_devops/src/models/work_item_type.dart';
+import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -345,6 +346,10 @@ class AzureApiServiceImpl implements AzureApiService {
           message: SentryMessage(res.reasonPhrase ?? ''),
         ),
       );
+
+      if ([401, 403].contains(res.statusCode)) {
+        OverlayService.snackbar('Unauthorized', isError: true);
+      }
     }
   }
 
