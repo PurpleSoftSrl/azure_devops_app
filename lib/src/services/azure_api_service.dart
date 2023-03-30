@@ -380,7 +380,6 @@ class AzureApiServiceImpl implements AzureApiService {
 
     _organization = StorageServiceCore().getOrganization();
 
-
     if (_organization.isEmpty) {
       return LoginStatus.orgNotSet;
     }
