@@ -177,7 +177,7 @@ class OverlayService {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(child: Text(title * 10)),
+                Expanded(child: Text(title)),
                 const SizedBox(
                   width: 10,
                 ),
