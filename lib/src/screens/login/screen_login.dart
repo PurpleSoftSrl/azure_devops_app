@@ -11,7 +11,8 @@ class _LoginScreen extends StatelessWidget {
     return WillPopScope(
       onWillPop: AppRouter.askBeforeClosingApp,
       child: AppPage(
-        init: ctrl.init,
+        // ignore: no-empty-block
+        init: () async {},
         dispose: ctrl.dispose,
         title: 'Az DevOps',
         builder: (_) => Column(

@@ -37,7 +37,7 @@ void main() {
     expect((errorWidget.title as Text).data, 'Login error');
   });
 
-  testWidgets("Login with token without 'All organizations' shows error alert", (t) async {
+  testWidgets("Login with token without 'All organizations' shows 'Insert your organization' bottomsheet", (t) async {
     final app = MaterialApp(
       navigatorKey: AppRouter.navigatorKey,
       home: AzureApiServiceInherited(
@@ -59,11 +59,11 @@ void main() {
 
     await t.pumpAndSettle();
 
-    final errorAlert = find.byType(AlertDialog);
+    final errorAlert = find.byType(BottomSheet);
     expect(errorAlert, findsOneWidget);
 
-    final errorWidget = t.widget(errorAlert) as AlertDialog;
-    expect((errorWidget.title as Text).data, 'Unauthorized');
+    final errorText = find.descendant(of: errorAlert, matching: find.textContaining('Insert your organization'));
+    expect(errorText, findsOneWidget);
   });
 
   testWidgets("Login with valid token brings user to 'Choose project' page", (t) async {

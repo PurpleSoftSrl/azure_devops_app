@@ -19,10 +19,6 @@ class _LoginController {
     instance = null;
   }
 
-  Future<void> init() async {
-    print('$_LoginController initialized');
-  }
-
   void setPat(String value) {
     pat = value;
   }
@@ -60,7 +56,7 @@ class _LoginController {
       description:
           'Your PAT is stored on your device and is only used as an http header to communicate with Azure API, '
           "it's not stored anywhere else.\n\n"
-          "Check that your PAT has access to all the organizations, otherwise it won't work.",
+          "Check that your PAT has 'User Profile' read enabled, otherwise it won't work.",
     );
   }
 

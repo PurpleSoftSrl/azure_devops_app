@@ -19,7 +19,7 @@ Features:
 - See and manage your work items
 - See and manage your pull requests
 
-Follow [this guide](https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows) to generate a new Personal Acces Token. Be sure to select 'All accessible organizations', otherwise the app won't work.
+Follow [this guide](https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows) to generate a new Personal Acces Token. Be sure to select 'All accessible organizations', otherwise you will have to manually input the organization name.
 
 # App Downloads
 
