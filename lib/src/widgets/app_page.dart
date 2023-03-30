@@ -76,7 +76,9 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> {
         if (widget.notifier != null) {
           widget.notifier!.value = widget.notifier!.value?.copyWith(isError: true) ?? ApiResponse.error();
         }
-        Sentry.captureException(e, stackTrace: s, hint: 'Page ${widget.title} init exception');
+
+        final hint = Hint.withMap({'page_status': 'Page ${widget.title} init exception'});
+        Sentry.captureException(e, stackTrace: s, hint: hint);
       },
     );
 
@@ -89,7 +91,9 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> {
         if (widget.notifier != null) {
           widget.notifier!.value = widget.notifier!.value?.copyWith(isError: true);
         }
-        unawaited(Sentry.captureException(e, stackTrace: s, hint: 'Page ${widget.title} refresh exception'));
+
+        final hint = Hint.withMap({'page_status': 'Page ${widget.title} refresh exception'});
+        unawaited(Sentry.captureException(e, stackTrace: s, hint: hint));
       }
       _refreshController.refreshCompleted();
     };
