@@ -83,6 +83,7 @@ class _ProjectCard extends StatelessWidget {
                 child: CachedNetworkImage(
                   imageUrl: project.defaultTeamImageUrl!,
                   httpHeaders: AzureApiServiceInherited.of(context).apiService.headers,
+                  errorWidget: (_, __, ___) => Icon(DevOpsIcons.project),
                   width: 30,
                   height: 30,
                 ),
