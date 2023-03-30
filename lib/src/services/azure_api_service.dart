@@ -25,6 +25,7 @@ import 'package:azure_devops/src/models/work_item_type.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -363,15 +364,25 @@ class AzureApiServiceImpl implements AzureApiService {
 
     _accessToken = accessToken;
 
-    final accountsRes = await _get('$_usersBasePath/_apis/profile/profiles/me?$_apiVersion-preview');
+    var profileEndpoint = '$_usersBasePath/_apis/profile/profiles/me?$_apiVersion-preview';
+
+    _organization = StorageServiceCore().getOrganization();
+
+    if (_organization.isNotEmpty) {
+      profileEndpoint = '$_usersBasePath/$_organization/_apis/profile/profiles/me?$_apiVersion-preview';
+    }
+
+    final accountsRes = await _get(profileEndpoint);
 
     if (accountsRes.statusCode == HttpStatus.unauthorized) {
       _accessToken = oldToken;
+      await setOrganization('');
       return LoginStatus.unauthorized;
     }
 
     if (accountsRes.statusCode != HttpStatus.ok) {
       _accessToken = oldToken;
+      await setOrganization('');
       return LoginStatus.failed;
     }
 
