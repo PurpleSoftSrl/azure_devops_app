@@ -14,6 +14,7 @@ import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:azure_devops/src/widgets/section_header.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 part 'components_home.dart';
 part 'controller_home.dart';

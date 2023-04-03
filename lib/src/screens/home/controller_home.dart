@@ -25,6 +25,8 @@ class _HomeController {
     alreadyChosenProjects.toList().sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!));
 
     projects.value = ApiResponse.ok(alreadyChosenProjects.toList());
+
+    _configureSentryScope();
   }
 
   Future<void> goToCommits() async {
@@ -49,5 +51,18 @@ class _HomeController {
 
   void goToProjectDetail(Project p) {
     AppRouter.goToProjectDetail(p.name!);
+  }
+
+  void _configureSentryScope() {
+    Sentry.configureScope((sc) async {
+      final user = apiService.user;
+      await sc.setUser(
+        SentryUser(
+          id: user?.id ?? 'user-not-logged-id',
+          email: user?.emailAddress ?? 'user-not-logged-email',
+        ),
+      );
+      await sc.setTag('org', apiService.organization);
+    });
   }
 }
