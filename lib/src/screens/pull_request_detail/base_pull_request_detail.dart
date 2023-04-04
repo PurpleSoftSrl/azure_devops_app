@@ -16,6 +16,7 @@ import 'package:azure_devops/src/widgets/text_title_description.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 part 'components_pull_request_detail.dart';
 part 'controller_pull_request_detail.dart';

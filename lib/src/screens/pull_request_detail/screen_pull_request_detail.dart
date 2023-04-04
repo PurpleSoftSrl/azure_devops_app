@@ -83,6 +83,9 @@ class _PullRequestDetailScreen extends StatelessWidget {
               MarkdownBody(
                 data: '${pr.description}',
                 styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
+                onTapLink: (text, href, title) async {
+                  if (await canLaunchUrlString(href!)) await launchUrlString(href);
+                },
               ),
               const SizedBox(
                 height: 20,
