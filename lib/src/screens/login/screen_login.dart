@@ -44,6 +44,7 @@ class _LoginScreen extends StatelessWidget {
                     formFieldKey: ctrl.formFieldKey,
                     onChanged: ctrl.setPat,
                     hint: 'Personal Access Token',
+                    maxLines: 1,
                     onFieldSubmitted: ctrl.login,
                   ),
                   Link(

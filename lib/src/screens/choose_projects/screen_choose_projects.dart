@@ -23,7 +23,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
-                  'Choose the projects that you want to follow.\nYou will see only info related to the projects that you choose.\nYou can change your choice any time from the settings.',
+                  'You will see only info related to the projects that you choose.\nYou can change your choice any time from the settings.',
                   style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary, height: 1.6),
                   textAlign: TextAlign.center,
                 ),
