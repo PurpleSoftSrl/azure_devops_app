@@ -168,6 +168,10 @@ class _WorkItemDetailScreen extends StatelessWidget {
                   context,
                   defaultTextStyle: context.textTheme.titleSmall,
                   detail.fields.systemDescription!,
+                  linksCallback: (str) async {
+                    final url = str.toString();
+                    if (await canLaunchUrlString(url)) await launchUrlString(url);
+                  },
                 ),
               ),
             ],

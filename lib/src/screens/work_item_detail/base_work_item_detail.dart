@@ -23,6 +23,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:simple_html_css/simple_html_css.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 part 'components_work_item_detail.dart';
 part 'controller_work_item_detail.dart';
