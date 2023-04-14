@@ -341,7 +341,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
     Sentry.addBreadcrumb(breadcrumb);
 
-    if (res.isError) {
+    if (res.isError && _user != null) {
       Sentry.captureEvent(
         SentryEvent(
           level: SentryLevel.warning,
@@ -1057,6 +1057,7 @@ class AzureApiServiceImpl implements AzureApiService {
     _organization = '';
     _chosenProjects = null;
     _allUsers.clear();
+    _user = null;
     dispose();
   }
 }
