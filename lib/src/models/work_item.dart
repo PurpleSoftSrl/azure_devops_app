@@ -300,7 +300,7 @@ class GetWorkItemDetailResponseFields {
 class System {
   factory System.fromJson(Map<String, dynamic> json) => System(
         displayName: json['displayName'] as String,
-        url: json['url'] as String,
+        url: json['url'] as String?,
         links: SystemAssignedToLinks.fromJson(json['_links'] as Map<String, dynamic>),
         id: json['id'] as String,
         uniqueName: json['uniqueName'] as String,
@@ -319,7 +319,7 @@ class System {
   });
 
   final String displayName;
-  final String url;
+  final String? url;
   final SystemAssignedToLinks links;
   final String id;
   final String uniqueName;
@@ -384,7 +384,7 @@ class GetWorkItemDetailResponseLinks {
         workItemType: HtmlClass.fromJson(json['workItemType'] as Map<String, dynamic>),
         fields: HtmlClass.fromJson(json['fields'] as Map<String, dynamic>),
       );
-      
+
   GetWorkItemDetailResponseLinks({
     required this.self,
     required this.workItemUpdates,
