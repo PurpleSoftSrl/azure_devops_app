@@ -484,6 +484,8 @@ class AzureApiServiceImpl implements AzureApiService {
       for (final p in projects)
         _get('$_basePath/${p.id}/_apis/wit/workitemtypes?$_apiVersion').then(
           (value) {
+            if (value.isError) return;
+
             _workItemTypes.putIfAbsent(
               p.name!,
               () => WorkItemTypesResponse.fromRawJson(value.body).types.where((t) => !t.isDisabled).toList(),
@@ -644,13 +646,18 @@ class AzureApiServiceImpl implements AzureApiService {
         ),
     ]);
 
+    var isAllError = true;
+
     for (final res in allProjectPrs) {
-      if (res.isError) return ApiResponse.error();
+      isAllError &= res.isError;
     }
+
+    if (isAllError) return ApiResponse.error();
 
     return ApiResponse.ok(
       allProjectPrs
-          .map((e) => GetPullRequestsResponse.fromJson(jsonDecode(e.body) as Map<String, dynamic>).pullRequests)
+          .where((r) => !r.isError)
+          .map((r) => GetPullRequestsResponse.fromJson(jsonDecode(r.body) as Map<String, dynamic>).pullRequests)
           .expand((b) => b)
           .toList(),
     );
@@ -825,12 +832,17 @@ class AzureApiServiceImpl implements AzureApiService {
         _get('$_basePath/${project.name}/_apis/build/builds?$queryParams'),
     ]);
 
+    var isAllError = true;
+
     for (final res in allProjectPipelines) {
-      if (res.isError) return ApiResponse.error();
+      isAllError &= res.isError;
     }
 
+    if (isAllError) return ApiResponse.error();
+
     final res = allProjectPipelines
-        .map((e) => GetPipelineResponse.fromJson(jsonDecode(e.body) as Map<String, dynamic>).pipelines)
+        .where((r) => !r.isError)
+        .map((r) => GetPipelineResponse.fromJson(jsonDecode(r.body) as Map<String, dynamic>).pipelines)
         .expand((b) => b)
         .toList();
 
@@ -876,12 +888,17 @@ class AzureApiServiceImpl implements AzureApiService {
       for (final project in projectsToSearch) _get('$_basePath/${project.name}/_apis/git/repositories?$_apiVersion'),
     ]);
 
+    var isAllError = true;
+
     for (final res in allProjectRepos) {
-      if (res.isError) return ApiResponse.error();
+      isAllError &= res.isError;
     }
 
+    if (isAllError) return ApiResponse.error();
+
     final repos = allProjectRepos
-        .map((res) => GetRepositoriesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).repositories)
+        .where((r) => !r.isError)
+        .map((r) => GetRepositoriesResponse.fromJson(jsonDecode(r.body) as Map<String, dynamic>).repositories)
         .expand((r) => r)
         .toList();
 
