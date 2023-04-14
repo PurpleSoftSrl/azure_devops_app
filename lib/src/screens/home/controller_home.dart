@@ -20,11 +20,17 @@ class _HomeController {
   }
 
   Future<void> init() async {
+    final allProjectsRes = await apiService.getProjects();
+    final allProjects = allProjectsRes.data ?? [];
+
     final alreadyChosenProjects = StorageServiceCore().getChosenProjects();
 
-    alreadyChosenProjects.toList().sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!));
+    final existentProjects = alreadyChosenProjects.where((p) => allProjects.map((e) => e.id!).contains(p.id));
+    final sortedProjects = existentProjects.toList()..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!));
 
-    projects.value = ApiResponse.ok(alreadyChosenProjects.toList());
+    projects.value = ApiResponse.ok(sortedProjects);
+
+    StorageServiceCore().setChosenProjects(existentProjects);
 
     _configureSentryScope();
   }

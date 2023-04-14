@@ -37,12 +37,15 @@ class _ChooseProjectsController {
     final projectsRes = await apiService.getProjects();
     final projects = projectsRes.data ?? [];
 
-    final alreadyChosenProjects = storageService.getChosenProjects();
+    final alreadyChosenProjects =
+        storageService.getChosenProjects().where((p) => projects.map((p1) => p1.id!).contains(p.id!));
 
     // sort projects by last change date, already chosen projects go first.
     if (alreadyChosenProjects.isNotEmpty) {
       allProjects
-        ..addAll(alreadyChosenProjects.toList()..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)))
+        ..addAll(
+          alreadyChosenProjects.toList()..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)),
+        )
         ..addAll(
           projects.where((p) => !alreadyChosenProjects.contains(p)).toList()
             ..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)),
