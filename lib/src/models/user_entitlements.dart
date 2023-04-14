@@ -3,15 +3,12 @@ class GetUserEntitlementsResponse {
         members:
             List<_Item>.from((json['members'] as List<dynamic>).map((m) => _Item.fromJson(m as Map<String, dynamic>))),
       );
-  GetUserEntitlementsResponse({
-    required this.members,
-  });
+
+  GetUserEntitlementsResponse({required this.members});
 
   final List<_Item> members;
 
-  Map<String, dynamic> toJson() => {
-        'members': List<dynamic>.from(members.map((x) => x.toJson())),
-      };
+  Map<String, dynamic> toJson() => {'members': List<dynamic>.from(members.map((x) => x.toJson()))};
 }
 
 class _Item {
@@ -25,6 +22,7 @@ class _Item {
         projectEntitlements: List<dynamic>.from((json['projectEntitlements'] as List<dynamic>).map((x) => x)),
         groupAssignments: List<dynamic>.from((json['groupAssignments'] as List<dynamic>).map((x) => x)),
       );
+
   _Item({
     required this.user,
     required this.extensions,
@@ -67,6 +65,7 @@ class _AccessLevel {
         statusMessage: json['statusMessage'] as String,
         assignmentSource: json['assignmentSource'] as String,
       );
+
   _AccessLevel({
     required this.licensingSource,
     required this.accountLicenseType,
@@ -100,7 +99,7 @@ class _User {
   factory _User.fromJson(Map<String, dynamic> json) => _User(
         subjectKind: json['subjectKind'] as String,
         metaType: json['metaType'] as String,
-        directoryAlias: json['directoryAlias'] as String,
+        directoryAlias: json['directoryAlias'] as String?,
         domain: json['domain'] as String,
         principalName: json['principalName'] as String,
         mailAddress: json['mailAddress'] as String,
@@ -111,6 +110,7 @@ class _User {
         url: json['url'] as String,
         descriptor: json['descriptor'] as String,
       );
+
   _User({
     required this.subjectKind,
     required this.metaType,
@@ -128,7 +128,7 @@ class _User {
 
   final String subjectKind;
   final String metaType;
-  final String directoryAlias;
+  final String? directoryAlias;
   final String domain;
   final String principalName;
   final String mailAddress;
@@ -163,6 +163,7 @@ class _Links {
         storageKey: _Avatar.fromJson(json['storageKey'] as Map<String, dynamic>),
         avatar: _Avatar.fromJson(json['avatar'] as Map<String, dynamic>),
       );
+
   _Links({
     required this.self,
     required this.memberships,
@@ -190,13 +191,10 @@ class _Avatar {
   factory _Avatar.fromJson(Map<String, dynamic> json) => _Avatar(
         href: json['href'] as String,
       );
-  _Avatar({
-    required this.href,
-  });
+
+  _Avatar({required this.href});
 
   final String href;
 
-  Map<String, dynamic> toJson() => {
-        'href': href,
-      };
+  Map<String, dynamic> toJson() => {'href': href};
 }
