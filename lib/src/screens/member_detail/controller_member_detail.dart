@@ -39,7 +39,7 @@ class _MemberDetailController {
   Future<void> init() async {
     final userRes = await apiService.getUserFromDescriptor(descriptor: userDescriptor);
 
-    if (userRes.isError) {
+    if (userRes.isError || userRes.data == null) {
       recentCommits.value = [];
       return;
     }
