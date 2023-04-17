@@ -111,7 +111,7 @@ class _PipelineDetailScreen extends StatelessWidget {
             ),
             RepositoryChip(
               onTap: ctrl.goToRepo,
-              repositoryName: pipeline.repository!.name!,
+              repositoryName: pipeline.repository?.name ?? '-',
             ),
             const SizedBox(
               height: 20,
