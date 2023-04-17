@@ -221,7 +221,7 @@ class GetWorkItemDetailResponseFields {
         systemBoardColumn: json['System.BoardColumn'] as String?,
         systemBoardColumnDone: (json['System.BoardColumnDone'] as bool?) ?? false,
         microsoftVstsCommonStateChangeDate:
-            DateTime.parse(json['Microsoft.VSTS.Common.StateChangeDate']!.toString()).toLocal(),
+            DateTime.tryParse(json['Microsoft.VSTS.Common.StateChangeDate']?.toString() ?? '')?.toLocal(),
         microsoftVstsCommonPriority: json['Microsoft.VSTS.Common.Priority'] as int?,
         microsoftVstsCommonValueArea: json['Microsoft.VSTS.Common.ValueArea'] as String?,
         systemDescription: json['System.Description'] as String?,
@@ -264,7 +264,7 @@ class GetWorkItemDetailResponseFields {
   final String systemTitle;
   final String? systemBoardColumn;
   final bool systemBoardColumnDone;
-  final DateTime microsoftVstsCommonStateChangeDate;
+  final DateTime? microsoftVstsCommonStateChangeDate;
   final int? microsoftVstsCommonPriority;
   final String? microsoftVstsCommonValueArea;
   final String? systemDescription;
@@ -285,7 +285,7 @@ class GetWorkItemDetailResponseFields {
         'System.Title': systemTitle,
         'System.BoardColumn': systemBoardColumn,
         'System.BoardColumnDone': systemBoardColumnDone,
-        'Microsoft.VSTS.Common.StateChangeDate': microsoftVstsCommonStateChangeDate.toIso8601String(),
+        'Microsoft.VSTS.Common.StateChangeDate': microsoftVstsCommonStateChangeDate?.toIso8601String(),
         'Microsoft.VSTS.Common.Priority': microsoftVstsCommonPriority,
         'Microsoft.VSTS.Common.ValueArea': microsoftVstsCommonValueArea,
         'System.Description': systemDescription,
