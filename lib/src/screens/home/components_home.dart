@@ -16,6 +16,7 @@ class _HomeItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      key: ValueKey(title),
       onTap: onTap,
       child: DecoratedBox(
         decoration: BoxDecoration(
@@ -73,6 +74,7 @@ class _ProjectCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppTheme.radius),
       ),
       child: InkWell(
+        key: ValueKey(project.name),
         onTap: () => onTap(project),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),

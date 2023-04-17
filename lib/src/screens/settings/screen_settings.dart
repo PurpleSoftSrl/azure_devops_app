@@ -195,11 +195,13 @@ class _SettingsScreen extends StatelessWidget {
             ),
           ),
           Link(
-            uri: Uri.parse('https://www.purplesoft.io'),
+            uri: Uri.parse(
+              'https://www.purplesoft.io?utm_source=azdevops_app&utm_medium=app&utm_campaign=azdevops',
+            ),
             builder: (_, link) => SizedBox(
               height: 48,
               child: InkWell(
-                onTap: link,
+                onTap: () => ctrl.openPurplesoftWebsite(link),
                 child: Row(
                   children: [
                     Text('Made with \u2764 by Purplesoft'),

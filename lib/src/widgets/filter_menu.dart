@@ -103,6 +103,7 @@ class FilterMenu<T> extends StatelessWidget {
 
     if (isUsers) {
       return InkWell(
+        key: ValueKey(title),
         onTap: () {
           OverlayService.bottomsheet(
             isScrollControlled: true,
@@ -122,6 +123,7 @@ class FilterMenu<T> extends StatelessWidget {
                   children: values
                       .map(
                         (v) => InkWell(
+                          key: ValueKey(formatLabel?.call(v) ?? v.toString()),
                           onTap: () {
                             onSelected!(v);
                             AppRouter.popRoute();
@@ -169,7 +171,7 @@ class FilterMenu<T> extends StatelessWidget {
     final children = values
         .map(
           (v) => PopupMenuItem<T>(
-            key: ValueKey('Popup menu item ${formatLabel?.call(v) ?? v.toString()}'),
+            key: ValueKey(formatLabel?.call(v) ?? v.toString()),
             value: v,
             padding: EdgeInsets.zero,
             child: Column(
@@ -202,7 +204,7 @@ class FilterMenu<T> extends StatelessWidget {
         .toList();
 
     return PopupMenuButton(
-      key: ValueKey('Popup menu $title'),
+      key: ValueKey(title),
       onSelected: onSelected,
       itemBuilder: (_) => children,
       elevation: 0,
@@ -226,10 +228,11 @@ class _ResetFiltersMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
-      key: ValueKey('Popup menu reset filters'),
+      key: ValueKey('popup_menu_reset_filters'),
       onSelected: (_) => resetFilters(),
       itemBuilder: (_) => [
         PopupMenuItem<void>(
+          key: ValueKey('reset_filters'),
           value: false,
           padding: const EdgeInsets.symmetric(horizontal: 10),
           height: 30,

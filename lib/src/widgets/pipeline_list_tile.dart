@@ -25,6 +25,7 @@ class PipelineListTile extends StatelessWidget {
     final subtitleStyle = context.textTheme.bodySmall!;
     return InkWell(
       onTap: onTap,
+      key: ValueKey('pipeline_${pipe.id}'),
       child: Column(
         children: [
           Row(

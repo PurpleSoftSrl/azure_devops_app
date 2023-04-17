@@ -24,7 +24,8 @@ class CommitListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtitleStyle = context.textTheme.bodySmall!.copyWith(height: 1);
-    return GestureDetector(
+    return InkWell(
+      key: ValueKey('commit_${commit.commitId?.substring(0, 6)}'),
       onTap: onTap,
       child: Column(
         children: [

@@ -16,6 +16,7 @@ class _WorkItemListTile extends StatelessWidget {
     final subtitleStyle = context.textTheme.bodySmall!;
     return InkWell(
       onTap: onTap,
+      key: ValueKey('work_item_${item.id}'),
       child: Column(
         children: [
           ListTile(

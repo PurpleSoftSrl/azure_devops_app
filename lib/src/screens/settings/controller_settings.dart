@@ -89,4 +89,10 @@ class _SettingsController {
       setNewToken(patTextFieldController.text);
     }
   }
+
+  void openPurplesoftWebsite(FollowLink? link) {
+    if (kReleaseMode) Sentry.captureMessage('Open Purplesoft website');
+
+    link?.call();
+  }
 }

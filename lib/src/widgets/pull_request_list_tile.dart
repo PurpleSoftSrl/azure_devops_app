@@ -19,7 +19,8 @@ class PullRequestListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtitleStyle = context.textTheme.bodySmall!;
-    return GestureDetector(
+    return InkWell(
+      key: ValueKey('pr_${pr.pullRequestId}'),
       onTap: onTap,
       child: Column(
         children: [
