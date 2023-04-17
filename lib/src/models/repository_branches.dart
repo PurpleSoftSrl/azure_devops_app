@@ -111,8 +111,8 @@ class _Commit {
 class _Author {
   factory _Author.fromJson(Map<String, dynamic> json) => _Author(
         name: json['name'] as String,
-        email: json['email'] as String,
-        date: DateTime.parse(json['date'] as String),
+        email: json['email'] as String?,
+        date: DateTime.tryParse(json['date']?.toString() ?? '')?.toLocal(),
       );
 
   _Author({
@@ -122,14 +122,14 @@ class _Author {
   });
 
   final String name;
-  final String email;
-  final DateTime date;
+  final String? email;
+  final DateTime? date;
 
   String toRawJson() => json.encode(toJson());
 
   Map<String, dynamic> toJson() => {
         'name': name,
         'email': email,
-        'date': date.toIso8601String(),
+        'date': date?.toIso8601String(),
       };
 }
