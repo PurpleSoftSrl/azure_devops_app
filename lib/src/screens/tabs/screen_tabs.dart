@@ -56,7 +56,13 @@ class _TabsScreen extends StatelessWidget {
                 key: ctrl.navPages[i].key,
                 observers: [
                   SentryNavigatorObserver(
-                    routeNameExtractor: (settings) => RouteSettings(name: ctrl.navPages[i].pageName),
+                    routeNameExtractor: (settings) => settings?.name == null || settings?.name == '/'
+                        ? RouteSettings(
+                            name: settings?.name == null
+                                ? ctrl.navPages[ctrl.previousIndex].pageName
+                                : ctrl.navPages[i].pageName,
+                          )
+                        : null,
                   ),
                 ],
                 onGenerateRoute: (route) => MaterialPageRoute(

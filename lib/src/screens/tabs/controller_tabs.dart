@@ -14,6 +14,7 @@ class _TabsController {
   final GlobalKey<NavigatorState> tabKey = GlobalKey<NavigatorState>(debugLabel: 'tab_bar_key');
 
   int page = 0;
+  int previousIndex = 0;
 
   final tabController = CupertinoTabController();
 
@@ -38,6 +39,8 @@ class _TabsController {
   }
 
   void switchTab(int index) {
+    previousIndex = page;
+
     if (page == index) popAll(navPages[index].key);
     page = index;
     AppRouter.index = index;
