@@ -138,80 +138,103 @@ class _SettingsScreen extends StatelessWidget {
             ),
           ),
           SectionHeader(
+            text: 'Developer',
+          ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: context.colorScheme.surface,
+              borderRadius: BorderRadius.circular(AppTheme.radius),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Link(
+                uri: Uri.parse('https://github.com/PurpleSoftSrl/azure_devops_app'),
+                builder: (_, link) => InkWell(
+                  onTap: link,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('GitHub repository'),
+                      Icon(DevOpsIcons.github_mark),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: context.colorScheme.surface,
+              borderRadius: BorderRadius.circular(AppTheme.radius),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Link(
+                uri: Uri.parse(
+                  'https://www.purplesoft.io?utm_source=azdevops_app&utm_medium=app&utm_campaign=azdevops',
+                ),
+                builder: (_, link) => InkWell(
+                  onTap: () => ctrl.openPurplesoftWebsite(link),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Made with \u2764 by Purplesoft Srl'),
+                      Icon(DevOpsIcons.link),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SectionHeader(
             text: 'App settings',
           ),
           InkWell(
             onTap: ctrl.logout,
-            child: SizedBox(
-              height: 48,
-              child: Row(
-                children: [
-                  Icon(DevOpsIcons.logout),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Text('Logout'),
-                ],
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: context.colorScheme.surface,
+                borderRadius: BorderRadius.circular(AppTheme.radius),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Logout'),
+                    Icon(DevOpsIcons.logout),
+                  ],
+                ),
               ),
             ),
           ),
-          const Divider(
+          const SizedBox(
             height: 20,
           ),
           InkWell(
             onTap: ctrl.clearLocalStorage,
-            child: SizedBox(
-              height: 48,
-              child: Row(
-                children: [
-                  Icon(Icons.cleaning_services),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Text('Clear cache'),
-                ],
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: context.colorScheme.surface,
+                borderRadius: BorderRadius.circular(AppTheme.radius),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Clear cache'),
+                    Icon(Icons.cleaning_services),
+                  ],
+                ),
               ),
             ),
           ),
           const SizedBox(
             height: 40,
-          ),
-          Link(
-            uri: Uri.parse('https://github.com/PurpleSoftSrl/azure_devops_app'),
-            builder: (_, link) => SizedBox(
-              height: 48,
-              child: InkWell(
-                onTap: link,
-                child: Row(
-                  children: [
-                    Text('GitHub repository'),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Icon(DevOpsIcons.github_mark),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Link(
-            uri: Uri.parse(
-              'https://www.purplesoft.io?utm_source=azdevops_app&utm_medium=app&utm_campaign=azdevops',
-            ),
-            builder: (_, link) => SizedBox(
-              height: 48,
-              child: InkWell(
-                onTap: () => ctrl.openPurplesoftWebsite(link),
-                child: Row(
-                  children: [
-                    Text('Made with \u2764 by Purplesoft'),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
           ),
           ValueListenableBuilder<String>(
             valueListenable: ctrl.appVersion,
@@ -219,9 +242,6 @@ class _SettingsScreen extends StatelessWidget {
               'Version $version',
               style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
             ),
-          ),
-          const SizedBox(
-            height: 40,
           ),
         ],
       ),
