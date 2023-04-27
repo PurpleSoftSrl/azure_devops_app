@@ -38,14 +38,15 @@ class _CommitsScreen extends StatelessWidget {
             formatLabel: (p) => p.name!,
             isDefaultFilter: ctrl.projectFilter == ctrl.allProject,
           ),
-          FilterMenu<GraphUser>.user(
-            title: 'Author',
-            values: ctrl.users,
-            currentFilter: ctrl.userFilter,
-            onSelected: ctrl.filterByUser,
-            formatLabel: (u) => u.displayName!,
-            isDefaultFilter: ctrl.userFilter == ctrl._userAll,
-          ),
+          if (ctrl.users.length > 1)
+            FilterMenu<GraphUser>.user(
+              title: 'Author',
+              values: ctrl.users,
+              currentFilter: ctrl.userFilter,
+              onSelected: ctrl.filterByUser,
+              formatLabel: (u) => u.displayName!,
+              isDefaultFilter: ctrl.userFilter == ctrl._userAll,
+            ),
         ],
       ),
       builder: (commits) => Column(

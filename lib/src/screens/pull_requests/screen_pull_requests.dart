@@ -37,14 +37,15 @@ class _PullRequestsScreen extends StatelessWidget {
             onSelected: ctrl.filterByStatus,
             isDefaultFilter: ctrl.statusFilter == PullRequestState.all,
           ),
-          FilterMenu<GraphUser>.user(
-            title: 'Opened by',
-            values: ctrl.users,
-            currentFilter: ctrl.userFilter,
-            onSelected: ctrl.filterByUser,
-            formatLabel: (u) => u.displayName!,
-            isDefaultFilter: ctrl.userFilter == ctrl._userAll,
-          ),
+          if (ctrl.users.length > 1)
+            FilterMenu<GraphUser>.user(
+              title: 'Opened by',
+              values: ctrl.users,
+              currentFilter: ctrl.userFilter,
+              onSelected: ctrl.filterByUser,
+              formatLabel: (u) => u.displayName!,
+              isDefaultFilter: ctrl.userFilter == ctrl._userAll,
+            ),
           FilterMenu<Project>(
             title: 'Project',
             values: ctrl.projects,

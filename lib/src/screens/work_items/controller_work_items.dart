@@ -217,18 +217,19 @@ class _WorkItemsController {
                             const SizedBox(
                               height: 5,
                             ),
-                            FilterMenu<GraphUser>.user(
-                              title: 'Assigned to',
-                              values: users,
-                              currentFilter: newWorkItemAssignedTo,
-                              onSelected: (u) {
-                                setState(() {
-                                  newWorkItemAssignedTo = u;
-                                });
-                              },
-                              formatLabel: (u) => u.displayName!,
-                              isDefaultFilter: newWorkItemAssignedTo.displayName == 'Assigned to',
-                            ),
+                            if (users.length > 1)
+                              FilterMenu<GraphUser>.user(
+                                title: 'Assigned to',
+                                values: users,
+                                currentFilter: newWorkItemAssignedTo,
+                                onSelected: (u) {
+                                  setState(() {
+                                    newWorkItemAssignedTo = u;
+                                  });
+                                },
+                                formatLabel: (u) => u.displayName!,
+                                isDefaultFilter: newWorkItemAssignedTo.displayName == 'Assigned to',
+                              ),
                           ],
                         ),
                       ),

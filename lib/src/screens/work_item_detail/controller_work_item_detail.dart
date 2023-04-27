@@ -103,7 +103,7 @@ class _WorkItemDetailController {
           states: [],
           url: '',
         );
-        
+
     var newWorkItemAssignedTo =
         users.firstWhereOrNull((u) => u.displayName == fields.systemAssignedTo?.displayName) ?? _userNone;
     var newWorkItemTitle = fields.systemTitle;
@@ -190,18 +190,19 @@ class _WorkItemDetailController {
                             const SizedBox(
                               height: 5,
                             ),
-                            FilterMenu<GraphUser>.user(
-                              title: 'Assigned to',
-                              values: users,
-                              currentFilter: newWorkItemAssignedTo,
-                              onSelected: (u) {
-                                setState(() {
-                                  newWorkItemAssignedTo = u;
-                                });
-                              },
-                              formatLabel: (u) => u.displayName!,
-                              isDefaultFilter: newWorkItemAssignedTo.displayName == 'Assigned to',
-                            ),
+                            if (users.length > 1)
+                              FilterMenu<GraphUser>.user(
+                                title: 'Assigned to',
+                                values: users,
+                                currentFilter: newWorkItemAssignedTo,
+                                onSelected: (u) {
+                                  setState(() {
+                                    newWorkItemAssignedTo = u;
+                                  });
+                                },
+                                formatLabel: (u) => u.displayName!,
+                                isDefaultFilter: newWorkItemAssignedTo.displayName == 'Assigned to',
+                              ),
                           ],
                         ),
                       ),
