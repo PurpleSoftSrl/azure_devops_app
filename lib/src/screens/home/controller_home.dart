@@ -5,9 +5,7 @@ class _HomeController {
     return instance ??= _HomeController._(apiService);
   }
 
-  _HomeController._(this.apiService) {
-    init();
-  }
+  _HomeController._(this.apiService);
 
   static _HomeController? instance;
 
