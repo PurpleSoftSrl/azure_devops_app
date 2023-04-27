@@ -66,6 +66,7 @@ class _ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final apiService = AzureApiServiceInherited.of(context).apiService;
     return Container(
       height: parameters.projectCardHeight,
       margin: const EdgeInsets.only(top: 8),
@@ -82,13 +83,19 @@ class _ProjectCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(100),
-                child: CachedNetworkImage(
-                  imageUrl: project.defaultTeamImageUrl!,
-                  httpHeaders: AzureApiServiceInherited.of(context).apiService.headers,
-                  errorWidget: (_, __, ___) => Icon(DevOpsIcons.project),
-                  width: 30,
-                  height: 30,
-                ),
+                child: apiService.isImageUnauthorized
+                    ? SizedBox(
+                        height: 30,
+                        width: 30,
+                        child: Icon(DevOpsIcons.project),
+                      )
+                    : CachedNetworkImage(
+                        imageUrl: project.defaultTeamImageUrl!,
+                        httpHeaders: apiService.headers,
+                        errorWidget: (_, __, ___) => Icon(DevOpsIcons.project),
+                        width: 30,
+                        height: 30,
+                      ),
               ),
               const SizedBox(
                 width: 15,

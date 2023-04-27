@@ -191,6 +191,8 @@ abstract class AzureApiService {
   Future<ApiResponse<PullRequest>> getPullRequest({required String projectName, required int id});
 
   Future<void> logout();
+
+  bool get isImageUnauthorized;
 }
 
 class AzureApiServiceImpl implements AzureApiService {
@@ -230,6 +232,10 @@ class AzureApiServiceImpl implements AzureApiService {
   @override
   List<GraphUser> get allUsers => _allUsers;
   List<GraphUser> _allUsers = [];
+
+  @override
+  bool get isImageUnauthorized => _isImageUnauthorized;
+  bool _isImageUnauthorized = false;
 
   @override
   Map<String, String>? get headers => {
@@ -448,6 +454,15 @@ class AzureApiServiceImpl implements AzureApiService {
 
     final res = GetProjectsResponse.fromJson(jsonDecode(projectsRes.body) as Map<String, dynamic>);
     _projects = res.projects;
+
+    // check if user is authorized to get images. This is done to avoid throwing many exceptions
+    if (_projects.isNotEmpty) {
+      final url = _projects.firstWhereOrNull((p) => p.defaultTeamImageUrl != null);
+      if (url != null) {
+        final imageRes = await _get(url.defaultTeamImageUrl!);
+        if (imageRes.isError) _isImageUnauthorized = true;
+      }
+    }
 
     return ApiResponse.ok(_projects);
   }

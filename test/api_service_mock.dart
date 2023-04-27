@@ -31,6 +31,9 @@ class AzureApiServiceMock implements AzureApiService {
   Map<String, List<WorkItemType>> get workItemTypes => {};
 
   @override
+  bool get isImageUnauthorized => false;
+
+  @override
   Future<ApiResponse<Pipeline>> cancelPipeline({required int buildId, required String projectId}) {
     throw UnimplementedError();
   }
