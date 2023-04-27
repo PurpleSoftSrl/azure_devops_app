@@ -34,6 +34,7 @@ Future<void> main(List<String> args) async {
           ..enableUserInteractionBreadcrumbs = true
           ..maxBreadcrumbs = 500
           ..attachScreenshot = true
+          ..screenshotQuality = SentryScreenshotQuality.medium
           ..tracesSampler = (samplingContext) {
             if (kDebugMode) return null;
             return 1;
