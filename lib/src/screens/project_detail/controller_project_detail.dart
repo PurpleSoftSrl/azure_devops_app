@@ -53,7 +53,7 @@ class _ProjectDetailController {
   Future<void> init() async {
     _to = DateTime.now();
 
-    await Future.wait([
+    final allRes = await Future.wait<ApiResponse>([
       _getLangs(),
       _getMembers(),
       _getRepos(),
@@ -61,7 +61,10 @@ class _ProjectDetailController {
       _getPipelines(),
     ]);
 
-    project.value = await apiService.getProject(projectName: projectName);
+    final projectRes = await apiService.getProject(projectName: projectName);
+
+    final isAllErrors = allRes.every((r) => r.isError);
+    project.value = projectRes.copyWith(isError: isAllErrors, errorResponse: allRes.first.errorResponse);
   }
 
   Future<bool> loadMore() async {
@@ -121,27 +124,31 @@ class _ProjectDetailController {
     AppRouter.goToPullRequestDetail(pr);
   }
 
-  Future<void> _getLangs() async {
+  Future<ApiResponse<List<LanguageBreakdown>>> _getLangs() async {
     final langs = await apiService.getProjectLanguages(projectName: projectName);
     languages = langs.data ?? [];
+    return langs;
   }
 
-  Future<void> _getMembers() async {
+  Future<ApiResponse<List<TeamMember>>> _getMembers() async {
     final membersRes = await apiService.getProjectTeams(projectId: projectName);
     members = membersRes.data ?? [];
+    return membersRes;
   }
 
-  Future<void> _getRepos() async {
+  Future<ApiResponse<List<GitRepository>>> _getRepos() async {
     final reposRes = await apiService.getProjectRepositories(projectName: projectName);
     repos = reposRes.data ?? [];
+    return reposRes;
   }
 
-  Future<void> _getPrs() async {
+  Future<ApiResponse<List<PullRequest>>> _getPrs() async {
     final pullRequestsRes = await apiService.getProjectPullRequests(projectName: projectName);
     pullRequests = pullRequestsRes.data ?? [];
+    return pullRequestsRes;
   }
 
-  Future<void> _getPipelines() async {
+  Future<ApiResponse<List<Pipeline>>> _getPipelines() async {
     final pipelinesRes = await _getData();
 
     // sort by start date. Pipelines in progress go first, then queued pipelines, and finally all the completed pipelines.
@@ -153,5 +160,6 @@ class _ProjectDetailController {
     );
 
     pipelines.value.addAll(pipelinesRes.data ?? []);
+    return pipelinesRes;
   }
 }
