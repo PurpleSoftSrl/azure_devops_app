@@ -108,30 +108,32 @@ class _ProjectDetailScreen extends StatelessWidget {
                   .toList(),
             ),
           ],
-          SectionHeader.withIcon(
-            text: 'Repositories',
-            icon: DevOpsIcons.repository,
-          ),
-          ...ctrl.repos.map(
-            (r) => InkWell(
-              onTap: () => ctrl.goToRepoDetail(r),
-              child: Container(
-                margin: r == ctrl.repos.first ? null : const EdgeInsets.only(top: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                decoration: BoxDecoration(
-                  color: context.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(AppTheme.radius),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(child: Text(r.name!)),
-                    Icon(Icons.arrow_forward_ios),
-                  ],
+          if (ctrl.repos.isNotEmpty) ...[
+            SectionHeader.withIcon(
+              text: 'Repositories',
+              icon: DevOpsIcons.repository,
+            ),
+            ...ctrl.repos.map(
+              (r) => InkWell(
+                onTap: () => ctrl.goToRepoDetail(r),
+                child: Container(
+                  margin: r == ctrl.repos.first ? null : const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: context.colorScheme.surface,
+                    borderRadius: BorderRadius.circular(AppTheme.radius),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(child: Text(r.name!)),
+                      Icon(Icons.arrow_forward_ios),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
           if (ctrl.pullRequests.isNotEmpty) ...[
             SectionHeader.withIcon(
               text: 'Pull requests',
