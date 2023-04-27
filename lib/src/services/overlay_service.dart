@@ -20,7 +20,7 @@ class OverlayService {
 
     await showCupertinoDialog(
       context: context,
-      routeSettings: RouteSettings(name: 'alert_$title'),
+      routeSettings: RouteSettings(name: 'alert_${title}_$description'),
       builder: (ctx) => Center(
         child: AlertDialog(
           title: Text(
@@ -92,7 +92,7 @@ class OverlayService {
 
     await showCupertinoDialog(
       context: context,
-      routeSettings: RouteSettings(name: 'alert_$title'),
+      routeSettings: RouteSettings(name: 'alert_${title}_$description'),
       builder: (ctx) => Center(
         child: AlertDialog(
           title: Text(
