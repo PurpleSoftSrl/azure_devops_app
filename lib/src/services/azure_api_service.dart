@@ -334,7 +334,10 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   void _addSentryBreadcrumb(String url, String method, Response res) {
-    if (kDebugMode) return;
+    if (kDebugMode) {
+      print('$method $url ${res.statusCode} ${res.reasonPhrase}');
+      return;
+    }
 
     final breadcrumb =
         Breadcrumb.http(url: Uri.parse(url), method: method, reason: res.reasonPhrase, statusCode: res.statusCode);
@@ -414,7 +417,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
     StorageServiceCore.instance!.setOrganization(_organization);
 
-    unawaited(_getUsers());
+    if (user != null) unawaited(_getUsers());
   }
 
   @override
