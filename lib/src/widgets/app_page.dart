@@ -74,7 +74,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> {
       (e, s) {
         print('Exception on init: $e');
         if (widget.notifier != null) {
-          widget.notifier!.value = widget.notifier!.value?.copyWith(isError: true) ?? ApiResponse.error();
+          widget.notifier!.value = widget.notifier!.value?.copyWith(isError: true) ?? ApiResponse.error(null);
         }
 
         final hint = Hint.withMap({'page_status': 'Page ${widget.title} init exception'});
@@ -263,7 +263,12 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> {
                 ),
               ),
               if (response != null && response.isError)
-                ErrorPage(description: 'Something went wrong', onRetry: widget.init)
+                ErrorPage(
+                  description: (response.errorResponse?.reasonPhrase?.isEmpty ?? true)
+                      ? 'Something went wrong'
+                      : response.errorResponse!.reasonPhrase!,
+                  onRetry: widget.init,
+                )
               else if (response == null)
                 Padding(
                   padding: EdgeInsets.only(top: paddingTop),
