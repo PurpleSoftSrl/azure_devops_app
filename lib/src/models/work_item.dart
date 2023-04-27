@@ -301,7 +301,7 @@ class System {
   factory System.fromJson(Map<String, dynamic> json) => System(
         displayName: json['displayName'] as String,
         url: json['url'] as String?,
-        links: SystemAssignedToLinks.fromJson(json['_links'] as Map<String, dynamic>),
+        links: json['_links'] == null ? null : SystemAssignedToLinks.fromJson(json['_links'] as Map<String, dynamic>),
         id: json['id'] as String,
         uniqueName: json['uniqueName'] as String,
         imageUrl: json['imageUrl'] as String,
@@ -320,7 +320,7 @@ class System {
 
   final String displayName;
   final String? url;
-  final SystemAssignedToLinks links;
+  final SystemAssignedToLinks? links;
   final String id;
   final String uniqueName;
   final String imageUrl;
@@ -329,7 +329,7 @@ class System {
   Map<String, dynamic> toJson() => {
         'displayName': displayName,
         'url': url,
-        '_links': links.toJson(),
+        '_links': links?.toJson(),
         'id': id,
         'uniqueName': uniqueName,
         'imageUrl': imageUrl,
