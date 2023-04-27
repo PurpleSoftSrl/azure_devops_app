@@ -41,6 +41,12 @@ Future<void> main(List<String> args) async {
           ..beforeSend = (evt, {hint}) {
             print('[sentry] ${evt.exceptions?[0].value}');
             if (kDebugMode) return null;
+
+            switch (evt.throwable.runtimeType.toString()) {
+              case 'HttpExceptionWithStatus':
+                return null;
+            }
+
             return evt..tags?.putIfAbsent('hint', () => hint.toString());
           };
       },
