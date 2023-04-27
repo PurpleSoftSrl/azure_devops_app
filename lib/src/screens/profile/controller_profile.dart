@@ -45,7 +45,7 @@ class _ProfileController {
 
     final res = commits.data?.take(100).toList();
 
-    recentCommits.value = ApiResponse.ok(res);
+    recentCommits.value = commits.copyWith(data: res);
   }
 
   Future<void> goToCommitDetail(Commit c) async {
