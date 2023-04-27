@@ -44,6 +44,8 @@ Future<void> main(List<String> args) async {
 
             switch (evt.throwable.runtimeType.toString()) {
               case 'HttpExceptionWithStatus':
+              case 'ClientException':
+              case '_ClientSocketException':
                 return null;
             }
 
