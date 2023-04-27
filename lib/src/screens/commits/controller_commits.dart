@@ -77,7 +77,7 @@ class _CommitsController {
 
     commits = commits.take(100).toList();
 
-    recentCommits.value = ApiResponse.ok(commits);
+    recentCommits.value = res.copyWith(data: commits);
   }
 
   Future<void> goToCommitDetail(Commit c) async {

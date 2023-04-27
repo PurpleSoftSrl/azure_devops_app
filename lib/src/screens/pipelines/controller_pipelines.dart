@@ -79,7 +79,7 @@ class _PipelinesController {
 
     pipes = pipes.take(100).toList();
 
-    pipelines.value = ApiResponse.ok(pipes);
+    pipelines.value = res.copyWith(data: pipes);
   }
 
   Future<void> goToPipelineDetail(Pipeline pipeline) async {
