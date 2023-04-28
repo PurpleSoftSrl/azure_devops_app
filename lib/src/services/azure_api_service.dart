@@ -22,7 +22,6 @@ import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/user_entitlements.dart';
 import 'package:azure_devops/src/models/work_item.dart';
 import 'package:azure_devops/src/models/work_item_type.dart';
-import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -350,7 +349,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
     Sentry.addBreadcrumb(breadcrumb);
 
-    if (res.isError && _user != null) {
+    if (res.isError && _user != null && ![401, 403].contains(res.statusCode)) {
       Sentry.captureEvent(
         SentryEvent(
           level: SentryLevel.warning,
