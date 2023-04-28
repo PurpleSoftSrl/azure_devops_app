@@ -358,10 +358,6 @@ class AzureApiServiceImpl implements AzureApiService {
           message: SentryMessage(res.reasonPhrase ?? ''),
         ),
       );
-
-      if ([401, 403].contains(res.statusCode)) {
-        OverlayService.snackbar('Unauthorized', isError: true);
-      }
     }
   }
 
