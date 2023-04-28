@@ -375,4 +375,12 @@ class StorageServiceMock implements StorageService {
   void clear() {
     throw UnimplementedError();
   }
+
+  @override
+  void increaseNumberOfSessions() {
+    throw UnimplementedError();
+  }
+
+  @override
+  int get numberOfSessions => throw UnimplementedError();
 }

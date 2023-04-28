@@ -31,6 +31,8 @@ class _HomeController {
     StorageServiceCore().setChosenProjects(existentProjects);
 
     _configureSentryScope();
+
+    await _maybeRequestReview();
   }
 
   Future<void> goToCommits() async {
@@ -68,5 +70,19 @@ class _HomeController {
       );
       await sc.setTag('org', apiService.organization);
     });
+  }
+
+  /// Shows review dialog only the 5th time the app is opened.
+  Future<void> _maybeRequestReview() async {
+    final numberOfSessions = StorageServiceCore().numberOfSessions;
+    if (numberOfSessions == 5) {
+      final inAppReview = InAppReview.instance;
+
+      if (await inAppReview.isAvailable()) {
+        await inAppReview.requestReview();
+      }
+    }
+
+    StorageServiceCore().increaseNumberOfSessions();
   }
 }

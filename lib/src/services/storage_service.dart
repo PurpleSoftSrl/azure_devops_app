@@ -20,6 +20,10 @@ abstract class StorageService {
   void clearNoToken();
 
   void clear();
+
+  int get numberOfSessions;
+
+  void increaseNumberOfSessions();
 }
 
 class StorageServiceCore implements StorageService {
@@ -102,6 +106,14 @@ class StorageServiceCore implements StorageService {
   void clear() {
     _helper!.clear();
   }
+
+  @override
+  int get numberOfSessions => _helper!.getInt(_Keys.numberOfSessions) ?? 0;
+
+  @override
+  void increaseNumberOfSessions() {
+    _helper!.setInt(_Keys.numberOfSessions, numberOfSessions + 1);
+  }
 }
 
 class _StorageServiceHelper {
@@ -129,14 +141,24 @@ class _StorageServiceHelper {
     _instance!.setString(key, value);
   }
 
-  void setStringList(String key, List<String> value) {
-    _assertIsInitialized();
-    _instance!.setStringList(key, value);
-  }
-
   String? getString(String key) {
     _assertIsInitialized();
     return _instance!.getString(key);
+  }
+
+  void setInt(String key, int value) {
+    _assertIsInitialized();
+    _instance!.setInt(key, value);
+  }
+
+  int? getInt(String key) {
+    _assertIsInitialized();
+    return _instance!.getInt(key);
+  }
+
+  void setStringList(String key, List<String> value) {
+    _assertIsInitialized();
+    _instance!.setStringList(key, value);
   }
 
   List<String>? getStringList(String key) {
@@ -169,6 +191,7 @@ class _Keys {
   static const chosenProjects = 'chosenProjects';
   static const theme = 'theme';
   static const org = 'org';
+  static const numberOfSessions = 'numberOfSessions';
 }
 
 class StorageServiceInherited extends InheritedWidget {

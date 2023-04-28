@@ -189,6 +189,28 @@ class _SettingsScreen extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(
+            height: 20,
+          ),
+          InkWell(
+            onTap: ctrl.openAppStore,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: context.colorScheme.surface,
+                borderRadius: BorderRadius.circular(AppTheme.radius),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Leave a review'),
+                    Icon(Icons.rate_review_outlined),
+                  ],
+                ),
+              ),
+            ),
+          ),
           SectionHeader(
             text: 'App settings',
           ),

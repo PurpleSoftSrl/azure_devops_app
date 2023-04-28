@@ -95,4 +95,8 @@ class _SettingsController {
 
     link?.call();
   }
+
+  void openAppStore() {
+    InAppReview.instance.openStoreListing(appStoreId: '1666994628');
+  }
 }
