@@ -148,6 +148,7 @@ class Author {
         email: json['email'] as String?,
         date: DateTime.tryParse(json['date']?.toString() ?? '')?.toLocal(),
       );
+
   Author({
     required this.name,
     required this.email,
@@ -175,6 +176,9 @@ class Author {
       date: date ?? this.date,
     );
   }
+
+  @override
+  String toString() => 'Author(name: $name, email: $email, date: $date)';
 }
 
 class _ChangeCounts {
@@ -183,6 +187,7 @@ class _ChangeCounts {
         edit: json['Edit'] as int?,
         delete: json['Delete'] as int?,
       );
+
   _ChangeCounts({
     required this.add,
     required this.edit,
@@ -198,4 +203,7 @@ class _ChangeCounts {
         'Edit': edit,
         'Delete': delete,
       };
+
+  @override
+  String toString() => '_ChangeCounts(add: $add, edit: $edit, delete: $delete)';
 }

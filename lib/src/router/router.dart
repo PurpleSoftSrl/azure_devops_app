@@ -300,6 +300,9 @@ class PipelineLogsArgs {
 
   final Pipeline pipeline;
   final Record task;
+
+  @override
+  String toString() => 'PipelineLogsArgs(pipeline: $pipeline, task: $task)';
 }
 
 class FileDiffArgs {
@@ -312,4 +315,7 @@ class FileDiffArgs {
   final Commit commit;
   final String filePath;
   final bool isAdded;
+
+  @override
+  String toString() => 'FileDiffArgs(commit: $commit, filePath: $filePath, isAdded: $isAdded)';
 }
