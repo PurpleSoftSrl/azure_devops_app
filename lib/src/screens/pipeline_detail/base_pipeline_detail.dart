@@ -1,5 +1,7 @@
 library pipeline_detail;
 
+import 'dart:async';
+
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/extensions/duration_extension.dart';

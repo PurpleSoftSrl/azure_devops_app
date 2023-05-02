@@ -30,12 +30,35 @@ class _PipelineDetailController {
 
   final pipeStages = ValueNotifier<List<_Stage>?>(null);
 
+  Timer? _timer;
+
   void dispose() {
+    _timer?.cancel();
+    _timer = null;
+
     instance = null;
     _instances.remove(pipeline.hashCode);
   }
 
   Future<void> init() async {
+    await _init();
+
+    if (buildDetail.value != null) {
+      final pipeStatus = buildDetail.value!.data!.status;
+
+      // auto refresh page every 10 seconds until pipeline is completed
+      if (pipeStatus == PipelineStatus.notStarted || pipeStatus == PipelineStatus.inProgress) {
+        _timer = Timer.periodic(Duration(seconds: 10), (timer) async {
+          await _init();
+          if (buildDetail.value!.data!.status == PipelineStatus.completed) {
+            timer.cancel();
+          }
+        });
+      }
+    }
+  }
+
+  Future<void> _init() async {
     final res = await apiService.getPipeline(projectName: pipeline.project!.name!, id: pipeline.id!);
     buildDetail.value = res;
 
