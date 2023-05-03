@@ -45,4 +45,12 @@ class _PipelineLogsController {
 
     return null;
   }
+
+  String _getBuildWebUrl() {
+    return '${apiService.basePath}/${args.pipeline.project!.name}/_build/results?buildId=${args.pipeline.id}&view=logs&j=${args.task.parentId}&t=${args.task.id}';
+  }
+
+  void shareLogs() {
+    Share.share(_getBuildWebUrl());
+  }
 }

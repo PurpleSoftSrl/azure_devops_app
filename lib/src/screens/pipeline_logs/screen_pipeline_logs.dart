@@ -16,6 +16,12 @@ class _PipelineLogsScreen extends StatelessWidget {
       onEmpty: (_) => Text('No logs found'),
       padding: const EdgeInsets.only(left: 8),
       showScrollbar: true,
+      actions: [
+        IconButton(
+          onPressed: ctrl.shareLogs,
+          icon: Icon(DevOpsIcons.share),
+        ),
+      ],
       builder: (logs) => SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Column(
