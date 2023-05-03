@@ -276,6 +276,11 @@ class Pipeline {
         repository.hashCode ^
         triggeredByBuild.hashCode;
   }
+
+  @override
+  String toString() {
+    return 'Pipeline(triggerInfo: $triggerInfo, id: $id, buildNumber: $buildNumber, status: $status, result: $result, queueTime: $queueTime, startTime: $startTime, finishTime: $finishTime, url: $url, definition: $definition, buildNumberRevision: $buildNumberRevision, project: $project, uri: $uri, sourceBranch: $sourceBranch, sourceVersion: $sourceVersion, queuePosition: $queuePosition, priority: $priority, reason: $reason, requestedFor: $requestedFor, requestedBy: $requestedBy, repository: $repository, triggeredByBuild: $triggeredByBuild)';
+  }
 }
 
 class _Definition {
@@ -291,6 +296,7 @@ class _Definition {
         revision: json['revision'] as int?,
         project: Project.fromJson(json['project'] as Map<String, dynamic>),
       );
+
   _Definition({
     required this.drafts,
     required this.id,
@@ -327,6 +333,11 @@ class _Definition {
         'revision': revision,
         'project': project!.toJson(),
       };
+
+  @override
+  String toString() {
+    return '_Definition(drafts: $drafts, id: $id, name: $name, url: $url, uri: $uri, path: $path, type: $type, queueStatus: $queueStatus, revision: $revision, project: $project)';
+  }
 }
 
 class _LastChangedBy {
@@ -387,12 +398,18 @@ class _LastChangedBy {
       descriptor: descriptor ?? this.descriptor,
     );
   }
+
+  @override
+  String toString() {
+    return '_LastChangedBy(displayName: $displayName, url: $url, links: $links, id: $id, uniqueName: $uniqueName, imageUrl: $imageUrl, descriptor: $descriptor)';
+  }
 }
 
 class _LastChangedByLinks {
   factory _LastChangedByLinks.fromJson(Map<String, dynamic> json) => _LastChangedByLinks(
         avatar: _Badge.fromJson(json['avatar'] as Map<String, dynamic>),
       );
+
   _LastChangedByLinks({
     required this.avatar,
   });
@@ -402,12 +419,16 @@ class _LastChangedByLinks {
   Map<String, dynamic> toJson() => {
         'avatar': avatar!.toJson(),
       };
+
+  @override
+  String toString() => '_LastChangedByLinks(avatar: $avatar)';
 }
 
 class _Badge {
   factory _Badge.fromJson(Map<String, dynamic> json) => _Badge(
         href: json['href'] as String?,
       );
+
   _Badge({
     required this.href,
   });
@@ -417,6 +438,9 @@ class _Badge {
   Map<String, dynamic> toJson() => {
         'href': href,
       };
+
+  @override
+  String toString() => '_Badge(href: $href)';
 }
 
 class _Repository {
@@ -428,6 +452,7 @@ class _Repository {
         clean: json['clean'],
         checkoutSubmodules: json['checkoutSubmodules'] as bool?,
       );
+
   _Repository({
     required this.id,
     required this.type,
@@ -452,6 +477,11 @@ class _Repository {
         'clean': clean,
         'checkoutSubmodules': checkoutSubmodules,
       };
+
+  @override
+  String toString() {
+    return '_Repository(id: $id, type: $type, name: $name, url: $url, clean: $clean, checkoutSubmodules: $checkoutSubmodules)';
+  }
 }
 
 class _TriggerInfo {
@@ -461,6 +491,7 @@ class _TriggerInfo {
         ciMessage: json['ci.message'] as String?,
         ciTriggerRepository: json['ci.triggerRepository'] as String?,
       );
+
   _TriggerInfo({
     required this.ciSourceBranch,
     required this.ciSourceSha,
@@ -492,6 +523,11 @@ class _TriggerInfo {
       ciMessage: ciMessage ?? this.ciMessage,
       ciTriggerRepository: ciTriggerRepository ?? this.ciTriggerRepository,
     );
+  }
+
+  @override
+  String toString() {
+    return '_TriggerInfo(ciSourceBranch: $ciSourceBranch, ciSourceSha: $ciSourceSha, ciMessage: $ciMessage, ciTriggerRepository: $ciTriggerRepository)';
   }
 }
 
