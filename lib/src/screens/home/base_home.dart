@@ -13,6 +13,7 @@ import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:azure_devops/src/widgets/section_header.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';

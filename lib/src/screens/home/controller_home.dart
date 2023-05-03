@@ -33,6 +33,8 @@ class _HomeController {
     _configureSentryScope();
 
     await _maybeRequestReview();
+
+    _logSession();
   }
 
   Future<void> goToCommits() async {
@@ -84,5 +86,13 @@ class _HomeController {
     }
 
     StorageServiceCore().increaseNumberOfSessions();
+  }
+
+  void _logSession() {
+    Timer(Duration(seconds: 5), () {
+      if (kReleaseMode && apiService.user != null) {
+        Sentry.captureMessage('5 seconds session');
+      }
+    });
   }
 }
