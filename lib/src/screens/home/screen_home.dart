@@ -14,19 +14,6 @@ class _HomeScreen extends StatelessWidget {
       init: ctrl.init,
       dispose: ctrl.dispose,
       title: ctrl.apiService.organization,
-      onEmpty: (onRetry) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('No chosen projects'),
-          const SizedBox(
-            height: 48,
-          ),
-          LoadingButton(
-            onPressed: onRetry,
-            text: 'Choose some projects',
-          ),
-        ],
-      ),
       builder: (projects) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -73,13 +60,19 @@ class _HomeScreen extends StatelessWidget {
             text: 'Projects',
             icon: DevOpsIcons.list,
           ),
-          ...projects.map(
-            (p) => _ProjectCard(
-              parameters: parameters,
-              project: p,
-              onTap: ctrl.goToProjectDetail,
+          if (projects.isEmpty)
+            Text(
+              'No project found',
+              style: context.textTheme.labelLarge,
+            )
+          else
+            ...projects.map(
+              (p) => _ProjectCard(
+                parameters: parameters,
+                project: p,
+                onTap: ctrl.goToProjectDetail,
+              ),
             ),
-          ),
           const SizedBox(
             height: 40,
           ),
