@@ -41,6 +41,7 @@ class _MemberDetailController {
 
     if (userRes.isError || userRes.data == null) {
       recentCommits.value = [];
+      user.value = userRes;
       return;
     }
 

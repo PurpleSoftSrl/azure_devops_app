@@ -1073,7 +1073,12 @@ class AzureApiServiceImpl implements AzureApiService {
       await _getUsers();
     }
 
-    return ApiResponse.ok(_allUsers.firstWhereOrNull((u) => u.descriptor == descriptor));
+    final user = _allUsers.firstWhereOrNull((u) => u.descriptor == descriptor);
+    if (user == null) {
+      return ApiResponse.error(null);
+    }
+
+    return ApiResponse.ok(user);
   }
 
   Future<ApiResponse> _getUsers() async {
