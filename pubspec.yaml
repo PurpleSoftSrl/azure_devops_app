@@ -20,7 +20,7 @@ dependencies:
   cached_network_image:
   package_info_plus:
   flutter_markdown:
-  simple_html_css:
+  flutter_html:
   flutter_highlight:
   in_app_review:
   purple_theme:

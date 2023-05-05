@@ -163,16 +163,28 @@ class _WorkItemDetailScreen extends StatelessWidget {
                 'Description:',
                 style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
               ),
-              RichText(
-                text: HTML.toTextSpan(
-                  context,
-                  defaultTextStyle: context.textTheme.titleSmall,
-                  detail.fields.systemDescription!,
-                  linksCallback: (str) async {
-                    final url = str.toString();
-                    if (await canLaunchUrlString(url)) await launchUrlString(url);
-                  },
-                ),
+              Html(
+                data: detail.fields.systemDescription!,
+                onLinkTap: (str, _, __, ___) async {
+                  final url = str.toString();
+                  if (await canLaunchUrlString(url)) await launchUrlString(url);
+                },
+                customRenders: {
+                  (ctx) => ctx.tree.element?.localName == 'img': CustomRender.widget(
+                    widget: (ctx, child) => Image.network(
+                      ctx.tree.attributes['src']!,
+                      headers: ctrl.apiService.headers,
+                      fit: BoxFit.contain,
+                      height: double.tryParse(ctx.tree.attributes['height'] ?? ''),
+                      width: double.tryParse(ctx.tree.attributes['width'] ?? ''),
+                      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) =>
+                          frame == null ? const CircularProgressIndicator() : child,
+                    ),
+                  ),
+                  (ctx) => ctx.tree.element?.localName == 'br': CustomRender.widget(
+                    widget: (ctx, child) => const Text('\n'),
+                  ),
+                },
               ),
             ],
             const Divider(

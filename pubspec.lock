@@ -238,6 +238,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.0"
+  flutter_html:
+    dependency: "direct main"
+    description:
+      name: flutter_html
+      sha256: "342c7908f0a67bcec62b6e0f7cf23e23bafe7f64693665dd35be98d5e783bdfd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0-alpha.6"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -296,14 +304,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.15.2"
-  html_unescape:
-    dependency: transitive
-    description:
-      name: html_unescape
-      sha256: "15362d7a18f19d7b742ef8dcb811f5fd2a2df98db9f80ea393c075189e0b61e3"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   http:
     dependency: "direct main"
     description:
@@ -408,6 +408,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  numerus:
+    dependency: transitive
+    description:
+      name: numerus
+      sha256: "436759d84f233b40107d0cc31cfa92d24e0960afeb2e506be70926d4cddffd9e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   octo_image:
     dependency: transitive
     description:
@@ -682,14 +690,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
-  simple_html_css:
-    dependency: "direct main"
-    description:
-      name: simple_html_css
-      sha256: af730b15c0b37c97a14b6aeceabe68128855c4630dc500030f3c3e176e8fc57f
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.0.0"
   sky_engine:
     dependency: transitive
     description: flutter
