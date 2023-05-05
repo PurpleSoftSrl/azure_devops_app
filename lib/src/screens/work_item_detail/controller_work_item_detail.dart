@@ -57,6 +57,7 @@ class _WorkItemDetailController {
   List<WorkItemStatus> statuses = [];
 
   List<WorkItemUpdate> updates = [];
+  final showUpdatesReversed = ValueNotifier(true);
 
   void dispose() {
     instance = null;
@@ -85,6 +86,10 @@ class _WorkItemDetailController {
   Future<void> _getStatuses(String workItemType) async {
     final statusesRes = await apiService.getWorkItemStatuses(projectName: item.teamProject, type: workItemType);
     statuses = statusesRes.data ?? [];
+  }
+
+  void toggleShowUpdatesReversed() {
+    showUpdatesReversed.value = !showUpdatesReversed.value;
   }
 
   void shareWorkItem() {
