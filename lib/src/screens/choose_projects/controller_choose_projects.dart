@@ -55,8 +55,12 @@ class _ChooseProjectsController {
       chooseAll.value = true;
     }
 
-    chosenProjects.value = ApiResponse.ok(
-      GetProjectsResponse(projects: (alreadyChosenProjects.isNotEmpty ? alreadyChosenProjects : projects).toList()),
+    chosenProjects.value = ApiResponse(
+      isError: projectsRes.isError,
+      data: GetProjectsResponse(
+        projects: (alreadyChosenProjects.isNotEmpty ? alreadyChosenProjects : projects).toList(),
+      ),
+      errorResponse: projectsRes.errorResponse,
     );
   }
 
