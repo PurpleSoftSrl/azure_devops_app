@@ -21,6 +21,12 @@ class _HomeController {
     final allProjectsRes = await apiService.getProjects();
     final allProjects = allProjectsRes.data ?? [];
 
+    // avoid resetting projects if response is error (and thus contains zero projects)
+    if (allProjectsRes.isError) {
+      projects.value = allProjectsRes;
+      return;
+    }
+
     final alreadyChosenProjects = StorageServiceCore().getChosenProjects();
 
     final existentProjects = alreadyChosenProjects.where((p) => allProjects.map((e) => e.id!).contains(p.id));
