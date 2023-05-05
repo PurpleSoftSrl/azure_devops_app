@@ -191,6 +191,8 @@ abstract class AzureApiService {
 
   Future<ApiResponse<GraphUser>> getUserFromDescriptor({required String descriptor});
 
+  Future<ApiResponse<GraphUser>> getUserFromDisplayName({required String name});
+
   Future<ApiResponse<List<TeamMember>>> getProjectTeams({required String projectId});
 
   Future<ApiResponse<PullRequest>> getPullRequest({required String projectName, required int id});
@@ -1074,6 +1076,22 @@ class AzureApiServiceImpl implements AzureApiService {
     }
 
     final user = _allUsers.firstWhereOrNull((u) => u.descriptor == descriptor);
+    if (user == null) {
+      return ApiResponse.error(null);
+    }
+
+    return ApiResponse.ok(user);
+  }
+
+  @override
+  Future<ApiResponse<GraphUser>> getUserFromDisplayName({
+    required String name,
+  }) async {
+    if (_allUsers.isEmpty) {
+      await _getUsers();
+    }
+
+    final user = _allUsers.firstWhereOrNull((u) => u.displayName == name);
     if (user == null) {
       return ApiResponse.error(null);
     }

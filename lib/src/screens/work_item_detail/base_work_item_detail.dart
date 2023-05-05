@@ -1,5 +1,7 @@
 library work_item_detail;
 
+import 'dart:async';
+
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/extensions/work_item_extension.dart';

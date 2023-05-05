@@ -68,6 +68,22 @@ class _HtmlWidget extends StatelessWidget {
         (ctx) => ctx.tree.element?.localName == 'br': CustomRender.widget(
           widget: (ctx, child) => const Text('\n'),
         ),
+        (ctx) => ctx.tree.element?.localName == 'a' && ctx.tree.attributes['data-vss-mention'] != null:
+            CustomRender.widget(
+          widget: (ctx, child) => GestureDetector(
+            onTap: () async {
+              final name = ctx.tree.element!.innerHtml.substring(1);
+              final user = await apiService.getUserFromDisplayName(name: name);
+              if (user.isError) return;
+
+              unawaited(AppRouter.goToMemberDetail(user.data!.descriptor!));
+            },
+            child: Text(
+              ctx.tree.element!.innerHtml,
+              style: context.textTheme.labelSmall!.copyWith(color: Colors.blue, decoration: TextDecoration.underline),
+            ),
+          ),
+        ),
       },
     );
   }

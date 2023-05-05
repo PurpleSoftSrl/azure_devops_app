@@ -332,6 +332,11 @@ class AzureApiServiceMock implements AzureApiService {
   }) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<ApiResponse<GraphUser>> getUserFromDisplayName({required String name}) {
+    throw UnimplementedError();
+  }
 }
 
 class StorageServiceMock implements StorageService {
