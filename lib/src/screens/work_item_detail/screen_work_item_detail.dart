@@ -178,7 +178,39 @@ class _WorkItemDetailScreen extends StatelessWidget {
                       height: double.tryParse(ctx.tree.attributes['height'] ?? ''),
                       width: double.tryParse(ctx.tree.attributes['width'] ?? ''),
                       frameBuilder: (context, child, frame, wasSynchronouslyLoaded) =>
-                          frame == null ? const CircularProgressIndicator() : child,
+                          frame == null ? Center(child: const CircularProgressIndicator()) : child,
+                    ),
+                  ),
+                  (ctx) => ctx.tree.element?.localName == 'br': CustomRender.widget(
+                    widget: (ctx, child) => const Text('\n'),
+                  ),
+                },
+              ),
+            ],
+            if (detail.fields.reproSteps != null) ...[
+              const SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Repro Steps:',
+                style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+              ),
+              Html(
+                data: detail.fields.reproSteps!,
+                onLinkTap: (str, _, __, ___) async {
+                  final url = str.toString();
+                  if (await canLaunchUrlString(url)) await launchUrlString(url);
+                },
+                customRenders: {
+                  (ctx) => ctx.tree.element?.localName == 'img': CustomRender.widget(
+                    widget: (ctx, child) => Image.network(
+                      ctx.tree.attributes['src']!,
+                      headers: ctrl.apiService.headers,
+                      fit: BoxFit.contain,
+                      height: double.tryParse(ctx.tree.attributes['height'] ?? ''),
+                      width: double.tryParse(ctx.tree.attributes['width'] ?? ''),
+                      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) =>
+                          frame == null ? Center(child: const CircularProgressIndicator()) : child,
                     ),
                   ),
                   (ctx) => ctx.tree.element?.localName == 'br': CustomRender.widget(

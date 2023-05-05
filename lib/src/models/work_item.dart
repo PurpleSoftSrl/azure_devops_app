@@ -225,6 +225,7 @@ class GetWorkItemDetailResponseFields {
         microsoftVstsCommonPriority: json['Microsoft.VSTS.Common.Priority'] as int?,
         microsoftVstsCommonValueArea: json['Microsoft.VSTS.Common.ValueArea'] as String?,
         systemDescription: json['System.Description'] as String?,
+        reproSteps: json['Microsoft.VSTS.TCM.ReproSteps'] as String?,
       );
 
   GetWorkItemDetailResponseFields({
@@ -247,6 +248,7 @@ class GetWorkItemDetailResponseFields {
     required this.microsoftVstsCommonPriority,
     required this.microsoftVstsCommonValueArea,
     required this.systemDescription,
+    required this.reproSteps,
   });
 
   final String systemAreaPath;
@@ -268,6 +270,7 @@ class GetWorkItemDetailResponseFields {
   final int? microsoftVstsCommonPriority;
   final String? microsoftVstsCommonValueArea;
   final String? systemDescription;
+  final String? reproSteps;
 
   Map<String, dynamic> toJson() => {
         'System.AreaPath': systemAreaPath,
@@ -289,6 +292,7 @@ class GetWorkItemDetailResponseFields {
         'Microsoft.VSTS.Common.Priority': microsoftVstsCommonPriority,
         'Microsoft.VSTS.Common.ValueArea': microsoftVstsCommonValueArea,
         'System.Description': systemDescription,
+        'Microsoft.VSTS.TCM.ReproSteps': reproSteps,
       };
 
   @override
