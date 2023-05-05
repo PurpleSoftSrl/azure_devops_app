@@ -68,10 +68,10 @@ class AppTheme {
         'dark': _getCustomTheme(_darkColorScheme),
       };
 
+  static final defaultFont = GoogleFonts.notoSans().fontFamily;
+
   // ignore: long-method
   static ThemeData _getCustomTheme(ColorScheme colorScheme) {
-    final defaultFont = GoogleFonts.notoSans().fontFamily;
-
     final letterSpacing = .5;
 
     final isTablet = (MediaQueryData.fromWindow(window).size.width) >= tabletBeakpoint;

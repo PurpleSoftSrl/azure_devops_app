@@ -22,6 +22,7 @@ import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/user_entitlements.dart';
 import 'package:azure_devops/src/models/work_item.dart';
 import 'package:azure_devops/src/models/work_item_type.dart';
+import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -65,6 +66,11 @@ abstract class AzureApiService {
   Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes();
 
   Future<ApiResponse<WorkItemDetail>> getWorkItemDetail({
+    required String projectName,
+    required int workItemId,
+  });
+
+  Future<ApiResponse<List<WorkItemUpdate>>> getWorkItemUpdates({
     required String projectName,
     required int workItemId,
   });
@@ -519,6 +525,20 @@ class AzureApiServiceImpl implements AzureApiService {
     if (workItemRes.isError) return ApiResponse.error(workItemRes);
 
     return ApiResponse.ok(WorkItemDetail.fromJson(jsonDecode(workItemRes.body) as Map<String, dynamic>));
+  }
+
+  @override
+  Future<ApiResponse<List<WorkItemUpdate>>> getWorkItemUpdates({
+    required String projectName,
+    required int workItemId,
+  }) async {
+    final workItemUpdatesRes =
+        await _get('$_basePath/$projectName/_apis/wit/workitems/$workItemId/updates?$_apiVersion');
+    if (workItemUpdatesRes.isError) return ApiResponse.error(workItemUpdatesRes);
+
+    return ApiResponse.ok(
+      WorkItemUpdatesResponse.fromJson(jsonDecode(workItemUpdatesRes.body) as Map<String, dynamic>).updates,
+    );
   }
 
   @override

@@ -56,6 +56,8 @@ class _WorkItemDetailController {
 
   List<WorkItemStatus> statuses = [];
 
+  List<WorkItemUpdate> updates = [];
+
   void dispose() {
     instance = null;
     _instances.remove(item.hashCode);
@@ -63,6 +65,8 @@ class _WorkItemDetailController {
 
   Future<void> init() async {
     final res = await apiService.getWorkItemDetail(projectName: item.teamProject, workItemId: item.id);
+
+    await _getUpdates();
     itemDetail.value = res;
 
     users = apiService.allUsers
@@ -71,6 +75,11 @@ class _WorkItemDetailController {
         .toList();
 
     await _getStatuses(item.workItemType);
+  }
+
+  Future<void> _getUpdates() async {
+    final res = await apiService.getWorkItemUpdates(projectName: item.teamProject, workItemId: item.id);
+    updates = res.data ?? [];
   }
 
   Future<void> _getStatuses(String workItemType) async {

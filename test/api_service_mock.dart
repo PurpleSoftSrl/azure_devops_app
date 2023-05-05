@@ -14,6 +14,7 @@ import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/work_item.dart';
 import 'package:azure_devops/src/models/work_item_type.dart';
+import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 
@@ -222,6 +223,14 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<WorkItemDetail>> getWorkItemDetail({
+    required String projectName,
+    required int workItemId,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<WorkItemUpdate>>> getWorkItemUpdates({
     required String projectName,
     required int workItemId,
   }) {
