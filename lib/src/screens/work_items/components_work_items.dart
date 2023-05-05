@@ -51,6 +51,14 @@ class _WorkItemListTile extends StatelessWidget {
                 ),
                 Row(
                   children: [
+                    Text(
+                      '#${item.id}',
+                      style: subtitleStyle,
+                    ),
+                    Text(
+                      ' in ',
+                      style: subtitleStyle.copyWith(color: context.colorScheme.onSecondary),
+                    ),
                     Expanded(
                       child: Text(
                         item.teamProject,
