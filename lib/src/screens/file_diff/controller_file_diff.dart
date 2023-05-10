@@ -1,6 +1,6 @@
 part of file_diff;
 
-class _FileDiffController {
+class _FileDiffController with ShareMixin {
   factory _FileDiffController({required AzureApiService apiService, required FileDiffArgs args}) {
     return instance ??= _FileDiffController._(apiService, args);
   }
@@ -55,7 +55,7 @@ class _FileDiffController {
   }
 
   void shareDiff() {
-    Share.share(diffUrl);
+    shareUrl(diffUrl);
   }
 
   int _getTextWidth(String b) {

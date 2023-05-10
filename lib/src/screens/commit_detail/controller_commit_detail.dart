@@ -1,6 +1,6 @@
 part of commit_detail;
 
-class _CommitDetailController {
+class _CommitDetailController with ShareMixin {
   factory _CommitDetailController({required Commit commit, required AzureApiService apiService}) {
     // handle page already in memory with a different commit
     if (_instances[commit.hashCode] != null) {
@@ -73,7 +73,7 @@ class _CommitDetailController {
   }
 
   void shareDiff() {
-    Share.share(diffUrl);
+    shareUrl(diffUrl);
   }
 
   String get diffUrl =>

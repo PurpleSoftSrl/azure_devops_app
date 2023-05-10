@@ -1,6 +1,6 @@
 part of pipeline_detail;
 
-class _PipelineDetailController {
+class _PipelineDetailController with ShareMixin {
   factory _PipelineDetailController({required Pipeline pipeline, required AzureApiService apiService}) {
     // handle page already in memory with a different build
     if (_instances[pipeline.hashCode] != null) {
@@ -162,7 +162,7 @@ class _PipelineDetailController {
   }
 
   void shareBuild() {
-    Share.share(getBuildWebUrl());
+    shareUrl(getBuildWebUrl());
   }
 
   Duration getQueueTime() {

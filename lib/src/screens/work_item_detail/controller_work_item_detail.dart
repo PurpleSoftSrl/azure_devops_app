@@ -1,6 +1,6 @@
 part of work_item_detail;
 
-class _WorkItemDetailController {
+class _WorkItemDetailController with ShareMixin {
   factory _WorkItemDetailController({
     required WorkItem item,
     required AzureApiService apiService,
@@ -93,7 +93,7 @@ class _WorkItemDetailController {
   }
 
   void shareWorkItem() {
-    Share.share(itemWebUrl);
+    shareUrl(itemWebUrl);
   }
 
   void goToProject() {

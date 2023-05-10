@@ -1,6 +1,6 @@
 part of settings;
 
-class _SettingsController {
+class _SettingsController with ShareMixin {
   factory _SettingsController({required AzureApiService apiService}) {
     return instance ??= _SettingsController._(apiService);
   }
@@ -34,7 +34,7 @@ class _SettingsController {
         ? 'https://play.google.com/store/apps/details?id=io.purplesoft.azuredevops'
         : 'https://apps.apple.com/app/apple-store/id1666994628?pt=120276127&ct=app&mt=8';
 
-    Share.share(appUrl);
+    shareUrl(appUrl);
   }
 
   Future<void> logout() async {

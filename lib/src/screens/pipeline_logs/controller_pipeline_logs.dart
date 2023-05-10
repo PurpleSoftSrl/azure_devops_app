@@ -1,6 +1,6 @@
 part of pipeline_logs;
 
-class _PipelineLogsController {
+class _PipelineLogsController with ShareMixin {
   factory _PipelineLogsController({required AzureApiService apiService, required PipelineLogsArgs args}) {
     return instance ??= _PipelineLogsController._(apiService, args);
   }
@@ -51,6 +51,6 @@ class _PipelineLogsController {
   }
 
   void shareLogs() {
-    Share.share(_getBuildWebUrl());
+    shareUrl(_getBuildWebUrl());
   }
 }

@@ -4,9 +4,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
+import 'package:azure_devops/src/mixins/share_mixin.dart';
 import 'package:azure_devops/src/router/router.dart';
-import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
+import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/theme/theme.dart';
@@ -18,7 +19,6 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:purple_theme/purple_theme.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/link.dart';
 
 part 'components_settings.dart';

@@ -1,6 +1,6 @@
 part of pull_request_detail;
 
-class _PullRequestDetailController {
+class _PullRequestDetailController with ShareMixin {
   factory _PullRequestDetailController({required PullRequest pullRequest, required AzureApiService apiService}) {
     // handle page already in memory with a different work item
     if (_instances[pullRequest.hashCode] != null) {
@@ -58,7 +58,7 @@ class _PullRequestDetailController {
   }
 
   void sharePr() {
-    Share.share(prWebUrl);
+    shareUrl(prWebUrl);
   }
 
   void goToRepo() {
