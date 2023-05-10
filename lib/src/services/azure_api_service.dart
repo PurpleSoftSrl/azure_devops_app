@@ -947,9 +947,13 @@ class AzureApiServiceImpl implements AzureApiService {
         ),
     ]);
 
+    var isAllCommitsError = true;
+
     for (final res in allProjectCommits) {
-      if (res.isError) return ApiResponse.error(allProjectCommits.firstOrNull);
+      isAllCommitsError &= res.isError;
     }
+
+    if (isAllCommitsError) return ApiResponse.error(allProjectCommits.firstOrNull);
 
     final res = allProjectCommits
         .map((res) => GetCommitsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).commits)
