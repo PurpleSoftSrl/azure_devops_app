@@ -279,7 +279,7 @@ class Pipeline {
 
   @override
   String toString() {
-    return 'Pipeline(triggerInfo: $triggerInfo, id: $id, buildNumber: $buildNumber, status: $status, result: $result, queueTime: $queueTime, startTime: $startTime, finishTime: $finishTime, url: $url, definition: $definition, buildNumberRevision: $buildNumberRevision, project: $project, uri: $uri, sourceBranch: $sourceBranch, sourceVersion: $sourceVersion, queuePosition: $queuePosition, priority: $priority, reason: $reason, requestedFor: $requestedFor, requestedBy: $requestedBy, repository: $repository, triggeredByBuild: $triggeredByBuild)';
+    return 'Pipeline(triggerInfo: $triggerInfo, id: $id, buildNumber: $buildNumber, status: $status, result: $result, queueTime: $queueTime, startTime: $startTime, finishTime: $finishTime, repository: $repository, project: $project, url: $url, buildNumberRevision: $buildNumberRevision, uri: $uri, sourceBranch: $sourceBranch, sourceVersion: $sourceVersion, queuePosition: $queuePosition, priority: $priority, reason: $reason, requestedFor: $requestedFor, requestedBy: $requestedBy, triggeredByBuild: $triggeredByBuild)';
   }
 }
 

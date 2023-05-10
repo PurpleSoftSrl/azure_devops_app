@@ -67,7 +67,7 @@ class PipelineListTile extends StatelessWidget {
                         ),
                         Expanded(
                           child: Text(
-                            pipe.repository?.name ?? '',
+                            pipe.repository?.name ?? '-',
                             overflow: TextOverflow.ellipsis,
                             style: subtitleStyle,
                           ),

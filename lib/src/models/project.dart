@@ -85,6 +85,11 @@ class Project {
   int get hashCode {
     return id.hashCode;
   }
+
+  @override
+  String toString() {
+    return 'Project(id: $id, name: $name, description: $description, url: $url, state: $state, revision: $revision, visibility: $visibility, lastUpdateTime: $lastUpdateTime, defaultTeam: $defaultTeam, defaultTeamImageUrl: $defaultTeamImageUrl)';
+  }
 }
 
 class _DefaultTeam {
