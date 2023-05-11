@@ -6,23 +6,24 @@ publish_to: 'none'
 
 environment:
   sdk: '>=2.19.0 <3.0.0'
+  flutter: '>=3.7.12'
 
 dependencies:
   flutter: { sdk: flutter }
-  google_fonts:
-  http:
-  shared_preferences:
-  pull_to_refresh_flutter3: 
-  intl:
-  url_launcher:
-  share_plus:
-  sentry_flutter:
-  cached_network_image:
-  package_info_plus:
-  flutter_markdown:
-  flutter_html:
-  flutter_highlight:
-  in_app_review:
+  google_fonts: ^4.0.4
+  http: ^0.13.6
+  shared_preferences: ^2.1.1
+  pull_to_refresh_flutter3: ^2.0.1
+  intl: ^0.18.1
+  url_launcher: ^6.1.11
+  share_plus: ^7.0.0
+  sentry_flutter: ^7.5.2
+  cached_network_image: ^3.2.3
+  package_info_plus: ^3.1.2
+  flutter_markdown: ^0.6.14
+  flutter_html: ^3.0.0-alpha.6
+  flutter_highlight: ^0.7.0
+  in_app_review: ^2.0.6
   purple_theme:
    git:
     url: https://github.com/PurpleSoftSrl/flutter_theme_manager
@@ -30,7 +31,7 @@ dependencies:
 
 dev_dependencies:
   flutter_test: { sdk: flutter }
-  flutter_launcher_icons:
+  flutter_launcher_icons: ^0.13.1
   purple_lints:
     git:
       url: https://github.com/PurpleSoftSrl/flutter_lints
