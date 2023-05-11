@@ -1,18 +1,21 @@
 class GetUserEntitlementsResponse {
   factory GetUserEntitlementsResponse.fromJson(Map<String, dynamic> json) => GetUserEntitlementsResponse(
-        members:
-            List<_Item>.from((json['members'] as List<dynamic>).map((m) => _Item.fromJson(m as Map<String, dynamic>))),
+        members: List<_Member>.from(
+          (json['members'] as List<dynamic>).map(
+            (m) => _Member.fromJson(m as Map<String, dynamic>),
+          ),
+        ),
       );
 
   GetUserEntitlementsResponse({required this.members});
 
-  final List<_Item> members;
+  final List<_Member> members;
 
   Map<String, dynamic> toJson() => {'members': List<dynamic>.from(members.map((x) => x.toJson()))};
 }
 
-class _Item {
-  factory _Item.fromJson(Map<String, dynamic> json) => _Item(
+class _Member {
+  factory _Member.fromJson(Map<String, dynamic> json) => _Member(
         user: _User.fromJson(json['user'] as Map<String, dynamic>),
         extensions: List<dynamic>.from((json['extensions'] as List<dynamic>).map((x) => x)),
         id: json['id'] as String,
@@ -23,7 +26,7 @@ class _Item {
         groupAssignments: List<dynamic>.from((json['groupAssignments'] as List<dynamic>).map((x) => x)),
       );
 
-  _Item({
+  _Member({
     required this.user,
     required this.extensions,
     required this.id,
@@ -98,13 +101,13 @@ class _AccessLevel {
 class _User {
   factory _User.fromJson(Map<String, dynamic> json) => _User(
         subjectKind: json['subjectKind'] as String,
-        metaType: json['metaType'] as String,
+        metaType: json['metaType'] as String?,
         directoryAlias: json['directoryAlias'] as String?,
         domain: json['domain'] as String,
         principalName: json['principalName'] as String,
         mailAddress: json['mailAddress'] as String,
         origin: json['origin'] as String,
-        originId: json['originId'] as String,
+        originId: json['originId'] as String?,
         displayName: json['displayName'] as String,
         links: _Links.fromJson(json['_links'] as Map<String, dynamic>),
         url: json['url'] as String,
@@ -127,13 +130,13 @@ class _User {
   });
 
   final String subjectKind;
-  final String metaType;
+  final String? metaType;
   final String? directoryAlias;
   final String domain;
   final String principalName;
   final String mailAddress;
   final String origin;
-  final String originId;
+  final String? originId;
   final String displayName;
   final _Links links;
   final String url;

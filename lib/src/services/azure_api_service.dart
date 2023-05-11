@@ -667,13 +667,16 @@ class AzureApiServiceImpl implements AzureApiService {
     var creatorFilter = '';
     if (creator != null) {
       final creatorSearch = "&\$filter=name eq '${creator.mailAddress}'";
-      final r =
+      final entitlementRes =
           await _get('https://vsaex.dev.azure.com/$_organization/_apis/userentitlements?$_apiVersion$creatorSearch');
+      if (entitlementRes.isError) return ApiResponse.error(entitlementRes);
 
-      final entitlement =
-          GetUserEntitlementsResponse.fromJson(jsonDecode(r.body) as Map<String, dynamic>).members.first;
+      final member = GetUserEntitlementsResponse.fromJson(jsonDecode(entitlementRes.body) as Map<String, dynamic>)
+          .members
+          .firstOrNull;
+      if (member == null) return ApiResponse.error(null);
 
-      creatorFilter = '&searchCriteria.creatorId=${entitlement.id}';
+      creatorFilter = '&searchCriteria.creatorId=${member.id}';
     }
 
     final projectsToSearch = project != null ? [project] : (_chosenProjects ?? _projects);
