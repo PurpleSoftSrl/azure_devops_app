@@ -8,11 +8,15 @@ class _HtmlWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
+    final textStyle =
+        Style.fromTextStyle(context.textTheme.labelMedium!).copyWith(margin: Margins.zero, padding: EdgeInsets.zero);
     return Html(
       data: data,
       style: {
-        'div': Style.fromTextStyle(context.textTheme.labelSmall!),
-        'p': Style.fromTextStyle(context.textTheme.labelSmall!),
+        'div': textStyle,
+        'p': textStyle,
+        'body': textStyle,
+        'html': textStyle,
       },
       onLinkTap: (str, _, __, ___) async {
         final url = str.toString();
