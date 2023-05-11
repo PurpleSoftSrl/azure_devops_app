@@ -155,6 +155,12 @@ class _History extends StatelessWidget {
                             ? 'Set effort to ${update.fields.microsoftVstsSchedulingEffort?.newValue}'
                             : 'Changed effort from ${update.fields.microsoftVstsSchedulingEffort?.oldValue} to ${update.fields.microsoftVstsSchedulingEffort?.newValue}',
                       ),
+                    if (update.fields.systemTitle != null)
+                      Text(
+                        update.fields.systemTitle?.oldValue == null
+                            ? "Set title to '${update.fields.systemTitle?.newValue}'"
+                            : "Changed title from '${update.fields.systemTitle?.oldValue}' to '${update.fields.systemTitle?.newValue}'",
+                      ),
                     if (update.fields.systemHistory != null)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

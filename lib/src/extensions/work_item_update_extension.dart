@@ -6,6 +6,7 @@ extension WorkItemUpdateExt on WorkItemUpdate {
         fields.systemWorkItemType?.newValue != null ||
         fields.systemAssignedTo?.newValue?.displayName != null ||
         fields.microsoftVstsSchedulingEffort != null ||
+        fields.systemTitle != null ||
         fields.systemHistory != null;
   }
 }
