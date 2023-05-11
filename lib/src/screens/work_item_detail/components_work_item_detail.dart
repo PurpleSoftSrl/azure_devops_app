@@ -1,15 +1,16 @@
 part of work_item_detail;
 
 class _HtmlWidget extends StatelessWidget {
-  const _HtmlWidget({required this.data});
+  const _HtmlWidget({required this.data, this.padding = EdgeInsets.zero});
 
   final String data;
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final textStyle =
-        Style.fromTextStyle(context.textTheme.labelMedium!).copyWith(margin: Margins.zero, padding: EdgeInsets.zero);
+        Style.fromTextStyle(context.textTheme.labelMedium!).copyWith(margin: Margins.zero, padding: padding);
     return Html(
       data: data,
       style: {
@@ -177,6 +178,7 @@ class _History extends StatelessWidget {
                                 color: context.colorScheme.surface,
                                 child: _HtmlWidget(
                                   data: update.fields.systemHistory!.newValue!,
+                                  padding: const EdgeInsets.all(3),
                                 ),
                               ),
                             ),
