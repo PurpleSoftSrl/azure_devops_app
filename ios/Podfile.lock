@@ -10,13 +10,13 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - Sentry/HybridSDK (8.4.0):
-    - SentryPrivate (= 8.4.0)
+  - Sentry/HybridSDK (8.5.0):
+    - SentryPrivate (= 8.5.0)
   - sentry_flutter (0.0.1):
     - Flutter
     - FlutterMacOS
-    - Sentry/HybridSDK (= 8.4.0)
-  - SentryPrivate (8.4.0)
+    - Sentry/HybridSDK (= 8.5.0)
+  - SentryPrivate (8.5.0)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
@@ -70,12 +70,12 @@ SPEC CHECKSUMS:
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   in_app_review: 318597b3a06c22bb46dc454d56828c85f444f99d
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
-  path_provider_foundation: c68054786f1b4f3343858c1e1d0caaded73f0be9
-  Sentry: 16d46dd5ca10e7f4469a2611805a3de123188add
-  sentry_flutter: 45124526f72f01bacc790d075443692cd490ee78
-  SentryPrivate: 2bb4f8d9ff558b25ac70b66c1dedc58a7c43630b
-  share_plus: 056a1e8ac890df3e33cb503afffaf1e9b4fbae68
-  shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
+  path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
+  Sentry: 3be3f42e40e5a552935552e115744d5810a216d9
+  sentry_flutter: c75806c304706163b2c129394c4621a786ad84e9
+  SentryPrivate: 8c9463280e282527f938d1a5d1d60f8e10ff279b
+  share_plus: 599aa54e4ea31d4b4c0e9c911bcc26c55e791028
+  shared_preferences_foundation: e2dae3258e06f44cc55f49d42024fd8dd03c590c
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
 
