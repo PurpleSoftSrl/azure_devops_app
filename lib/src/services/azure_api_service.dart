@@ -273,7 +273,7 @@ class AzureApiServiceImpl implements AzureApiService {
       headers: headers,
     );
 
-    _addSentryBreadcrumb(url, 'GET', res);
+    _addSentryBreadcrumb(url, 'GET', res, '');
 
     return res;
   }
@@ -286,7 +286,7 @@ class AzureApiServiceImpl implements AzureApiService {
       body: jsonEncode(body),
     );
 
-    _addSentryBreadcrumb(url, 'PATCH', res);
+    _addSentryBreadcrumb(url, 'PATCH', res, body);
 
     return res;
   }
@@ -301,7 +301,7 @@ class AzureApiServiceImpl implements AzureApiService {
       body: jsonEncode(body),
     );
 
-    _addSentryBreadcrumb(url, 'PATCH', res);
+    _addSentryBreadcrumb(url, 'PATCH', res, body);
 
     return res;
   }
@@ -314,7 +314,7 @@ class AzureApiServiceImpl implements AzureApiService {
       body: jsonEncode(body),
     );
 
-    _addSentryBreadcrumb(url, 'POST', res);
+    _addSentryBreadcrumb(url, 'POST', res, body);
 
     return res;
   }
@@ -329,7 +329,7 @@ class AzureApiServiceImpl implements AzureApiService {
       body: jsonEncode(body),
     );
 
-    _addSentryBreadcrumb(url, 'POST', res);
+    _addSentryBreadcrumb(url, 'POST', res, body);
 
     return res;
   }
@@ -341,19 +341,23 @@ class AzureApiServiceImpl implements AzureApiService {
       headers: headers,
     );
 
-    _addSentryBreadcrumb(url, 'DELETE', res);
+    _addSentryBreadcrumb(url, 'DELETE', res, '');
 
     return res;
   }
 
-  void _addSentryBreadcrumb(String url, String method, Response res) {
+  void _addSentryBreadcrumb(String url, String method, Response res, Object? body) {
     if (kDebugMode) {
       print('$method $url ${res.statusCode} ${res.reasonPhrase}');
       return;
     }
 
-    final breadcrumb =
-        Breadcrumb.http(url: Uri.parse(url), method: method, reason: res.reasonPhrase, statusCode: res.statusCode);
+    final breadcrumb = Breadcrumb.http(
+      url: Uri.parse(url),
+      method: method,
+      reason: res.reasonPhrase,
+      statusCode: res.statusCode,
+    );
 
     Sentry.addBreadcrumb(breadcrumb);
 
@@ -362,7 +366,7 @@ class AzureApiServiceImpl implements AzureApiService {
         SentryEvent(
           level: SentryLevel.warning,
           breadcrumbs: [breadcrumb],
-          message: SentryMessage(res.reasonPhrase ?? ''),
+          message: SentryMessage('${res.reasonPhrase ?? ''} - body: $body'),
         ),
       );
     }
