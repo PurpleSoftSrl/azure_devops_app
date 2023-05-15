@@ -51,10 +51,7 @@ class _CommitsController {
   }
 
   Future<void> init() async {
-    projectFilter = allProject;
     projects = [allProject];
-
-    userFilter = _userAll;
 
     users = apiService.allUsers
         .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
@@ -98,6 +95,8 @@ class _CommitsController {
 
   void resetFilters() {
     recentCommits.value = null;
+    projectFilter = allProject;
+    userFilter = _userAll;
     init();
   }
 }

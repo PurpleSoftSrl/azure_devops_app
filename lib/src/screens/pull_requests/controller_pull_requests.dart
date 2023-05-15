@@ -54,12 +54,7 @@ class _PullRequestsController {
   }
 
   Future<void> init() async {
-    projectFilter = allProject;
     projects = [allProject];
-
-    statusFilter = PullRequestState.all;
-
-    userFilter = _userAll;
 
     users = apiService.allUsers
         .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
@@ -106,6 +101,10 @@ class _PullRequestsController {
 
   void resetFilters() {
     pullRequests.value = null;
+    projectFilter = allProject;
+    statusFilter = PullRequestState.all;
+    userFilter = _userAll;
+
     init();
   }
 }

@@ -42,11 +42,6 @@ class _PipelinesController {
   }
 
   Future<void> init() async {
-    resultFilter = PipelineResult.all;
-    statusFilter = PipelineStatus.all;
-
-    userFilter = _userAll;
-
     users = apiService.allUsers
         .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
         .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
@@ -107,6 +102,10 @@ class _PipelinesController {
 
   void resetFilters() {
     pipelines.value = null;
+    resultFilter = PipelineResult.all;
+    statusFilter = PipelineStatus.all;
+    userFilter = _userAll;
+
     init();
   }
 }

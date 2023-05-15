@@ -59,9 +59,6 @@ class _WorkItemsController {
   }
 
   Future<void> init() async {
-    statusFilter = _workItemStateAll;
-    typeFilter = WorkItemType.all;
-
     allWorkItemTypes = [typeFilter];
 
     users = apiService.allUsers
@@ -69,7 +66,6 @@ class _WorkItemsController {
         .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
         .toList();
 
-    projectFilter = allProject;
     projects = [allProject];
 
     final types = await apiService.getWorkItemTypes();
@@ -129,6 +125,10 @@ class _WorkItemsController {
 
   void resetFilters() {
     workItems.value = null;
+    statusFilter = _workItemStateAll;
+    typeFilter = WorkItemType.all;
+    projectFilter = allProject;
+
     init();
   }
 
