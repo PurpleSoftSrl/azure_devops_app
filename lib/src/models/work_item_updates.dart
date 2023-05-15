@@ -27,7 +27,7 @@ class WorkItemUpdate {
         rev: json['rev'] as int,
         revisedBy: RevisedBy.fromJson(json['revisedBy'] as Map<String, dynamic>),
         revisedDate: DateTime.parse(json['revisedDate']!.toString()).toLocal(),
-        fields: Fields.fromJson(json['fields'] as Map<String, dynamic>),
+        fields: json['fields'] == null ? null : Fields.fromJson(json['fields'] as Map<String, dynamic>),
         url: json['url'] as String,
       );
 
@@ -46,7 +46,7 @@ class WorkItemUpdate {
   final int rev;
   final RevisedBy revisedBy;
   final DateTime revisedDate;
-  final Fields fields;
+  final Fields? fields;
   final String url;
 
   Map<String, dynamic> toJson() => {
@@ -55,7 +55,7 @@ class WorkItemUpdate {
         'rev': rev,
         'revisedBy': revisedBy.toJson(),
         'revisedDate': revisedDate.toIso8601String(),
-        'fields': fields.toJson(),
+        'fields': fields?.toJson(),
         'url': url,
       };
 

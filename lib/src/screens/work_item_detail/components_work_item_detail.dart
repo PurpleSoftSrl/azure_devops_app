@@ -106,6 +106,9 @@ class _History extends StatelessWidget {
       children: updatesToShow.map(
         (update) {
           final isFirst = update.rev == 1;
+          final fields = update.fields;
+          if (fields == null) return const SizedBox();
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -117,8 +120,8 @@ class _History extends StatelessWidget {
                   ),
                   Text(update.revisedBy.displayName),
                   const Spacer(),
-                  if (update.fields.systemChangedDate?.newValue != null)
-                    Text(DateTime.tryParse(update.fields.systemChangedDate!.newValue!)!.minutesAgo),
+                  if (fields.systemChangedDate?.newValue != null)
+                    Text(DateTime.tryParse(fields.systemChangedDate!.newValue!)!.minutesAgo),
                 ],
               ),
               const SizedBox(
@@ -136,37 +139,37 @@ class _History extends StatelessWidget {
                       Text(
                         'Created work item',
                       ),
-                    if (update.fields.systemWorkItemType?.newValue != null)
+                    if (fields.systemWorkItemType?.newValue != null)
                       Text(
-                        update.fields.systemWorkItemType?.oldValue == null
-                            ? 'Set type to ${update.fields.systemWorkItemType?.newValue}'
-                            : 'Changed type to ${update.fields.systemWorkItemType?.newValue}',
+                        fields.systemWorkItemType?.oldValue == null
+                            ? 'Set type to ${fields.systemWorkItemType?.newValue}'
+                            : 'Changed type to ${fields.systemWorkItemType?.newValue}',
                       ),
-                    if (!isFirst && update.fields.systemState?.newValue != null)
+                    if (!isFirst && fields.systemState?.newValue != null)
                       Text(
-                        update.fields.systemState?.oldValue == null
-                            ? 'Set state to ${update.fields.systemState?.newValue}'
-                            : 'Changed state to ${update.fields.systemState?.newValue}',
+                        fields.systemState?.oldValue == null
+                            ? 'Set state to ${fields.systemState?.newValue}'
+                            : 'Changed state to ${fields.systemState?.newValue}',
                       ),
-                    if (update.fields.systemAssignedTo?.newValue?.displayName != null)
+                    if (fields.systemAssignedTo?.newValue?.displayName != null)
                       Text(
-                        update.fields.systemAssignedTo?.oldValue?.displayName == null
-                            ? 'Set assignee to ${update.fields.systemAssignedTo?.newValue?.displayName}'
-                            : 'Changed assignee: ${update.fields.systemAssignedTo?.newValue?.displayName}',
+                        fields.systemAssignedTo?.oldValue?.displayName == null
+                            ? 'Set assignee to ${fields.systemAssignedTo?.newValue?.displayName}'
+                            : 'Changed assignee: ${fields.systemAssignedTo?.newValue?.displayName}',
                       ),
-                    if (update.fields.microsoftVstsSchedulingEffort != null)
+                    if (fields.microsoftVstsSchedulingEffort != null)
                       Text(
-                        update.fields.microsoftVstsSchedulingEffort?.oldValue == null
-                            ? 'Set effort to ${update.fields.microsoftVstsSchedulingEffort?.newValue}'
-                            : 'Changed effort from ${update.fields.microsoftVstsSchedulingEffort?.oldValue} to ${update.fields.microsoftVstsSchedulingEffort?.newValue}',
+                        fields.microsoftVstsSchedulingEffort?.oldValue == null
+                            ? 'Set effort to ${fields.microsoftVstsSchedulingEffort?.newValue}'
+                            : 'Changed effort from ${fields.microsoftVstsSchedulingEffort?.oldValue} to ${fields.microsoftVstsSchedulingEffort?.newValue}',
                       ),
-                    if (update.fields.systemTitle != null)
+                    if (fields.systemTitle != null)
                       Text(
-                        update.fields.systemTitle?.oldValue == null
-                            ? "Set title to '${update.fields.systemTitle?.newValue}'"
-                            : "Changed title from '${update.fields.systemTitle?.oldValue}' to '${update.fields.systemTitle?.newValue}'",
+                        fields.systemTitle?.oldValue == null
+                            ? "Set title to '${fields.systemTitle?.newValue}'"
+                            : "Changed title from '${fields.systemTitle?.oldValue}' to '${fields.systemTitle?.newValue}'",
                       ),
-                    if (update.fields.systemHistory != null)
+                    if (fields.systemHistory != null)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -177,7 +180,7 @@ class _History extends StatelessWidget {
                               child: ColoredBox(
                                 color: context.colorScheme.surface,
                                 child: _HtmlWidget(
-                                  data: update.fields.systemHistory!.newValue!,
+                                  data: fields.systemHistory!.newValue!,
                                   padding: const EdgeInsets.all(3),
                                 ),
                               ),
