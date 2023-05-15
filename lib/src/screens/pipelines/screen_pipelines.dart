@@ -30,6 +30,14 @@ class _PipelinesScreen extends StatelessWidget {
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: [
+          FilterMenu<Project>(
+            title: 'Project',
+            values: ctrl.projects,
+            currentFilter: ctrl.projectFilter,
+            onSelected: ctrl.filterByProject,
+            formatLabel: (p) => p.name!,
+            isDefaultFilter: ctrl.projectFilter == ctrl.allProject,
+          ),
           FilterMenu<PipelineResult>(
             title: 'Result',
             values: PipelineResult.values.where((v) => v != PipelineResult.none).toList(),

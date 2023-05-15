@@ -164,6 +164,7 @@ abstract class AzureApiService {
   });
 
   Future<ApiResponse<List<Pipeline>>> getRecentPipelines({
+    Project? project,
     PipelineResult result,
     PipelineStatus status,
     String? triggeredBy,
@@ -858,6 +859,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
   @override
   Future<ApiResponse<List<Pipeline>>> getRecentPipelines({
+    Project? project,
     PipelineResult result = PipelineResult.all,
     PipelineStatus status = PipelineStatus.all,
     String? triggeredBy,
@@ -869,9 +871,10 @@ class AzureApiServiceImpl implements AzureApiService {
 
     final queryParams = '$_apiVersion$orderSearch$resultSearch$statusSearch$triggeredBySearch';
 
+    final projectsToSearch = project != null ? [project] : (_chosenProjects ?? _projects);
+
     final allProjectPipelines = await Future.wait([
-      for (final project in _chosenProjects ?? _projects)
-        _get('$_basePath/${project.name}/_apis/build/builds?$queryParams'),
+      for (final project in projectsToSearch) _get('$_basePath/${project.name}/_apis/build/builds?$queryParams'),
     ]);
 
     var isAllError = true;
