@@ -30,25 +30,25 @@ class _HomeScreen extends StatelessWidget {
             crossAxisSpacing: 13,
             mainAxisSpacing: 18,
             children: [
-              _HomeItem(
+              WorkCard(
                 title: 'Commits',
                 icon: DevOpsIcons.commit,
                 onTap: ctrl.goToCommits,
                 index: i++,
               ),
-              _HomeItem(
+              WorkCard(
                 title: 'Pipelines',
                 icon: DevOpsIcons.pipeline,
                 onTap: ctrl.goToPipelines,
                 index: i++,
               ),
-              _HomeItem(
+              WorkCard(
                 title: 'Work items',
                 icon: DevOpsIcons.task,
                 onTap: ctrl.goToWorkItems,
                 index: i++,
               ),
-              _HomeItem(
+              WorkCard(
                 title: 'Pull requests',
                 icon: DevOpsIcons.pullrequest,
                 onTap: ctrl.goToPullRequests,

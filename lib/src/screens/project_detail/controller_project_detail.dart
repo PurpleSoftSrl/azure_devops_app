@@ -30,15 +30,7 @@ class _ProjectDetailController {
 
   List<TeamMember> members = <TeamMember>[];
   List<GitRepository> repos = <GitRepository>[];
-  List<PullRequest> pullRequests = <PullRequest>[];
   List<LanguageBreakdown> languages = <LanguageBreakdown>[];
-
-  final pipelines = ValueNotifier(<Pipeline>[]);
-
-  static const _top = 10;
-
-  final now = DateTime.now();
-  late var _to = now;
 
   Iterable<LanguageBreakdown> get meaningfulLanguages => languages
       .where((l) => l.languagePercentage != null && l.languagePercentage! > 1)
@@ -51,54 +43,16 @@ class _ProjectDetailController {
   }
 
   Future<void> init() async {
-    _to = DateTime.now();
-
     final allRes = await Future.wait<ApiResponse>([
       _getLangs(),
       _getMembers(),
       _getRepos(),
-      _getPrs(),
-      _getPipelines(),
     ]);
 
     final projectRes = await apiService.getProject(projectName: projectName);
 
     final isAllErrors = allRes.every((r) => r.isError);
     project.value = projectRes.copyWith(isError: isAllErrors, errorResponse: allRes.first.errorResponse);
-  }
-
-  Future<bool> loadMore() async {
-    if (pipelines.value.isEmpty) return false;
-
-    // get least recent pipeline
-    _to = pipelines.value.sortedBy((p) => p.queueTime!).first.queueTime!;
-
-    // subtract one second to avoid duplicate pipeline
-    _to = _to.subtract(Duration(seconds: 1));
-
-    final nextDayData = await _getData();
-
-    final resLength = nextDayData.data?.length ?? 0;
-
-    if (resLength <= 0) {
-      return false;
-    }
-
-    // sort by start date. Pipelines in progress go first, then queued pipelines, and finally all the completed pipelines.
-    nextDayData.data?.sort(
-      (a, b) {
-        final statusOrder = a.status!.order.compareTo(b.status.order);
-        return statusOrder != 0 ? statusOrder : (b.startTime ?? now).compareTo(a.startTime ?? now);
-      },
-    );
-
-    pipelines.value = nextDayData.data!..insertAll(0, pipelines.value);
-
-    return true;
-  }
-
-  Future<ApiResponse<List<Pipeline>>> _getData() async {
-    return apiService.getProjectPipelines(projectName: projectName, top: _top, to: _to);
   }
 
   void goToRepoDetail(GitRepository repo) {
@@ -112,16 +66,8 @@ class _ProjectDetailController {
     );
   }
 
-  void goToPipelineDetail(Pipeline build) {
-    AppRouter.goToPipelineDetail(build);
-  }
-
   void goToMemberDetail(TeamMember member) {
     AppRouter.goToMemberDetail(member.identity!.descriptor!);
-  }
-
-  void goToPullRequestDetail(PullRequest pr) {
-    AppRouter.goToPullRequestDetail(pr);
   }
 
   Future<ApiResponse<List<LanguageBreakdown>>> _getLangs() async {
@@ -142,24 +88,19 @@ class _ProjectDetailController {
     return reposRes;
   }
 
-  Future<ApiResponse<List<PullRequest>>> _getPrs() async {
-    final pullRequestsRes = await apiService.getProjectPullRequests(projectName: projectName);
-    pullRequests = pullRequestsRes.data ?? [];
-    return pullRequestsRes;
+  void goToCommits() {
+    AppRouter.goToCommits(project: project.value?.data);
   }
 
-  Future<ApiResponse<List<Pipeline>>> _getPipelines() async {
-    final pipelinesRes = await _getData();
+  void goToPipelines() {
+    AppRouter.goToPipelines(project: project.value?.data);
+  }
 
-    // sort by start date. Pipelines in progress go first, then queued pipelines, and finally all the completed pipelines.
-    pipelinesRes.data?.sort(
-      (a, b) {
-        final statusOrder = a.status!.order.compareTo(b.status.order);
-        return statusOrder != 0 ? statusOrder : (b.startTime ?? now).compareTo(a.startTime ?? now);
-      },
-    );
+  void goToWorkItems() {
+    AppRouter.goToWorkItems(project: project.value?.data);
+  }
 
-    pipelines.value.addAll(pipelinesRes.data ?? []);
-    return pipelinesRes;
+  void goToPullRequests() {
+    AppRouter.goToPullRequests(project: project.value?.data);
   }
 }

@@ -8,9 +8,9 @@ class _ProjectDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var i = 0;
     return AppPage<Project?>(
       init: ctrl.init,
-      onLoading: ctrl.loadMore,
       dispose: ctrl.dispose,
       title: ctrl.projectName,
       notifier: ctrl.project,
@@ -108,10 +108,51 @@ class _ProjectDetailScreen extends StatelessWidget {
                   .toList(),
             ),
           ],
+          SectionHeader.withIcon(
+            text: 'Work',
+            icon: DevOpsIcons.repository,
+          ),
+          GridView.count(
+            crossAxisCount: 2,
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            childAspectRatio: parameters.gridItemAspectRatio,
+            crossAxisSpacing: 13,
+            mainAxisSpacing: 18,
+            children: [
+              WorkCard(
+                title: 'Commits',
+                icon: DevOpsIcons.commit,
+                onTap: ctrl.goToCommits,
+                index: i++,
+              ),
+              WorkCard(
+                title: 'Pipelines',
+                icon: DevOpsIcons.pipeline,
+                onTap: ctrl.goToPipelines,
+                index: i++,
+              ),
+              WorkCard(
+                title: 'Work items',
+                icon: DevOpsIcons.task,
+                onTap: ctrl.goToWorkItems,
+                index: i++,
+              ),
+              WorkCard(
+                title: 'Pull requests',
+                icon: DevOpsIcons.pullrequest,
+                onTap: ctrl.goToPullRequests,
+                index: i++,
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 8,
+          ),
           if (ctrl.repos.isNotEmpty) ...[
             SectionHeader.withIcon(
               text: 'Repositories',
-              icon: DevOpsIcons.repository,
+              icon: DevOpsIcons.list,
             ),
             ...ctrl.repos.map(
               (r) => InkWell(
@@ -131,39 +172,6 @@ class _ProjectDetailScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-              ),
-            ),
-          ],
-          if (ctrl.pullRequests.isNotEmpty) ...[
-            SectionHeader.withIcon(
-              text: 'Pull requests',
-              icon: DevOpsIcons.pullrequest,
-            ),
-            ...ctrl.pullRequests.map(
-              (pr) => PullRequestListTile(
-                pr: pr,
-                onTap: () => ctrl.goToPullRequestDetail(pr),
-                isLast: pr == ctrl.pullRequests.last,
-              ),
-            ),
-          ],
-          if (ctrl.pipelines.value.isNotEmpty) ...[
-            SectionHeader.withIcon(
-              text: 'Recent pipelines',
-              icon: DevOpsIcons.pipeline,
-            ),
-            ValueListenableBuilder(
-              valueListenable: ctrl.pipelines,
-              builder: (_, pipelines, __) => Column(
-                children: ctrl.pipelines.value
-                    .map(
-                      (p) => PipelineListTile(
-                        pipe: p,
-                        onTap: () => ctrl.goToPipelineDetail(p),
-                        isLast: p == ctrl.pipelines.value.last,
-                      ),
-                    )
-                    .toList(),
               ),
             ),
           ],

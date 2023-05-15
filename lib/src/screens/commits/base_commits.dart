@@ -29,7 +29,12 @@ class CommitsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final storageService = StorageServiceInherited.of(context).storageService;
-    final ctrl = _CommitsController(apiService: apiService, storageService: storageService);
+    final project = AppRouter.getCommitsArgs(context);
+    final ctrl = _CommitsController(
+      apiService: apiService,
+      storageService: storageService,
+      project: project,
+    );
     return LayoutBuilder(
       builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
           ? _CommitsScreen(ctrl, _smartphoneParameters)

@@ -1,24 +1,25 @@
 part of work_items;
 
 class _WorkItemsController {
-  factory _WorkItemsController({required AzureApiService apiService, required StorageService storageService}) {
-    return instance ??= _WorkItemsController._(apiService, storageService);
+  factory _WorkItemsController({
+    required AzureApiService apiService,
+    required StorageService storageService,
+    Project? project,
+  }) {
+    return instance ??= _WorkItemsController._(apiService, storageService, project);
   }
 
-  _WorkItemsController._(this.apiService, this.storageService);
+  _WorkItemsController._(this.apiService, this.storageService, this.project);
 
   static _WorkItemsController? instance;
 
   final AzureApiService apiService;
-
   final StorageService storageService;
+  final Project? project;
 
   final workItems = ValueNotifier<ApiResponse<List<WorkItem>?>?>(null);
 
   final _workItemStateAll = 'All';
-
-  late String statusFilter = _workItemStateAll;
-  WorkItemType typeFilter = WorkItemType.all;
 
   final allProject = Project(
     id: '-1',
@@ -31,7 +32,6 @@ class _WorkItemsController {
     lastUpdateTime: DateTime.now(),
   );
 
-  late Project projectFilter = allProject;
   List<Project> projects = [];
 
   final _userNone = GraphUser(
@@ -49,7 +49,11 @@ class _WorkItemsController {
     directoryAlias: '',
   );
 
+  late Project projectFilter = project ?? allProject;
+  late String statusFilter = _workItemStateAll;
+  WorkItemType typeFilter = WorkItemType.all;
   late GraphUser userFilter = _userNone;
+
   List<GraphUser> users = [];
 
   late List<WorkItemType> allWorkItemTypes = [typeFilter];

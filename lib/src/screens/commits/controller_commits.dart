@@ -1,16 +1,21 @@
 part of commits;
 
 class _CommitsController {
-  factory _CommitsController({required AzureApiService apiService, required StorageService storageService}) {
-    return instance ??= _CommitsController._(apiService, storageService);
+  factory _CommitsController({
+    required AzureApiService apiService,
+    required StorageService storageService,
+    Project? project,
+  }) {
+    return instance ??= _CommitsController._(apiService, storageService, project);
   }
 
-  _CommitsController._(this.apiService, this.storageService);
+  _CommitsController._(this.apiService, this.storageService, this.project);
 
   static _CommitsController? instance;
 
   final AzureApiService apiService;
   final StorageService storageService;
+  final Project? project;
 
   final recentCommits = ValueNotifier<ApiResponse<List<Commit>?>?>(null);
 
@@ -25,7 +30,7 @@ class _CommitsController {
     lastUpdateTime: DateTime.now(),
   );
 
-  late Project projectFilter = allProject;
+  late Project projectFilter = project ?? allProject;
   List<Project> projects = [];
 
   final _userAll = GraphUser(

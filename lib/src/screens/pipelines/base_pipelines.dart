@@ -30,7 +30,12 @@ class PipelinesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final storageService = StorageServiceInherited.of(context).storageService;
-    final ctrl = _PipelinesController(apiService: apiService, storageService: storageService);
+    final project = AppRouter.getPipelinesArgs(context);
+    final ctrl = _PipelinesController(
+      apiService: apiService,
+      storageService: storageService,
+      project: project,
+    );
     return LayoutBuilder(
       builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
           ? _PipelinesScreen(ctrl, _smartphoneParameters)

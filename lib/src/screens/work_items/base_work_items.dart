@@ -35,7 +35,12 @@ class WorkItemsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final storageService = StorageServiceInherited.of(context).storageService;
-    final ctrl = _WorkItemsController(apiService: apiService, storageService: storageService);
+    final project = AppRouter.getWorkItemsArgs(context);
+    final ctrl = _WorkItemsController(
+      apiService: apiService,
+      storageService: storageService,
+      project: project,
+    );
     return LayoutBuilder(
       builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
           ? _WorkItemsScreen(ctrl, _smartphoneParameters)

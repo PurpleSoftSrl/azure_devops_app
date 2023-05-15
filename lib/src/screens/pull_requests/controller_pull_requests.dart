@@ -1,17 +1,21 @@
 part of pull_requests;
 
 class _PullRequestsController {
-  factory _PullRequestsController({required AzureApiService apiService, required StorageService storageService}) {
-    return instance ??= _PullRequestsController._(apiService, storageService);
+  factory _PullRequestsController({
+    required AzureApiService apiService,
+    required StorageService storageService,
+    Project? project,
+  }) {
+    return instance ??= _PullRequestsController._(apiService, storageService, project);
   }
 
-  _PullRequestsController._(this.apiService, this.storageService);
+  _PullRequestsController._(this.apiService, this.storageService, this.project);
 
   static _PullRequestsController? instance;
 
   final AzureApiService apiService;
-
   final StorageService storageService;
+  final Project? project;
 
   final pullRequests = ValueNotifier<ApiResponse<List<PullRequest>?>?>(null);
 
@@ -46,7 +50,7 @@ class _PullRequestsController {
     lastUpdateTime: DateTime.now(),
   );
 
-  late Project projectFilter = allProject;
+  late Project projectFilter = project ?? allProject;
   List<Project> projects = [];
 
   void dispose() {

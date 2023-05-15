@@ -1,24 +1,26 @@
 part of pipelines;
 
 class _PipelinesController {
-  factory _PipelinesController({required AzureApiService apiService, required StorageService storageService}) {
-    return instance ??= _PipelinesController._(apiService, storageService);
+  factory _PipelinesController({
+    required AzureApiService apiService,
+    required StorageService storageService,
+    Project? project,
+  }) {
+    return instance ??= _PipelinesController._(apiService, storageService, project);
   }
 
-  _PipelinesController._(this.apiService, this.storageService);
+  _PipelinesController._(this.apiService, this.storageService, this.project);
 
   static _PipelinesController? instance;
 
   final AzureApiService apiService;
   final StorageService storageService;
+  final Project? project;
 
   final pipelines = ValueNotifier<ApiResponse<List<Pipeline>?>?>(null);
 
   int get inProgressPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.inProgress).length ?? 0;
   int get queuedPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.notStarted).length ?? 0;
-
-  PipelineResult resultFilter = PipelineResult.all;
-  PipelineStatus statusFilter = PipelineStatus.all;
 
   final allProject = Project(
     id: '-1',
@@ -31,7 +33,6 @@ class _PipelinesController {
     lastUpdateTime: DateTime.now(),
   );
 
-  late Project projectFilter = allProject;
   List<Project> projects = [];
 
   final _userAll = GraphUser(
@@ -49,8 +50,12 @@ class _PipelinesController {
     directoryAlias: '',
   );
 
-  late GraphUser userFilter = _userAll;
   List<GraphUser> users = [];
+
+  late GraphUser userFilter = _userAll;
+  late Project projectFilter = project ?? allProject;
+  PipelineResult resultFilter = PipelineResult.all;
+  PipelineStatus statusFilter = PipelineStatus.all;
 
   void dispose() {
     instance = null;

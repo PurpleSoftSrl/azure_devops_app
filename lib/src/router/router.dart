@@ -1,5 +1,6 @@
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
+import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
 import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/work_item.dart';
@@ -103,8 +104,12 @@ class AppRouter {
     return ModalRoute.of(context)!.settings.arguments as bool;
   }
 
-  static Future<void> goToPipelines() async {
-    await _currentNavigator!.pushNamed(_pipelines);
+  static Future<void> goToPipelines({Project? project}) async {
+    await _currentNavigator!.pushNamed(_pipelines, arguments: project);
+  }
+
+  static Project? getPipelinesArgs(BuildContext context) {
+    return ModalRoute.of(context)!.settings.arguments as Project?;
   }
 
   static Future<void> goToPipelineDetail(Pipeline pipeline) async {
@@ -123,8 +128,12 @@ class AppRouter {
     return ModalRoute.of(context)!.settings.arguments as PipelineLogsArgs;
   }
 
-  static Future<void> goToCommits() async {
-    await _currentNavigator!.pushNamed(_commits);
+  static Future<void> goToCommits({Project? project}) async {
+    await _currentNavigator!.pushNamed(_commits, arguments: project);
+  }
+
+  static Project? getCommitsArgs(BuildContext context) {
+    return ModalRoute.of(context)!.settings.arguments as Project?;
   }
 
   static Future<void> goToCommitDetail(Commit commit) async {
@@ -151,8 +160,12 @@ class AppRouter {
     return ModalRoute.of(context)!.settings.arguments as String;
   }
 
-  static Future<void> goToWorkItems() async {
-    await _currentNavigator!.pushNamed(_workItems);
+  static Future<void> goToWorkItems({Project? project}) async {
+    await _currentNavigator!.pushNamed(_workItems, arguments: project);
+  }
+
+  static Project? getWorkItemsArgs(BuildContext context) {
+    return ModalRoute.of(context)!.settings.arguments as Project?;
   }
 
   static Future<void> goToWorkItemDetail(WorkItem item) async {
@@ -163,8 +176,12 @@ class AppRouter {
     return ModalRoute.of(context)!.settings.arguments as WorkItem;
   }
 
-  static Future<void> goToPullRequests() async {
-    await _currentNavigator!.pushNamed(_pullRequests);
+  static Future<void> goToPullRequests({Project? project}) async {
+    await _currentNavigator!.pushNamed(_pullRequests, arguments: project);
+  }
+
+  static Project? getPullRequestsArgs(BuildContext context) {
+    return ModalRoute.of(context)!.settings.arguments as Project?;
   }
 
   static Future<void> goToPullRequestDetail(PullRequest pr) async {
