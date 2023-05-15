@@ -1088,7 +1088,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
     final user = _allUsers.firstWhereOrNull((u) => u.descriptor == descriptor);
     if (user == null) {
-      return ApiResponse.error(null);
+      return ApiResponse.error(Response('', 404, reasonPhrase: 'User not found'));
     }
 
     return ApiResponse.ok(user);
