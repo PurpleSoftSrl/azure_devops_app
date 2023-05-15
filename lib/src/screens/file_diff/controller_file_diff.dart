@@ -20,6 +20,9 @@ class _FileDiffController with ShareMixin {
   /// Used to calculate text width to avoid layout issues.
   int diffMaxLength = -1;
 
+  String? imageDiffContent;
+  String? previousImageDiffContent;
+
   void dispose() {
     instance = null;
   }
@@ -45,6 +48,29 @@ class _FileDiffController with ShareMixin {
       final maxLength = max(maxLengthM, maxLengthO);
 
       diffMaxLength = maxLength;
+    }
+
+    final isImage = res.data?.imageComparison ?? false;
+
+    if (isImage) {
+      final imageRes = await apiService.getFileDetail(
+        projectName: args.commit.projectName,
+        repoName: args.commit.repositoryName,
+        path: args.filePath,
+        commitId: args.commit.commitId,
+      );
+
+      imageDiffContent = imageRes.data?.content;
+
+      final previousImageRes = await apiService.getFileDetail(
+        projectName: args.commit.projectName,
+        repoName: args.commit.repositoryName,
+        path: args.filePath,
+        commitId: args.commit.commitId,
+        previousChange: true,
+      );
+
+      previousImageDiffContent = previousImageRes.data?.content;
     }
 
     diff.value = res;

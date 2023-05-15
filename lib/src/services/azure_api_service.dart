@@ -136,11 +136,14 @@ abstract class AzureApiService {
     required String repoName,
   });
 
+  // ignore: long-parameter-list
   Future<ApiResponse<FileDetailResponse>> getFileDetail({
     required String projectName,
     required String repoName,
     required String path,
     String? branch,
+    String? commitId,
+    bool previousChange,
   });
 
   Future<ApiResponse<List<Commit>>> getRecentCommits({Project? project, String? author, int? maxCount});
@@ -824,16 +827,29 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
+  // ignore: long-parameter-list
   Future<ApiResponse<FileDetailResponse>> getFileDetail({
     required String projectName,
     required String repoName,
     required String path,
     String? branch,
+    String? commitId,
+    bool previousChange = false,
   }) async {
-    final branchQuery = branch != null ? 'versionDescriptor.version=$branch&versionDescriptor.versionType=branch&' : '';
+    var versionQuery = '';
+
+    if (commitId != null) {
+      versionQuery = 'versionDescriptor.version=$commitId&versionDescriptor.versionType=commit&';
+    } else if (branch != null) {
+      versionQuery = 'versionDescriptor.version=$branch&versionDescriptor.versionType=branch&';
+    }
+
+    if (previousChange) {
+      versionQuery += 'versionDescriptor.versionOptions=previousChange&';
+    }
 
     final res = await _get(
-      '$_basePath/$projectName/_apis/git/repositories/$repoName/items?path=$path&includeContentMetadata=true&includeContent=true&$branchQuery$_apiVersion',
+      '$_basePath/$projectName/_apis/git/repositories/$repoName/items?path=$path&includeContentMetadata=true&includeContent=true&$versionQuery$_apiVersion',
     );
     if (res.isError) return ApiResponse.error(res);
 

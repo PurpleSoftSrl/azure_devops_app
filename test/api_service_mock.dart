@@ -330,6 +330,8 @@ class AzureApiServiceMock implements AzureApiService {
     required String repoName,
     required String path,
     String? branch,
+    String? commitId,
+    bool previousChange = false,
   }) {
     throw UnimplementedError();
   }
