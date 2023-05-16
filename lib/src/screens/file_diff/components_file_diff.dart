@@ -157,17 +157,16 @@ class _FileDiffHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final file = diff.modifiedFile ?? diff.originalFile;
     return Padding(
       padding: const EdgeInsets.only(left: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (diff.modifiedFile != null) ...[
-            Text(diff.modifiedFile!.contentMetadata.fileName),
+          if (file != null) ...[
+            Text(file.contentMetadata.fileName),
             Text(
-              diff.modifiedFile!.serverItem.startsWith('/')
-                  ? diff.modifiedFile!.serverItem.substring(1)
-                  : diff.modifiedFile!.serverItem,
+              file.serverItem.startsWith('/') ? file.serverItem.substring(1) : file.serverItem,
               style: context.textTheme.labelSmall!.copyWith(color: context.colorScheme.onBackground.withOpacity(.6)),
             ),
           ],
