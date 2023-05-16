@@ -98,8 +98,8 @@ class _FileDiff extends StatelessWidget {
                   ),
                   ...diff.blocks.map(
                     (b) {
-                      var oldLineNumber = b.oLine ?? -1;
-                      final newLineNumber = b.mLine;
+                      final oldLineNumber = b.oLine ?? -1;
+                      var newLineNumber = b.mLine;
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -107,7 +107,7 @@ class _FileDiff extends StatelessWidget {
                             ...b.mLines.map(
                               (l) => _NotEditedLine(
                                 line: l,
-                                lineNumber: oldLineNumber++,
+                                lineNumber: newLineNumber++,
                               ),
                             )
                           else
