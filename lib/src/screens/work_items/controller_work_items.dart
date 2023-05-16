@@ -41,7 +41,7 @@ class _WorkItemsController {
     mailAddress: '',
     origin: '',
     originId: '',
-    displayName: 'Assigned to',
+    displayName: 'All',
     links: null,
     url: '',
     descriptor: '',
@@ -65,10 +65,14 @@ class _WorkItemsController {
   Future<void> init() async {
     allWorkItemTypes = [typeFilter];
 
-    users = apiService.allUsers
-        .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
-        .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
-        .toList();
+    users = [_userNone];
+
+    users.addAll(
+      apiService.allUsers
+          .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
+          .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
+          .toList(),
+    );
 
     projects = [allProject];
 
@@ -86,6 +90,12 @@ class _WorkItemsController {
     AppRouter.goToWorkItemDetail(item);
   }
 
+  void filterByProject(Project proj) {
+    workItems.value = null;
+    projectFilter = proj.name == 'All' ? allProject : proj;
+    _getData();
+  }
+
   void filterByStatus(String state) {
     workItems.value = null;
     statusFilter = state;
@@ -98,9 +108,9 @@ class _WorkItemsController {
     _getData();
   }
 
-  void filterByProject(Project proj) {
+  void filterByUser(GraphUser user) {
     workItems.value = null;
-    projectFilter = proj.name == 'All' ? allProject : proj;
+    userFilter = user;
     _getData();
   }
 
@@ -108,23 +118,32 @@ class _WorkItemsController {
     final res = await apiService.getWorkItems();
     res.data?.sort((a, b) => b.changedDate.compareTo(a.changedDate));
 
-    if (statusFilter == _workItemStateAll && typeFilter == WorkItemType.all && projectFilter == allProject) {
+    final noFilters = statusFilter == _workItemStateAll &&
+        typeFilter == WorkItemType.all &&
+        projectFilter == allProject &&
+        userFilter == _userNone;
+
+    if (noFilters) {
       workItems.value = res;
-    } else {
-      final filteredByTypeItems = typeFilter == WorkItemType.all
-          ? res.data
-          : res.data?.where((i) => i.workItemType == typeFilter.name).toList();
-
-      final filteredByStatusItems = statusFilter == _workItemStateAll
-          ? filteredByTypeItems
-          : filteredByTypeItems?.where((i) => i.state == statusFilter);
-
-      final filteredByProjectItems = projectFilter == allProject
-          ? filteredByStatusItems
-          : filteredByStatusItems?.where((i) => i.teamProject == projectFilter.name);
-
-      workItems.value = ApiResponse.ok(filteredByProjectItems?.toList());
+      return;
     }
+
+    final filteredByTypeItems =
+        typeFilter == WorkItemType.all ? res.data : res.data?.where((i) => i.workItemType == typeFilter.name).toList();
+
+    final filteredByStatusItems = statusFilter == _workItemStateAll
+        ? filteredByTypeItems
+        : filteredByTypeItems?.where((i) => i.state == statusFilter);
+
+    final filteredByProjectItems = projectFilter == allProject
+        ? filteredByStatusItems
+        : filteredByStatusItems?.where((i) => i.teamProject == projectFilter.name);
+
+    final filteredByUserItems = userFilter == _userNone
+        ? filteredByProjectItems
+        : filteredByProjectItems?.where((i) => i.assignedTo?.displayName == userFilter.displayName);
+
+    workItems.value = ApiResponse.ok(filteredByUserItems?.toList());
   }
 
   void resetFilters() {
@@ -132,6 +151,7 @@ class _WorkItemsController {
     statusFilter = _workItemStateAll;
     typeFilter = WorkItemType.all;
     projectFilter = allProject;
+    userFilter = _userNone;
 
     init();
   }
@@ -224,7 +244,7 @@ class _WorkItemsController {
                             if (users.length > 1)
                               FilterMenu<GraphUser>.user(
                                 title: 'Assigned to',
-                                values: users,
+                                values: users.whereNot((u) => u.displayName == 'All').toList(),
                                 currentFilter: newWorkItemAssignedTo,
                                 onSelected: (u) {
                                   setState(() {
@@ -232,7 +252,7 @@ class _WorkItemsController {
                                   });
                                 },
                                 formatLabel: (u) => u.displayName!,
-                                isDefaultFilter: newWorkItemAssignedTo.displayName == 'Assigned to',
+                                isDefaultFilter: newWorkItemAssignedTo.displayName == 'All',
                               ),
                           ],
                         ),
@@ -286,7 +306,7 @@ class _WorkItemsController {
       projectName: newWorkItemProject.name!,
       type: newWorkItemType,
       title: newWorkItemTitle,
-      assignedTo: newWorkItemAssignedTo.displayName == 'Assigned to' ? null : newWorkItemAssignedTo,
+      assignedTo: newWorkItemAssignedTo.displayName == 'All' ? null : newWorkItemAssignedTo,
       description: newWorkItemDescription,
     );
 

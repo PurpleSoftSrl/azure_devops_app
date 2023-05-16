@@ -39,6 +39,14 @@ class _WorkItemsScreen extends StatelessWidget {
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: [
+          FilterMenu<Project>(
+            title: 'Project',
+            values: ctrl.projects,
+            currentFilter: ctrl.projectFilter,
+            onSelected: ctrl.filterByProject,
+            formatLabel: (p) => p.name!,
+            isDefaultFilter: ctrl.projectFilter == ctrl.allProject,
+          ),
           FilterMenu<String>(
             title: 'Status',
             values: WorkItemExt.allStates,
@@ -54,14 +62,15 @@ class _WorkItemsScreen extends StatelessWidget {
             onSelected: ctrl.filterByType,
             isDefaultFilter: ctrl.typeFilter.name == 'All',
           ),
-          FilterMenu<Project>(
-            title: 'Project',
-            values: ctrl.projects,
-            currentFilter: ctrl.projectFilter,
-            onSelected: ctrl.filterByProject,
-            formatLabel: (p) => p.name!,
-            isDefaultFilter: ctrl.projectFilter == ctrl.allProject,
-          ),
+          if (ctrl.users.length > 1)
+            FilterMenu<GraphUser>.user(
+              title: 'Assigned to',
+              values: ctrl.users,
+              currentFilter: ctrl.userFilter,
+              onSelected: ctrl.filterByUser,
+              formatLabel: (u) => u.displayName!,
+              isDefaultFilter: ctrl.userFilter == ctrl._userNone,
+            ),
         ],
       ),
       builder: (items) => Column(
