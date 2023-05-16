@@ -62,6 +62,7 @@ class AzureApiServiceMock implements AzureApiService {
     required Commit commit,
     required String filePath,
     required bool isAdded,
+    required bool isDeleted,
   }) {
     throw UnimplementedError();
   }

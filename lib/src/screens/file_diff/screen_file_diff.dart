@@ -22,7 +22,8 @@ class _FileDiffScreen extends StatelessWidget {
       onEmpty: (_) => Text('No diff found'),
       padding: EdgeInsets.zero,
       showScrollbar: true,
-      builder: (diff) => diff!.imageComparison && ctrl.imageDiffContent != null
+      builder: (diff) => diff!.imageComparison &&
+              (ctrl.imageDiffContent != null || ctrl.previousImageDiffContent != null)
           ? _ImageDiff(ctrl: ctrl)
           : diff.binaryContent
               ? Center(child: Text('Cannot show binary file diff'))
@@ -43,20 +44,22 @@ class _FileDiffScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(diff.modifiedFile.contentMetadata.fileName),
-                                Text(
-                                  diff.modifiedFile.serverItem.startsWith('/')
-                                      ? diff.modifiedFile.serverItem.substring(1)
-                                      : diff.modifiedFile.serverItem,
-                                  style: context.textTheme.labelSmall!
-                                      .copyWith(color: context.colorScheme.onBackground.withOpacity(.6)),
-                                ),
+                                if (diff.modifiedFile != null) ...[
+                                  Text(diff.modifiedFile!.contentMetadata.fileName),
+                                  Text(
+                                    diff.modifiedFile!.serverItem.startsWith('/')
+                                        ? diff.modifiedFile!.serverItem.substring(1)
+                                        : diff.modifiedFile!.serverItem,
+                                    style: context.textTheme.labelSmall!
+                                        .copyWith(color: context.colorScheme.onBackground.withOpacity(.6)),
+                                  ),
+                                ],
                                 Row(
                                   children: [
                                     if (diff.originalFile != null &&
                                         diff.blocks.fold(
                                               0,
-                                              (a, b) => a + (ctrl.isNotRealChange(b) ? 0 : b.oLines!.length),
+                                              (a, b) => a + (ctrl.isNotRealChange(b) ? 0 : b.oLines.length),
                                             ) >
                                             0) ...[
                                       Icon(
@@ -66,7 +69,7 @@ class _FileDiffScreen extends StatelessWidget {
                                       ),
                                       Text(
                                         diff.blocks
-                                            .fold(0, (a, b) => a + (ctrl.isNotRealChange(b) ? 0 : b.oLines!.length))
+                                            .fold(0, (a, b) => a + (ctrl.isNotRealChange(b) ? 0 : b.oLines.length))
                                             .toString(),
                                         style: context.textTheme.titleSmall!.copyWith(color: Colors.red),
                                       ),
@@ -146,7 +149,7 @@ class _FileDiffScreen extends StatelessWidget {
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    ...b.oLines!.map(
+                                                    ...b.oLines.map(
                                                       (ol) => Row(
                                                         children: [
                                                           SizedBox(

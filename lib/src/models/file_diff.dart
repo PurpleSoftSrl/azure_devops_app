@@ -49,7 +49,9 @@ class Diff {
         originalFile: json['originalFile'] == null
             ? null
             : ModifiedFileClass.fromJson(json['originalFile'] as Map<String, dynamic>),
-        modifiedFile: ModifiedFileClass.fromJson(json['modifiedFile'] as Map<String, dynamic>),
+        modifiedFile: json['modifiedFile'] == null
+            ? null
+            : ModifiedFileClass.fromJson(json['modifiedFile'] as Map<String, dynamic>),
         blocks:
             List<Block>.from((json['blocks'] as List<dynamic>).map((l) => Block.fromJson(l as Map<String, dynamic>))),
         lineCharBlocks: List<LineCharBlock>.from(
@@ -70,7 +72,7 @@ class Diff {
   });
 
   final ModifiedFileClass? originalFile;
-  final ModifiedFileClass modifiedFile;
+  final ModifiedFileClass? modifiedFile;
   final List<Block> blocks;
   final List<LineCharBlock> lineCharBlocks;
   final bool binaryContent;
@@ -80,7 +82,7 @@ class Diff {
 
   Map<String, dynamic> toJson() => {
         'originalFile': originalFile?.toJson(),
-        'modifiedFile': modifiedFile.toJson(),
+        'modifiedFile': modifiedFile?.toJson(),
         'blocks': List<dynamic>.from(blocks.map((x) => x.toJson())),
         'lineCharBlocks': List<dynamic>.from(lineCharBlocks.map((x) => x.toJson())),
         'isBinary': binaryContent,
@@ -97,8 +99,8 @@ class Block {
         oLinesCount: json['oLinesCount'] as int?,
         mLine: json['mLine'] as int,
         mLinesCount: json['mLinesCount'] as int,
-        oLines: json['oLines'] == null ? null : List<String>.from((json['oLines'] as List<dynamic>).map((x) => x)),
-        mLines: List<String>.from((json['mLines'] as List<dynamic>).map((x) => x)),
+        oLines: List<String>.from((json['oLines'] as List<dynamic>? ?? []).map((x) => x)),
+        mLines: List<String>.from((json['mLines'] as List<dynamic>? ?? []).map((x) => x)),
         truncatedBefore: json['truncatedBefore'] as bool?,
         truncatedAfter: json['truncatedAfter'] as bool?,
       );
@@ -120,7 +122,7 @@ class Block {
   final int? oLinesCount;
   final int mLine;
   final int mLinesCount;
-  final List<String>? oLines;
+  final List<String> oLines;
   final List<String> mLines;
   final bool? truncatedBefore;
   final bool? truncatedAfter;

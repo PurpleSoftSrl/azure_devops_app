@@ -164,6 +164,7 @@ abstract class AzureApiService {
     required Commit commit,
     required String filePath,
     required bool isAdded,
+    required bool isDeleted,
   });
 
   Future<ApiResponse<List<Pipeline>>> getRecentPipelines({
@@ -1020,6 +1021,7 @@ class AzureApiServiceImpl implements AzureApiService {
     required Commit commit,
     required String filePath,
     required bool isAdded,
+    required bool isDeleted,
   }) async {
     final prevCommitRes = await _get(
       '$_basePath/${commit.projectId}/_apis/git/repositories/${commit.repositoryId}/commits?searchCriteria.toDate=${commit.author!.date}&searchCriteria.\$top=1&searchCriteria.\$skip=1&$_apiVersion',
@@ -1041,8 +1043,8 @@ class AzureApiServiceImpl implements AzureApiService {
             'repositoryId': repoId,
             'diffParameters': {
               'includeCharDiffs': true,
-              'modifiedPath': filePath,
-              'modifiedVersion': 'GC${commit.commitId}',
+              if (!isDeleted) 'modifiedPath': filePath,
+              if (!isDeleted) 'modifiedVersion': 'GC${commit.commitId}',
               if (!isAdded) 'originalPath': filePath,
               if (!isAdded) 'originalVersion': 'GC$prevCommitId',
               'partialDiff': true,

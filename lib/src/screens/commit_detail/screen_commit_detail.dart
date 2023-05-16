@@ -157,7 +157,7 @@ class _CommitDetailScreen extends StatelessWidget {
                       ),
                       ...ctrl.editedFiles.map(
                         (c2) => InkWell(
-                          onTap: () => ctrl.goToFileDiff(filePath: c2.item!.path!, isAdded: false),
+                          onTap: () => ctrl.goToFileDiff(filePath: c2.item!.path!),
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Text(
@@ -179,11 +179,17 @@ class _CommitDetailScreen extends StatelessWidget {
                         style: context.textTheme.titleLarge,
                       ),
                       ...ctrl.deletedFiles.map(
-                        (c2) => Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: Text(
-                            c2!.item!.path!.startsWith('/') ? c2.item!.path!.substring(1) : c2.item!.path!,
-                            style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                        (c2) => InkWell(
+                          onTap: () => ctrl.goToFileDiff(filePath: c2.item!.path!, isDeleted: true),
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              c2!.item!.path!.startsWith('/') ? c2.item!.path!.substring(1) : c2.item!.path!,
+                              style: context.textTheme.titleSmall!.copyWith(
+                                color: context.colorScheme.onSecondary,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
                           ),
                         ),
                       ),

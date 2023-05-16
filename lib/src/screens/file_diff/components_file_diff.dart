@@ -11,7 +11,7 @@ class _ImageDiff extends StatelessWidget {
     return Column(
       children: [
         if (ctrl.previousImageDiffContent != null) ...[
-          Text('Original'),
+          Text(ctrl.imageDiffContent != null ? 'Original' : 'Deleted'),
           const SizedBox(
             height: 5,
           ),
@@ -22,15 +22,17 @@ class _ImageDiff extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          Text('Modified'),
+        ],
+        if (ctrl.imageDiffContent != null) ...[
+          Text(ctrl.previousImageDiffContent != null ? 'Modified' : 'Added'),
           const SizedBox(
             height: 5,
           ),
+          _Image(
+            imageBytes: ctrl.imageDiffContent!.codeUnits,
+            imageHeight: imageHeight,
+          ),
         ],
-        _Image(
-          imageBytes: ctrl.imageDiffContent!.codeUnits,
-          imageHeight: imageHeight,
-        ),
       ],
     );
   }

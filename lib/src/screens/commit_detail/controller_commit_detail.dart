@@ -89,12 +89,13 @@ class _CommitDetailController with ShareMixin {
     );
   }
 
-  void goToFileDiff({required String filePath, required bool isAdded}) {
+  void goToFileDiff({required String filePath, bool isAdded = false, bool isDeleted = false}) {
     AppRouter.goToFileDiff(
       FileDiffArgs(
         commit: commitDetail!,
         filePath: filePath,
         isAdded: isAdded,
+        isDeleted: isDeleted,
       ),
     );
   }

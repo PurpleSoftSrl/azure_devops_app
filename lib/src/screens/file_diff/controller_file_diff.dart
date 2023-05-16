@@ -32,6 +32,7 @@ class _FileDiffController with ShareMixin {
       commit: args.commit,
       filePath: args.filePath,
       isAdded: args.isAdded,
+      isDeleted: args.isDeleted,
     );
 
     if (res.data != null) {
@@ -40,7 +41,7 @@ class _FileDiffController with ShareMixin {
         return a > size ? a : size;
       });
 
-      final maxLengthO = res.data!.blocks.map((e) => e.oLines).expand((l) => l ?? <String>[]).fold(0, (a, b) {
+      final maxLengthO = res.data!.blocks.map((e) => e.oLines).expand((l) => l).fold(0, (a, b) {
         final size = _getTextWidth(b);
         return a > size ? a : size;
       });
@@ -53,24 +54,28 @@ class _FileDiffController with ShareMixin {
     final isImage = res.data?.imageComparison ?? false;
 
     if (isImage) {
-      final imageRes = await apiService.getFileDetail(
-        projectName: args.commit.projectName,
-        repoName: args.commit.repositoryName,
-        path: args.filePath,
-        commitId: args.commit.commitId,
-      );
+      if (!args.isDeleted) {
+        final imageRes = await apiService.getFileDetail(
+          projectName: args.commit.projectName,
+          repoName: args.commit.repositoryName,
+          path: args.filePath,
+          commitId: args.commit.commitId,
+        );
 
-      imageDiffContent = imageRes.data?.content;
+        imageDiffContent = imageRes.data?.content;
+      }
 
-      final previousImageRes = await apiService.getFileDetail(
-        projectName: args.commit.projectName,
-        repoName: args.commit.repositoryName,
-        path: args.filePath,
-        commitId: args.commit.commitId,
-        previousChange: true,
-      );
+      if (!args.isAdded) {
+        final previousImageRes = await apiService.getFileDetail(
+          projectName: args.commit.projectName,
+          repoName: args.commit.repositoryName,
+          path: args.filePath,
+          commitId: args.commit.commitId,
+          previousChange: true,
+        );
 
-      previousImageDiffContent = previousImageRes.data?.content;
+        previousImageDiffContent = previousImageRes.data?.content;
+      }
     }
 
     diff.value = res;

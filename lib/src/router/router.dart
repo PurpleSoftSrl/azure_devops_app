@@ -327,12 +327,14 @@ class FileDiffArgs {
     required this.commit,
     required this.filePath,
     required this.isAdded,
+    required this.isDeleted,
   });
 
   final Commit commit;
   final String filePath;
   final bool isAdded;
+  final bool isDeleted;
 
   @override
-  String toString() => 'FileDiffArgs(commit: $commit, filePath: $filePath, isAdded: $isAdded)';
+  String toString() => 'FileDiffArgs(commit: $commit, filePath: $filePath, isAdded: $isAdded, isDeleted: $isDeleted)';
 }
