@@ -1,9 +1,12 @@
 import 'package:azure_devops/src/extensions/context_extension.dart';
+import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/router/router.dart';
+import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class FiltersRow extends StatelessWidget {
@@ -48,14 +51,14 @@ class FiltersRow extends StatelessWidget {
 }
 
 class FilterMenu<T> extends StatelessWidget {
-  const FilterMenu.user({
+  const FilterMenu.bottomsheet({
     required this.title,
     required this.values,
     required this.currentFilter,
     required this.onSelected,
     this.formatLabel,
     required this.isDefaultFilter,
-  }) : isUsers = true;
+  }) : withBottomsheet = true;
 
   const FilterMenu({
     required this.title,
@@ -64,7 +67,7 @@ class FilterMenu<T> extends StatelessWidget {
     required this.onSelected,
     this.formatLabel,
     required this.isDefaultFilter,
-  }) : isUsers = false;
+  }) : withBottomsheet = false;
 
   final void Function(T)? onSelected;
   final List<T> values;
@@ -72,7 +75,7 @@ class FilterMenu<T> extends StatelessWidget {
   final String title;
   final String Function(T)? formatLabel;
   final bool isDefaultFilter;
-  final bool isUsers;
+  final bool withBottomsheet;
 
   @override
   Widget build(BuildContext context) {
@@ -101,13 +104,14 @@ class FilterMenu<T> extends StatelessWidget {
       ),
     );
 
-    if (isUsers) {
+    if (withBottomsheet) {
+      final apiService = AzureApiServiceInherited.of(context).apiService;
       return InkWell(
         key: ValueKey(title),
         onTap: () {
           OverlayService.bottomsheet(
             isScrollControlled: true,
-            title: 'Users filter menu',
+            title: title,
             builder: (context) => Container(
               height: context.height * .8,
               decoration: BoxDecoration(
@@ -134,6 +138,23 @@ class FilterMenu<T> extends StatelessWidget {
                                 children: [
                                   if (v is GraphUser && (v.descriptor?.isNotEmpty ?? false))
                                     MemberAvatar(userDescriptor: v.descriptor!)
+                                  else if (v is Project && v.defaultTeamImageUrl != null)
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(100),
+                                      child: apiService.isImageUnauthorized
+                                          ? const SizedBox(
+                                              height: 30,
+                                              width: 30,
+                                              child: Icon(DevOpsIcons.project),
+                                            )
+                                          : CachedNetworkImage(
+                                              imageUrl: v.defaultTeamImageUrl!,
+                                              httpHeaders: apiService.headers,
+                                              errorWidget: (_, __, ___) => Icon(DevOpsIcons.project),
+                                              width: 30,
+                                              height: 30,
+                                            ),
+                                    )
                                   else
                                     SizedBox(
                                       height: 40,

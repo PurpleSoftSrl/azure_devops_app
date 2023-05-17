@@ -31,7 +31,7 @@ class _PipelinesScreen extends StatelessWidget {
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: [
-          FilterMenu<Project>(
+          FilterMenu<Project>.bottomsheet(
             title: 'Project',
             values: ctrl.getProjects(ctrl.storageService),
             currentFilter: ctrl.projectFilter,
@@ -54,7 +54,7 @@ class _PipelinesScreen extends StatelessWidget {
             isDefaultFilter: ctrl.statusFilter == PipelineStatus.all,
           ),
           if (ctrl.getSortedUsers(ctrl.apiService).length > 1)
-            FilterMenu<GraphUser>.user(
+            FilterMenu<GraphUser>.bottomsheet(
               title: 'Triggered by',
               values: ctrl.getSortedUsers(ctrl.apiService),
               currentFilter: ctrl.userFilter,

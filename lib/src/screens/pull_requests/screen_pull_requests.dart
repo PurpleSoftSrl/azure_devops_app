@@ -39,7 +39,7 @@ class _PullRequestsScreen extends StatelessWidget {
             isDefaultFilter: ctrl.statusFilter == PullRequestState.all,
           ),
           if (ctrl.getSortedUsers(ctrl.apiService).length > 1)
-            FilterMenu<GraphUser>.user(
+            FilterMenu<GraphUser>.bottomsheet(
               title: 'Opened by',
               values: ctrl.getSortedUsers(ctrl.apiService),
               currentFilter: ctrl.userFilter,
@@ -47,7 +47,7 @@ class _PullRequestsScreen extends StatelessWidget {
               formatLabel: (u) => u.displayName!,
               isDefaultFilter: ctrl.userFilter == ctrl.userAll,
             ),
-          FilterMenu<Project>(
+          FilterMenu<Project>.bottomsheet(
             title: 'Project',
             values: ctrl.getProjects(ctrl.storageService),
             currentFilter: ctrl.projectFilter,

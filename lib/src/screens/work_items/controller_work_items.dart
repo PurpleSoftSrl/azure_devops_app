@@ -191,7 +191,7 @@ class _WorkItemsController with FilterMixin {
                             const SizedBox(
                               height: 5,
                             ),
-                            FilterMenu<Project>(
+                            FilterMenu<Project>.bottomsheet(
                               title: 'Project',
                               values: getProjects(storageService).where((p) => p != projectAll).toList(),
                               currentFilter: newWorkItemProject,
@@ -211,7 +211,7 @@ class _WorkItemsController with FilterMixin {
                               height: 5,
                             ),
                             if (getSortedUsers(apiService).length > 1)
-                              FilterMenu<GraphUser>.user(
+                              FilterMenu<GraphUser>.bottomsheet(
                                 title: 'Assigned to',
                                 values: getSortedUsers(apiService)
                                     .whereNot((u) => u.displayName == userAll.displayName)

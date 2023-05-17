@@ -31,7 +31,7 @@ class _CommitsScreen extends StatelessWidget {
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: [
-          FilterMenu<Project>(
+          FilterMenu<Project>.bottomsheet(
             title: 'Project',
             values: ctrl.getProjects(ctrl.storageService),
             currentFilter: ctrl.projectFilter,
@@ -40,7 +40,7 @@ class _CommitsScreen extends StatelessWidget {
             isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
           ),
           if (ctrl.getSortedUsers(ctrl.apiService).length > 1)
-            FilterMenu<GraphUser>.user(
+            FilterMenu<GraphUser>.bottomsheet(
               title: 'Author',
               values: ctrl.getSortedUsers(ctrl.apiService),
               currentFilter: ctrl.userFilter,

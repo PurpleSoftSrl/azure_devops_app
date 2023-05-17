@@ -182,7 +182,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
                               height: 5,
                             ),
                             if (getSortedUsers(apiService).length > 1)
-                              FilterMenu<GraphUser>.user(
+                              FilterMenu<GraphUser>.bottomsheet(
                                 title: 'Assigned to',
                                 values: getSortedUsers(apiService, withUserAll: false),
                                 currentFilter: newWorkItemAssignedTo,
