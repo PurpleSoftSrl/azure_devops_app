@@ -39,15 +39,14 @@ class _CommitsScreen extends StatelessWidget {
             formatLabel: (p) => p.name!,
             isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
           ),
-          if (ctrl.getSortedUsers(ctrl.apiService).length > 1)
-            FilterMenu<GraphUser>.bottomsheet(
-              title: 'Author',
-              values: ctrl.getSortedUsers(ctrl.apiService),
-              currentFilter: ctrl.userFilter,
-              onSelected: ctrl.filterByUser,
-              formatLabel: (u) => u.displayName!,
-              isDefaultFilter: ctrl.userFilter == ctrl.userAll,
-            ),
+          FilterMenu<GraphUser>.bottomsheet(
+            title: 'Author',
+            values: ctrl.getSortedUsers(ctrl.apiService),
+            currentFilter: ctrl.userFilter,
+            onSelected: ctrl.filterByUser,
+            formatLabel: (u) => u.displayName!,
+            isDefaultFilter: ctrl.userFilter == ctrl.userAll,
+          ),
         ],
       ),
       builder: (commits) => Column(

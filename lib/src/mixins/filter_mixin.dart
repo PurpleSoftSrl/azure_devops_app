@@ -19,10 +19,12 @@ mixin FilterMixin {
 
     final me = apiService.allUsers.firstWhereOrNull((u) => u.mailAddress == apiService.user?.emailAddress);
 
+    final otherUsers = users.where((u) => u != me);
+
     return [
       if (withUserAll) userAll,
       if (me != null) me.copyWith(displayName: '${me.displayName} (me)'),
-      ...users.where((u) => u != me),
+      ...otherUsers,
     ];
   }
 

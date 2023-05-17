@@ -53,15 +53,14 @@ class _PipelinesScreen extends StatelessWidget {
             onSelected: ctrl.filterByStatus,
             isDefaultFilter: ctrl.statusFilter == PipelineStatus.all,
           ),
-          if (ctrl.getSortedUsers(ctrl.apiService).length > 1)
-            FilterMenu<GraphUser>.bottomsheet(
-              title: 'Triggered by',
-              values: ctrl.getSortedUsers(ctrl.apiService),
-              currentFilter: ctrl.userFilter,
-              onSelected: ctrl.filterByUser,
-              formatLabel: (u) => u.displayName!,
-              isDefaultFilter: ctrl.userFilter == ctrl.userAll,
-            ),
+          FilterMenu<GraphUser>.bottomsheet(
+            title: 'Triggered by',
+            values: ctrl.getSortedUsers(ctrl.apiService),
+            currentFilter: ctrl.userFilter,
+            onSelected: ctrl.filterByUser,
+            formatLabel: (u) => u.displayName!,
+            isDefaultFilter: ctrl.userFilter == ctrl.userAll,
+          ),
         ],
       ),
       builder: (pipelines) => Column(

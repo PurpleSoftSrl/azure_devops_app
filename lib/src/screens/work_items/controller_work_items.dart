@@ -210,21 +210,20 @@ class _WorkItemsController with FilterMixin {
                             const SizedBox(
                               height: 5,
                             ),
-                            if (getSortedUsers(apiService).length > 1)
-                              FilterMenu<GraphUser>.bottomsheet(
-                                title: 'Assigned to',
-                                values: getSortedUsers(apiService)
-                                    .whereNot((u) => u.displayName == userAll.displayName)
-                                    .toList(),
-                                currentFilter: newWorkItemAssignedTo,
-                                onSelected: (u) {
-                                  setState(() {
-                                    newWorkItemAssignedTo = u;
-                                  });
-                                },
-                                formatLabel: (u) => u.displayName!,
-                                isDefaultFilter: newWorkItemAssignedTo.displayName == userAll.displayName,
-                              ),
+                            FilterMenu<GraphUser>.bottomsheet(
+                              title: 'Assigned to',
+                              values: getSortedUsers(apiService)
+                                  .whereNot((u) => u.displayName == userAll.displayName)
+                                  .toList(),
+                              currentFilter: newWorkItemAssignedTo,
+                              onSelected: (u) {
+                                setState(() {
+                                  newWorkItemAssignedTo = u;
+                                });
+                              },
+                              formatLabel: (u) => u.displayName!,
+                              isDefaultFilter: newWorkItemAssignedTo.displayName == userAll.displayName,
+                            ),
                           ],
                         ),
                       ),

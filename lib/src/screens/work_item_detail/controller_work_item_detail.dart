@@ -95,8 +95,9 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
         );
 
     var newWorkItemAssignedTo =
-        getSortedUsers(apiService).firstWhereOrNull((u) => u.displayName == fields.systemAssignedTo?.displayName) ??
+        getSortedUsers(apiService).firstWhereOrNull((u) => u.mailAddress == fields.systemAssignedTo?.uniqueName) ??
             userAll;
+
     var newWorkItemTitle = fields.systemTitle;
     var newWorkItemDescription = fields.systemDescription ?? '';
 
@@ -181,19 +182,18 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
                             const SizedBox(
                               height: 5,
                             ),
-                            if (getSortedUsers(apiService).length > 1)
-                              FilterMenu<GraphUser>.bottomsheet(
-                                title: 'Assigned to',
-                                values: getSortedUsers(apiService, withUserAll: false),
-                                currentFilter: newWorkItemAssignedTo,
-                                onSelected: (u) {
-                                  setState(() {
-                                    newWorkItemAssignedTo = u;
-                                  });
-                                },
-                                formatLabel: (u) => u.displayName!,
-                                isDefaultFilter: newWorkItemAssignedTo.displayName == userAll.displayName,
-                              ),
+                            FilterMenu<GraphUser>.bottomsheet(
+                              title: 'Assigned to',
+                              values: getSortedUsers(apiService, withUserAll: false),
+                              currentFilter: newWorkItemAssignedTo,
+                              onSelected: (u) {
+                                setState(() {
+                                  newWorkItemAssignedTo = u;
+                                });
+                              },
+                              formatLabel: (u) => u.displayName!,
+                              isDefaultFilter: newWorkItemAssignedTo.displayName == userAll.displayName,
+                            ),
                           ],
                         ),
                       ),

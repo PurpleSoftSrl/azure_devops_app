@@ -63,15 +63,14 @@ class _WorkItemsScreen extends StatelessWidget {
             onSelected: ctrl.filterByType,
             isDefaultFilter: ctrl.typeFilter.name == 'All',
           ),
-          if (ctrl.getSortedUsers(ctrl.apiService).length > 1)
-            FilterMenu<GraphUser>.bottomsheet(
-              title: 'Assigned to',
-              values: ctrl.getSortedUsers(ctrl.apiService),
-              currentFilter: ctrl.userFilter,
-              onSelected: ctrl.filterByUser,
-              formatLabel: (u) => u.displayName!,
-              isDefaultFilter: ctrl.userFilter == ctrl.userAll,
-            ),
+          FilterMenu<GraphUser>.bottomsheet(
+            title: 'Assigned to',
+            values: ctrl.getSortedUsers(ctrl.apiService),
+            currentFilter: ctrl.userFilter,
+            onSelected: ctrl.filterByUser,
+            formatLabel: (u) => u.displayName!,
+            isDefaultFilter: ctrl.userFilter == ctrl.userAll,
+          ),
         ],
       ),
       builder: (items) => Column(
