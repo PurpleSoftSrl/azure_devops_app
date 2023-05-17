@@ -65,6 +65,10 @@ class _PullRequestDetailController with ShareMixin {
     );
   }
 
+  void goToProject() {
+    AppRouter.goToProjectDetail(pullRequest.repository.project.name);
+  }
+
   Future<String> _getReviewerDescriptor(Reviewer r) async {
     final res = await apiService.getUserFromEmail(email: r.uniqueName);
     return res.data?.descriptor ?? '';

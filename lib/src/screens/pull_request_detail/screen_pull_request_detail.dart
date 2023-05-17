@@ -51,6 +51,10 @@ class _PullRequestDetailScreen extends StatelessWidget {
                 Text(pr.creationDate.minutesAgo),
               ],
             ),
+            ProjectChip(
+              onTap: ctrl.goToProject,
+              projectName: pr.repository.project.name,
+            ),
             RepositoryChip(
               onTap: ctrl.goToRepo,
               repositoryName: pr.repository.name,
