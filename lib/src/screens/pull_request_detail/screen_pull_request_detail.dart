@@ -38,6 +38,9 @@ class _PullRequestDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(
+              height: 20,
+            ),
             Row(
               children: [
                 TextTitleDescription(title: 'Created by: ', description: pr.createdBy.displayName),
@@ -46,10 +49,14 @@ class _PullRequestDetailScreen extends StatelessWidget {
                 ),
                 MemberAvatar(
                   userDescriptor: pr.createdBy.descriptor,
+                  radius: 20,
                 ),
                 const Spacer(),
                 Text(pr.creationDate.minutesAgo),
               ],
+            ),
+            const SizedBox(
+              height: 20,
             ),
             ProjectChip(
               onTap: ctrl.goToProject,
@@ -110,6 +117,7 @@ class _PullRequestDetailScreen extends StatelessWidget {
                     children: [
                       MemberAvatar(
                         userDescriptor: ctrl.reviewers.firstWhere((rev) => rev.reviewer.id == r.id).descriptor,
+                        radius: 20,
                       ),
                       const SizedBox(
                         width: 20,
