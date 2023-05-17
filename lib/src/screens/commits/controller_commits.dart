@@ -9,7 +9,9 @@ class _CommitsController with FilterMixin {
     return instance ??= _CommitsController._(apiService, storageService, project);
   }
 
-  _CommitsController._(this.apiService, this.storageService, this.project);
+  _CommitsController._(this.apiService, this.storageService, this.project) {
+    projectFilter = project ?? allProject;
+  }
 
   static _CommitsController? instance;
 
@@ -19,29 +21,11 @@ class _CommitsController with FilterMixin {
 
   final recentCommits = ValueNotifier<ApiResponse<List<Commit>?>?>(null);
 
-  final allProject = Project(
-    id: '-1',
-    name: 'All',
-    description: '',
-    url: '',
-    state: '',
-    revision: -1,
-    visibility: '',
-    lastUpdateTime: DateTime.now(),
-  );
-
-  late Project projectFilter = project ?? allProject;
-  List<Project> projects = [];
-
   void dispose() {
     instance = null;
   }
 
   Future<void> init() async {
-    projects = [allProject];
-
-    projects.addAll(storageService.getChosenProjects());
-
     await _getData();
   }
 

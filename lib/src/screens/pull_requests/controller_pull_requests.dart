@@ -9,7 +9,9 @@ class _PullRequestsController with FilterMixin {
     return instance ??= _PullRequestsController._(apiService, storageService, project);
   }
 
-  _PullRequestsController._(this.apiService, this.storageService, this.project);
+  _PullRequestsController._(this.apiService, this.storageService, this.project) {
+    projectFilter = project ?? allProject;
+  }
 
   static _PullRequestsController? instance;
 
@@ -21,29 +23,11 @@ class _PullRequestsController with FilterMixin {
 
   PullRequestState statusFilter = PullRequestState.all;
 
-  final allProject = Project(
-    id: '-1',
-    name: 'All',
-    description: '',
-    url: '',
-    state: '',
-    revision: -1,
-    visibility: '',
-    lastUpdateTime: DateTime.now(),
-  );
-
-  late Project projectFilter = project ?? allProject;
-  List<Project> projects = [];
-
   void dispose() {
     instance = null;
   }
 
   Future<void> init() async {
-    projects = [allProject];
-
-    projects.addAll(storageService.getChosenProjects());
-
     await _getData();
   }
 

@@ -9,7 +9,9 @@ class _WorkItemsController with FilterMixin {
     return instance ??= _WorkItemsController._(apiService, storageService, project);
   }
 
-  _WorkItemsController._(this.apiService, this.storageService, this.project);
+  _WorkItemsController._(this.apiService, this.storageService, this.project) {
+    projectFilter = project ?? allProject;
+  }
 
   static _WorkItemsController? instance;
 
@@ -21,20 +23,6 @@ class _WorkItemsController with FilterMixin {
 
   final _workItemStateAll = 'All';
 
-  final allProject = Project(
-    id: '-1',
-    name: 'All',
-    description: '',
-    url: '',
-    state: '',
-    revision: -1,
-    visibility: '',
-    lastUpdateTime: DateTime.now(),
-  );
-
-  List<Project> projects = [];
-
-  late Project projectFilter = project ?? allProject;
   late String statusFilter = _workItemStateAll;
   WorkItemType typeFilter = WorkItemType.all;
 
@@ -47,16 +35,12 @@ class _WorkItemsController with FilterMixin {
   Future<void> init() async {
     allWorkItemTypes = [typeFilter];
 
-    projects = [allProject];
-
     final types = await apiService.getWorkItemTypes();
     if (!types.isError) {
       allWorkItemTypes.addAll(types.data!.values.expand((ts) => ts).toSet());
     }
 
     await _getData();
-
-    projects.addAll(storageService.getChosenProjects());
   }
 
   void goToWorkItemDetail(WorkItem item) {
@@ -131,7 +115,7 @@ class _WorkItemsController with FilterMixin {
 
   // ignore: long-method
   Future<void> createWorkItem() async {
-    var newWorkItemProject = projects.firstWhereOrNull((p) => p.id != '-1') ?? allProject;
+    var newWorkItemProject = getProjects(storageService).firstWhereOrNull((p) => p.id != '-1') ?? allProject;
 
     var newWorkItemType = allWorkItemTypes.first;
 
@@ -197,7 +181,7 @@ class _WorkItemsController with FilterMixin {
                             ),
                             FilterMenu<Project>(
                               title: 'Project',
-                              values: projects.where((p) => p != allProject).toList(),
+                              values: getProjects(storageService).where((p) => p != allProject).toList(),
                               currentFilter: newWorkItemProject,
                               onSelected: (p) {
                                 setState(() {

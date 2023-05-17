@@ -1,8 +1,13 @@
+import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
+import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:collection/collection.dart';
 
 mixin FilterMixin {
+  final allProject = Project.all();
+  late Project projectFilter = allProject;
+
   final userAll = GraphUser.all();
   late GraphUser userFilter = userAll;
 
@@ -13,5 +18,9 @@ mixin FilterMixin {
         .toList();
 
     return [if (withUserAll) userAll, ...users];
+  }
+
+  List<Project> getProjects(StorageService storageService) {
+    return [allProject, ...storageService.getChosenProjects()];
   }
 }

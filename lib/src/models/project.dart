@@ -9,6 +9,8 @@ class GetProjectsResponse {
 }
 
 class Project {
+  factory Project.all() => Project(name: 'All');
+
   factory Project.fromJson(Map<String, dynamic> json) => Project(
         id: json['id'] as String?,
         name: json['name'] as String?,
@@ -24,14 +26,14 @@ class Project {
       );
 
   Project({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.url,
-    required this.state,
-    required this.revision,
-    required this.visibility,
-    required this.lastUpdateTime,
+    this.id,
+    this.name,
+    this.description,
+    this.url,
+    this.state,
+    this.revision,
+    this.visibility,
+    this.lastUpdateTime,
     this.defaultTeam,
     this.defaultTeamImageUrl,
   });

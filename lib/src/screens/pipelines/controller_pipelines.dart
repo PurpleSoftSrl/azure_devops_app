@@ -9,7 +9,9 @@ class _PipelinesController with FilterMixin {
     return instance ??= _PipelinesController._(apiService, storageService, project);
   }
 
-  _PipelinesController._(this.apiService, this.storageService, this.project);
+  _PipelinesController._(this.apiService, this.storageService, this.project) {
+    projectFilter = project ?? allProject;
+  }
 
   static _PipelinesController? instance;
 
@@ -22,20 +24,6 @@ class _PipelinesController with FilterMixin {
   int get inProgressPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.inProgress).length ?? 0;
   int get queuedPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.notStarted).length ?? 0;
 
-  final allProject = Project(
-    id: '-1',
-    name: 'All',
-    description: '',
-    url: '',
-    state: '',
-    revision: -1,
-    visibility: '',
-    lastUpdateTime: DateTime.now(),
-  );
-
-  List<Project> projects = [];
-
-  late Project projectFilter = project ?? allProject;
   PipelineResult resultFilter = PipelineResult.all;
   PipelineStatus statusFilter = PipelineStatus.all;
 
@@ -44,7 +32,6 @@ class _PipelinesController with FilterMixin {
   }
 
   Future<void> init() async {
-    projects = [allProject, ...storageService.getChosenProjects()];
     await _getData();
   }
 

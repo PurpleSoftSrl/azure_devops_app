@@ -129,11 +129,6 @@ class AzureApiServiceMock implements AzureApiService {
         id: '0',
         name: 'p1',
         description: 'p1 desc',
-        url: '',
-        state: '',
-        revision: 0,
-        visibility: '',
-        lastUpdateTime: null,
       ),
     ]);
   }

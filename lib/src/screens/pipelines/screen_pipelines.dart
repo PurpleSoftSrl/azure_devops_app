@@ -32,7 +32,7 @@ class _PipelinesScreen extends StatelessWidget {
         filters: [
           FilterMenu<Project>(
             title: 'Project',
-            values: ctrl.projects,
+            values: ctrl.getProjects(ctrl.storageService),
             currentFilter: ctrl.projectFilter,
             onSelected: ctrl.filterByProject,
             formatLabel: (p) => p.name!,
