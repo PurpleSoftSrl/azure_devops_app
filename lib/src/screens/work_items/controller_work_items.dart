@@ -6,7 +6,17 @@ class _WorkItemsController with FilterMixin {
     required StorageService storageService,
     Project? project,
   }) {
-    return instance ??= _WorkItemsController._(apiService, storageService, project);
+    // handle page already in memory with a different project filter
+    if (_instances[project.hashCode] != null) {
+      return _instances[project.hashCode]!;
+    }
+
+    if (instance != null && project?.id != instance!.project?.id) {
+      instance = _WorkItemsController._(apiService, storageService, project);
+    }
+
+    instance ??= _WorkItemsController._(apiService, storageService, project);
+    return _instances.putIfAbsent(project.hashCode, () => instance!);
   }
 
   _WorkItemsController._(this.apiService, this.storageService, this.project) {
@@ -14,6 +24,7 @@ class _WorkItemsController with FilterMixin {
   }
 
   static _WorkItemsController? instance;
+  static final Map<int, _WorkItemsController> _instances = {};
 
   final AzureApiService apiService;
   final StorageService storageService;
@@ -30,6 +41,7 @@ class _WorkItemsController with FilterMixin {
 
   void dispose() {
     instance = null;
+    _instances.remove(project.hashCode);
   }
 
   Future<void> init() async {

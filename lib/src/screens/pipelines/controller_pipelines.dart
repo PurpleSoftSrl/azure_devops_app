@@ -6,7 +6,17 @@ class _PipelinesController with FilterMixin {
     required StorageService storageService,
     Project? project,
   }) {
-    return instance ??= _PipelinesController._(apiService, storageService, project);
+    // handle page already in memory with a different project filter
+    if (_instances[project.hashCode] != null) {
+      return _instances[project.hashCode]!;
+    }
+
+    if (instance != null && project?.id != instance!.project?.id) {
+      instance = _PipelinesController._(apiService, storageService, project);
+    }
+
+    instance ??= _PipelinesController._(apiService, storageService, project);
+    return _instances.putIfAbsent(project.hashCode, () => instance!);
   }
 
   _PipelinesController._(this.apiService, this.storageService, this.project) {
@@ -14,6 +24,7 @@ class _PipelinesController with FilterMixin {
   }
 
   static _PipelinesController? instance;
+  static final Map<int, _PipelinesController> _instances = {};
 
   final AzureApiService apiService;
   final StorageService storageService;
@@ -29,6 +40,7 @@ class _PipelinesController with FilterMixin {
 
   void dispose() {
     instance = null;
+    _instances.remove(project.hashCode);
   }
 
   Future<void> init() async {

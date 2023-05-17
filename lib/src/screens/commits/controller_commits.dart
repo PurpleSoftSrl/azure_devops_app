@@ -6,7 +6,17 @@ class _CommitsController with FilterMixin {
     required StorageService storageService,
     Project? project,
   }) {
-    return instance ??= _CommitsController._(apiService, storageService, project);
+    // handle page already in memory with a different project filter
+    if (_instances[project.hashCode] != null) {
+      return _instances[project.hashCode]!;
+    }
+
+    if (instance != null && project?.id != instance!.project?.id) {
+      instance = _CommitsController._(apiService, storageService, project);
+    }
+
+    instance ??= _CommitsController._(apiService, storageService, project);
+    return _instances.putIfAbsent(project.hashCode, () => instance!);
   }
 
   _CommitsController._(this.apiService, this.storageService, this.project) {
@@ -14,6 +24,7 @@ class _CommitsController with FilterMixin {
   }
 
   static _CommitsController? instance;
+  static final Map<int, _CommitsController> _instances = {};
 
   final AzureApiService apiService;
   final StorageService storageService;
@@ -23,6 +34,7 @@ class _CommitsController with FilterMixin {
 
   void dispose() {
     instance = null;
+    _instances.remove(project.hashCode);
   }
 
   Future<void> init() async {
