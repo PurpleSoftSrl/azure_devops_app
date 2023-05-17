@@ -1,6 +1,6 @@
 part of pull_requests;
 
-class _PullRequestsController {
+class _PullRequestsController with FilterMixin {
   factory _PullRequestsController({
     required AzureApiService apiService,
     required StorageService storageService,
@@ -20,24 +20,6 @@ class _PullRequestsController {
   final pullRequests = ValueNotifier<ApiResponse<List<PullRequest>?>?>(null);
 
   PullRequestState statusFilter = PullRequestState.all;
-
-  final _userAll = GraphUser(
-    subjectKind: '',
-    domain: '',
-    principalName: '',
-    mailAddress: '',
-    origin: '',
-    originId: '',
-    displayName: 'All',
-    links: null,
-    url: '',
-    descriptor: '',
-    metaType: '',
-    directoryAlias: '',
-  );
-
-  late GraphUser userFilter = _userAll;
-  List<GraphUser> users = [];
 
   final allProject = Project(
     id: '-1',
@@ -59,13 +41,6 @@ class _PullRequestsController {
 
   Future<void> init() async {
     projects = [allProject];
-
-    users = apiService.allUsers
-        .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
-        .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
-        .toList();
-
-    users.insert(0, _userAll);
 
     projects.addAll(storageService.getChosenProjects());
 
@@ -107,7 +82,7 @@ class _PullRequestsController {
     pullRequests.value = null;
     projectFilter = allProject;
     statusFilter = PullRequestState.all;
-    userFilter = _userAll;
+    userFilter = userAll;
 
     init();
   }

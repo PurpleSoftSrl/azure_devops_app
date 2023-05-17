@@ -1,6 +1,6 @@
 part of commits;
 
-class _CommitsController {
+class _CommitsController with FilterMixin {
   factory _CommitsController({
     required AzureApiService apiService,
     required StorageService storageService,
@@ -33,37 +33,12 @@ class _CommitsController {
   late Project projectFilter = project ?? allProject;
   List<Project> projects = [];
 
-  final _userAll = GraphUser(
-    subjectKind: '',
-    domain: '',
-    principalName: '',
-    mailAddress: '',
-    origin: '',
-    originId: '',
-    displayName: 'All',
-    links: null,
-    url: '',
-    descriptor: '',
-    metaType: '',
-    directoryAlias: '',
-  );
-
-  late GraphUser userFilter = _userAll;
-  List<GraphUser> users = [];
-
   void dispose() {
     instance = null;
   }
 
   Future<void> init() async {
     projects = [allProject];
-
-    users = apiService.allUsers
-        .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
-        .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
-        .toList();
-
-    users.insert(0, _userAll);
 
     projects.addAll(storageService.getChosenProjects());
 
@@ -72,8 +47,8 @@ class _CommitsController {
 
   Future<void> _getData() async {
     final res = await apiService.getRecentCommits(
-      project: projectFilter.name == 'All' ? null : projectFilter,
-      author: userFilter.displayName == 'All' ? null : userFilter.mailAddress,
+      project: projectFilter.name == userAll.displayName ? null : projectFilter,
+      author: userFilter.displayName == userAll.displayName ? null : userFilter.mailAddress,
     );
     var commits = (res.data ?? [])..sort((a, b) => b.author!.date!.compareTo(a.author!.date!));
 
@@ -88,7 +63,7 @@ class _CommitsController {
 
   void filterByProject(Project proj) {
     recentCommits.value = null;
-    projectFilter = proj.name! == 'All' ? allProject : proj;
+    projectFilter = proj.name! == userAll.displayName ? allProject : proj;
     _getData();
   }
 
@@ -101,7 +76,7 @@ class _CommitsController {
   void resetFilters() {
     recentCommits.value = null;
     projectFilter = allProject;
-    userFilter = _userAll;
+    userFilter = userAll;
     init();
   }
 }

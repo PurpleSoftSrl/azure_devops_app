@@ -1,5 +1,6 @@
 library pull_requests;
 
+import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
 import 'package:azure_devops/src/models/user.dart';
@@ -11,7 +12,6 @@ import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/filter_menu.dart';
 import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:azure_devops/src/widgets/pull_request_list_tile.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 part 'components_pull_requests.dart';

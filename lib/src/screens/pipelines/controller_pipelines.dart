@@ -1,6 +1,6 @@
 part of pipelines;
 
-class _PipelinesController {
+class _PipelinesController with FilterMixin {
   factory _PipelinesController({
     required AzureApiService apiService,
     required StorageService storageService,
@@ -35,24 +35,6 @@ class _PipelinesController {
 
   List<Project> projects = [];
 
-  final _userAll = GraphUser(
-    subjectKind: '',
-    domain: '',
-    principalName: '',
-    mailAddress: '',
-    origin: '',
-    originId: '',
-    displayName: 'All',
-    links: null,
-    url: '',
-    descriptor: '',
-    metaType: '',
-    directoryAlias: '',
-  );
-
-  List<GraphUser> users = [];
-
-  late GraphUser userFilter = _userAll;
   late Project projectFilter = project ?? allProject;
   PipelineResult resultFilter = PipelineResult.all;
   PipelineStatus statusFilter = PipelineStatus.all;
@@ -63,14 +45,6 @@ class _PipelinesController {
 
   Future<void> init() async {
     projects = [allProject, ...storageService.getChosenProjects()];
-
-    users = apiService.allUsers
-        .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
-        .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
-        .toList();
-
-    users.insert(0, _userAll);
-
     await _getData();
   }
 
@@ -78,10 +52,10 @@ class _PipelinesController {
     final now = DateTime.now();
 
     final res = await apiService.getRecentPipelines(
-      project: projectFilter.name == 'All' ? null : projectFilter,
+      project: projectFilter.name == userAll.displayName ? null : projectFilter,
       result: resultFilter,
       status: statusFilter,
-      triggeredBy: userFilter.displayName == 'All' ? null : userFilter.mailAddress,
+      triggeredBy: userFilter.displayName == userAll.displayName ? null : userFilter.mailAddress,
     );
 
     var pipes = res.data ?? [];
@@ -107,7 +81,7 @@ class _PipelinesController {
 
   void filterByProject(Project proj) {
     pipelines.value = null;
-    projectFilter = proj.name! == 'All' ? allProject : proj;
+    projectFilter = proj.name! == userAll.displayName ? allProject : proj;
     _getData();
   }
 
@@ -134,7 +108,7 @@ class _PipelinesController {
     projectFilter = allProject;
     resultFilter = PipelineResult.all;
     statusFilter = PipelineStatus.all;
-    userFilter = _userAll;
+    userFilter = userAll;
 
     init();
   }

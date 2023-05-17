@@ -1,6 +1,6 @@
 part of work_items;
 
-class _WorkItemsController {
+class _WorkItemsController with FilterMixin {
   factory _WorkItemsController({
     required AzureApiService apiService,
     required StorageService storageService,
@@ -34,27 +34,9 @@ class _WorkItemsController {
 
   List<Project> projects = [];
 
-  final _userNone = GraphUser(
-    subjectKind: '',
-    domain: '',
-    principalName: '',
-    mailAddress: '',
-    origin: '',
-    originId: '',
-    displayName: 'All',
-    links: null,
-    url: '',
-    descriptor: '',
-    metaType: '',
-    directoryAlias: '',
-  );
-
   late Project projectFilter = project ?? allProject;
   late String statusFilter = _workItemStateAll;
   WorkItemType typeFilter = WorkItemType.all;
-  late GraphUser userFilter = _userNone;
-
-  List<GraphUser> users = [];
 
   late List<WorkItemType> allWorkItemTypes = [typeFilter];
 
@@ -64,15 +46,6 @@ class _WorkItemsController {
 
   Future<void> init() async {
     allWorkItemTypes = [typeFilter];
-
-    users = [_userNone];
-
-    users.addAll(
-      apiService.allUsers
-          .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
-          .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
-          .toList(),
-    );
 
     projects = [allProject];
 
@@ -121,7 +94,7 @@ class _WorkItemsController {
     final noFilters = statusFilter == _workItemStateAll &&
         typeFilter == WorkItemType.all &&
         projectFilter == allProject &&
-        userFilter == _userNone;
+        userFilter == userAll;
 
     if (noFilters) {
       workItems.value = res;
@@ -139,7 +112,7 @@ class _WorkItemsController {
         ? filteredByStatusItems
         : filteredByStatusItems?.where((i) => i.teamProject == projectFilter.name);
 
-    final filteredByUserItems = userFilter == _userNone
+    final filteredByUserItems = userFilter == userAll
         ? filteredByProjectItems
         : filteredByProjectItems?.where((i) => i.assignedTo?.displayName == userFilter.displayName);
 
@@ -151,7 +124,7 @@ class _WorkItemsController {
     statusFilter = _workItemStateAll;
     typeFilter = WorkItemType.all;
     projectFilter = allProject;
-    userFilter = _userNone;
+    userFilter = userAll;
 
     init();
   }
@@ -162,7 +135,7 @@ class _WorkItemsController {
 
     var newWorkItemType = allWorkItemTypes.first;
 
-    var newWorkItemAssignedTo = _userNone;
+    var newWorkItemAssignedTo = userAll;
     var newWorkItemTitle = '';
     var newWorkItemDescription = '';
 
@@ -241,10 +214,12 @@ class _WorkItemsController {
                             const SizedBox(
                               height: 5,
                             ),
-                            if (users.length > 1)
+                            if (getSortedUsers(apiService).length > 1)
                               FilterMenu<GraphUser>.user(
                                 title: 'Assigned to',
-                                values: users.whereNot((u) => u.displayName == 'All').toList(),
+                                values: getSortedUsers(apiService)
+                                    .whereNot((u) => u.displayName == userAll.displayName)
+                                    .toList(),
                                 currentFilter: newWorkItemAssignedTo,
                                 onSelected: (u) {
                                   setState(() {
@@ -252,7 +227,7 @@ class _WorkItemsController {
                                   });
                                 },
                                 formatLabel: (u) => u.displayName!,
-                                isDefaultFilter: newWorkItemAssignedTo.displayName == 'All',
+                                isDefaultFilter: newWorkItemAssignedTo.displayName == userAll.displayName,
                               ),
                           ],
                         ),
@@ -306,7 +281,7 @@ class _WorkItemsController {
       projectName: newWorkItemProject.name!,
       type: newWorkItemType,
       title: newWorkItemTitle,
-      assignedTo: newWorkItemAssignedTo.displayName == 'All' ? null : newWorkItemAssignedTo,
+      assignedTo: newWorkItemAssignedTo.displayName == userAll.displayName ? null : newWorkItemAssignedTo,
       description: newWorkItemDescription,
     );
 

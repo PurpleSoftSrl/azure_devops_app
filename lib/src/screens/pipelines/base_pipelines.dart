@@ -1,6 +1,7 @@
 library pipelines;
 
 import 'package:azure_devops/src/extensions/pipeline_result_extension.dart';
+import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/user.dart';
@@ -12,7 +13,6 @@ import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/filter_menu.dart';
 import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:azure_devops/src/widgets/pipeline_list_tile.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 part 'components_pipelines.dart';

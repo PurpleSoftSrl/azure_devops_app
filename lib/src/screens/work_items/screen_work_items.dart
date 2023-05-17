@@ -62,14 +62,14 @@ class _WorkItemsScreen extends StatelessWidget {
             onSelected: ctrl.filterByType,
             isDefaultFilter: ctrl.typeFilter.name == 'All',
           ),
-          if (ctrl.users.length > 1)
+          if (ctrl.getSortedUsers(ctrl.apiService).length > 1)
             FilterMenu<GraphUser>.user(
               title: 'Assigned to',
-              values: ctrl.users,
+              values: ctrl.getSortedUsers(ctrl.apiService),
               currentFilter: ctrl.userFilter,
               onSelected: ctrl.filterByUser,
               formatLabel: (u) => u.displayName!,
-              isDefaultFilter: ctrl.userFilter == ctrl._userNone,
+              isDefaultFilter: ctrl.userFilter == ctrl.userAll,
             ),
         ],
       ),

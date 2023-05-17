@@ -25,19 +25,21 @@ class GetUsersResponse {
 }
 
 class GraphUser {
+  factory GraphUser.all() => GraphUser(displayName: 'All');
+
   GraphUser({
-    required this.subjectKind,
-    required this.domain,
-    required this.principalName,
-    required this.mailAddress,
-    required this.origin,
-    required this.originId,
-    required this.displayName,
-    required this.links,
-    required this.url,
-    required this.descriptor,
-    required this.metaType,
-    required this.directoryAlias,
+    this.subjectKind,
+    this.domain,
+    this.principalName,
+    this.mailAddress,
+    this.origin,
+    this.originId,
+    this.displayName,
+    this.links,
+    this.url,
+    this.descriptor,
+    this.metaType,
+    this.directoryAlias,
   });
 
   factory GraphUser.fromJson(Map<String, dynamic> json) => GraphUser(

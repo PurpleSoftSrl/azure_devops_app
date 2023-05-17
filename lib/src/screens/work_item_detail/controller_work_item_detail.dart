@@ -1,6 +1,6 @@
 part of work_item_detail;
 
-class _WorkItemDetailController with ShareMixin {
+class _WorkItemDetailController with ShareMixin, FilterMixin {
   factory _WorkItemDetailController({
     required WorkItem item,
     required AzureApiService apiService,
@@ -37,23 +37,6 @@ class _WorkItemDetailController with ShareMixin {
 
   String get itemWebUrl => '${apiService.basePath}/${item.teamProject}/_workitems/edit/${item.id}';
 
-  final _userNone = GraphUser(
-    subjectKind: '',
-    domain: '',
-    principalName: '',
-    mailAddress: '',
-    origin: '',
-    originId: '',
-    displayName: 'Assigned to',
-    links: null,
-    url: '',
-    descriptor: '',
-    metaType: '',
-    directoryAlias: '',
-  );
-
-  List<GraphUser> users = [];
-
   List<WorkItemStatus> statuses = [];
 
   List<WorkItemUpdate> updates = [];
@@ -69,11 +52,6 @@ class _WorkItemDetailController with ShareMixin {
 
     await _getUpdates();
     itemDetail.value = res;
-
-    users = apiService.allUsers
-        .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
-        .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
-        .toList();
 
     await _getStatuses(item.workItemType);
   }
@@ -119,7 +97,8 @@ class _WorkItemDetailController with ShareMixin {
         );
 
     var newWorkItemAssignedTo =
-        users.firstWhereOrNull((u) => u.displayName == fields.systemAssignedTo?.displayName) ?? _userNone;
+        getSortedUsers(apiService).firstWhereOrNull((u) => u.displayName == fields.systemAssignedTo?.displayName) ??
+            userAll;
     var newWorkItemTitle = fields.systemTitle;
     var newWorkItemDescription = fields.systemDescription ?? '';
 
@@ -204,10 +183,10 @@ class _WorkItemDetailController with ShareMixin {
                             const SizedBox(
                               height: 5,
                             ),
-                            if (users.length > 1)
+                            if (getSortedUsers(apiService).length > 1)
                               FilterMenu<GraphUser>.user(
                                 title: 'Assigned to',
-                                values: users,
+                                values: getSortedUsers(apiService, withUserAll: false),
                                 currentFilter: newWorkItemAssignedTo,
                                 onSelected: (u) {
                                   setState(() {
@@ -215,7 +194,7 @@ class _WorkItemDetailController with ShareMixin {
                                   });
                                 },
                                 formatLabel: (u) => u.displayName!,
-                                isDefaultFilter: newWorkItemAssignedTo.displayName == 'Assigned to',
+                                isDefaultFilter: newWorkItemAssignedTo.displayName == userAll.displayName,
                               ),
                           ],
                         ),
@@ -269,7 +248,7 @@ class _WorkItemDetailController with ShareMixin {
     if (newWorkItemType.name == fields.systemWorkItemType &&
         newWorkItemStatus == fields.systemState &&
         newWorkItemTitle == fields.systemTitle &&
-        newWorkItemAssignedTo.displayName == (fields.systemAssignedTo?.displayName ?? _userNone.displayName) &&
+        newWorkItemAssignedTo.displayName == (fields.systemAssignedTo?.displayName ?? userAll.displayName) &&
         newWorkItemDescription == (fields.systemDescription ?? '')) {
       return;
     }
