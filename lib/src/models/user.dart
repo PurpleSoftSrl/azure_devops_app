@@ -124,6 +124,23 @@ class GraphUser {
         metaType.hashCode ^
         directoryAlias.hashCode;
   }
+
+  GraphUser copyWith({String? displayName}) {
+    return GraphUser(
+      subjectKind: subjectKind,
+      domain: domain,
+      principalName: principalName,
+      mailAddress: mailAddress,
+      origin: origin,
+      originId: originId,
+      displayName: displayName ?? this.displayName,
+      links: links,
+      url: url,
+      descriptor: descriptor,
+      metaType: metaType,
+      directoryAlias: directoryAlias,
+    );
+  }
 }
 
 class UserMe {

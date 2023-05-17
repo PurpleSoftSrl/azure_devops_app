@@ -106,6 +106,7 @@ class FilterMenu<T> extends StatelessWidget {
 
     if (withBottomsheet) {
       final apiService = AzureApiServiceInherited.of(context).apiService;
+      const imageSize = 35.0;
       return InkWell(
         key: ValueKey(title),
         onTap: () {
@@ -137,29 +138,32 @@ class FilterMenu<T> extends StatelessWidget {
                               Row(
                                 children: [
                                   if (v is GraphUser && (v.descriptor?.isNotEmpty ?? false))
-                                    MemberAvatar(userDescriptor: v.descriptor!)
+                                    MemberAvatar(
+                                      userDescriptor: v.descriptor!,
+                                      radius: imageSize,
+                                    )
                                   else if (v is Project && v.defaultTeamImageUrl != null)
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(100),
                                       child: apiService.isImageUnauthorized
                                           ? const SizedBox(
-                                              height: 30,
-                                              width: 30,
+                                              height: imageSize,
+                                              width: imageSize,
                                               child: Icon(DevOpsIcons.project),
                                             )
                                           : CachedNetworkImage(
                                               imageUrl: v.defaultTeamImageUrl!,
                                               httpHeaders: apiService.headers,
                                               errorWidget: (_, __, ___) => Icon(DevOpsIcons.project),
-                                              width: 30,
-                                              height: 30,
+                                              width: imageSize,
+                                              height: imageSize,
                                             ),
                                     )
                                   else
                                     SizedBox(
-                                      height: 40,
-                                      width: 40,
-                                      child: Icon(DevOpsIcons.users),
+                                      height: imageSize,
+                                      width: imageSize,
+                                      child: Icon(v is Project ? DevOpsIcons.project : DevOpsIcons.users),
                                     ),
                                   const SizedBox(
                                     width: 20,

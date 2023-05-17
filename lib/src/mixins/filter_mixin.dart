@@ -17,7 +17,13 @@ mixin FilterMixin {
         .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
         .toList();
 
-    return [if (withUserAll) userAll, ...users];
+    final me = apiService.allUsers.firstWhereOrNull((u) => u.mailAddress == apiService.user?.emailAddress);
+
+    return [
+      if (withUserAll) userAll,
+      if (me != null) me.copyWith(displayName: '${me.displayName} (me)'),
+      ...users.where((u) => u != me),
+    ];
   }
 
   List<Project> getProjects(StorageService storageService) {

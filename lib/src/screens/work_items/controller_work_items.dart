@@ -110,7 +110,7 @@ class _WorkItemsController with FilterMixin {
 
     final filteredByUserItems = userFilter == userAll
         ? filteredByProjectItems
-        : filteredByProjectItems?.where((i) => i.assignedTo?.displayName == userFilter.displayName);
+        : filteredByProjectItems?.where((i) => i.assignedTo?.uniqueName == userFilter.mailAddress);
 
     workItems.value = ApiResponse.ok(filteredByUserItems?.toList());
   }
