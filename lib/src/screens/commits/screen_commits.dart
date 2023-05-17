@@ -36,7 +36,7 @@ class _CommitsScreen extends StatelessWidget {
             currentFilter: ctrl.projectFilter,
             onSelected: ctrl.filterByProject,
             formatLabel: (p) => p.name!,
-            isDefaultFilter: ctrl.projectFilter == ctrl.allProject,
+            isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
           ),
           if (ctrl.getSortedUsers(ctrl.apiService).length > 1)
             FilterMenu<GraphUser>.user(

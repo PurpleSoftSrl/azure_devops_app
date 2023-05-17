@@ -10,7 +10,7 @@ class _WorkItemsController with FilterMixin {
   }
 
   _WorkItemsController._(this.apiService, this.storageService, this.project) {
-    projectFilter = project ?? allProject;
+    projectFilter = project ?? projectAll;
   }
 
   static _WorkItemsController? instance;
@@ -49,7 +49,7 @@ class _WorkItemsController with FilterMixin {
 
   void filterByProject(Project proj) {
     workItems.value = null;
-    projectFilter = proj.name == 'All' ? allProject : proj;
+    projectFilter = proj.name == projectAll.name ? projectAll : proj;
     _getData();
   }
 
@@ -77,7 +77,7 @@ class _WorkItemsController with FilterMixin {
 
     final noFilters = statusFilter == _workItemStateAll &&
         typeFilter == WorkItemType.all &&
-        projectFilter == allProject &&
+        projectFilter == projectAll &&
         userFilter == userAll;
 
     if (noFilters) {
@@ -92,7 +92,7 @@ class _WorkItemsController with FilterMixin {
         ? filteredByTypeItems
         : filteredByTypeItems?.where((i) => i.state == statusFilter);
 
-    final filteredByProjectItems = projectFilter == allProject
+    final filteredByProjectItems = projectFilter == projectAll
         ? filteredByStatusItems
         : filteredByStatusItems?.where((i) => i.teamProject == projectFilter.name);
 
@@ -107,7 +107,7 @@ class _WorkItemsController with FilterMixin {
     workItems.value = null;
     statusFilter = _workItemStateAll;
     typeFilter = WorkItemType.all;
-    projectFilter = allProject;
+    projectFilter = projectAll;
     userFilter = userAll;
 
     init();
@@ -115,7 +115,7 @@ class _WorkItemsController with FilterMixin {
 
   // ignore: long-method
   Future<void> createWorkItem() async {
-    var newWorkItemProject = getProjects(storageService).firstWhereOrNull((p) => p.id != '-1') ?? allProject;
+    var newWorkItemProject = getProjects(storageService).firstWhereOrNull((p) => p.id != '-1') ?? projectAll;
 
     var newWorkItemType = allWorkItemTypes.first;
 
@@ -181,7 +181,7 @@ class _WorkItemsController with FilterMixin {
                             ),
                             FilterMenu<Project>(
                               title: 'Project',
-                              values: getProjects(storageService).where((p) => p != allProject).toList(),
+                              values: getProjects(storageService).where((p) => p != projectAll).toList(),
                               currentFilter: newWorkItemProject,
                               onSelected: (p) {
                                 setState(() {
@@ -189,7 +189,7 @@ class _WorkItemsController with FilterMixin {
                                 });
                               },
                               formatLabel: (p) => p.name!,
-                              isDefaultFilter: newWorkItemProject == allProject,
+                              isDefaultFilter: newWorkItemProject == projectAll,
                             ),
                             const SizedBox(
                               height: 15,
@@ -257,7 +257,7 @@ class _WorkItemsController with FilterMixin {
       ),
     );
 
-    if (newWorkItemProject == allProject || newWorkItemType == WorkItemType.all || newWorkItemTitle.isEmpty) {
+    if (newWorkItemProject == projectAll || newWorkItemType == WorkItemType.all || newWorkItemTitle.isEmpty) {
       return;
     }
 

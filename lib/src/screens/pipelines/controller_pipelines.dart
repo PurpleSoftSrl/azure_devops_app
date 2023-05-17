@@ -10,7 +10,7 @@ class _PipelinesController with FilterMixin {
   }
 
   _PipelinesController._(this.apiService, this.storageService, this.project) {
-    projectFilter = project ?? allProject;
+    projectFilter = project ?? projectAll;
   }
 
   static _PipelinesController? instance;
@@ -68,7 +68,7 @@ class _PipelinesController with FilterMixin {
 
   void filterByProject(Project proj) {
     pipelines.value = null;
-    projectFilter = proj.name! == userAll.displayName ? allProject : proj;
+    projectFilter = proj.name! == userAll.displayName ? projectAll : proj;
     _getData();
   }
 
@@ -92,7 +92,7 @@ class _PipelinesController with FilterMixin {
 
   void resetFilters() {
     pipelines.value = null;
-    projectFilter = allProject;
+    projectFilter = projectAll;
     resultFilter = PipelineResult.all;
     statusFilter = PipelineStatus.all;
     userFilter = userAll;

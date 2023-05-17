@@ -10,7 +10,7 @@ class _CommitsController with FilterMixin {
   }
 
   _CommitsController._(this.apiService, this.storageService, this.project) {
-    projectFilter = project ?? allProject;
+    projectFilter = project ?? projectAll;
   }
 
   static _CommitsController? instance;
@@ -47,7 +47,7 @@ class _CommitsController with FilterMixin {
 
   void filterByProject(Project proj) {
     recentCommits.value = null;
-    projectFilter = proj.name! == userAll.displayName ? allProject : proj;
+    projectFilter = proj.name! == userAll.displayName ? projectAll : proj;
     _getData();
   }
 
@@ -59,7 +59,7 @@ class _CommitsController with FilterMixin {
 
   void resetFilters() {
     recentCommits.value = null;
-    projectFilter = allProject;
+    projectFilter = projectAll;
     userFilter = userAll;
     init();
   }

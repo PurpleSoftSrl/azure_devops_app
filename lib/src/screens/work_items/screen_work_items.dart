@@ -45,7 +45,7 @@ class _WorkItemsScreen extends StatelessWidget {
             currentFilter: ctrl.projectFilter,
             onSelected: ctrl.filterByProject,
             formatLabel: (p) => p.name!,
-            isDefaultFilter: ctrl.projectFilter == ctrl.allProject,
+            isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
           ),
           FilterMenu<String>(
             title: 'Status',

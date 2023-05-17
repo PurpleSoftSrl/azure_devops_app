@@ -10,7 +10,7 @@ class _PullRequestsController with FilterMixin {
   }
 
   _PullRequestsController._(this.apiService, this.storageService, this.project) {
-    projectFilter = project ?? allProject;
+    projectFilter = project ?? projectAll;
   }
 
   static _PullRequestsController? instance;
@@ -49,22 +49,22 @@ class _PullRequestsController with FilterMixin {
 
   void filterByProject(Project proj) {
     pullRequests.value = null;
-    projectFilter = proj.name! == 'All' ? allProject : proj;
+    projectFilter = proj.name! == projectAll.name ? projectAll : proj;
     _getData();
   }
 
   Future<void> _getData() async {
     final res = await apiService.getPullRequests(
       filter: statusFilter,
-      creator: userFilter.displayName == 'All' ? null : userFilter,
-      project: projectFilter.name == 'All' ? null : projectFilter,
+      creator: userFilter.displayName == userAll.displayName ? null : userFilter,
+      project: projectFilter.name == projectAll.name ? null : projectFilter,
     );
     pullRequests.value = res..data?.sort((a, b) => (b.creationDate).compareTo(a.creationDate));
   }
 
   void resetFilters() {
     pullRequests.value = null;
-    projectFilter = allProject;
+    projectFilter = projectAll;
     statusFilter = PullRequestState.all;
     userFilter = userAll;
 
