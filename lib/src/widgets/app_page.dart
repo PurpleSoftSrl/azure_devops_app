@@ -22,6 +22,7 @@ class AppPage<T extends Object?> extends StatefulWidget {
         refreshController = null,
         safeAreaBottom = true,
         showScrollbar = false,
+        onResetFilters = null,
         _isEmpty = true;
 
   const AppPage({
@@ -39,6 +40,7 @@ class AppPage<T extends Object?> extends StatefulWidget {
     this.header,
     this.padding,
     this.showScrollbar = false,
+    this.onResetFilters,
   }) : _isEmpty = false;
 
   final Widget Function(T) builder;
@@ -54,6 +56,7 @@ class AppPage<T extends Object?> extends StatefulWidget {
   final Widget Function()? header;
   final EdgeInsets? padding;
   final bool showScrollbar;
+  final VoidCallback? onResetFilters;
 
   final bool _isEmpty;
 
@@ -277,7 +280,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> {
               else if ((response.data is List) && (response.data as List).isEmpty)
                 Padding(
                   padding: EdgeInsets.only(top: paddingTop),
-                  child: Center(child: widget.onEmpty?.call(_onRefresh)),
+                  child: Center(child: widget.onEmpty?.call(widget.onResetFilters ?? _onRefresh)),
                 ),
             ],
           );

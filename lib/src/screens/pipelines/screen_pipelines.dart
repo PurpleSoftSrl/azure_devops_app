@@ -14,6 +14,7 @@ class _PipelinesScreen extends StatelessWidget {
       title: 'Pipelines',
       notifier: ctrl.pipelines,
       showScrollbar: true,
+      onResetFilters: ctrl.resetFilters,
       onEmpty: (onRetry) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

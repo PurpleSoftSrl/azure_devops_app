@@ -14,6 +14,7 @@ class _CommitsScreen extends StatelessWidget {
       title: 'Commits',
       notifier: ctrl.recentCommits,
       showScrollbar: true,
+      onResetFilters: ctrl.resetFilters,
       onEmpty: (onRetry) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

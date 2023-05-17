@@ -23,6 +23,7 @@ class _WorkItemsScreen extends StatelessWidget {
           ),
         ),
       ],
+      onResetFilters: ctrl.resetFilters,
       onEmpty: (onRetry) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

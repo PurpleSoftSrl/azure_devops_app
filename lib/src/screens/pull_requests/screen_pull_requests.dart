@@ -14,6 +14,7 @@ class _PullRequestsScreen extends StatelessWidget {
       title: 'Pull requests',
       notifier: ctrl.pullRequests,
       showScrollbar: true,
+      onResetFilters: ctrl.resetFilters,
       onEmpty: (onRetry) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
