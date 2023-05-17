@@ -804,7 +804,12 @@ class AzureApiServiceImpl implements AzureApiService {
     required String path,
     String? branch,
   }) async {
-    final branchQuery = branch != null ? 'versionDescriptor.version=$branch&versionDescriptor.versionType=branch&' : '';
+    var branchQuery = '';
+
+    if (branch != null) {
+      final escapedBranch = Uri.encodeQueryComponent(branch);
+      branchQuery = 'versionDescriptor.version=$escapedBranch&versionDescriptor.versionType=branch&';
+    }
 
     final itemsRes = await _get(
       '$_basePath/$projectName/_apis/git/repositories/$repoName/items?scopePath=$path&recursionLevel=oneLevel&includeContentMetadata=true&includeContent=true&$branchQuery$_apiVersion',
@@ -842,7 +847,8 @@ class AzureApiServiceImpl implements AzureApiService {
     if (commitId != null) {
       versionQuery = 'versionDescriptor.version=$commitId&versionDescriptor.versionType=commit&';
     } else if (branch != null) {
-      versionQuery = 'versionDescriptor.version=$branch&versionDescriptor.versionType=branch&';
+      final escapedBranch = Uri.encodeQueryComponent(branch);
+      versionQuery = 'versionDescriptor.version=$escapedBranch&versionDescriptor.versionType=branch&';
     }
 
     if (previousChange) {
