@@ -12,16 +12,14 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
     }
 
     if (instance != null && instance!.item != item) {
-      instance = _WorkItemDetailController._(item, apiService, forceRefresh: true, storageService);
+      instance = _WorkItemDetailController._(item, apiService, storageService);
     }
 
     instance ??= _WorkItemDetailController._(item, apiService, storageService);
     return _instances.putIfAbsent(item.hashCode, () => instance!);
   }
 
-  _WorkItemDetailController._(this.item, this.apiService, this.storageService, {bool forceRefresh = false}) {
-    if (forceRefresh) init();
-  }
+  _WorkItemDetailController._(this.item, this.apiService, this.storageService);
 
   static _WorkItemDetailController? instance;
 

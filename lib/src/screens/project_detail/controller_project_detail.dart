@@ -8,15 +8,13 @@ class _ProjectDetailController {
     }
 
     if (instance != null && instance!.projectName != projectName) {
-      instance = _ProjectDetailController._(apiService, projectName, forceRefresh: true);
+      instance = _ProjectDetailController._(apiService, projectName);
     }
     instance ??= _ProjectDetailController._(apiService, projectName);
     return _instances.putIfAbsent(projectName, () => instance!);
   }
 
-  _ProjectDetailController._(this.apiService, this.projectName, {bool forceRefresh = false}) {
-    if (forceRefresh) init();
-  }
+  _ProjectDetailController._(this.apiService, this.projectName);
 
   static _ProjectDetailController? instance;
 

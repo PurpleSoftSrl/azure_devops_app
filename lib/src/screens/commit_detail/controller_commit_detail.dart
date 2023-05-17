@@ -8,16 +8,14 @@ class _CommitDetailController with ShareMixin {
     }
 
     if (instance != null && commit.commitId != instance!.commit.commitId) {
-      instance = _CommitDetailController._(commit, apiService, forceRefresh: true);
+      instance = _CommitDetailController._(commit, apiService);
     }
 
     instance ??= _CommitDetailController._(commit, apiService);
     return _instances.putIfAbsent(commit.hashCode, () => instance!);
   }
 
-  _CommitDetailController._(this.commit, this.apiService, {bool forceRefresh = false}) {
-    if (forceRefresh) init();
-  }
+  _CommitDetailController._(this.commit, this.apiService);
 
   static _CommitDetailController? instance;
 

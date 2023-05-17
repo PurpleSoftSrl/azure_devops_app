@@ -8,16 +8,14 @@ class _PipelineDetailController with ShareMixin {
     }
 
     if (instance != null && pipeline.id != instance!.pipeline.id) {
-      instance = _PipelineDetailController._(pipeline, apiService, forceRefresh: true);
+      instance = _PipelineDetailController._(pipeline, apiService);
     }
 
     instance ??= _PipelineDetailController._(pipeline, apiService);
     return _instances.putIfAbsent(pipeline.hashCode, () => instance!);
   }
 
-  _PipelineDetailController._(this.pipeline, this.apiService, {bool forceRefresh = false}) {
-    if (forceRefresh) init();
-  }
+  _PipelineDetailController._(this.pipeline, this.apiService);
 
   static _PipelineDetailController? instance;
 

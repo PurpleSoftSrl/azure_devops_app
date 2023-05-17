@@ -8,16 +8,14 @@ class _MemberDetailController {
     }
 
     if (instance != null && instance!.userDescriptor != userDescriptor) {
-      instance = _MemberDetailController._(userDescriptor, apiService, forceRefresh: true);
+      instance = _MemberDetailController._(userDescriptor, apiService);
     }
 
     instance ??= _MemberDetailController._(userDescriptor, apiService);
     return _instances.putIfAbsent(userDescriptor, () => instance!);
   }
 
-  _MemberDetailController._(this.userDescriptor, this.apiService, {bool forceRefresh = false}) {
-    if (forceRefresh) init();
-  }
+  _MemberDetailController._(this.userDescriptor, this.apiService);
 
   static _MemberDetailController? instance;
 

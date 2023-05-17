@@ -8,16 +8,14 @@ class _PullRequestDetailController with ShareMixin {
     }
 
     if (instance != null && instance!.pullRequest != pullRequest) {
-      instance = _PullRequestDetailController._(pullRequest, apiService, forceRefresh: true);
+      instance = _PullRequestDetailController._(pullRequest, apiService);
     }
 
     instance ??= _PullRequestDetailController._(pullRequest, apiService);
     return _instances.putIfAbsent(pullRequest.hashCode, () => instance!);
   }
 
-  _PullRequestDetailController._(this.pullRequest, this.apiService, {bool forceRefresh = false}) {
-    if (forceRefresh) init();
-  }
+  _PullRequestDetailController._(this.pullRequest, this.apiService);
 
   static _PullRequestDetailController? instance;
 

@@ -8,16 +8,14 @@ class _RepositoryDetailController {
     }
 
     if (instance != null && instance!.args != args) {
-      instance = _RepositoryDetailController._(apiService, args, forceRefresh: true);
+      instance = _RepositoryDetailController._(apiService, args);
     }
 
     instance ??= _RepositoryDetailController._(apiService, args);
     return _instances.putIfAbsent(args.hashCode, () => instance!);
   }
 
-  _RepositoryDetailController._(this.apiService, this.args, {bool forceRefresh = false}) {
-    if (forceRefresh) init();
-  }
+  _RepositoryDetailController._(this.apiService, this.args);
 
   static _RepositoryDetailController? instance;
 
