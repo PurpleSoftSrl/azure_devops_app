@@ -51,7 +51,7 @@ class Record {
         currentOperation: json['currentOperation'],
         percentComplete: json['percentComplete'] as int?,
         state: TaskStatus.fromString(json['state'] as String),
-        result: json['result'] == null ? null : TaskResult.fromString(json['result'] as String),
+        result: json['result'] == null ? null : _TaskResult.fromString(json['result'] as String),
         resultCode: json['resultCode'],
         changeId: json['changeId'] as int,
         lastModified: DateTime.parse(json['lastModified'] as String),
@@ -61,14 +61,16 @@ class Record {
         errorCount: json['errorCount'] as int,
         warningCount: json['warningCount'] as int,
         url: json['url'],
-        log: json['log'] == null ? null : Log.fromJson(json['log'] as Map<String, dynamic>),
-        task: json['task'] == null ? null : Task.fromJson(json['task'] as Map<String, dynamic>),
+        log: json['log'] == null ? null : _Log.fromJson(json['log'] as Map<String, dynamic>),
+        task: json['task'] == null ? null : _Task.fromJson(json['task'] as Map<String, dynamic>),
         attempt: json['attempt'] as int,
         identifier: json['identifier'] as String?,
         queueId: json['queueId'] as int?,
         issues: json['issues'] == null
             ? []
-            : List<Issue>.from((json['issues'] as List<dynamic>).map((i) => Issue.fromJson(i as Map<String, dynamic>))),
+            : List<_Issue>.from(
+                (json['issues'] as List<dynamic>).map((i) => _Issue.fromJson(i as Map<String, dynamic>)),
+              ),
       );
 
   Record({
@@ -110,7 +112,7 @@ class Record {
   final dynamic currentOperation;
   final int? percentComplete;
   final TaskStatus state;
-  final TaskResult? result;
+  final _TaskResult? result;
   final dynamic resultCode;
   final int changeId;
   final DateTime lastModified;
@@ -120,12 +122,12 @@ class Record {
   final int errorCount;
   final int warningCount;
   final dynamic url;
-  final Log? log;
-  final Task? task;
+  final _Log? log;
+  final _Task? task;
   final int attempt;
   final String? identifier;
   final int? queueId;
-  final List<Issue>? issues;
+  final List<_Issue>? issues;
 
   @override
   String toString() {
@@ -133,15 +135,14 @@ class Record {
   }
 }
 
-class Issue {
-  factory Issue.fromRawJson(String str) => Issue.fromJson(json.decode(str) as Map<String, dynamic>);
-
-  factory Issue.fromJson(Map<String, dynamic> json) => Issue(
+class _Issue {
+  factory _Issue.fromJson(Map<String, dynamic> json) => _Issue(
         type: json['type'] as String,
         category: json['category'] as String?,
         message: json['message'] as String,
       );
-  Issue({
+
+  _Issue({
     required this.type,
     this.category,
     required this.message,
@@ -152,16 +153,14 @@ class Issue {
   final String message;
 }
 
-class Log {
-  factory Log.fromRawJson(String str) => Log.fromJson(json.decode(str) as Map<String, dynamic>);
-
-  factory Log.fromJson(Map<String, dynamic> json) => Log(
+class _Log {
+  factory _Log.fromJson(Map<String, dynamic> json) => _Log(
         id: json['id'] as int,
         type: json['type'] as String,
         url: json['url'] as String,
       );
 
-  Log({
+  _Log({
     required this.id,
     required this.type,
     required this.url,
@@ -172,15 +171,13 @@ class Log {
   final String url;
 }
 
-class Task {
-  factory Task.fromRawJson(String str) => Task.fromJson(json.decode(str) as Map<String, dynamic>);
-
-  factory Task.fromJson(Map<String, dynamic> json) => Task(
+class _Task {
+  factory _Task.fromJson(Map<String, dynamic> json) => _Task(
         id: json['id'] as String,
         name: json['name'] as String,
         version: json['version'] as String,
       );
-  Task({
+  _Task({
     required this.id,
     required this.name,
     required this.version,
@@ -244,7 +241,7 @@ enum TaskStatus {
 }
 
 /// The result of a task/job/stage.
-enum TaskResult {
+enum _TaskResult {
   abandoned('abandoned'),
   canceled('canceled'),
   failed('failed'),
@@ -252,28 +249,28 @@ enum TaskResult {
   succeeded('succeeded'),
   succeededWithIssues('succeededWithIssues');
 
-  const TaskResult(this.stringValue);
+  const _TaskResult(this.stringValue);
 
   final String stringValue;
 
-  static TaskResult fromString(String str) {
+  static _TaskResult fromString(String str) {
     return values.firstWhere((v) => v.stringValue == str);
   }
 
   @override
   String toString() {
     switch (this) {
-      case TaskResult.abandoned:
+      case _TaskResult.abandoned:
         return 'Abandoned';
-      case TaskResult.canceled:
+      case _TaskResult.canceled:
         return 'Canceled';
-      case TaskResult.failed:
+      case _TaskResult.failed:
         return 'Failed';
-      case TaskResult.skipped:
+      case _TaskResult.skipped:
         return 'Skipped';
-      case TaskResult.succeeded:
+      case _TaskResult.succeeded:
         return 'Succeeded';
-      case TaskResult.succeededWithIssues:
+      case _TaskResult.succeededWithIssues:
         return 'Succeeded with issues';
     }
   }
@@ -282,27 +279,27 @@ enum TaskResult {
     final size = 15.0;
 
     switch (this) {
-      case TaskResult.abandoned:
-      case TaskResult.canceled:
+      case _TaskResult.abandoned:
+      case _TaskResult.canceled:
         return Icon(
           DevOpsIcons.cancelled,
           color: AppRouter.rootNavigator!.context.colorScheme.onBackground,
           size: size,
         );
-      case TaskResult.failed:
+      case _TaskResult.failed:
         return Icon(
           DevOpsIcons.failed,
           color: Colors.red,
           size: size,
         );
-      case TaskResult.skipped:
+      case _TaskResult.skipped:
         return Icon(
           DevOpsIcons.skipped,
           color: AppRouter.rootNavigator!.context.colorScheme.onBackground,
           size: size,
         );
-      case TaskResult.succeeded:
-      case TaskResult.succeededWithIssues:
+      case _TaskResult.succeeded:
+      case _TaskResult.succeededWithIssues:
         return Icon(
           DevOpsIcons.success,
           color: Colors.green,

@@ -100,20 +100,6 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<Pipeline>>> getProjectPipelines({
-    required String projectName,
-    required int top,
-    required DateTime to,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<ApiResponse<List<PullRequest>>> getProjectPullRequests({required String projectName}) {
-    throw UnimplementedError();
-  }
-
-  @override
   Future<ApiResponse<List<GitRepository>>> getProjectRepositories({required String projectName}) {
     throw UnimplementedError();
   }
@@ -139,16 +125,6 @@ class AzureApiServiceMock implements AzureApiService {
     required PullRequestState filter,
     GraphUser? creator,
     Project? project,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<ApiResponse<List<Commit>>> getRepositoryCommits({
-    required String projectName,
-    required String repoName,
-    required int top,
-    required int skip,
   }) {
     throw UnimplementedError();
   }

@@ -30,7 +30,7 @@ class WorkItemType {
         color: json['color'] as String,
         isDisabled: json['isDisabled'] as bool,
         states:
-            List<State>.from((json['states'] as List<dynamic>).map((s) => State.fromJson(s as Map<String, dynamic>))),
+            List<_State>.from((json['states'] as List<dynamic>).map((s) => _State.fromJson(s as Map<String, dynamic>))),
         url: json['url'] as String,
       );
 
@@ -49,7 +49,7 @@ class WorkItemType {
   final String? description;
   final String color;
   final bool isDisabled;
-  final List<State> states;
+  final List<_State> states;
   final String url;
 
   static WorkItemType get all {
@@ -77,16 +77,14 @@ class WorkItemType {
   }
 }
 
-class State {
-  factory State.fromRawJson(String str) => State.fromJson(json.decode(str) as Map<String, dynamic>);
-
-  factory State.fromJson(Map<String, dynamic> json) => State(
+class _State {
+  factory _State.fromJson(Map<String, dynamic> json) => _State(
         name: json['name'] as String,
         color: json['color'] as String,
-        category: categoryValues.map[json['category']]!,
+        category: _categoryValues.map[json['category']]!,
       );
 
-  State({
+  _State({
     required this.name,
     required this.color,
     required this.category,
@@ -94,38 +92,21 @@ class State {
 
   final String name;
   final String color;
-  final Category category;
+  final _Category category;
 }
 
-enum Category { proposed, inProgress, resolved, completed, removed }
+enum _Category { proposed, inProgress, resolved, completed, removed }
 
-final categoryValues = EnumValues({
-  'Completed': Category.completed,
-  'InProgress': Category.inProgress,
-  'Proposed': Category.proposed,
-  'Removed': Category.removed,
-  'Resolved': Category.resolved,
+final _categoryValues = _EnumValues({
+  'Completed': _Category.completed,
+  'InProgress': _Category.inProgress,
+  'Proposed': _Category.proposed,
+  'Removed': _Category.removed,
+  'Resolved': _Category.resolved,
 });
 
-class Transition {
-  factory Transition.fromRawJson(String str) => Transition.fromJson(json.decode(str) as Map<String, dynamic>);
-
-  factory Transition.fromJson(Map<String, dynamic> json) => Transition(
-        to: json['to'] as String,
-        actions: json['actions'] == null ? [] : List<String>.from((json['actions'] as List<dynamic>).map((x) => x)),
-      );
-
-  Transition({
-    required this.to,
-    this.actions,
-  });
-
-  final String to;
-  final List<String>? actions;
-}
-
-class EnumValues<T> {
-  EnumValues(this.map);
+class _EnumValues<T> {
+  _EnumValues(this.map);
   Map<String, T> map;
   late Map<T, String> reverseMap;
 

@@ -113,22 +113,7 @@ abstract class AzureApiService {
 
   Future<ApiResponse<List<GitRepository>>> getProjectRepositories({required String projectName});
 
-  Future<ApiResponse<List<Pipeline>>> getProjectPipelines({
-    required String projectName,
-    required int top,
-    required DateTime to,
-  });
-
-  Future<ApiResponse<List<PullRequest>>> getProjectPullRequests({required String projectName});
-
   Future<ApiResponse<List<LanguageBreakdown>>> getProjectLanguages({required String projectName});
-
-  Future<ApiResponse<List<Commit>>> getRepositoryCommits({
-    required String projectName,
-    required String repoName,
-    required int top,
-    required int skip,
-  });
 
   Future<ApiResponse<List<RepoItem>>> getRepositoryItems({
     required String projectName,
@@ -776,25 +761,6 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<Pipeline>>> getProjectPipelines({
-    required String projectName,
-    required int top,
-    required DateTime to,
-  }) async {
-    final topSearch = '&\$top=$top';
-    final toSearch = '&maxTime=${to.toUtc().toIso8601String()}';
-    final orderSearch = '&queryOrder=queueTimeDescending';
-
-    final pipelinesRes =
-        await _get('$_basePath/$projectName/_apis/build/builds?$_apiVersion$topSearch$toSearch$orderSearch');
-    if (pipelinesRes.isError) return ApiResponse.error(pipelinesRes);
-
-    return ApiResponse.ok(
-      GetPipelineResponse.fromJson(jsonDecode(pipelinesRes.body) as Map<String, dynamic>).pipelines,
-    );
-  }
-
-  @override
   Future<ApiResponse<List<TeamMember>>> getProjectTeams({required String projectId}) async {
     final teamsRes = await _get('$_basePath/_apis/teams?$_apiVersion-preview');
     if (teamsRes.isError) return ApiResponse.error(teamsRes);
@@ -815,41 +781,11 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<PullRequest>>> getProjectPullRequests({required String projectName}) async {
-    final prsRes = await _get('$_basePath/$projectName/_apis/git/pullrequests?$_apiVersion');
-    if (prsRes.isError) return ApiResponse.error(prsRes);
-
-    return ApiResponse.ok(
-      GetPullRequestsResponse.fromJson(jsonDecode(prsRes.body) as Map<String, dynamic>).pullRequests,
-    );
-  }
-
-  @override
   Future<ApiResponse<PullRequest>> getPullRequest({required String projectName, required int id}) async {
     final prRes = await _get('$_basePath/$projectName/_apis/git/pullrequests/$id?$_apiVersion');
     if (prRes.isError) return ApiResponse.error(prRes);
 
     return ApiResponse.ok(PullRequest.fromJson(jsonDecode(prRes.body) as Map<String, dynamic>));
-  }
-
-  @override
-  Future<ApiResponse<List<Commit>>> getRepositoryCommits({
-    required String projectName,
-    required String repoName,
-    required int top,
-    required int skip,
-  }) async {
-    final topSearch = '&searchCriteria.\$top=$top';
-    final skipSearch = '&searchCriteria.\$skip=$skip';
-
-    final commitsRes = await _get(
-      '$_basePath/$projectName/_apis/git/repositories/$repoName/commits?$_apiVersion$topSearch$skipSearch',
-    );
-    if (commitsRes.isError) return ApiResponse.error(commitsRes);
-
-    final commits = GetCommitsResponse.fromJson(jsonDecode(commitsRes.body) as Map<String, dynamic>).commits.toList();
-
-    return ApiResponse.ok(commits);
   }
 
   @override

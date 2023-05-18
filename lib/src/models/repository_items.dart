@@ -30,7 +30,7 @@ class RepoItem {
         isFolder: json['isFolder'] as bool? ?? false,
         contentMetadata: json['contentMetadata'] == null
             ? null
-            : ContentMetadata.fromJson(json['contentMetadata'] as Map<String, dynamic>),
+            : _ContentMetadata.fromJson(json['contentMetadata'] as Map<String, dynamic>),
         url: json['url'] as String,
       );
 
@@ -47,18 +47,16 @@ class RepoItem {
   final String commitId;
   final String path;
   final bool isFolder;
-  final ContentMetadata? contentMetadata;
+  final _ContentMetadata? contentMetadata;
   final String url;
 }
 
-class ContentMetadata {
-  factory ContentMetadata.fromRawJson(String str) => ContentMetadata.fromJson(json.decode(str) as Map<String, dynamic>);
-
-  factory ContentMetadata.fromJson(Map<String, dynamic> json) => ContentMetadata(
+class _ContentMetadata {
+  factory _ContentMetadata.fromJson(Map<String, dynamic> json) => _ContentMetadata(
         fileName: json['fileName'] as String,
       );
 
-  ContentMetadata({required this.fileName});
+  _ContentMetadata({required this.fileName});
 
   final String fileName;
 }

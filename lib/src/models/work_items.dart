@@ -4,23 +4,23 @@ class GetWorkItemIds {
   });
 
   factory GetWorkItemIds.fromJson(Map<String, dynamic> json) => GetWorkItemIds(
-        workItems: List<WorkItemId>.from(
+        workItems: List<_WorkItemId>.from(
           (json['workItems'] as List<dynamic>).map(
-            (w) => WorkItemId.fromJson(w as Map<String, dynamic>),
+            (w) => _WorkItemId.fromJson(w as Map<String, dynamic>),
           ),
         ),
       );
 
-  final List<WorkItemId> workItems;
+  final List<_WorkItemId> workItems;
 }
 
-class WorkItemId {
-  WorkItemId({
+class _WorkItemId {
+  _WorkItemId({
     required this.id,
     required this.url,
   });
 
-  factory WorkItemId.fromJson(Map<String, dynamic> json) => WorkItemId(
+  factory _WorkItemId.fromJson(Map<String, dynamic> json) => _WorkItemId(
         id: json['id'] as int,
         url: json['url'] as String,
       );
@@ -62,24 +62,24 @@ class WorkItem {
         url: json['url'] as String?,
         commentVersionRef: json['commentVersionRef'] == null
             ? null
-            : CommentVersionRef.fromJson(json['commentVersionRef'] as Map<String, dynamic>),
+            : _CommentVersionRef.fromJson(json['commentVersionRef'] as Map<String, dynamic>),
       );
 
   final int id;
   final int? rev;
   final ItemFields fields;
   final String? url;
-  final CommentVersionRef? commentVersionRef;
+  final _CommentVersionRef? commentVersionRef;
 }
 
-class CommentVersionRef {
-  CommentVersionRef({
+class _CommentVersionRef {
+  _CommentVersionRef({
     required this.commentId,
     required this.version,
     required this.url,
   });
 
-  factory CommentVersionRef.fromJson(Map<String, dynamic> json) => CommentVersionRef(
+  factory _CommentVersionRef.fromJson(Map<String, dynamic> json) => _CommentVersionRef(
         commentId: json['commentId'] as int,
         version: json['version'] as int,
         url: json['url'] as String,
@@ -126,13 +126,13 @@ class ItemFields {
         systemReason: json['System.Reason'] as String?,
         systemAssignedTo: json['System.AssignedTo'] == null
             ? null
-            : SystemChangedBy.fromJson(json['System.AssignedTo'] as Map<String, dynamic>),
+            : _SystemChangedBy.fromJson(json['System.AssignedTo'] as Map<String, dynamic>),
         systemCreatedDate: DateTime.parse(json['System.CreatedDate']!.toString()).toLocal(),
-        systemCreatedBy: SystemChangedBy.fromJson(json['System.CreatedBy'] as Map<String, dynamic>),
+        systemCreatedBy: _SystemChangedBy.fromJson(json['System.CreatedBy'] as Map<String, dynamic>),
         systemChangedDate: DateTime.parse(json['System.ChangedDate']!.toString()).toLocal(),
         systemChangedBy: json['System.ChangedBy'] == null
             ? null
-            : SystemChangedBy.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
+            : _SystemChangedBy.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
         systemCommentCount: json['System.CommentCount'] as int,
         systemTitle: json['System.Title'] as String,
         microsoftVstsCommonStateChangeDate:
@@ -144,13 +144,13 @@ class ItemFields {
             : DateTime.parse(json['Microsoft.VSTS.Common.ClosedDate']!.toString()).toLocal(),
         microsoftVstsCommonClosedBy: json['Microsoft.VSTS.Common.ClosedBy'] == null
             ? null
-            : SystemChangedBy.fromJson(json['Microsoft.VSTS.Common.ClosedBy'] as Map<String, dynamic>),
+            : _SystemChangedBy.fromJson(json['Microsoft.VSTS.Common.ClosedBy'] as Map<String, dynamic>),
         microsoftVstsCommonActivatedDate: json['Microsoft.VSTS.Common.ActivatedDate'] == null
             ? null
             : DateTime.parse(json['Microsoft.VSTS.Common.ActivatedDate']!.toString()).toLocal(),
         microsoftVstsCommonActivatedBy: json['Microsoft.VSTS.Common.ActivatedBy'] == null
             ? null
-            : SystemChangedBy.fromJson(json['Microsoft.VSTS.Common.ActivatedBy'] as Map<String, dynamic>),
+            : _SystemChangedBy.fromJson(json['Microsoft.VSTS.Common.ActivatedBy'] as Map<String, dynamic>),
         microsoftVstsCommonResolvedDate: json['Microsoft.VSTS.Common.ResolvedDate'] == null
             ? null
             : DateTime.parse(json['Microsoft.VSTS.Common.ResolvedDate']!.toString()).toLocal(),
@@ -164,27 +164,27 @@ class ItemFields {
   final String systemWorkItemType;
   final String systemState;
   final String? systemReason;
-  final SystemChangedBy? systemAssignedTo;
+  final _SystemChangedBy? systemAssignedTo;
   final DateTime? systemCreatedDate;
-  final SystemChangedBy? systemCreatedBy;
+  final _SystemChangedBy? systemCreatedBy;
   final DateTime systemChangedDate;
-  final SystemChangedBy? systemChangedBy;
+  final _SystemChangedBy? systemChangedBy;
   final int? systemCommentCount;
   final String systemTitle;
   final DateTime? microsoftVstsCommonStateChangeDate;
   final int? microsoftVstsCommonPriority;
   final String? systemDescription;
   final DateTime? microsoftVstsCommonClosedDate;
-  final SystemChangedBy? microsoftVstsCommonClosedBy;
+  final _SystemChangedBy? microsoftVstsCommonClosedBy;
   final DateTime? microsoftVstsCommonActivatedDate;
-  final SystemChangedBy? microsoftVstsCommonActivatedBy;
+  final _SystemChangedBy? microsoftVstsCommonActivatedBy;
   final DateTime? microsoftVstsCommonResolvedDate;
   final String? systemHistory;
   final String? systemTags;
 }
 
-class SystemChangedBy {
-  SystemChangedBy({
+class _SystemChangedBy {
+  _SystemChangedBy({
     required this.displayName,
     required this.url,
     required this.links,
@@ -195,10 +195,10 @@ class SystemChangedBy {
     this.inactive,
   });
 
-  factory SystemChangedBy.fromJson(Map<String, dynamic> json) => SystemChangedBy(
+  factory _SystemChangedBy.fromJson(Map<String, dynamic> json) => _SystemChangedBy(
         displayName: json['displayName'] as String,
         url: json['url'] as String,
-        links: Links.fromJson(json['_links'] as Map<String, dynamic>),
+        links: _Links.fromJson(json['_links'] as Map<String, dynamic>),
         id: json['id'] as String,
         uniqueName: json['uniqueName'] as String,
         imageUrl: json['imageUrl'] as String,
@@ -208,7 +208,7 @@ class SystemChangedBy {
 
   final String displayName;
   final String url;
-  final Links links;
+  final _Links links;
   final String id;
   final String uniqueName;
   final String imageUrl;
@@ -216,21 +216,21 @@ class SystemChangedBy {
   final bool? inactive;
 }
 
-class Links {
-  Links({required this.avatar});
+class _Links {
+  _Links({required this.avatar});
 
-  factory Links.fromJson(Map<String, dynamic> json) => Links(
-        avatar: Avatar.fromJson(json['avatar'] as Map<String, dynamic>),
+  factory _Links.fromJson(Map<String, dynamic> json) => _Links(
+        avatar: _Avatar.fromJson(json['avatar'] as Map<String, dynamic>),
       );
 
-  final Avatar avatar;
+  final _Avatar avatar;
 }
 
-class Avatar {
-  Avatar({
+class _Avatar {
+  _Avatar({
     required this.href,
   });
 
-  factory Avatar.fromJson(Map<String, dynamic> json) => Avatar(href: json['href'] as String);
+  factory _Avatar.fromJson(Map<String, dynamic> json) => _Avatar(href: json['href'] as String);
   final String href;
 }

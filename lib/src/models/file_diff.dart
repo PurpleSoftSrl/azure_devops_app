@@ -5,25 +5,23 @@ class GetFileDiffResponse {
       GetFileDiffResponse.fromJson(json.decode(str) as Map<String, dynamic>);
 
   factory GetFileDiffResponse.fromJson(Map<String, dynamic> json) => GetFileDiffResponse(
-        data: DataProviders.fromJson(json['dataProviders'] as Map<String, dynamic>),
+        data: _DataProviders.fromJson(json['dataProviders'] as Map<String, dynamic>),
       );
 
   GetFileDiffResponse({
     required this.data,
   });
 
-  final DataProviders data;
+  final _DataProviders data;
 }
 
-class DataProviders {
-  factory DataProviders.fromRawJson(String str) => DataProviders.fromJson(json.decode(str) as Map<String, dynamic>);
-
-  factory DataProviders.fromJson(Map<String, dynamic> json) => DataProviders(
+class _DataProviders {
+  factory _DataProviders.fromJson(Map<String, dynamic> json) => _DataProviders(
         diff: Diff.fromJson(
           json['ms.vss-code-web.file-diff-data-provider'] as Map<String, dynamic>,
         ),
       );
-  DataProviders({
+  _DataProviders({
     required this.diff,
   });
 
@@ -36,14 +34,14 @@ class Diff {
   factory Diff.fromJson(Map<String, dynamic> json) => Diff(
         originalFile: json['originalFile'] == null
             ? null
-            : ModifiedFileClass.fromJson(json['originalFile'] as Map<String, dynamic>),
+            : _ModifiedFileClass.fromJson(json['originalFile'] as Map<String, dynamic>),
         modifiedFile: json['modifiedFile'] == null
             ? null
-            : ModifiedFileClass.fromJson(json['modifiedFile'] as Map<String, dynamic>),
+            : _ModifiedFileClass.fromJson(json['modifiedFile'] as Map<String, dynamic>),
         blocks:
             List<Block>.from((json['blocks'] as List<dynamic>).map((l) => Block.fromJson(l as Map<String, dynamic>))),
-        lineCharBlocks: List<LineCharBlock>.from(
-          (json['lineCharBlocks'] as List<dynamic>?)?.map((l) => LineCharBlock.fromJson(l as Map<String, dynamic>)) ??
+        lineCharBlocks: List<_LineCharBlock>.from(
+          (json['lineCharBlocks'] as List<dynamic>?)?.map((l) => _LineCharBlock.fromJson(l as Map<String, dynamic>)) ??
               [],
         ),
         binaryContent: json['binaryContent'] as bool? ?? false,
@@ -59,10 +57,10 @@ class Diff {
     this.imageComparison = false,
   });
 
-  final ModifiedFileClass? originalFile;
-  final ModifiedFileClass? modifiedFile;
+  final _ModifiedFileClass? originalFile;
+  final _ModifiedFileClass? modifiedFile;
   final List<Block> blocks;
-  final List<LineCharBlock> lineCharBlocks;
+  final List<_LineCharBlock> lineCharBlocks;
   final bool binaryContent;
   final bool imageComparison;
 }
@@ -105,31 +103,27 @@ class Block {
   final bool? truncatedAfter;
 }
 
-class LineCharBlock {
-  factory LineCharBlock.fromRawJson(String str) => LineCharBlock.fromJson(json.decode(str) as Map<String, dynamic>);
-
-  factory LineCharBlock.fromJson(Map<String, dynamic> json) => LineCharBlock(
+class _LineCharBlock {
+  factory _LineCharBlock.fromJson(Map<String, dynamic> json) => _LineCharBlock(
         lineChange: Block.fromJson(json['lineChange'] as Map<String, dynamic>),
         charChange: json['charChange'] == null
             ? []
-            : List<CharChange>.from(
-                (json['charChange'] as List<dynamic>).map((c) => CharChange.fromJson(c as Map<String, dynamic>)),
+            : List<_CharChange>.from(
+                (json['charChange'] as List<dynamic>).map((c) => _CharChange.fromJson(c as Map<String, dynamic>)),
               ),
       );
 
-  LineCharBlock({
+  _LineCharBlock({
     required this.lineChange,
     this.charChange,
   });
 
   final Block lineChange;
-  final List<CharChange>? charChange;
+  final List<_CharChange>? charChange;
 }
 
-class CharChange {
-  factory CharChange.fromRawJson(String str) => CharChange.fromJson(json.decode(str) as Map<String, dynamic>);
-
-  factory CharChange.fromJson(Map<String, dynamic> json) => CharChange(
+class _CharChange {
+  factory _CharChange.fromJson(Map<String, dynamic> json) => _CharChange(
         changeType: json['changeType'] as int,
         oLine: json['oLine'] as int,
         oLinesCount: json['oLinesCount'] as int,
@@ -137,7 +131,7 @@ class CharChange {
         mLinesCount: json['mLinesCount'] as int,
       );
 
-  CharChange({
+  _CharChange({
     required this.changeType,
     required this.oLine,
     required this.oLinesCount,
@@ -152,21 +146,18 @@ class CharChange {
   final int mLinesCount;
 }
 
-class ModifiedFileClass {
-  factory ModifiedFileClass.fromRawJson(String str) =>
-      ModifiedFileClass.fromJson(json.decode(str) as Map<String, dynamic>);
-
-  factory ModifiedFileClass.fromJson(Map<String, dynamic> json) => ModifiedFileClass(
-        objectId: ObjectId.fromJson(json['objectId'] as Map<String, dynamic>),
+class _ModifiedFileClass {
+  factory _ModifiedFileClass.fromJson(Map<String, dynamic> json) => _ModifiedFileClass(
+        objectId: _ObjectId.fromJson(json['objectId'] as Map<String, dynamic>),
         gitObjectType: json['gitObjectType'] as int,
         commitId: json['commitId'] as String?,
         serverItem: json['serverItem'] as String,
         version: json['version'] as String,
-        contentMetadata: ContentMetadata.fromJson(json['contentMetadata'] as Map<String, dynamic>),
+        contentMetadata: _ContentMetadata.fromJson(json['contentMetadata'] as Map<String, dynamic>),
         versionDescription: json['versionDescription'] as String,
       );
 
-  ModifiedFileClass({
+  _ModifiedFileClass({
     required this.objectId,
     required this.gitObjectType,
     this.commitId,
@@ -176,19 +167,17 @@ class ModifiedFileClass {
     required this.versionDescription,
   });
 
-  final ObjectId objectId;
+  final _ObjectId objectId;
   final int gitObjectType;
   final String? commitId;
   final String serverItem;
   final String version;
-  final ContentMetadata contentMetadata;
+  final _ContentMetadata contentMetadata;
   final String versionDescription;
 }
 
-class ContentMetadata {
-  factory ContentMetadata.fromRawJson(String str) => ContentMetadata.fromJson(json.decode(str) as Map<String, dynamic>);
-
-  factory ContentMetadata.fromJson(Map<String, dynamic> json) => ContentMetadata(
+class _ContentMetadata {
+  factory _ContentMetadata.fromJson(Map<String, dynamic> json) => _ContentMetadata(
         encoding: json['encoding'] as int,
         contentType: json['contentType'] as String,
         fileName: json['fileName'] as String,
@@ -196,7 +185,7 @@ class ContentMetadata {
         vsLink: json['vsLink'] as String,
       );
 
-  ContentMetadata({
+  _ContentMetadata({
     required this.encoding,
     required this.contentType,
     required this.fileName,
@@ -211,15 +200,13 @@ class ContentMetadata {
   final String vsLink;
 }
 
-class ObjectId {
-  factory ObjectId.fromRawJson(String str) => ObjectId.fromJson(json.decode(str) as Map<String, dynamic>);
-
-  factory ObjectId.fromJson(Map<String, dynamic> json) => ObjectId(
+class _ObjectId {
+  factory _ObjectId.fromJson(Map<String, dynamic> json) => _ObjectId(
         full: json['full'] as String,
         short: json['short'] as String,
       );
 
-  ObjectId({
+  _ObjectId({
     required this.full,
     required this.short,
   });

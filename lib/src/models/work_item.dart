@@ -4,8 +4,8 @@ class WorkItemDetail {
   factory WorkItemDetail.fromJson(Map<String, dynamic> json) => WorkItemDetail(
         id: json['id'] as int,
         rev: json['rev'] as int,
-        fields: GetWorkItemDetailResponseFields.fromJson(json['fields'] as Map<String, dynamic>),
-        links: GetWorkItemDetailResponseLinks.fromJson(json['_links'] as Map<String, dynamic>),
+        fields: _GetWorkItemDetailResponseFields.fromJson(json['fields'] as Map<String, dynamic>),
+        links: _GetWorkItemDetailResponseLinks.fromJson(json['_links'] as Map<String, dynamic>),
         url: json['url'] as String,
       );
   WorkItemDetail({
@@ -18,8 +18,8 @@ class WorkItemDetail {
 
   final int id;
   final int rev;
-  final GetWorkItemDetailResponseFields fields;
-  final GetWorkItemDetailResponseLinks links;
+  final _GetWorkItemDetailResponseFields fields;
+  final _GetWorkItemDetailResponseLinks links;
   final String url;
 
   @override
@@ -28,8 +28,8 @@ class WorkItemDetail {
   }
 }
 
-class GetWorkItemDetailResponseFields {
-  factory GetWorkItemDetailResponseFields.fromJson(Map<String, dynamic> json) => GetWorkItemDetailResponseFields(
+class _GetWorkItemDetailResponseFields {
+  factory _GetWorkItemDetailResponseFields.fromJson(Map<String, dynamic> json) => _GetWorkItemDetailResponseFields(
         systemAreaPath: json['System.AreaPath'] as String,
         systemTeamProject: json['System.TeamProject'] as String,
         systemIterationPath: json['System.IterationPath'] as String,
@@ -38,11 +38,11 @@ class GetWorkItemDetailResponseFields {
         systemReason: json['System.Reason'] as String,
         systemAssignedTo: json['System.AssignedTo'] == null
             ? null
-            : System.fromJson(json['System.AssignedTo'] as Map<String, dynamic>),
+            : _System.fromJson(json['System.AssignedTo'] as Map<String, dynamic>),
         systemCreatedDate: DateTime.parse(json['System.CreatedDate']!.toString()).toLocal(),
-        systemCreatedBy: System.fromJson(json['System.CreatedBy'] as Map<String, dynamic>),
+        systemCreatedBy: _System.fromJson(json['System.CreatedBy'] as Map<String, dynamic>),
         systemChangedDate: DateTime.parse(json['System.ChangedDate']!.toString()).toLocal(),
-        systemChangedBy: System.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
+        systemChangedBy: _System.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
         systemCommentCount: json['System.CommentCount'] as int,
         systemTitle: json['System.Title'] as String,
         systemBoardColumn: json['System.BoardColumn'] as String?,
@@ -55,7 +55,7 @@ class GetWorkItemDetailResponseFields {
         reproSteps: json['Microsoft.VSTS.TCM.ReproSteps'] as String?,
       );
 
-  GetWorkItemDetailResponseFields({
+  _GetWorkItemDetailResponseFields({
     required this.systemAreaPath,
     required this.systemTeamProject,
     required this.systemIterationPath,
@@ -84,11 +84,11 @@ class GetWorkItemDetailResponseFields {
   final String systemWorkItemType;
   final String systemState;
   final String systemReason;
-  final System? systemAssignedTo;
+  final _System? systemAssignedTo;
   final DateTime systemCreatedDate;
-  final System systemCreatedBy;
+  final _System systemCreatedBy;
   final DateTime systemChangedDate;
-  final System systemChangedBy;
+  final _System systemChangedBy;
   final int systemCommentCount;
   final String systemTitle;
   final String? systemBoardColumn;
@@ -105,18 +105,18 @@ class GetWorkItemDetailResponseFields {
   }
 }
 
-class System {
-  factory System.fromJson(Map<String, dynamic> json) => System(
+class _System {
+  factory _System.fromJson(Map<String, dynamic> json) => _System(
         displayName: json['displayName'] as String,
         url: json['url'] as String?,
-        links: json['_links'] == null ? null : SystemAssignedToLinks.fromJson(json['_links'] as Map<String, dynamic>),
+        links: json['_links'] == null ? null : _SystemAssignedToLinks.fromJson(json['_links'] as Map<String, dynamic>),
         id: json['id'] as String,
         uniqueName: json['uniqueName'] as String,
         imageUrl: json['imageUrl'] as String,
         descriptor: json['descriptor'] as String,
       );
 
-  System({
+  _System({
     required this.displayName,
     required this.url,
     required this.links,
@@ -128,7 +128,7 @@ class System {
 
   final String displayName;
   final String? url;
-  final SystemAssignedToLinks? links;
+  final _SystemAssignedToLinks? links;
   final String id;
   final String uniqueName;
   final String imageUrl;
@@ -140,42 +140,38 @@ class System {
   }
 }
 
-class SystemAssignedToLinks {
-  factory SystemAssignedToLinks.fromJson(Map<String, dynamic> json) => SystemAssignedToLinks(
-        avatar: HtmlClass.fromJson(json['avatar'] as Map<String, dynamic>),
+class _SystemAssignedToLinks {
+  factory _SystemAssignedToLinks.fromJson(Map<String, dynamic> json) => _SystemAssignedToLinks(
+        avatar: _HtmlClass.fromJson(json['avatar'] as Map<String, dynamic>),
       );
 
-  SystemAssignedToLinks({
-    required this.avatar,
-  });
+  _SystemAssignedToLinks({required this.avatar});
 
-  final HtmlClass avatar;
+  final _HtmlClass avatar;
 }
 
-class HtmlClass {
-  factory HtmlClass.fromJson(Map<String, dynamic> json) => HtmlClass(
+class _HtmlClass {
+  factory _HtmlClass.fromJson(Map<String, dynamic> json) => _HtmlClass(
         href: json['href'] as String,
       );
 
-  HtmlClass({
-    required this.href,
-  });
+  _HtmlClass({required this.href});
 
   final String href;
 }
 
-class GetWorkItemDetailResponseLinks {
-  factory GetWorkItemDetailResponseLinks.fromJson(Map<String, dynamic> json) => GetWorkItemDetailResponseLinks(
-        self: HtmlClass.fromJson(json['self'] as Map<String, dynamic>),
-        workItemUpdates: HtmlClass.fromJson(json['workItemUpdates'] as Map<String, dynamic>),
-        workItemRevisions: HtmlClass.fromJson(json['workItemRevisions'] as Map<String, dynamic>),
-        workItemComments: HtmlClass.fromJson(json['workItemComments'] as Map<String, dynamic>),
-        html: HtmlClass.fromJson(json['html'] as Map<String, dynamic>),
-        workItemType: HtmlClass.fromJson(json['workItemType'] as Map<String, dynamic>),
-        fields: HtmlClass.fromJson(json['fields'] as Map<String, dynamic>),
+class _GetWorkItemDetailResponseLinks {
+  factory _GetWorkItemDetailResponseLinks.fromJson(Map<String, dynamic> json) => _GetWorkItemDetailResponseLinks(
+        self: _HtmlClass.fromJson(json['self'] as Map<String, dynamic>),
+        workItemUpdates: _HtmlClass.fromJson(json['workItemUpdates'] as Map<String, dynamic>),
+        workItemRevisions: _HtmlClass.fromJson(json['workItemRevisions'] as Map<String, dynamic>),
+        workItemComments: _HtmlClass.fromJson(json['workItemComments'] as Map<String, dynamic>),
+        html: _HtmlClass.fromJson(json['html'] as Map<String, dynamic>),
+        workItemType: _HtmlClass.fromJson(json['workItemType'] as Map<String, dynamic>),
+        fields: _HtmlClass.fromJson(json['fields'] as Map<String, dynamic>),
       );
 
-  GetWorkItemDetailResponseLinks({
+  _GetWorkItemDetailResponseLinks({
     required this.self,
     required this.workItemUpdates,
     required this.workItemRevisions,
@@ -185,13 +181,13 @@ class GetWorkItemDetailResponseLinks {
     required this.fields,
   });
 
-  final HtmlClass self;
-  final HtmlClass workItemUpdates;
-  final HtmlClass workItemRevisions;
-  final HtmlClass workItemComments;
-  final HtmlClass html;
-  final HtmlClass workItemType;
-  final HtmlClass fields;
+  final _HtmlClass self;
+  final _HtmlClass workItemUpdates;
+  final _HtmlClass workItemRevisions;
+  final _HtmlClass workItemComments;
+  final _HtmlClass html;
+  final _HtmlClass workItemType;
+  final _HtmlClass fields;
 }
 
 class GetWorkItemStatusesResponse {

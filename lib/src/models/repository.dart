@@ -648,16 +648,16 @@ class _TeamProjectReferenceStateEnum {
   static const deleted = _TeamProjectReferenceStateEnum._(r'deleted');
 
   static _TeamProjectReferenceStateEnum? fromJson(dynamic value) =>
-      TeamProjectReferenceStateEnumTypeTransformer().decode(value);
+      _TeamProjectReferenceStateEnumTypeTransformer().decode(value);
 }
 
 /// Transformation class that can [encode] an instance of [_TeamProjectReferenceStateEnum] to String,
 /// and [decode] dynamic data back to [_TeamProjectReferenceStateEnum].
-class TeamProjectReferenceStateEnumTypeTransformer {
-  factory TeamProjectReferenceStateEnumTypeTransformer() =>
-      _instance ??= const TeamProjectReferenceStateEnumTypeTransformer._();
+class _TeamProjectReferenceStateEnumTypeTransformer {
+  factory _TeamProjectReferenceStateEnumTypeTransformer() =>
+      _instance ??= const _TeamProjectReferenceStateEnumTypeTransformer._();
 
-  const TeamProjectReferenceStateEnumTypeTransformer._();
+  const _TeamProjectReferenceStateEnumTypeTransformer._();
 
   String encode(_TeamProjectReferenceStateEnum data) => data.value;
 
@@ -695,8 +695,8 @@ class TeamProjectReferenceStateEnumTypeTransformer {
     return null;
   }
 
-  /// Singleton [TeamProjectReferenceStateEnumTypeTransformer] instance.
-  static TeamProjectReferenceStateEnumTypeTransformer? _instance;
+  /// Singleton [_TeamProjectReferenceStateEnumTypeTransformer] instance.
+  static _TeamProjectReferenceStateEnumTypeTransformer? _instance;
 }
 
 /// Project visibility.
