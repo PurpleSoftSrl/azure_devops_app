@@ -51,7 +51,7 @@ class _PipelinesController with FilterMixin {
     final now = DateTime.now();
 
     final res = await apiService.getRecentPipelines(
-      project: projectFilter.name == userAll.displayName ? null : projectFilter,
+      project: projectFilter.name == projectAll.name ? null : projectFilter,
       result: resultFilter,
       status: statusFilter,
       triggeredBy: userFilter.displayName == userAll.displayName ? null : userFilter.mailAddress,
@@ -80,7 +80,7 @@ class _PipelinesController with FilterMixin {
 
   void filterByProject(Project proj) {
     pipelines.value = null;
-    projectFilter = proj.name! == userAll.displayName ? projectAll : proj;
+    projectFilter = proj.name! == projectAll.name ? projectAll : proj;
     _getData();
   }
 
