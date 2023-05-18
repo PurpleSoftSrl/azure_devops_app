@@ -17,7 +17,7 @@ dependencies:
   intl: ^0.18.1
   url_launcher: ^6.1.11
   share_plus: ^7.0.0
-  sentry_flutter: ^7.5.2
+  sentry_flutter: ^7.6.1
   cached_network_image: ^3.2.3
   package_info_plus: ^3.1.2
   flutter_markdown: ^0.6.14
