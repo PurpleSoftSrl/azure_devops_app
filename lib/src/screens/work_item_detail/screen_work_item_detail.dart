@@ -100,7 +100,10 @@ class _WorkItemDetailScreen extends StatelessWidget {
                 const SizedBox(
                   width: 10,
                 ),
-                Text(detail.fields.systemState),
+                Text(
+                  detail.fields.systemState,
+                  style: context.textTheme.titleSmall!.copyWith(color: item.stateColor),
+                ),
               ],
             ),
             const SizedBox(
@@ -154,6 +157,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
               ),
               _HtmlWidget(
                 data: detail.fields.systemDescription!,
+                style: context.textTheme.titleSmall,
               ),
             ],
             if (detail.fields.reproSteps != null) ...[
@@ -183,6 +187,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                   ),
                   MemberAvatar(
                     userDescriptor: detail.fields.systemAssignedTo!.descriptor,
+                    radius: 30,
                   ),
                 ],
               ),

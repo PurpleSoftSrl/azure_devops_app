@@ -1,23 +1,25 @@
 part of work_item_detail;
 
 class _HtmlWidget extends StatelessWidget {
-  const _HtmlWidget({required this.data, this.padding = EdgeInsets.zero});
+  const _HtmlWidget({required this.data, this.padding = EdgeInsets.zero, this.style});
 
   final String data;
   final EdgeInsets padding;
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final textStyle =
-        Style.fromTextStyle(context.textTheme.labelMedium!).copyWith(margin: Margins.zero, padding: padding);
+    final defaultTextStyle = context.textTheme.labelMedium!;
+    final effectiveStyle = style ?? defaultTextStyle;
+    final htmlTextStyle = Style.fromTextStyle(effectiveStyle).copyWith(margin: Margins.zero, padding: padding);
     return Html(
       data: data,
       style: {
-        'div': textStyle,
-        'p': textStyle,
-        'body': textStyle,
-        'html': textStyle,
+        'div': htmlTextStyle,
+        'p': htmlTextStyle,
+        'body': htmlTextStyle,
+        'html': htmlTextStyle,
       },
       onLinkTap: (str, _, __, ___) async {
         final url = str.toString();
@@ -85,7 +87,7 @@ class _HtmlWidget extends StatelessWidget {
             },
             child: Text(
               ctx.tree.element!.innerHtml,
-              style: context.textTheme.labelSmall!.copyWith(color: Colors.blue, decoration: TextDecoration.underline),
+              style: effectiveStyle.copyWith(color: Colors.blue, decoration: TextDecoration.underline),
             ),
           ),
         ),

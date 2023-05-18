@@ -14,7 +14,7 @@ extension WorkItemExt on WorkItem {
       case 'Closed':
         return Color.fromRGBO(82, 152, 66, 1);
       case 'Removed':
-        return Color.fromRGBO(52, 120, 198, .2);
+        return Colors.red;
       case 'To Do':
         return Color.fromRGBO(255, 255, 255, 1);
       case 'Done':
