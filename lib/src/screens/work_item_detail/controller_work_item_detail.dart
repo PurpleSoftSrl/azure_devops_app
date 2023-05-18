@@ -257,7 +257,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
       id: item.id,
       type: newWorkItemType,
       title: newWorkItemTitle,
-      assignedTo: newWorkItemAssignedTo.displayName == 'Assigned to' ? null : newWorkItemAssignedTo,
+      assignedTo: newWorkItemAssignedTo.displayName == userAll.displayName ? null : newWorkItemAssignedTo,
       description: newWorkItemDescription,
       status: newWorkItemStatus,
     );
