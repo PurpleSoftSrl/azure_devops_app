@@ -373,11 +373,16 @@ class AzureApiServiceImpl implements AzureApiService {
     Sentry.addBreadcrumb(breadcrumb);
 
     if (res.isError && _user != null && ![401, 403].contains(res.statusCode)) {
+      var msg = 'Reason: ${res.reasonPhrase}, Body: ${res.body}';
+      if (body != null) {
+        msg += ', Request body: $body';
+      }
+
       Sentry.captureEvent(
         SentryEvent(
           level: SentryLevel.warning,
           breadcrumbs: [breadcrumb],
-          message: SentryMessage('${res.reasonPhrase ?? ''} - body: $body'),
+          message: SentryMessage(msg),
         ),
       );
     }
@@ -638,7 +643,7 @@ class AzureApiServiceImpl implements AzureApiService {
         if (assignedTo != null)
           {
             'op': 'add',
-            'value': assignedTo.displayName,
+            'value': assignedTo.mailAddress,
             'path': '/fields/System.AssignedTo',
           },
       ],
