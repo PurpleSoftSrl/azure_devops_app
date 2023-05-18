@@ -33,7 +33,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
 
   final itemDetail = ValueNotifier<ApiResponse<WorkItemDetail?>?>(null);
 
-  String get itemWebUrl => '${apiService.basePath}/${item.teamProject}/_workitems/edit/${item.id}';
+  String get itemWebUrl => '${apiService.basePath}/${item.fields.systemTeamProject}/_workitems/edit/${item.id}';
 
   List<WorkItemStatus> statuses = [];
 
@@ -46,21 +46,24 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
   }
 
   Future<void> init() async {
-    final res = await apiService.getWorkItemDetail(projectName: item.teamProject, workItemId: item.id);
+    final res = await apiService.getWorkItemDetail(projectName: item.fields.systemTeamProject, workItemId: item.id);
 
     await _getUpdates();
     itemDetail.value = res;
 
-    await _getStatuses(item.workItemType);
+    await _getStatuses(item.fields.systemWorkItemType);
   }
 
   Future<void> _getUpdates() async {
-    final res = await apiService.getWorkItemUpdates(projectName: item.teamProject, workItemId: item.id);
+    final res = await apiService.getWorkItemUpdates(projectName: item.fields.systemTeamProject, workItemId: item.id);
     updates = res.data ?? [];
   }
 
   Future<void> _getStatuses(String workItemType) async {
-    final statusesRes = await apiService.getWorkItemStatuses(projectName: item.teamProject, type: workItemType);
+    final statusesRes = await apiService.getWorkItemStatuses(
+      projectName: item.fields.systemTeamProject,
+      type: workItemType,
+    );
     statuses = statusesRes.data ?? [];
   }
 
@@ -73,7 +76,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
   }
 
   void goToProject() {
-    AppRouter.goToProjectDetail(item.teamProject);
+    AppRouter.goToProjectDetail(item.fields.systemTeamProject);
   }
 
   // ignore: long-method
@@ -252,7 +255,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
     }
 
     final res = await apiService.editWorkItem(
-      projectName: item.teamProject,
+      projectName: item.fields.systemTeamProject,
       id: item.id,
       type: newWorkItemType,
       title: newWorkItemTitle,
@@ -272,7 +275,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
     final conf = await OverlayService.confirm('Attention', description: 'Do you really want to delete this work item?');
     if (!conf) return;
 
-    final res = await apiService.deleteWorkItem(projectName: item.teamProject, id: item.id);
+    final res = await apiService.deleteWorkItem(projectName: item.fields.systemTeamProject, id: item.id);
     if (!(res.data ?? false)) {
       return OverlayService.error('Error', description: 'Work item not deleted');
     }

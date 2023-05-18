@@ -3,7 +3,7 @@ import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
 import 'package:azure_devops/src/models/timeline.dart';
-import 'package:azure_devops/src/models/work_item.dart';
+import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/screens/choose_projects/base_choose_projects.dart';
 import 'package:azure_devops/src/screens/commit_detail/base_commit_detail.dart';
 import 'package:azure_devops/src/screens/commits/base_commits.dart';

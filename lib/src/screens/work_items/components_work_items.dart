@@ -33,13 +33,13 @@ class _WorkItemListTile extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    item.title,
+                    item.fields.systemTitle,
                     overflow: TextOverflow.ellipsis,
                     style: context.textTheme.labelLarge,
                   ),
                 ),
                 Text(
-                  item.state,
+                  item.fields.systemState,
                   style: subtitleStyle.copyWith(color: item.stateColor),
                 ),
               ],
@@ -61,12 +61,12 @@ class _WorkItemListTile extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        item.teamProject,
+                        item.fields.systemTeamProject,
                         style: subtitleStyle,
                       ),
                     ),
                     Text(
-                      item.changedDate.minutesAgo,
+                      item.fields.systemChangedDate.minutesAgo,
                       style: subtitleStyle,
                     ),
                   ],

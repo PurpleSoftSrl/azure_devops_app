@@ -1,10 +1,10 @@
-import 'package:azure_devops/src/models/work_item.dart';
+import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:flutter/material.dart';
 
 extension WorkItemExt on WorkItem {
   Color get stateColor {
-    switch (state) {
+    switch (fields.systemState) {
       case 'New':
         return Color.fromRGBO(178, 178, 178, 1);
       case 'Active':
@@ -41,7 +41,7 @@ extension WorkItemExt on WorkItem {
       ];
 
   Icon get workItemTypeIcon {
-    switch (workItemType) {
+    switch (fields.systemWorkItemType) {
       case 'Bug':
         return Icon(DevOpsIcons.bug, color: Colors.red);
       case 'Epic':
@@ -63,4 +63,15 @@ extension WorkItemExt on WorkItem {
         return Icon(DevOpsIcons.userstory, color: Colors.transparent);
     }
   }
+
+  static WorkItem withType(String type) => WorkItem(
+        id: -1,
+        fields: ItemFields(
+          systemWorkItemType: type,
+          systemState: '',
+          systemTeamProject: '',
+          systemTitle: '',
+          systemChangedDate: DateTime.now(),
+        ),
+      );
 }

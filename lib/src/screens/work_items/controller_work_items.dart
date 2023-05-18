@@ -84,35 +84,13 @@ class _WorkItemsController with FilterMixin {
   }
 
   Future<void> _getData() async {
-    final res = await apiService.getWorkItems();
-    res.data?.sort((a, b) => b.changedDate.compareTo(a.changedDate));
-
-    final noFilters = statusFilter == _workItemStateAll &&
-        typeFilter == WorkItemType.all &&
-        projectFilter == projectAll &&
-        userFilter == userAll;
-
-    if (noFilters) {
-      workItems.value = res;
-      return;
-    }
-
-    final filteredByTypeItems =
-        typeFilter == WorkItemType.all ? res.data : res.data?.where((i) => i.workItemType == typeFilter.name).toList();
-
-    final filteredByStatusItems = statusFilter == _workItemStateAll
-        ? filteredByTypeItems
-        : filteredByTypeItems?.where((i) => i.state == statusFilter);
-
-    final filteredByProjectItems = projectFilter == projectAll
-        ? filteredByStatusItems
-        : filteredByStatusItems?.where((i) => i.teamProject == projectFilter.name);
-
-    final filteredByUserItems = userFilter == userAll
-        ? filteredByProjectItems
-        : filteredByProjectItems?.where((i) => i.assignedTo?.uniqueName == userFilter.mailAddress);
-
-    workItems.value = ApiResponse.ok(filteredByUserItems?.toList());
+    final res = await apiService.getWorkItems(
+      project: projectFilter == projectAll ? null : projectFilter,
+      type: typeFilter == WorkItemType.all ? null : typeFilter,
+      status: statusFilter == _workItemStateAll ? null : statusFilter,
+      assignedTo: userFilter == userAll ? null : userFilter,
+    );
+    workItems.value = res;
   }
 
   void resetFilters() {

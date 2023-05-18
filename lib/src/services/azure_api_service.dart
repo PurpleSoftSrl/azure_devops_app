@@ -23,6 +23,7 @@ import 'package:azure_devops/src/models/user_entitlements.dart';
 import 'package:azure_devops/src/models/work_item.dart';
 import 'package:azure_devops/src/models/work_item_type.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
+import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -61,7 +62,12 @@ abstract class AzureApiService {
 
   Future<ApiResponse<Project>> getProject({required String projectName});
 
-  Future<ApiResponse<List<WorkItem>>> getWorkItems();
+  Future<ApiResponse<List<WorkItem>>> getWorkItems({
+    Project? project,
+    WorkItemType? type,
+    String? status,
+    GraphUser? assignedTo,
+  });
 
   Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes();
 
@@ -490,16 +496,58 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<WorkItem>>> getWorkItems() async {
-    final workItemsRes = await _get('$_basePath/_apis/work/accountmyworkrecentactivity?$_apiVersion');
-    if (workItemsRes.isError) return ApiResponse.error(workItemsRes);
+  Future<ApiResponse<List<WorkItem>>> getWorkItems({
+    Project? project,
+    WorkItemType? type,
+    String? status,
+    GraphUser? assignedTo,
+  }) async {
+    final query = <String>[];
+    if (project != null) query.add(" [System.TeamProject] = '${project.name}' ");
 
-    final projects = StorageServiceCore().getChosenProjects();
+    if (type != null) query.add(" [System.WorkItemType] = '${type.name}' ");
+
+    if (status != null) query.add(" [System.State] = '$status' ");
+
+    if (assignedTo != null) query.add(" [System.AssignedTo] = '${assignedTo.mailAddress}' ");
+
+    var queryStr = '';
+    if (query.isNotEmpty) {
+      queryStr = query.join(' and ');
+      queryStr = ' Where $queryStr ';
+    }
+
+    final workItemIdsRes = await _post(
+      '$_basePath/_apis/wit/wiql?\$top=200&$_apiVersion',
+      body: {'query': 'Select [System.Id] From WorkItems $queryStr Order By [System.ChangedDate] desc'},
+    );
+
+    if (workItemIdsRes.isError) return ApiResponse.error(workItemIdsRes);
+
+    final workItemIds = GetWorkItemIds.fromJson(jsonDecode(workItemIdsRes.body) as Map<String, dynamic>).workItems;
+    final ids = workItemIds.map((e) => e.id).join(',');
+
+    final projectsToSearch = project != null ? [project] : (_chosenProjects ?? _projects);
+
+    final allProjectWorkItems = await Future.wait([
+      for (final project in projectsToSearch)
+        _get('$_basePath/${project.name}/_apis/wit/workitems?ids=$ids&$_apiVersion'),
+    ]);
+
+    var isAllError = true;
+
+    for (final res in allProjectWorkItems) {
+      isAllError &= res.isError;
+    }
+
+    if (isAllError) return ApiResponse.error(allProjectWorkItems.firstOrNull);
 
     return ApiResponse.ok(
-      GetWorkItemsResponse.fromJson(jsonDecode(workItemsRes.body) as Map<String, dynamic>)
-          .workItems
-          .where((i) => projects.map((p) => p.name!.toLowerCase()).contains(i.teamProject.toLowerCase()))
+      allProjectWorkItems
+          .where((r) => !r.isError)
+          .map((r) => GetWorkItemsResponse.fromJson(jsonDecode(r.body) as Map<String, dynamic>))
+          .expand((r) => r.items)
+          .take(200)
           .toList(),
     );
   }
@@ -631,7 +679,7 @@ class AzureApiServiceImpl implements AzureApiService {
         if (assignedTo != null)
           {
             'op': 'replace',
-            'value': assignedTo.displayName,
+            'value': assignedTo.mailAddress,
             'path': '/fields/System.AssignedTo',
           },
         if (type != null)
