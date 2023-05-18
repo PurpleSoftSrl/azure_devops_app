@@ -530,6 +530,8 @@ class AzureApiServiceImpl implements AzureApiService {
     if (workItemIdsRes.isError) return ApiResponse.error(workItemIdsRes);
 
     final workItemIds = GetWorkItemIds.fromJson(jsonDecode(workItemIdsRes.body) as Map<String, dynamic>).workItems;
+    if (workItemIds.isEmpty) return ApiResponse.ok([]);
+
     final ids = workItemIds.map((e) => e.id).join(',');
 
     final projectsToSearch = project != null ? [project] : (_chosenProjects ?? _projects);
