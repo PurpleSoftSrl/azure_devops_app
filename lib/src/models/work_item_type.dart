@@ -95,14 +95,6 @@ class State {
   final String name;
   final String color;
   final Category category;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'color': color,
-        'category': categoryValues.reverse[category],
-      };
 }
 
 enum Category { proposed, inProgress, resolved, completed, removed }
@@ -130,13 +122,6 @@ class Transition {
 
   final String to;
   final List<String>? actions;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'to': to,
-        'actions': actions == null ? <dynamic>[] : List<dynamic>.from(actions!.map((x) => x)),
-      };
 }
 
 class EnumValues<T> {

@@ -13,11 +13,6 @@ class GetTeamsResponse {
 
   final List<_Team?>? teams;
   final int? count;
-
-  Map<String, dynamic> toJson() => {
-        'value': teams == null ? <dynamic>[] : List<dynamic>.from(teams!.map((x) => x!.toJson())),
-        'count': count,
-      };
 }
 
 class _Team {
@@ -48,14 +43,4 @@ class _Team {
   final String? identityUrl;
   final String? projectName;
   final String? projectId;
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'url': url,
-        'description': description,
-        'identityUrl': identityUrl,
-        'projectName': projectName,
-        'projectId': projectId,
-      };
 }

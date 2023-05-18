@@ -35,17 +35,6 @@ class GetTimelineResponse {
   final String id;
   final int changeId;
   final String url;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'records': List<dynamic>.from(records.map((x) => x.toJson())),
-        'lastChangedBy': lastChangedBy,
-        'lastChangedOn': lastChangedOn.toIso8601String(),
-        'id': id,
-        'changeId': changeId,
-        'url': url,
-      };
 }
 
 class Record {
@@ -138,37 +127,6 @@ class Record {
   final int? queueId;
   final List<Issue>? issues;
 
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'previousAttempts': List<dynamic>.from(previousAttempts.map((x) => x)),
-        'id': id,
-        'parentId': parentId,
-        'type': type,
-        'name': name,
-        'startTime': startTime?.toIso8601String(),
-        'finishTime': finishTime?.toIso8601String(),
-        'currentOperation': currentOperation,
-        'percentComplete': percentComplete,
-        'state': state,
-        'result': result,
-        'resultCode': resultCode,
-        'changeId': changeId,
-        'lastModified': lastModified.toIso8601String(),
-        'workerName': workerName,
-        'order': order,
-        'details': details,
-        'errorCount': errorCount,
-        'warningCount': warningCount,
-        'url': url,
-        'log': log?.toJson(),
-        'task': task?.toJson(),
-        'attempt': attempt,
-        'identifier': identifier,
-        'queueId': queueId,
-        'issues': issues == null ? <Issue>[] : List<dynamic>.from(issues!.map((x) => x.toJson())),
-      };
-
   @override
   String toString() {
     return 'Record(previousAttempts: $previousAttempts, id: $id, parentId: $parentId, type: $type, name: $name, startTime: $startTime, finishTime: $finishTime, currentOperation: $currentOperation, percentComplete: $percentComplete, state: $state, result: $result, resultCode: $resultCode, changeId: $changeId, lastModified: $lastModified, workerName: $workerName, order: $order, details: $details, errorCount: $errorCount, warningCount: $warningCount, url: $url, log: $log, task: $task, attempt: $attempt, identifier: $identifier, queueId: $queueId, issues: $issues)';
@@ -192,14 +150,6 @@ class Issue {
   final String type;
   final dynamic category;
   final String message;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'type': type,
-        'category': category,
-        'message': message,
-      };
 }
 
 class Log {
@@ -220,14 +170,6 @@ class Log {
   final int id;
   final String type;
   final String url;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'type': type,
-        'url': url,
-      };
 }
 
 class Task {
@@ -247,14 +189,6 @@ class Task {
   final String id;
   final String name;
   final String version;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'version': version,
-      };
 }
 
 /// The status of a single task.

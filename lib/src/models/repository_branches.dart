@@ -16,13 +16,6 @@ class RepositoryBranchesResponse {
 
   final int count;
   final List<Branch> branches;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'count': count,
-        'value': List<dynamic>.from(branches.map((x) => x.toJson())),
-      };
 }
 
 class Branch {
@@ -49,16 +42,6 @@ class Branch {
   final int aheadCount;
   final int behindCount;
   final bool isBaseVersion;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'commit': commit.toJson(),
-        'name': name,
-        'aheadCount': aheadCount,
-        'behindCount': behindCount,
-        'isBaseVersion': isBaseVersion,
-      };
 
   @override
   String toString() {
@@ -94,18 +77,6 @@ class _Commit {
   final String url;
   final String? treeId;
   final List<String>? parents;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'commitId': commitId,
-        'author': author.toJson(),
-        'committer': committer.toJson(),
-        'comment': comment,
-        'url': url,
-        'treeId': treeId,
-        'parents': parents == null ? <String>[] : List<dynamic>.from(parents!.map((x) => x)),
-      };
 }
 
 class _Author {
@@ -124,12 +95,4 @@ class _Author {
   final String name;
   final String? email;
   final DateTime? date;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'email': email,
-        'date': date?.toIso8601String(),
-      };
 }

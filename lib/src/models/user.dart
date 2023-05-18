@@ -17,11 +17,6 @@ class GetUsersResponse {
 
   final int? count;
   final List<GraphUser>? users;
-
-  Map<String, dynamic> toJson() => {
-        'count': count,
-        'value': users == null ? <dynamic>[] : List<dynamic>.from(users!.map((x) => x.toJson())),
-      };
 }
 
 class GraphUser {
@@ -69,21 +64,6 @@ class GraphUser {
   final String? descriptor;
   final String? metaType;
   final String? directoryAlias;
-
-  Map<String, dynamic> toJson() => {
-        'subjectKind': subjectKind,
-        'domain': domain,
-        'principalName': principalName,
-        'mailAddress': mailAddress,
-        'origin': origin,
-        'originId': originId,
-        'displayName': displayName,
-        'Links': links!.toJson(),
-        'url': url,
-        'descriptor': descriptor,
-        'metaType': metaType,
-        'directoryAlias': directoryAlias,
-      };
 
   @override
   String toString() {
@@ -171,16 +151,6 @@ class UserMe {
   final DateTime? timeStamp;
   final String? id;
   final int? revision;
-
-  Map<String, dynamic> toJson() => {
-        'displayName': displayName,
-        'publicAlias': publicAlias,
-        'emailAddress': emailAddress,
-        'coreRevision': coreRevision,
-        'timeStamp': timeStamp?.toIso8601String(),
-        'id': id,
-        'revision': revision,
-      };
 
   @override
   String toString() {

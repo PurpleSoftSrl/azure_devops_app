@@ -20,14 +20,6 @@ class Links {
   final Avatar? membershipState;
   final Avatar? storageKey;
   final Avatar? avatar;
-
-  Map<String, dynamic> toJson() => {
-        'self': self!.toJson(),
-        'memberships': memberships!.toJson(),
-        'membershipState': membershipState!.toJson(),
-        'storageKey': storageKey!.toJson(),
-        'avatar': avatar!.toJson(),
-      };
 }
 
 class Avatar {
@@ -40,8 +32,4 @@ class Avatar {
       );
 
   final String? href;
-
-  Map<String, dynamic> toJson() => {
-        'href': href,
-      };
 }

@@ -17,11 +17,6 @@ class GetTeamMembersResponse {
 
   final List<TeamMember>? members;
   final int? count;
-
-  Map<String, dynamic> toJson() => {
-        'value': members == null ? <dynamic>[] : List<dynamic>.from(members!.map((x) => x.toJson())),
-        'count': count,
-      };
 }
 
 class TeamMember {
@@ -37,11 +32,6 @@ class TeamMember {
 
   final bool? isTeamAdmin;
   final Identity? identity;
-
-  Map<String, dynamic> toJson() => {
-        'isTeamAdmin': isTeamAdmin,
-        'identity': identity!.toJson(),
-      };
 
   @override
   String toString() => 'TeamMember(isTeamAdmin: $isTeamAdmin, identity: $identity)';
@@ -85,16 +75,6 @@ class Identity {
   final String? uniqueName;
   final String? imageUrl;
   final String? descriptor;
-
-  Map<String, dynamic> toJson() => {
-        'displayName': displayName,
-        'url': url,
-        'Links': links!.toJson(),
-        'id': id,
-        'uniqueName': uniqueName,
-        'imageUrl': imageUrl,
-        'descriptor': descriptor,
-      };
 
   @override
   String toString() {

@@ -17,11 +17,6 @@ class GetOrganizationsResponse {
 
   final int? count;
   final List<Organization>? organizations;
-
-  Map<String, dynamic> toJson() => {
-        'count': count,
-        'value': organizations == null ? <dynamic>[] : List<dynamic>.from(organizations!.map((x) => x.toJson())),
-      };
 }
 
 class Organization {
@@ -43,13 +38,6 @@ class Organization {
   final String? accountUri;
   final String? accountName;
   final Map<String, dynamic>? properties;
-
-  Map<String, dynamic> toJson() => {
-        'accountId': accountId,
-        'accountUri': accountUri,
-        'accountName': accountName,
-        'properties': properties,
-      };
 
   @override
   String toString() {

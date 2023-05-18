@@ -15,11 +15,6 @@ class CommitChanges {
   final _ChangeCounts? changeCounts;
   final List<Change?>? changes;
 
-  Map<String, dynamic> toJson() => {
-        'changeCounts': changeCounts!.toJson(),
-        'changes': changes == null ? <dynamic>[] : List<dynamic>.from(changes!.map((x) => x!.toJson())),
-      };
-
   @override
   String toString() => 'CommitDetail(changeCounts: $changeCounts, changes: $changes)';
 }
@@ -40,12 +35,6 @@ class _ChangeCounts {
   final int? add;
   final int? delete;
 
-  Map<String, dynamic> toJson() => {
-        'Edit': edit,
-        'Add': add,
-        'Delete': delete,
-      };
-
   @override
   String toString() => 'ChangeCounts(edit: $edit: add: $add, delete: $delete)';
 }
@@ -62,11 +51,6 @@ class Change {
 
   final _Item? item;
   final String? changeType;
-
-  Map<String, dynamic> toJson() => {
-        'item': item!.toJson(),
-        'changeType': changeType,
-      };
 
   @override
   String toString() => 'Change(item: $item, changeType: $changeType)';
@@ -96,15 +80,6 @@ class _Item {
   final String? commitId;
   final String? path;
   final String? url;
-
-  Map<String, dynamic> toJson() => {
-        'objectId': objectId,
-        'originalObjectId': originalObjectId,
-        'gitObjectType': gitObjectType,
-        'commitId': commitId,
-        'path': path,
-        'url': url,
-      };
 
   @override
   String toString() {

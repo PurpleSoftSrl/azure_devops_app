@@ -147,31 +147,6 @@ class Pipeline {
     return result.toList(growable: growable);
   }
 
-  Map<String, dynamic> toJson() => {
-        'triggerInfo': triggerInfo!.toJson(),
-        'id': id,
-        'buildNumber': buildNumber,
-        'status': status,
-        'result': result,
-        'queueTime': queueTime?.toIso8601String(),
-        'startTime': startTime?.toIso8601String(),
-        'finishTime': finishTime?.toIso8601String(),
-        'url': url,
-        'definition': definition!.toJson(),
-        'buildNumberRevision': buildNumberRevision,
-        'project': project!.toJson(),
-        'uri': uri,
-        'sourceBranch': sourceBranch,
-        'sourceVersion': sourceVersion,
-        'queuePosition': queuePosition,
-        'priority': priority,
-        'reason': reason,
-        'requestedFor': requestedFor!.toJson(),
-        'requestedBy': requestedBy!.toJson(),
-        'repository': repository!.toJson(),
-        'triggeredByBuild': triggeredByBuild,
-      };
-
   Pipeline copyWith({
     _TriggerInfo? triggerInfo,
     int? id,
@@ -321,19 +296,6 @@ class _Definition {
   final int? revision;
   final Project? project;
 
-  Map<String, dynamic> toJson() => {
-        'drafts': drafts == null ? <dynamic>[] : List<dynamic>.from(drafts!.map((x) => x)),
-        'id': id,
-        'name': name,
-        'url': url,
-        'uri': uri,
-        'path': path,
-        'type': type,
-        'queueStatus': queueStatus,
-        'revision': revision,
-        'project': project!.toJson(),
-      };
-
   @override
   String toString() {
     return '_Definition(drafts: $drafts, id: $id, name: $name, url: $url, uri: $uri, path: $path, type: $type, queueStatus: $queueStatus, revision: $revision, project: $project)';
@@ -368,16 +330,6 @@ class _LastChangedBy {
   final String? uniqueName;
   final String? imageUrl;
   final String? descriptor;
-
-  Map<String, dynamic> toJson() => {
-        'displayName': displayName,
-        'url': url,
-        '_links': links!.toJson(),
-        'id': id,
-        'uniqueName': uniqueName,
-        'imageUrl': imageUrl,
-        'descriptor': descriptor,
-      };
 
   _LastChangedBy copyWith({
     String? displayName,
@@ -416,10 +368,6 @@ class _LastChangedByLinks {
 
   final _Badge? avatar;
 
-  Map<String, dynamic> toJson() => {
-        'avatar': avatar!.toJson(),
-      };
-
   @override
   String toString() => '_LastChangedByLinks(avatar: $avatar)';
 }
@@ -434,10 +382,6 @@ class _Badge {
   });
 
   final String? href;
-
-  Map<String, dynamic> toJson() => {
-        'href': href,
-      };
 
   @override
   String toString() => '_Badge(href: $href)';
@@ -469,15 +413,6 @@ class _Repository {
   final dynamic clean;
   final bool? checkoutSubmodules;
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'type': type,
-        'name': name,
-        'url': url,
-        'clean': clean,
-        'checkoutSubmodules': checkoutSubmodules,
-      };
-
   @override
   String toString() {
     return '_Repository(id: $id, type: $type, name: $name, url: $url, clean: $clean, checkoutSubmodules: $checkoutSubmodules)';
@@ -503,13 +438,6 @@ class _TriggerInfo {
   final String? ciSourceSha;
   final String? ciMessage;
   final String? ciTriggerRepository;
-
-  Map<String, dynamic> toJson() => {
-        'ci.sourceBranch': ciSourceBranch,
-        'ci.sourceSha': ciSourceSha,
-        'ci.message': ciMessage,
-        'ci.triggerRepository': ciTriggerRepository,
-      };
 
   _TriggerInfo copyWith({
     String? ciSourceBranch,

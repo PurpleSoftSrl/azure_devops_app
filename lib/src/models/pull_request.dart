@@ -17,11 +17,6 @@ class GetPullRequestsResponse {
   final List<PullRequest> pullRequests;
   final int count;
 
-  Map<String, dynamic> toJson() => {
-        'value': List<dynamic>.from(pullRequests.map((x) => x.toJson())),
-        'count': count,
-      };
-
   @override
   String toString() => 'GetPullRequestsResponse(pullRequests: $pullRequests, count: $count)';
 }
@@ -98,29 +93,6 @@ class PullRequest {
   final String url;
   final bool supportsIterations;
 
-  Map<String, dynamic> toJson() => {
-        'repository': repository.toJson(),
-        'pullRequestId': pullRequestId,
-        'codeReviewId': codeReviewId,
-        'status': status,
-        'createdBy': createdBy.toJson(),
-        'creationDate': creationDate.toIso8601String(),
-        'title': title,
-        'description': description,
-        'sourceRefName': sourceRefName,
-        'targetRefName': targetRefName,
-        'mergeStatus': mergeStatus,
-        'isDraft': isDraft,
-        'mergeId': mergeId,
-        'lastMergeSourceCommit': lastMergeSourceCommit.toJson(),
-        'lastMergeTargetCommit': lastMergeTargetCommit.toJson(),
-        'lastMergeCommit': lastMergeCommit?.toJson(),
-        'reviewers': List<dynamic>.from(reviewers.map((x) => x.toJson())),
-        'labels': List<dynamic>.from(labels?.map((x) => x.toJson()) ?? []),
-        'url': url,
-        'supportsIterations': supportsIterations,
-      };
-
   @override
   String toString() {
     return 'PullRequest(repository: $repository, pullRequestId: $pullRequestId, codeReviewId: $codeReviewId, status: $status, createdBy: $createdBy, creationDate: $creationDate, title: $title, description: $description, sourceRefName: $sourceRefName, targetRefName: $targetRefName, mergeStatus: $mergeStatus, isDraft: $isDraft, mergeId: $mergeId, lastMergeSourceCommit: $lastMergeSourceCommit, lastMergeTargetCommit: $lastMergeTargetCommit, lastMergeCommit: $lastMergeCommit, reviewers: $reviewers, labels: $labels, url: $url, supportsIterations: $supportsIterations)';
@@ -188,6 +160,7 @@ class _CreatedBy {
         imageUrl: json['imageUrl'] as String,
         descriptor: json['descriptor'] as String,
       );
+
   _CreatedBy({
     required this.displayName,
     required this.url,
@@ -205,16 +178,6 @@ class _CreatedBy {
   final String uniqueName;
   final String imageUrl;
   final String descriptor;
-
-  Map<String, dynamic> toJson() => {
-        'displayName': displayName,
-        'url': url,
-        'Links': links?.toJson(),
-        'id': id,
-        'uniqueName': uniqueName,
-        'imageUrl': imageUrl,
-        'descriptor': descriptor,
-      };
 
   @override
   String toString() {
@@ -238,12 +201,6 @@ class _Label {
   final String name;
   final bool active;
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'active': active,
-      };
-
   @override
   String toString() => '_Label(id: $id, name: $name, active: $active)';
 }
@@ -260,11 +217,6 @@ class _LastMergeCommit {
 
   final String commitId;
   final String url;
-
-  Map<String, dynamic> toJson() => {
-        'commitId': commitId,
-        'url': url,
-      };
 
   @override
   String toString() => '_LastMergeCommit(commitId: $commitId, url: $url)';
@@ -288,13 +240,6 @@ class _Repository {
   final String name;
   final String url;
   final _Project project;
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'url': url,
-        'project': project.toJson(),
-      };
 
   @override
   String toString() {
@@ -323,14 +268,6 @@ class _Project {
   final String state;
   final String visibility;
   final DateTime lastUpdateTime;
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'state': state,
-        'visibility': visibility,
-        'lastUpdateTime': lastUpdateTime.toIso8601String(),
-      };
 
   @override
   String toString() {
@@ -449,20 +386,6 @@ class Reviewer {
   final String id;
   final String uniqueName;
   final String imageUrl;
-
-  Map<String, dynamic> toJson() => {
-        'reviewerUrl': reviewerUrl,
-        'vote': vote,
-        'hasDeclined': hasDeclined,
-        'isFlagged': isFlagged,
-        'isRequired': isRequired,
-        'displayName': displayName,
-        'url': url,
-        'Links': links?.toJson(),
-        'id': id,
-        'uniqueName': uniqueName,
-        'imageUrl': imageUrl,
-      };
 
   @override
   String toString() {

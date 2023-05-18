@@ -10,8 +10,6 @@ class GetUserEntitlementsResponse {
   GetUserEntitlementsResponse({required this.members});
 
   final List<_Member> members;
-
-  Map<String, dynamic> toJson() => {'members': List<dynamic>.from(members.map((x) => x.toJson()))};
 }
 
 class _Member {
@@ -45,17 +43,6 @@ class _Member {
   final DateTime dateCreated;
   final List<dynamic> projectEntitlements;
   final List<dynamic> groupAssignments;
-
-  Map<String, dynamic> toJson() => {
-        'user': user.toJson(),
-        'extensions': List<dynamic>.from(extensions.map((x) => x)),
-        'id': id,
-        'accessLevel': accessLevel.toJson(),
-        'lastAccessedDate': lastAccessedDate.toIso8601String(),
-        'dateCreated': dateCreated.toIso8601String(),
-        'projectEntitlements': List<dynamic>.from(projectEntitlements.map((x) => x)),
-        'groupAssignments': List<dynamic>.from(groupAssignments.map((x) => x)),
-      };
 }
 
 class _AccessLevel {
@@ -86,16 +73,6 @@ class _AccessLevel {
   final String status;
   final String statusMessage;
   final String assignmentSource;
-
-  Map<String, dynamic> toJson() => {
-        'licensingSource': licensingSource,
-        'accountLicenseType': accountLicenseType,
-        'msdnLicenseType': msdnLicenseType,
-        'licenseDisplayName': licenseDisplayName,
-        'status': status,
-        'statusMessage': statusMessage,
-        'assignmentSource': assignmentSource,
-      };
 }
 
 class _User {
@@ -141,21 +118,6 @@ class _User {
   final _Links links;
   final String url;
   final String descriptor;
-
-  Map<String, dynamic> toJson() => {
-        'subjectKind': subjectKind,
-        'metaType': metaType,
-        'directoryAlias': directoryAlias,
-        'domain': domain,
-        'principalName': principalName,
-        'mailAddress': mailAddress,
-        'origin': origin,
-        'originId': originId,
-        'displayName': displayName,
-        '_links': links.toJson(),
-        'url': url,
-        'descriptor': descriptor,
-      };
 }
 
 class _Links {
@@ -180,14 +142,6 @@ class _Links {
   final _Avatar membershipState;
   final _Avatar storageKey;
   final _Avatar avatar;
-
-  Map<String, dynamic> toJson() => {
-        'self': self.toJson(),
-        'memberships': memberships.toJson(),
-        'membershipState': membershipState.toJson(),
-        'storageKey': storageKey.toJson(),
-        'avatar': avatar.toJson(),
-      };
 }
 
 class _Avatar {
@@ -198,6 +152,4 @@ class _Avatar {
   _Avatar({required this.href});
 
   final String href;
-
-  Map<String, dynamic> toJson() => {'href': href};
 }

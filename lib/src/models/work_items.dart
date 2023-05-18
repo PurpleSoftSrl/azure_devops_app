@@ -12,10 +12,6 @@ class GetWorkItemIds {
       );
 
   final List<WorkItemId> workItems;
-
-  Map<String, dynamic> toJson() => {
-        'workItems': List<dynamic>.from(workItems.map((x) => x.toJson())),
-      };
 }
 
 class WorkItemId {
@@ -31,11 +27,6 @@ class WorkItemId {
 
   final int id;
   final String url;
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'url': url,
-      };
 }
 
 class GetWorkItemsResponse {

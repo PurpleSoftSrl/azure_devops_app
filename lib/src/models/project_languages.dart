@@ -26,14 +26,6 @@ class GetProjectLanguagesResponse {
   final List<LanguageBreakdown> languageBreakdown;
   final List<_RepositoryLanguageAnalytic> repositoryLanguageAnalytics;
   final String id;
-
-  Map<String, dynamic> toJson() => {
-        'url': url,
-        'resultPhase': resultPhase,
-        'languageBreakdown': List<dynamic>.from(languageBreakdown.map((x) => x.toJson())),
-        'repositoryLanguageAnalytics': List<dynamic>.from(repositoryLanguageAnalytics.map((x) => x.toJson())),
-        'id': id,
-      };
 }
 
 class LanguageBreakdown {
@@ -58,14 +50,6 @@ class LanguageBreakdown {
   final double filesPercentage;
   final int bytes;
   final double? languagePercentage;
-
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'files': files,
-        'filesPercentage': filesPercentage,
-        'bytes': bytes,
-        'languagePercentage': languagePercentage,
-      };
 }
 
 class _RepositoryLanguageAnalytic {
@@ -93,12 +77,4 @@ class _RepositoryLanguageAnalytic {
   final DateTime updatedTime;
   final List<LanguageBreakdown> languageBreakdown;
   final String id;
-
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'resultPhase': resultPhase,
-        'updatedTime': updatedTime.toIso8601String(),
-        'languageBreakdown': List<dynamic>.from(languageBreakdown.map((x) => x.toJson())),
-        'id': id,
-      };
 }

@@ -51,16 +51,6 @@ class Commit {
   final String? url;
   final String? remoteUrl;
 
-  Map<String, dynamic> toJson() => {
-        'commitId': commitId,
-        'author': author!.toJson(),
-        'committer': committer!.toJson(),
-        'comment': comment,
-        'changeCounts': changeCounts!.toJson(),
-        'url': url,
-        'remoteUrl': remoteUrl,
-      };
-
   static Commit empty() {
     return Commit(
       commitId: null,
@@ -159,12 +149,6 @@ class Author {
   final String? email;
   final DateTime? date;
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'email': email,
-        'date': date?.toIso8601String(),
-      };
-
   Author copyWith({
     String? name,
     String? email,
@@ -197,12 +181,6 @@ class _ChangeCounts {
   final int? add;
   final int? edit;
   final int? delete;
-
-  Map<String, dynamic> toJson() => {
-        'Add': add,
-        'Edit': edit,
-        'Delete': delete,
-      };
 
   @override
   String toString() => '_ChangeCounts(add: $add, edit: $edit, delete: $delete)';

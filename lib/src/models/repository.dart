@@ -101,78 +101,6 @@ class GitRepository {
   String toString() =>
       'GitRepository[links=$links, defaultBranch=$defaultBranch, id=$id, isDisabled=$isDisabled, isFork=$isFork, name=$name, parentRepository=$parentRepository, project=$project, remoteUrl=$remoteUrl, size=$size, sshUrl=$sshUrl, url=$url, validRemoteUrls=$validRemoteUrls, webUrl=$webUrl]';
 
-  // ignore: long-method
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (links != null) {
-      json[r'_links'] = links;
-    } else {
-      json[r'_links'] = null;
-    }
-    if (defaultBranch != null) {
-      json[r'defaultBranch'] = defaultBranch;
-    } else {
-      json[r'defaultBranch'] = null;
-    }
-    if (id != null) {
-      json[r'id'] = id;
-    } else {
-      json[r'id'] = null;
-    }
-    if (isDisabled != null) {
-      json[r'isDisabled'] = isDisabled;
-    } else {
-      json[r'isDisabled'] = null;
-    }
-    if (isFork != null) {
-      json[r'isFork'] = isFork;
-    } else {
-      json[r'isFork'] = null;
-    }
-    if (name != null) {
-      json[r'name'] = name;
-    } else {
-      json[r'name'] = null;
-    }
-    if (parentRepository != null) {
-      json[r'parentRepository'] = parentRepository;
-    } else {
-      json[r'parentRepository'] = null;
-    }
-    if (project != null) {
-      json[r'project'] = project;
-    } else {
-      json[r'project'] = null;
-    }
-    if (remoteUrl != null) {
-      json[r'remoteUrl'] = remoteUrl;
-    } else {
-      json[r'remoteUrl'] = null;
-    }
-    if (size != null) {
-      json[r'size'] = size;
-    } else {
-      json[r'size'] = null;
-    }
-    if (sshUrl != null) {
-      json[r'sshUrl'] = sshUrl;
-    } else {
-      json[r'sshUrl'] = null;
-    }
-    if (url != null) {
-      json[r'url'] = url;
-    } else {
-      json[r'url'] = null;
-    }
-    json[r'validRemoteUrls'] = validRemoteUrls;
-    if (webUrl != null) {
-      json[r'webUrl'] = webUrl;
-    } else {
-      json[r'webUrl'] = null;
-    }
-    return json;
-  }
-
   /// Returns a new [GitRepository] instance and imports its values from
   /// [value] if it's a [Map], null otherwise.
   // ignore: prefer_constructors_over_static_methods
@@ -371,51 +299,6 @@ class _GitRepositoryRef {
   String toString() =>
       'GitRepositoryRef[collection=$collection, id=$id, isFork=$isFork, name=$name, project=$project, remoteUrl=$remoteUrl, sshUrl=$sshUrl, url=$url]';
 
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (collection != null) {
-      json[r'collection'] = collection;
-    } else {
-      json[r'collection'] = null;
-    }
-    if (id != null) {
-      json[r'id'] = id;
-    } else {
-      json[r'id'] = null;
-    }
-    if (isFork != null) {
-      json[r'isFork'] = isFork;
-    } else {
-      json[r'isFork'] = null;
-    }
-    if (name != null) {
-      json[r'name'] = name;
-    } else {
-      json[r'name'] = null;
-    }
-    if (project != null) {
-      json[r'project'] = project;
-    } else {
-      json[r'project'] = null;
-    }
-    if (remoteUrl != null) {
-      json[r'remoteUrl'] = remoteUrl;
-    } else {
-      json[r'remoteUrl'] = null;
-    }
-    if (sshUrl != null) {
-      json[r'sshUrl'] = sshUrl;
-    } else {
-      json[r'sshUrl'] = null;
-    }
-    if (url != null) {
-      json[r'url'] = url;
-    } else {
-      json[r'url'] = null;
-    }
-    return json;
-  }
-
   /// Returns a new [_GitRepositoryRef] instance and imports its values from
   /// [value] if it's a [Map], null otherwise.
   // ignore: prefer_constructors_over_static_methods
@@ -500,26 +383,6 @@ class _TeamProjectCollectionReference {
   @override
   String toString() => 'TeamProjectCollectionReference[id=$id, name=$name, url=$url]';
 
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (id != null) {
-      json[r'id'] = id;
-    } else {
-      json[r'id'] = null;
-    }
-    if (name != null) {
-      json[r'name'] = name;
-    } else {
-      json[r'name'] = null;
-    }
-    if (url != null) {
-      json[r'url'] = url;
-    } else {
-      json[r'url'] = null;
-    }
-    return json;
-  }
-
   /// Returns a new [_TeamProjectCollectionReference] instance and imports its values from
   /// [value] if it's a [Map], null otherwise.
   // ignore: prefer_constructors_over_static_methods
@@ -570,12 +433,6 @@ class _ReferenceLinks {
 
   @override
   String toString() => 'ReferenceLinks[links=$links]';
-
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    json[r'links'] = links;
-    return json;
-  }
 
   /// Returns a new [_ReferenceLinks] instance and imports its values from
   /// [value] if it's a [Map], null otherwise.
@@ -732,62 +589,6 @@ class _TeamProjectReference {
   String toString() =>
       'TeamProjectReference[abbreviation=$abbreviation, defaultTeamImageUrl=$defaultTeamImageUrl, description=$description, id=$id, lastUpdateTime=$lastUpdateTime, name=$name, revision=$revision, state=$state, url=$url, visibility=$visibility]';
 
-  // ignore: long-method
-  Map<String, dynamic> toJson() {
-    final json = <String, dynamic>{};
-    if (abbreviation != null) {
-      json[r'abbreviation'] = abbreviation;
-    } else {
-      json[r'abbreviation'] = null;
-    }
-    if (defaultTeamImageUrl != null) {
-      json[r'defaultTeamImageUrl'] = defaultTeamImageUrl;
-    } else {
-      json[r'defaultTeamImageUrl'] = null;
-    }
-    if (description != null) {
-      json[r'description'] = description;
-    } else {
-      json[r'description'] = null;
-    }
-    if (id != null) {
-      json[r'id'] = id;
-    } else {
-      json[r'id'] = null;
-    }
-    if (lastUpdateTime != null) {
-      json[r'lastUpdateTime'] = lastUpdateTime!.toUtc().toIso8601String();
-    } else {
-      json[r'lastUpdateTime'] = null;
-    }
-    if (name != null) {
-      json[r'name'] = name;
-    } else {
-      json[r'name'] = null;
-    }
-    if (revision != null) {
-      json[r'revision'] = revision;
-    } else {
-      json[r'revision'] = null;
-    }
-    if (state != null) {
-      json[r'state'] = state;
-    } else {
-      json[r'state'] = null;
-    }
-    if (url != null) {
-      json[r'url'] = url;
-    } else {
-      json[r'url'] = null;
-    }
-    if (visibility != null) {
-      json[r'visibility'] = visibility;
-    } else {
-      json[r'visibility'] = null;
-    }
-    return json;
-  }
-
   /// Returns a new [_TeamProjectReference] instance and imports its values from
   /// [value] if it's a [Map], null otherwise.
   // ignore: prefer_constructors_over_static_methods
@@ -837,8 +638,6 @@ class _TeamProjectReferenceStateEnum {
 
   @override
   String toString() => value;
-
-  String toJson() => value;
 
   static const deleting = _TeamProjectReferenceStateEnum._(r'deleting');
   static const new_ = _TeamProjectReferenceStateEnum._(r'new');
@@ -911,8 +710,6 @@ class _TeamProjectReferenceVisibilityEnum {
 
   @override
   String toString() => value;
-
-  String toJson() => value;
 
   static const private = _TeamProjectReferenceVisibilityEnum._(r'private');
   static const public = _TeamProjectReferenceVisibilityEnum._(r'public');

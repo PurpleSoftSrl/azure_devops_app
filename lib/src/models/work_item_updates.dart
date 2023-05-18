@@ -13,11 +13,6 @@ class WorkItemUpdatesResponse {
 
   final int count;
   final List<WorkItemUpdate> updates;
-
-  Map<String, dynamic> toJson() => {
-        'count': count,
-        'updates': List<dynamic>.from(updates.map((x) => x.toJson())),
-      };
 }
 
 class WorkItemUpdate {
@@ -48,16 +43,6 @@ class WorkItemUpdate {
   final DateTime revisedDate;
   final Fields? fields;
   final String url;
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'workItemId': workItemId,
-        'rev': rev,
-        'revisedBy': revisedBy.toJson(),
-        'revisedDate': revisedDate.toIso8601String(),
-        'fields': fields?.toJson(),
-        'url': url,
-      };
 
   @override
   String toString() {
@@ -248,45 +233,6 @@ class Fields {
   final MicrosoftVstsCommonActivatedBy? microsoftVstsCommonResolvedBy;
   final MicrosoftVstsCommonPriority? microsoftVstsSchedulingEffort;
 
-  Map<String, dynamic> toJson() => {
-        'System.Id': systemId?.toJson(),
-        'System.AreaId': systemAreaId?.toJson(),
-        'System.NodeName': systemNodeName?.toJson(),
-        'System.AreaLevel1': systemAreaLevel1?.toJson(),
-        'System.Rev': systemRev.toJson(),
-        'System.AuthorizedDate': systemAuthorizedDate.toJson(),
-        'System.RevisedDate': systemRevisedDate.toJson(),
-        'System.IterationId': systemIterationId?.toJson(),
-        'System.IterationLevel1': systemIterationLevel1?.toJson(),
-        'System.WorkItemType': systemWorkItemType?.toJson(),
-        'System.State': systemState?.toJson(),
-        'System.Reason': systemReason?.toJson(),
-        'System.AssignedTo': systemAssignedTo?.toJson(),
-        'System.CreatedDate': systemCreatedDate?.toJson(),
-        'System.CreatedBy': systemCreatedBy?.toJson(),
-        'System.ChangedDate': systemChangedDate?.toJson(),
-        'System.ChangedBy': systemChangedBy?.toJson(),
-        'System.AuthorizedAs': systemAuthorizedAs?.toJson(),
-        'System.PersonId': systemPersonId?.toJson(),
-        'System.Watermark': systemWatermark.toJson(),
-        'System.IsDeleted': systemIsDeleted?.toJson(),
-        'System.CommentCount': systemCommentCount?.toJson(),
-        'System.TeamProject': systemTeamProject?.toJson(),
-        'System.AreaPath': systemAreaPath?.toJson(),
-        'System.IterationPath': systemIterationPath?.toJson(),
-        'System.Title': systemTitle?.toJson(),
-        'System.BoardColumnDone': systemBoardColumnDone?.toJson(),
-        'Microsoft.VSTS.Common.Priority': microsoftVstsCommonPriority?.toJson(),
-        'Microsoft.VSTS.Common.ValueArea': microsoftVstsCommonValueArea?.toJson(),
-        'Microsoft.VSTS.Common.StateChangeDate': microsoftVstsCommonStateChangeDate?.toJson(),
-        'System.History': systemHistory?.toJson(),
-        'Microsoft.VSTS.Common.ActivatedBy': microsoftVstsCommonActivatedBy?.toJson(),
-        'Microsoft.VSTS.Common.ActivatedDate': microsoftVstsCommonActivatedDate?.toJson(),
-        'Microsoft.VSTS.Common.ResolvedDate': microsoftVstsCommonResolvedDate?.toJson(),
-        'Microsoft.VSTS.Common.ResolvedBy': microsoftVstsCommonResolvedBy?.toJson(),
-        'Microsoft.VSTS.Scheduling.Effort': microsoftVstsSchedulingEffort?.toJson(),
-      };
-
   @override
   String toString() {
     return 'Fields(systemId: $systemId, systemAreaId: $systemAreaId, systemNodeName: $systemNodeName, systemAreaLevel1: $systemAreaLevel1, systemRev: $systemRev, systemAuthorizedDate: $systemAuthorizedDate, systemRevisedDate: $systemRevisedDate, systemIterationId: $systemIterationId, systemIterationLevel1: $systemIterationLevel1, systemWorkItemType: $systemWorkItemType, systemState: $systemState, systemReason: $systemReason, systemAssignedTo: $systemAssignedTo, systemCreatedDate: $systemCreatedDate, systemCreatedBy: $systemCreatedBy, systemChangedDate: $systemChangedDate, systemChangedBy: $systemChangedBy, systemAuthorizedAs: $systemAuthorizedAs, systemPersonId: $systemPersonId, systemWatermark: $systemWatermark, systemIsDeleted: $systemIsDeleted, systemCommentCount: $systemCommentCount, systemTeamProject: $systemTeamProject, systemAreaPath: $systemAreaPath, systemIterationPath: $systemIterationPath, systemTitle: $systemTitle, systemBoardColumnDone: $systemBoardColumnDone, microsoftVstsCommonPriority: $microsoftVstsCommonPriority, microsoftVstsCommonValueArea: $microsoftVstsCommonValueArea, microsoftVstsCommonStateChangeDate: $microsoftVstsCommonStateChangeDate, systemHistory: $systemHistory, microsoftVstsCommonActivatedBy: $microsoftVstsCommonActivatedBy, microsoftVstsCommonActivatedDate: $microsoftVstsCommonActivatedDate, microsoftVstsCommonResolvedDate: $microsoftVstsCommonResolvedDate, microsoftVstsCommonResolvedBy: $microsoftVstsCommonResolvedBy, microsoftVstsSchedulingEffort: $microsoftVstsSchedulingEffort)';
@@ -306,11 +252,6 @@ class MicrosoftVstsCommonActivatedBy {
 
   final RevisedBy? newValue;
   final RevisedBy? oldValue;
-
-  Map<String, dynamic> toJson() => {
-        'newValue': newValue?.toJson(),
-        'oldValue': oldValue?.toJson(),
-      };
 }
 
 class RevisedBy {
@@ -344,17 +285,6 @@ class RevisedBy {
   final String imageUrl;
   final String descriptor;
   final String? name;
-
-  Map<String, dynamic> toJson() => {
-        'displayName': displayName,
-        'url': url,
-        '_links': links.toJson(),
-        'id': id,
-        'uniqueName': uniqueName,
-        'imageUrl': imageUrl,
-        'descriptor': descriptor,
-        'name': name,
-      };
 }
 
 class Links {
@@ -367,10 +297,6 @@ class Links {
   });
 
   final Avatar avatar;
-
-  Map<String, dynamic> toJson() => {
-        'avatar': avatar.toJson(),
-      };
 }
 
 class Avatar {
@@ -383,10 +309,6 @@ class Avatar {
   });
 
   final String href;
-
-  Map<String, dynamic> toJson() => {
-        'href': href,
-      };
 }
 
 class SystemAuthorizedDate {
@@ -402,11 +324,6 @@ class SystemAuthorizedDate {
 
   final String? newValue;
   final String? oldValue;
-
-  Map<String, dynamic> toJson() => {
-        'newValue': newValue,
-        'oldValue': oldValue,
-      };
 }
 
 class MicrosoftVstsCommonPriority {
@@ -422,11 +339,6 @@ class MicrosoftVstsCommonPriority {
 
   final double? oldValue;
   final double? newValue;
-
-  Map<String, dynamic> toJson() => {
-        'oldValue': oldValue,
-        'newValue': newValue,
-      };
 }
 
 class MicrosoftVstsCommonValueArea {
@@ -442,11 +354,6 @@ class MicrosoftVstsCommonValueArea {
 
   final String? oldValue;
   final String? newValue;
-
-  Map<String, dynamic> toJson() => {
-        'oldValue': oldValue,
-        'newValue': newValue,
-      };
 }
 
 class SystemAssignedToClass {
@@ -462,11 +369,6 @@ class SystemAssignedToClass {
 
   final RevisedBy? oldValue;
   final RevisedBy? newValue;
-
-  Map<String, dynamic> toJson() => {
-        'oldValue': oldValue?.toJson(),
-        'newValue': newValue?.toJson(),
-      };
 }
 
 class SystemBoardColumnDone {
@@ -479,10 +381,6 @@ class SystemBoardColumnDone {
   });
 
   final bool? newValue;
-
-  Map<String, dynamic> toJson() => {
-        'newValue': newValue,
-      };
 }
 
 class SystemRevClass {
@@ -498,9 +396,4 @@ class SystemRevClass {
 
   final int? newValue;
   final int? oldValue;
-
-  Map<String, dynamic> toJson() => {
-        'newValue': newValue,
-        'oldValue': oldValue,
-      };
 }

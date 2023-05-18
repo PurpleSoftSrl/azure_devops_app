@@ -13,12 +13,6 @@ class GetFileDiffResponse {
   });
 
   final DataProviders data;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'dataProviders': data.toJson(),
-      };
 }
 
 class DataProviders {
@@ -34,12 +28,6 @@ class DataProviders {
   });
 
   final Diff diff;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'ms.vss-code-web.file-diff-data-provider': diff.toJson(),
-      };
 }
 
 class Diff {
@@ -77,17 +65,6 @@ class Diff {
   final List<LineCharBlock> lineCharBlocks;
   final bool binaryContent;
   final bool imageComparison;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'originalFile': originalFile?.toJson(),
-        'modifiedFile': modifiedFile?.toJson(),
-        'blocks': List<dynamic>.from(blocks.map((x) => x.toJson())),
-        'lineCharBlocks': List<dynamic>.from(lineCharBlocks.map((x) => x.toJson())),
-        'isBinary': binaryContent,
-        'isImage': imageComparison,
-      };
 }
 
 class Block {
@@ -126,20 +103,6 @@ class Block {
   final List<String> mLines;
   final bool? truncatedBefore;
   final bool? truncatedAfter;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'changeType': changeType,
-        'oLine': oLine,
-        'oLinesCount': oLinesCount,
-        'mLine': mLine,
-        'mLinesCount': mLinesCount,
-        'oLines': oLines,
-        'mLines': mLines,
-        'truncatedBefore': truncatedBefore,
-        'truncatedAfter': truncatedAfter,
-      };
 }
 
 class LineCharBlock {
@@ -161,13 +124,6 @@ class LineCharBlock {
 
   final Block lineChange;
   final List<CharChange>? charChange;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'lineChange': lineChange.toJson(),
-        'charChange': charChange == null ? <CharChange>[] : List<dynamic>.from(charChange!.map((x) => x.toJson())),
-      };
 }
 
 class CharChange {
@@ -194,16 +150,6 @@ class CharChange {
   final int oLinesCount;
   final int mLine;
   final int mLinesCount;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'changeType': changeType,
-        'oLine': oLine,
-        'oLinesCount': oLinesCount,
-        'mLine': mLine,
-        'mLinesCount': mLinesCount,
-      };
 }
 
 class ModifiedFileClass {
@@ -237,18 +183,6 @@ class ModifiedFileClass {
   final String version;
   final ContentMetadata contentMetadata;
   final String versionDescription;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'objectId': objectId.toJson(),
-        'gitObjectType': gitObjectType,
-        'commitId': commitId,
-        'serverItem': serverItem,
-        'version': version,
-        'contentMetadata': contentMetadata.toJson(),
-        'versionDescription': versionDescription,
-      };
 }
 
 class ContentMetadata {
@@ -275,16 +209,6 @@ class ContentMetadata {
   final String fileName;
   final String extension;
   final String vsLink;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'encoding': encoding,
-        'contentType': contentType,
-        'fileName': fileName,
-        'extension': extension,
-        'vsLink': vsLink,
-      };
 }
 
 class ObjectId {
@@ -302,11 +226,4 @@ class ObjectId {
 
   final String full;
   final String short;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'full': full,
-        'short': short,
-      };
 }

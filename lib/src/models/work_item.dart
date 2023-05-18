@@ -22,14 +22,6 @@ class WorkItemDetail {
   final GetWorkItemDetailResponseLinks links;
   final String url;
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'rev': rev,
-        'fields': fields.toJson(),
-        '_links': links.toJson(),
-        'url': url,
-      };
-
   @override
   String toString() {
     return 'GetWorkItemDetailResponse(id: $id, rev: $rev, fields: $fields, links: $links, url: $url)';
@@ -107,29 +99,6 @@ class GetWorkItemDetailResponseFields {
   final String? systemDescription;
   final String? reproSteps;
 
-  Map<String, dynamic> toJson() => {
-        'System.AreaPath': systemAreaPath,
-        'System.TeamProject': systemTeamProject,
-        'System.IterationPath': systemIterationPath,
-        'System.WorkItemType': systemWorkItemType,
-        'System.State': systemState,
-        'System.Reason': systemReason,
-        'System.AssignedTo': systemAssignedTo?.toJson(),
-        'System.CreatedDate': systemCreatedDate.toIso8601String(),
-        'System.CreatedBy': systemCreatedBy.toJson(),
-        'System.ChangedDate': systemChangedDate.toIso8601String(),
-        'System.ChangedBy': systemChangedBy.toJson(),
-        'System.CommentCount': systemCommentCount,
-        'System.Title': systemTitle,
-        'System.BoardColumn': systemBoardColumn,
-        'System.BoardColumnDone': systemBoardColumnDone,
-        'Microsoft.VSTS.Common.StateChangeDate': microsoftVstsCommonStateChangeDate?.toIso8601String(),
-        'Microsoft.VSTS.Common.Priority': microsoftVstsCommonPriority,
-        'Microsoft.VSTS.Common.ValueArea': microsoftVstsCommonValueArea,
-        'System.Description': systemDescription,
-        'Microsoft.VSTS.TCM.ReproSteps': reproSteps,
-      };
-
   @override
   String toString() {
     return 'GetWorkItemDetailResponseFields(systemAreaPath: $systemAreaPath, systemTeamProject: $systemTeamProject, systemIterationPath: $systemIterationPath, systemWorkItemType: $systemWorkItemType, systemState: $systemState, systemReason: $systemReason, systemAssignedTo: $systemAssignedTo, systemCreatedDate: $systemCreatedDate, systemCreatedBy: $systemCreatedBy, systemChangedDate: $systemChangedDate, systemChangedBy: $systemChangedBy, systemCommentCount: $systemCommentCount, systemTitle: $systemTitle, systemBoardColumn: $systemBoardColumn, systemBoardColumnDone: $systemBoardColumnDone, microsoftVstsCommonStateChangeDate: $microsoftVstsCommonStateChangeDate, microsoftVstsCommonPriority: $microsoftVstsCommonPriority, microsoftVstsCommonValueArea: $microsoftVstsCommonValueArea, systemDescription: $systemDescription)';
@@ -165,16 +134,6 @@ class System {
   final String imageUrl;
   final String descriptor;
 
-  Map<String, dynamic> toJson() => {
-        'displayName': displayName,
-        'url': url,
-        '_links': links?.toJson(),
-        'id': id,
-        'uniqueName': uniqueName,
-        'imageUrl': imageUrl,
-        'descriptor': descriptor,
-      };
-
   @override
   String toString() {
     return 'System(displayName: $displayName, url: $url, links: $links, id: $id, uniqueName: $uniqueName, imageUrl: $imageUrl, descriptor: $descriptor)';
@@ -191,10 +150,6 @@ class SystemAssignedToLinks {
   });
 
   final HtmlClass avatar;
-
-  Map<String, dynamic> toJson() => {
-        'avatar': avatar.toJson(),
-      };
 }
 
 class HtmlClass {
@@ -207,10 +162,6 @@ class HtmlClass {
   });
 
   final String href;
-
-  Map<String, dynamic> toJson() => {
-        'href': href,
-      };
 }
 
 class GetWorkItemDetailResponseLinks {
@@ -241,16 +192,6 @@ class GetWorkItemDetailResponseLinks {
   final HtmlClass html;
   final HtmlClass workItemType;
   final HtmlClass fields;
-
-  Map<String, dynamic> toJson() => {
-        'self': self.toJson(),
-        'workItemUpdates': workItemUpdates.toJson(),
-        'workItemRevisions': workItemRevisions.toJson(),
-        'workItemComments': workItemComments.toJson(),
-        'html': html.toJson(),
-        'workItemType': workItemType.toJson(),
-        'fields': fields.toJson(),
-      };
 }
 
 class GetWorkItemStatusesResponse {
@@ -271,11 +212,6 @@ class GetWorkItemStatusesResponse {
 
   final int count;
   final List<WorkItemStatus> statuses;
-
-  Map<String, dynamic> toJson() => {
-        'count': count,
-        'value': List<dynamic>.from(statuses.map((x) => x.toJson())),
-      };
 }
 
 class WorkItemStatus {
@@ -293,15 +229,7 @@ class WorkItemStatus {
         category: json['category'] as String,
       );
 
-  String toRawJson() => json.encode(toJson());
-
   final String name;
   final String color;
   final String category;
-
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'color': color,
-        'category': category,
-      };
 }

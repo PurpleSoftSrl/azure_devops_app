@@ -18,13 +18,6 @@ class GetRepoItemsResponse {
 
   final int count;
   final List<RepoItem> repoItems;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'count': count,
-        'value': List<dynamic>.from(repoItems.map((x) => x.toJson())),
-      };
 }
 
 class RepoItem {
@@ -56,17 +49,6 @@ class RepoItem {
   final bool isFolder;
   final ContentMetadata? contentMetadata;
   final String url;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {
-        'objectId': objectId,
-        'commitId': commitId,
-        'path': path,
-        'isFolder': isFolder,
-        'contentMetadata': contentMetadata?.toJson(),
-        'url': url,
-      };
 }
 
 class ContentMetadata {
@@ -79,8 +61,4 @@ class ContentMetadata {
   ContentMetadata({required this.fileName});
 
   final String fileName;
-
-  String toRawJson() => json.encode(toJson());
-
-  Map<String, dynamic> toJson() => {'fileName': fileName};
 }
