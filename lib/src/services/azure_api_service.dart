@@ -519,28 +519,12 @@ class AzureApiServiceImpl implements AzureApiService {
 
     final ids = workItemIds.map((e) => e.id).join(',');
 
-    final projectsToSearch = project != null ? [project] : (_chosenProjects ?? _projects);
+    final allWorkItemsRes = await _get('$_basePath/_apis/wit/workitems?ids=$ids&$_apiVersion');
 
-    final allProjectWorkItems = await Future.wait([
-      for (final project in projectsToSearch)
-        _get('$_basePath/${project.name}/_apis/wit/workitems?ids=$ids&$_apiVersion'),
-    ]);
-
-    var isAllError = true;
-
-    for (final res in allProjectWorkItems) {
-      isAllError &= res.isError;
-    }
-
-    if (isAllError) return ApiResponse.error(allProjectWorkItems.firstOrNull);
+    if (allWorkItemsRes.isError) return ApiResponse.error(allWorkItemsRes);
 
     return ApiResponse.ok(
-      allProjectWorkItems
-          .where((r) => !r.isError)
-          .map((r) => GetWorkItemsResponse.fromJson(jsonDecode(r.body) as Map<String, dynamic>))
-          .expand((r) => r.items)
-          .take(200)
-          .toList(),
+      GetWorkItemsResponse.fromJson(jsonDecode(allWorkItemsRes.body) as Map<String, dynamic>).items,
     );
   }
 
