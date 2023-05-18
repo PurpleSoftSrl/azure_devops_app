@@ -29,38 +29,32 @@ class Pipeline {
         uri: json['uri'] as String?,
         sourceBranch: json['sourceBranch'] as String?,
         sourceVersion: json['sourceVersion'] as String?,
-        queuePosition: int.tryParse(json['queuePosition']?.toString() ?? ''),
-        priority: json['priority'] as String?,
         reason: json['reason'] as String?,
         requestedFor: _LastChangedBy.fromJson(json['requestedFor'] as Map<String, dynamic>),
         requestedBy: _LastChangedBy.fromJson(json['requestedBy'] as Map<String, dynamic>),
         repository: _Repository.fromJson(json['repository'] as Map<String, dynamic>),
-        triggeredByBuild: json['triggeredByBuild'],
       );
 
   Pipeline({
-    required this.triggerInfo,
-    required this.id,
-    required this.buildNumber,
-    required this.status,
-    required this.result,
-    required this.queueTime,
-    required this.startTime,
-    required this.finishTime,
-    required this.url,
-    required this.definition,
-    required this.buildNumberRevision,
-    required this.project,
-    required this.uri,
-    required this.sourceBranch,
-    required this.sourceVersion,
-    this.queuePosition,
-    required this.priority,
-    required this.reason,
-    required this.requestedFor,
-    required this.requestedBy,
-    required this.repository,
-    required this.triggeredByBuild,
+    this.triggerInfo,
+    this.id,
+    this.buildNumber,
+    this.status,
+    this.result,
+    this.queueTime,
+    this.startTime,
+    this.finishTime,
+    this.url,
+    this.definition,
+    this.buildNumberRevision,
+    this.project,
+    this.uri,
+    this.sourceBranch,
+    this.sourceVersion,
+    this.reason,
+    this.requestedFor,
+    this.requestedBy,
+    this.repository,
   });
 
   final _TriggerInfo? triggerInfo;
@@ -78,46 +72,17 @@ class Pipeline {
   final String? uri;
   final String? sourceBranch;
   final String? sourceVersion;
-  final int? queuePosition;
-  final String? priority;
   final String? reason;
   final _LastChangedBy? requestedFor;
   final _LastChangedBy? requestedBy;
   final _Repository? repository;
-  final dynamic triggeredByBuild;
 
   @visibleForTesting
   static Pipeline empty() {
     return Pipeline(
-      triggerInfo: _TriggerInfo(ciSourceBranch: '', ciSourceSha: '', ciMessage: '', ciTriggerRepository: ''),
       id: 1,
       buildNumber: '123',
-      status: PipelineStatus.none,
-      result: PipelineResult.none,
       queueTime: DateTime(2000),
-      startTime: null,
-      finishTime: null,
-      url: '',
-      definition: null,
-      buildNumberRevision: null,
-      project: null,
-      uri: null,
-      sourceBranch: null,
-      sourceVersion: null,
-      priority: null,
-      reason: null,
-      requestedFor: _LastChangedBy(
-        displayName: '',
-        url: '',
-        links: _LastChangedByLinks(avatar: _Badge(href: '')),
-        id: '',
-        uniqueName: '',
-        imageUrl: '',
-        descriptor: '',
-      ),
-      requestedBy: null,
-      repository: null,
-      triggeredByBuild: null,
     );
   }
 
@@ -163,13 +128,10 @@ class Pipeline {
     String? uri,
     String? sourceBranch,
     String? sourceVersion,
-    int? queuePosition,
-    String? priority,
     String? reason,
     _LastChangedBy? requestedFor,
     _LastChangedBy? requestedBy,
     _Repository? repository,
-    dynamic triggeredByBuild,
   }) {
     return Pipeline(
       triggerInfo: triggerInfo ?? this.triggerInfo,
@@ -187,13 +149,10 @@ class Pipeline {
       uri: uri ?? this.uri,
       sourceBranch: sourceBranch ?? this.sourceBranch,
       sourceVersion: sourceVersion ?? this.sourceVersion,
-      queuePosition: queuePosition ?? this.queuePosition,
-      priority: priority ?? this.priority,
       reason: reason ?? this.reason,
       requestedFor: requestedFor ?? this.requestedFor,
       requestedBy: requestedBy ?? this.requestedBy,
       repository: repository ?? this.repository,
-      triggeredByBuild: triggeredByBuild ?? this.triggeredByBuild,
     );
   }
 
@@ -217,13 +176,10 @@ class Pipeline {
         other.uri == uri &&
         other.sourceBranch == sourceBranch &&
         other.sourceVersion == sourceVersion &&
-        other.queuePosition == queuePosition &&
-        other.priority == priority &&
         other.reason == reason &&
         other.requestedFor == requestedFor &&
         other.requestedBy == requestedBy &&
-        other.repository == repository &&
-        other.triggeredByBuild == triggeredByBuild;
+        other.repository == repository;
   }
 
   @override
@@ -243,62 +199,41 @@ class Pipeline {
         uri.hashCode ^
         sourceBranch.hashCode ^
         sourceVersion.hashCode ^
-        queuePosition.hashCode ^
-        priority.hashCode ^
         reason.hashCode ^
         requestedFor.hashCode ^
         requestedBy.hashCode ^
-        repository.hashCode ^
-        triggeredByBuild.hashCode;
+        repository.hashCode;
   }
 
   @override
   String toString() {
-    return 'Pipeline(triggerInfo: $triggerInfo, id: $id, buildNumber: $buildNumber, status: $status, result: $result, queueTime: $queueTime, startTime: $startTime, finishTime: $finishTime, repository: $repository, project: $project, url: $url, buildNumberRevision: $buildNumberRevision, uri: $uri, sourceBranch: $sourceBranch, sourceVersion: $sourceVersion, queuePosition: $queuePosition, priority: $priority, reason: $reason, requestedFor: $requestedFor, requestedBy: $requestedBy, triggeredByBuild: $triggeredByBuild)';
+    return 'Pipeline(triggerInfo: $triggerInfo, id: $id, buildNumber: $buildNumber, status: $status, result: $result, queueTime: $queueTime, startTime: $startTime, finishTime: $finishTime, repository: $repository, project: $project, url: $url, buildNumberRevision: $buildNumberRevision, uri: $uri, sourceBranch: $sourceBranch, sourceVersion: $sourceVersion, reason: $reason, requestedFor: $requestedFor, requestedBy: $requestedBy)';
   }
 }
 
 class _Definition {
   factory _Definition.fromJson(Map<String, dynamic> json) => _Definition(
-        drafts: json['drafts'] == null ? [] : List<dynamic>.from((json['drafts'] as List<dynamic>).map((x) => x)),
         id: json['id'] as int?,
         name: json['name'] as String?,
-        url: json['url'] as String?,
-        uri: json['uri'] as String?,
-        path: json['path'] as String?,
-        type: json['type'] as String?,
-        queueStatus: json['queueStatus'] as String?,
         revision: json['revision'] as int?,
         project: Project.fromJson(json['project'] as Map<String, dynamic>),
       );
 
   _Definition({
-    required this.drafts,
     required this.id,
     required this.name,
-    required this.url,
-    required this.uri,
-    required this.path,
-    required this.type,
-    required this.queueStatus,
     required this.revision,
     required this.project,
   });
 
-  final List<dynamic>? drafts;
   final int? id;
   final String? name;
-  final String? url;
-  final String? uri;
-  final String? path;
-  final String? type;
-  final String? queueStatus;
   final int? revision;
   final Project? project;
 
   @override
   String toString() {
-    return '_Definition(drafts: $drafts, id: $id, name: $name, url: $url, uri: $uri, path: $path, type: $type, queueStatus: $queueStatus, revision: $revision, project: $project)';
+    return '_Definition(id: $id, name: $name, revision: $revision, project: $project)';
   }
 }
 
@@ -306,7 +241,6 @@ class _LastChangedBy {
   factory _LastChangedBy.fromJson(Map<String, dynamic> json) => _LastChangedBy(
         displayName: json['displayName'] as String?,
         url: json['url'] as String?,
-        links: _LastChangedByLinks.fromJson(json['_links'] as Map<String, dynamic>),
         id: json['id'] as String?,
         uniqueName: json['uniqueName'] as String?,
         imageUrl: json['imageUrl'] as String?,
@@ -314,18 +248,16 @@ class _LastChangedBy {
       );
 
   _LastChangedBy({
-    required this.displayName,
-    required this.url,
-    required this.links,
-    required this.id,
-    required this.uniqueName,
-    required this.imageUrl,
-    required this.descriptor,
+    this.displayName,
+    this.url,
+    this.id,
+    this.uniqueName,
+    this.imageUrl,
+    this.descriptor,
   });
 
   final String? displayName;
   final String? url;
-  final _LastChangedByLinks? links;
   final String? id;
   final String? uniqueName;
   final String? imageUrl;
@@ -334,7 +266,6 @@ class _LastChangedBy {
   _LastChangedBy copyWith({
     String? displayName,
     String? url,
-    _LastChangedByLinks? links,
     String? id,
     String? uniqueName,
     String? imageUrl,
@@ -343,7 +274,6 @@ class _LastChangedBy {
     return _LastChangedBy(
       displayName: displayName ?? this.displayName,
       url: url ?? this.url,
-      links: links ?? this.links,
       id: id ?? this.id,
       uniqueName: uniqueName ?? this.uniqueName,
       imageUrl: imageUrl ?? this.imageUrl,
@@ -353,38 +283,8 @@ class _LastChangedBy {
 
   @override
   String toString() {
-    return '_LastChangedBy(displayName: $displayName, url: $url, links: $links, id: $id, uniqueName: $uniqueName, imageUrl: $imageUrl, descriptor: $descriptor)';
+    return '_LastChangedBy(displayName: $displayName, url: $url, id: $id, uniqueName: $uniqueName, imageUrl: $imageUrl, descriptor: $descriptor)';
   }
-}
-
-class _LastChangedByLinks {
-  factory _LastChangedByLinks.fromJson(Map<String, dynamic> json) => _LastChangedByLinks(
-        avatar: _Badge.fromJson(json['avatar'] as Map<String, dynamic>),
-      );
-
-  _LastChangedByLinks({
-    required this.avatar,
-  });
-
-  final _Badge? avatar;
-
-  @override
-  String toString() => '_LastChangedByLinks(avatar: $avatar)';
-}
-
-class _Badge {
-  factory _Badge.fromJson(Map<String, dynamic> json) => _Badge(
-        href: json['href'] as String?,
-      );
-
-  _Badge({
-    required this.href,
-  });
-
-  final String? href;
-
-  @override
-  String toString() => '_Badge(href: $href)';
 }
 
 class _Repository {
@@ -428,10 +328,10 @@ class _TriggerInfo {
       );
 
   _TriggerInfo({
-    required this.ciSourceBranch,
-    required this.ciSourceSha,
-    required this.ciMessage,
-    required this.ciTriggerRepository,
+    this.ciSourceBranch,
+    this.ciSourceSha,
+    this.ciMessage,
+    this.ciTriggerRepository,
   });
 
   final String? ciSourceBranch;

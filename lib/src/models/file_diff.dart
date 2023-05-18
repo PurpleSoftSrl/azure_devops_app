@@ -182,7 +182,6 @@ class _ContentMetadata {
         contentType: json['contentType'] as String,
         fileName: json['fileName'] as String,
         extension: json['extension'] as String,
-        vsLink: json['vsLink'] as String,
       );
 
   _ContentMetadata({
@@ -190,14 +189,12 @@ class _ContentMetadata {
     required this.contentType,
     required this.fileName,
     required this.extension,
-    required this.vsLink,
   });
 
   final int encoding;
   final String contentType;
   final String fileName;
   final String extension;
-  final String vsLink;
 }
 
 class _ObjectId {

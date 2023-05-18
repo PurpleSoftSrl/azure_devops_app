@@ -19,9 +19,7 @@ class _Team {
   _Team({
     required this.id,
     required this.name,
-    required this.url,
     required this.description,
-    required this.identityUrl,
     required this.projectName,
     required this.projectId,
   });
@@ -29,18 +27,14 @@ class _Team {
   factory _Team.fromJson(Map<String, dynamic> json) => _Team(
         id: json['id'] as String?,
         name: json['name'] as String?,
-        url: json['url'] as String?,
         description: json['description'] as String?,
-        identityUrl: json['identityUrl'] as String?,
         projectName: json['projectName'] as String?,
         projectId: json['projectId'] as String?,
       );
 
   final String? id;
   final String? name;
-  final String? url;
   final String? description;
-  final String? identityUrl;
   final String? projectName;
   final String? projectId;
 }

@@ -89,12 +89,10 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
     var newWorkItemType = projectWorkItemTypes.firstWhereOrNull((t) => t.name == fields.systemWorkItemType) ??
         WorkItemType(
           name: fields.systemWorkItemType,
-          description: '',
           referenceName: fields.systemWorkItemType,
           color: '',
           isDisabled: false,
           states: [],
-          url: '',
         );
 
     var newWorkItemAssignedTo =

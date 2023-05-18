@@ -23,7 +23,6 @@ class WorkItemUpdate {
         revisedBy: _RevisedBy.fromJson(json['revisedBy'] as Map<String, dynamic>),
         revisedDate: DateTime.parse(json['revisedDate']!.toString()).toLocal(),
         fields: json['fields'] == null ? null : _Fields.fromJson(json['fields'] as Map<String, dynamic>),
-        url: json['url'] as String,
       );
 
   WorkItemUpdate({
@@ -33,7 +32,6 @@ class WorkItemUpdate {
     required this.revisedBy,
     required this.revisedDate,
     required this.fields,
-    required this.url,
   });
 
   final int id;
@@ -42,11 +40,10 @@ class WorkItemUpdate {
   final _RevisedBy revisedBy;
   final DateTime revisedDate;
   final _Fields? fields;
-  final String url;
 
   @override
   String toString() {
-    return 'WorkItemUpdate(id: $id, workItemId: $workItemId, rev: $rev, revisedBy: $revisedBy, revisedDate: $revisedDate, fields: $fields, url: $url)';
+    return 'WorkItemUpdate(id: $id, workItemId: $workItemId, rev: $rev, revisedBy: $revisedBy, revisedDate: $revisedDate, fields: $fields)';
   }
 }
 
@@ -56,24 +53,8 @@ class _Fields {
         systemId: json['System.Id'] == null
             ? null
             : _MicrosoftVstsCommonPriority.fromJson(json['System.Id'] as Map<String, dynamic>),
-        systemAreaId: json['System.AreaId'] == null
-            ? null
-            : _MicrosoftVstsCommonPriority.fromJson(json['System.AreaId'] as Map<String, dynamic>),
-        systemNodeName: json['System.NodeName'] == null
-            ? null
-            : _MicrosoftVstsCommonValueArea.fromJson(json['System.NodeName'] as Map<String, dynamic>),
-        systemAreaLevel1: json['System.AreaLevel1'] == null
-            ? null
-            : _MicrosoftVstsCommonValueArea.fromJson(json['System.AreaLevel1'] as Map<String, dynamic>),
-        systemRev: _SystemRevClass.fromJson(json['System.Rev'] as Map<String, dynamic>),
         systemAuthorizedDate: _SystemAuthorizedDate.fromJson(json['System.AuthorizedDate'] as Map<String, dynamic>),
         systemRevisedDate: _SystemAuthorizedDate.fromJson(json['System.RevisedDate'] as Map<String, dynamic>),
-        systemIterationId: json['System.IterationId'] == null
-            ? null
-            : _MicrosoftVstsCommonPriority.fromJson(json['System.IterationId'] as Map<String, dynamic>),
-        systemIterationLevel1: json['System.IterationLevel1'] == null
-            ? null
-            : _MicrosoftVstsCommonValueArea.fromJson(json['System.IterationLevel1'] as Map<String, dynamic>),
         systemWorkItemType: json['System.WorkItemType'] == null
             ? null
             : _MicrosoftVstsCommonValueArea.fromJson(json['System.WorkItemType'] as Map<String, dynamic>),
@@ -104,19 +85,12 @@ class _Fields {
         systemPersonId: json['System.PersonId'] == null
             ? null
             : _SystemRevClass.fromJson(json['System.PersonId'] as Map<String, dynamic>),
-        systemWatermark: _SystemRevClass.fromJson(json['System.Watermark'] as Map<String, dynamic>),
         systemCommentCount: json['System.CommentCount'] == null
             ? null
             : _SystemRevClass.fromJson(json['System.CommentCount'] as Map<String, dynamic>),
         systemTeamProject: json['System.TeamProject'] == null
             ? null
             : _MicrosoftVstsCommonValueArea.fromJson(json['System.TeamProject'] as Map<String, dynamic>),
-        systemAreaPath: json['System.AreaPath'] == null
-            ? null
-            : _MicrosoftVstsCommonValueArea.fromJson(json['System.AreaPath'] as Map<String, dynamic>),
-        systemIterationPath: json['System.IterationPath'] == null
-            ? null
-            : _MicrosoftVstsCommonValueArea.fromJson(json['System.IterationPath'] as Map<String, dynamic>),
         systemTitle: json['System.Title'] == null
             ? null
             : _MicrosoftVstsCommonValueArea.fromJson(json['System.Title'] as Map<String, dynamic>),
@@ -155,14 +129,8 @@ class _Fields {
 
   _Fields({
     this.systemId,
-    this.systemAreaId,
-    this.systemNodeName,
-    this.systemAreaLevel1,
-    required this.systemRev,
     required this.systemAuthorizedDate,
     required this.systemRevisedDate,
-    this.systemIterationId,
-    this.systemIterationLevel1,
     this.systemWorkItemType,
     this.systemState,
     this.systemReason,
@@ -173,11 +141,8 @@ class _Fields {
     this.systemChangedBy,
     this.systemAuthorizedAs,
     this.systemPersonId,
-    required this.systemWatermark,
     this.systemCommentCount,
     this.systemTeamProject,
-    this.systemAreaPath,
-    this.systemIterationPath,
     this.systemTitle,
     this.microsoftVstsCommonPriority,
     this.microsoftVstsCommonValueArea,
@@ -191,14 +156,8 @@ class _Fields {
   });
 
   final _MicrosoftVstsCommonPriority? systemId;
-  final _MicrosoftVstsCommonPriority? systemAreaId;
-  final _MicrosoftVstsCommonValueArea? systemNodeName;
-  final _MicrosoftVstsCommonValueArea? systemAreaLevel1;
-  final _SystemRevClass systemRev;
   final _SystemAuthorizedDate systemAuthorizedDate;
   final _SystemAuthorizedDate systemRevisedDate;
-  final _MicrosoftVstsCommonPriority? systemIterationId;
-  final _MicrosoftVstsCommonValueArea? systemIterationLevel1;
   final _MicrosoftVstsCommonValueArea? systemWorkItemType;
   final _SystemAuthorizedDate? systemState;
   final _SystemAuthorizedDate? systemReason;
@@ -209,11 +168,8 @@ class _Fields {
   final _MicrosoftVstsCommonActivatedBy? systemChangedBy;
   final _MicrosoftVstsCommonActivatedBy? systemAuthorizedAs;
   final _SystemRevClass? systemPersonId;
-  final _SystemRevClass systemWatermark;
   final _SystemRevClass? systemCommentCount;
   final _MicrosoftVstsCommonValueArea? systemTeamProject;
-  final _MicrosoftVstsCommonValueArea? systemAreaPath;
-  final _MicrosoftVstsCommonValueArea? systemIterationPath;
   final _MicrosoftVstsCommonValueArea? systemTitle;
   final _MicrosoftVstsCommonPriority? microsoftVstsCommonPriority;
   final _MicrosoftVstsCommonValueArea? microsoftVstsCommonValueArea;
@@ -227,7 +183,7 @@ class _Fields {
 
   @override
   String toString() {
-    return 'Fields(systemId: $systemId, systemAreaId: $systemAreaId, systemNodeName: $systemNodeName, systemAreaLevel1: $systemAreaLevel1, systemRev: $systemRev, systemAuthorizedDate: $systemAuthorizedDate, systemRevisedDate: $systemRevisedDate, systemIterationId: $systemIterationId, systemIterationLevel1: $systemIterationLevel1, systemWorkItemType: $systemWorkItemType, systemState: $systemState, systemReason: $systemReason, systemAssignedTo: $systemAssignedTo, systemCreatedDate: $systemCreatedDate, systemCreatedBy: $systemCreatedBy, systemChangedDate: $systemChangedDate, systemChangedBy: $systemChangedBy, systemAuthorizedAs: $systemAuthorizedAs, systemPersonId: $systemPersonId, systemWatermark: $systemWatermark, systemCommentCount: $systemCommentCount, systemTeamProject: $systemTeamProject, systemAreaPath: $systemAreaPath, systemIterationPath: $systemIterationPath, systemTitle: $systemTitle, microsoftVstsCommonPriority: $microsoftVstsCommonPriority, microsoftVstsCommonValueArea: $microsoftVstsCommonValueArea, microsoftVstsCommonStateChangeDate: $microsoftVstsCommonStateChangeDate, systemHistory: $systemHistory, microsoftVstsCommonActivatedBy: $microsoftVstsCommonActivatedBy, microsoftVstsCommonActivatedDate: $microsoftVstsCommonActivatedDate, microsoftVstsCommonResolvedDate: $microsoftVstsCommonResolvedDate, microsoftVstsCommonResolvedBy: $microsoftVstsCommonResolvedBy, microsoftVstsSchedulingEffort: $microsoftVstsSchedulingEffort)';
+    return 'Fields(systemId: $systemId, systemAuthorizedDate: $systemAuthorizedDate, systemRevisedDate: $systemRevisedDate, systemWorkItemType: $systemWorkItemType, systemState: $systemState, systemReason: $systemReason, systemAssignedTo: $systemAssignedTo, systemCreatedDate: $systemCreatedDate, systemCreatedBy: $systemCreatedBy, systemChangedDate: $systemChangedDate, systemChangedBy: $systemChangedBy, systemAuthorizedAs: $systemAuthorizedAs, systemPersonId: $systemPersonId, systemCommentCount: $systemCommentCount, systemTeamProject: $systemTeamProject, systemTitle: $systemTitle, microsoftVstsCommonPriority: $microsoftVstsCommonPriority, microsoftVstsCommonValueArea: $microsoftVstsCommonValueArea, microsoftVstsCommonStateChangeDate: $microsoftVstsCommonStateChangeDate, systemHistory: $systemHistory, microsoftVstsCommonActivatedBy: $microsoftVstsCommonActivatedBy, microsoftVstsCommonActivatedDate: $microsoftVstsCommonActivatedDate, microsoftVstsCommonResolvedDate: $microsoftVstsCommonResolvedDate, microsoftVstsCommonResolvedBy: $microsoftVstsCommonResolvedBy, microsoftVstsSchedulingEffort: $microsoftVstsSchedulingEffort)';
   }
 }
 
@@ -249,7 +205,6 @@ class _MicrosoftVstsCommonActivatedBy {
 class _RevisedBy {
   factory _RevisedBy.fromJson(Map<String, dynamic> json) => _RevisedBy(
         displayName: json['displayName'] as String,
-        url: json['url'] as String,
         id: json['id'] as String,
         uniqueName: json['uniqueName'] as String,
         imageUrl: json['imageUrl'] as String,
@@ -259,7 +214,6 @@ class _RevisedBy {
 
   _RevisedBy({
     required this.displayName,
-    required this.url,
     required this.id,
     required this.uniqueName,
     required this.imageUrl,
@@ -268,7 +222,6 @@ class _RevisedBy {
   });
 
   final String displayName;
-  final String url;
   final String id;
   final String uniqueName;
   final String imageUrl;

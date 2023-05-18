@@ -199,10 +199,7 @@ class _PipelineDetailController with ShareMixin {
         email: pipeline.requestedFor!.uniqueName,
         name: pipeline.requestedFor!.displayName,
       ),
-      committer: null,
       comment: pipeline.triggerInfo!.ciMessage,
-      changeCounts: null,
-      url: null,
       remoteUrl:
           '${apiService.basePath}/${pipeline.project!.name}/_git/${pipeline.repository!.name}/commit/${pipeline.triggerInfo!.ciSourceSha}',
     );

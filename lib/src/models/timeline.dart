@@ -14,7 +14,6 @@ class GetTimelineResponse {
         lastChangedOn: DateTime.parse(json['lastChangedOn'] as String),
         id: json['id'] as String,
         changeId: json['changeId'] as int,
-        url: json['url'] as String,
       );
 
   GetTimelineResponse({
@@ -23,7 +22,6 @@ class GetTimelineResponse {
     required this.lastChangedOn,
     required this.id,
     required this.changeId,
-    required this.url,
   });
 
   factory GetTimelineResponse.fromRawJson(String str) =>
@@ -34,7 +32,6 @@ class GetTimelineResponse {
   final DateTime lastChangedOn;
   final String id;
   final int changeId;
-  final String url;
 }
 
 class Record {

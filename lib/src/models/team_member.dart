@@ -1,5 +1,3 @@
-import 'package:azure_devops/src/models/shared.dart';
-
 class GetTeamMembersResponse {
   GetTeamMembersResponse({
     required this.members,
@@ -50,8 +48,6 @@ class TeamMember {
 class _Identity {
   _Identity({
     required this.displayName,
-    required this.url,
-    required this.links,
     required this.id,
     required this.uniqueName,
     required this.imageUrl,
@@ -60,8 +56,6 @@ class _Identity {
 
   factory _Identity.fromJson(Map<String, dynamic> json) => _Identity(
         displayName: json['displayName'] as String?,
-        url: json['url'] as String?,
-        links: json['Links'] == null ? null : Links.fromJson(json['Links'] as Map<String, dynamic>),
         id: json['id'] as String?,
         uniqueName: json['uniqueName'] as String?,
         imageUrl: json['imageUrl'] as String?,
@@ -69,8 +63,6 @@ class _Identity {
       );
 
   final String? displayName;
-  final String? url;
-  final Links? links;
   final String? id;
   final String? uniqueName;
   final String? imageUrl;
@@ -78,7 +70,7 @@ class _Identity {
 
   @override
   String toString() {
-    return 'Identity(displayName: $displayName, url: $url, links: $links, id: $id, uniqueName: $uniqueName, imageUrl: $imageUrl, descriptor: $descriptor)';
+    return 'Identity(displayName: $displayName, id: $id, uniqueName: $uniqueName, imageUrl: $imageUrl, descriptor: $descriptor)';
   }
 
   @override
@@ -87,8 +79,6 @@ class _Identity {
 
     return other is _Identity &&
         other.displayName == displayName &&
-        other.url == url &&
-        other.links == links &&
         other.id == id &&
         other.uniqueName == uniqueName &&
         other.imageUrl == imageUrl &&
@@ -97,12 +87,6 @@ class _Identity {
 
   @override
   int get hashCode {
-    return displayName.hashCode ^
-        url.hashCode ^
-        links.hashCode ^
-        id.hashCode ^
-        uniqueName.hashCode ^
-        imageUrl.hashCode ^
-        descriptor.hashCode;
+    return displayName.hashCode ^ id.hashCode ^ uniqueName.hashCode ^ imageUrl.hashCode ^ descriptor.hashCode;
   }
 }

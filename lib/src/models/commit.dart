@@ -34,13 +34,13 @@ class Commit {
       );
 
   Commit({
-    required this.commitId,
-    required this.author,
-    required this.committer,
-    required this.comment,
-    required this.changeCounts,
-    required this.url,
-    required this.remoteUrl,
+    this.commitId,
+    this.author,
+    this.committer,
+    this.comment,
+    this.changeCounts,
+    this.url,
+    this.remoteUrl,
   });
 
   final String? commitId;
@@ -53,12 +53,7 @@ class Commit {
 
   static Commit empty() {
     return Commit(
-      commitId: null,
       author: Author(name: null, email: null, date: null),
-      committer: null,
-      comment: null,
-      changeCounts: null,
-      url: null,
       remoteUrl: 'https://dev.azure.com/TestOrg/TestProject/_git/TestRepo/commit/testCommitId',
     );
   }

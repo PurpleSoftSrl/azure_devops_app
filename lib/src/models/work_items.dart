@@ -5,9 +5,7 @@ class GetWorkItemIds {
 
   factory GetWorkItemIds.fromJson(Map<String, dynamic> json) => GetWorkItemIds(
         workItems: List<_WorkItemId>.from(
-          (json['workItems'] as List<dynamic>).map(
-            (w) => _WorkItemId.fromJson(w as Map<String, dynamic>),
-          ),
+          (json['workItems'] as List<dynamic>).map((w) => _WorkItemId.fromJson(w as Map<String, dynamic>)),
         ),
       );
 
@@ -15,18 +13,11 @@ class GetWorkItemIds {
 }
 
 class _WorkItemId {
-  _WorkItemId({
-    required this.id,
-    required this.url,
-  });
+  _WorkItemId({required this.id});
 
-  factory _WorkItemId.fromJson(Map<String, dynamic> json) => _WorkItemId(
-        id: json['id'] as int,
-        url: json['url'] as String,
-      );
+  factory _WorkItemId.fromJson(Map<String, dynamic> json) => _WorkItemId(id: json['id'] as int);
 
   final int id;
-  final String url;
 }
 
 class GetWorkItemsResponse {
@@ -51,50 +42,22 @@ class WorkItem {
     required this.id,
     this.rev,
     required this.fields,
-    this.url,
-    this.commentVersionRef,
   });
 
   factory WorkItem.fromJson(Map<String, dynamic> json) => WorkItem(
         id: json['id'] as int,
         rev: json['rev'] as int?,
         fields: ItemFields.fromJson(json['fields'] as Map<String, dynamic>),
-        url: json['url'] as String?,
-        commentVersionRef: json['commentVersionRef'] == null
-            ? null
-            : _CommentVersionRef.fromJson(json['commentVersionRef'] as Map<String, dynamic>),
       );
 
   final int id;
   final int? rev;
   final ItemFields fields;
-  final String? url;
-  final _CommentVersionRef? commentVersionRef;
-}
-
-class _CommentVersionRef {
-  _CommentVersionRef({
-    required this.commentId,
-    required this.version,
-    required this.url,
-  });
-
-  factory _CommentVersionRef.fromJson(Map<String, dynamic> json) => _CommentVersionRef(
-        commentId: json['commentId'] as int,
-        version: json['version'] as int,
-        url: json['url'] as String,
-      );
-
-  final int commentId;
-  final int version;
-  final String url;
 }
 
 class ItemFields {
   ItemFields({
-    this.systemAreaPath,
     required this.systemTeamProject,
-    this.systemIterationPath,
     required this.systemWorkItemType,
     required this.systemState,
     this.systemReason,
@@ -118,9 +81,7 @@ class ItemFields {
   });
 
   factory ItemFields.fromJson(Map<String, dynamic> json) => ItemFields(
-        systemAreaPath: json['System.AreaPath'] as String?,
         systemTeamProject: json['System.TeamProject'] as String,
-        systemIterationPath: json['System.IterationPath'] as String?,
         systemWorkItemType: json['System.WorkItemType'] as String,
         systemState: json['System.State'] as String,
         systemReason: json['System.Reason'] as String?,
@@ -158,9 +119,7 @@ class ItemFields {
         systemTags: json['System.Tags'] as String?,
       );
 
-  final String? systemAreaPath;
   final String systemTeamProject;
-  final String? systemIterationPath;
   final String systemWorkItemType;
   final String systemState;
   final String? systemReason;
@@ -186,8 +145,6 @@ class ItemFields {
 class _SystemChangedBy {
   _SystemChangedBy({
     required this.displayName,
-    required this.url,
-    required this.links,
     required this.id,
     required this.uniqueName,
     required this.imageUrl,
@@ -197,8 +154,6 @@ class _SystemChangedBy {
 
   factory _SystemChangedBy.fromJson(Map<String, dynamic> json) => _SystemChangedBy(
         displayName: json['displayName'] as String,
-        url: json['url'] as String,
-        links: _Links.fromJson(json['_links'] as Map<String, dynamic>),
         id: json['id'] as String,
         uniqueName: json['uniqueName'] as String,
         imageUrl: json['imageUrl'] as String,
@@ -207,30 +162,9 @@ class _SystemChangedBy {
       );
 
   final String displayName;
-  final String url;
-  final _Links links;
   final String id;
   final String uniqueName;
   final String imageUrl;
   final String descriptor;
   final bool? inactive;
-}
-
-class _Links {
-  _Links({required this.avatar});
-
-  factory _Links.fromJson(Map<String, dynamic> json) => _Links(
-        avatar: _Avatar.fromJson(json['avatar'] as Map<String, dynamic>),
-      );
-
-  final _Avatar avatar;
-}
-
-class _Avatar {
-  _Avatar({
-    required this.href,
-  });
-
-  factory _Avatar.fromJson(Map<String, dynamic> json) => _Avatar(href: json['href'] as String);
-  final String href;
 }

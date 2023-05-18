@@ -36,11 +36,6 @@ class PullRequest {
         mergeStatus: json['mergeStatus'] as String?,
         isDraft: json['isDraft'] as bool,
         mergeId: json['mergeId'] as String,
-        lastMergeSourceCommit: _LastMergeCommit.fromJson(json['lastMergeSourceCommit'] as Map<String, dynamic>),
-        lastMergeTargetCommit: _LastMergeCommit.fromJson(json['lastMergeTargetCommit'] as Map<String, dynamic>),
-        lastMergeCommit: json['lastMergeCommit'] == null
-            ? null
-            : _LastMergeCommit.fromJson(json['lastMergeCommit'] as Map<String, dynamic>),
         reviewers: List<Reviewer>.from(
           (json['reviewers'] as List<dynamic>).map((e) => Reviewer.fromJson(e as Map<String, dynamic>)),
         ),
@@ -63,9 +58,6 @@ class PullRequest {
     required this.mergeStatus,
     required this.isDraft,
     required this.mergeId,
-    required this.lastMergeSourceCommit,
-    required this.lastMergeTargetCommit,
-    required this.lastMergeCommit,
     required this.reviewers,
     required this.labels,
     required this.url,
@@ -85,9 +77,6 @@ class PullRequest {
   final String? mergeStatus;
   final bool isDraft;
   final String mergeId;
-  final _LastMergeCommit lastMergeSourceCommit;
-  final _LastMergeCommit lastMergeTargetCommit;
-  final _LastMergeCommit? lastMergeCommit;
   final List<Reviewer> reviewers;
   final List<_Label>? labels;
   final String url;
@@ -95,7 +84,7 @@ class PullRequest {
 
   @override
   String toString() {
-    return 'PullRequest(repository: $repository, pullRequestId: $pullRequestId, codeReviewId: $codeReviewId, status: $status, createdBy: $createdBy, creationDate: $creationDate, title: $title, description: $description, sourceRefName: $sourceRefName, targetRefName: $targetRefName, mergeStatus: $mergeStatus, isDraft: $isDraft, mergeId: $mergeId, lastMergeSourceCommit: $lastMergeSourceCommit, lastMergeTargetCommit: $lastMergeTargetCommit, lastMergeCommit: $lastMergeCommit, reviewers: $reviewers, labels: $labels, url: $url, supportsIterations: $supportsIterations)';
+    return 'PullRequest(repository: $repository, pullRequestId: $pullRequestId, codeReviewId: $codeReviewId, status: $status, createdBy: $createdBy, creationDate: $creationDate, title: $title, description: $description, sourceRefName: $sourceRefName, targetRefName: $targetRefName, mergeStatus: $mergeStatus, isDraft: $isDraft, mergeId: $mergeId, reviewers: $reviewers, labels: $labels, url: $url, supportsIterations: $supportsIterations)';
   }
 
   @override
@@ -116,9 +105,6 @@ class PullRequest {
         other.mergeStatus == mergeStatus &&
         other.isDraft == isDraft &&
         other.mergeId == mergeId &&
-        other.lastMergeSourceCommit == lastMergeSourceCommit &&
-        other.lastMergeTargetCommit == lastMergeTargetCommit &&
-        other.lastMergeCommit == lastMergeCommit &&
         listEquals(other.reviewers, reviewers) &&
         listEquals(other.labels, labels) &&
         other.url == url &&
@@ -140,9 +126,6 @@ class PullRequest {
         mergeStatus.hashCode ^
         isDraft.hashCode ^
         mergeId.hashCode ^
-        lastMergeSourceCommit.hashCode ^
-        lastMergeTargetCommit.hashCode ^
-        lastMergeCommit.hashCode ^
         reviewers.hashCode ^
         labels.hashCode ^
         url.hashCode ^
@@ -203,23 +186,6 @@ class _Label {
 
   @override
   String toString() => '_Label(id: $id, name: $name, active: $active)';
-}
-
-class _LastMergeCommit {
-  factory _LastMergeCommit.fromJson(Map<String, dynamic> json) => _LastMergeCommit(
-        commitId: json['commitId'] as String,
-        url: json['url'] as String,
-      );
-  _LastMergeCommit({
-    required this.commitId,
-    required this.url,
-  });
-
-  final String commitId;
-  final String url;
-
-  @override
-  String toString() => '_LastMergeCommit(commitId: $commitId, url: $url)';
 }
 
 class _Repository {

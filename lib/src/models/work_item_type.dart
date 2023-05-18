@@ -31,17 +31,15 @@ class WorkItemType {
         isDisabled: json['isDisabled'] as bool,
         states:
             List<_State>.from((json['states'] as List<dynamic>).map((s) => _State.fromJson(s as Map<String, dynamic>))),
-        url: json['url'] as String,
       );
 
   WorkItemType({
     required this.name,
     required this.referenceName,
-    required this.description,
+    this.description,
     required this.color,
     required this.isDisabled,
     required this.states,
-    required this.url,
   });
 
   final String name;
@@ -50,7 +48,6 @@ class WorkItemType {
   final String color;
   final bool isDisabled;
   final List<_State> states;
-  final String url;
 
   static WorkItemType get all {
     return WorkItemType(
@@ -60,7 +57,6 @@ class WorkItemType {
       color: '',
       isDisabled: false,
       states: [],
-      url: '',
     );
   }
 
