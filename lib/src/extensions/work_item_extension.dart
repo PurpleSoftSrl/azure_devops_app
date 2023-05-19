@@ -74,4 +74,15 @@ extension WorkItemExt on WorkItem {
           systemChangedDate: DateTime.now(),
         ),
       );
+
+  static WorkItem withState(String state) => WorkItem(
+        id: -1,
+        fields: ItemFields(
+          systemWorkItemType: '',
+          systemState: state,
+          systemTeamProject: '',
+          systemTitle: '',
+          systemChangedDate: DateTime.now(),
+        ),
+      );
 }

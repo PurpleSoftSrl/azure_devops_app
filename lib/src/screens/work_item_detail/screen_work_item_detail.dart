@@ -12,7 +12,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
     return AppPage<WorkItemDetail?>(
       init: ctrl.init,
       dispose: ctrl.dispose,
-      title: '${item.fields.systemWorkItemType} ${item.id}',
+      title: 'Work Item #${item.id}',
       notifier: ctrl.itemDetail,
       onEmpty: (_) => Text('No work item found'),
       actions: [
@@ -102,7 +102,8 @@ class _WorkItemDetailScreen extends StatelessWidget {
                 ),
                 Text(
                   detail.fields.systemState,
-                  style: context.textTheme.titleSmall!.copyWith(color: item.stateColor),
+                  style: context.textTheme.titleSmall!
+                      .copyWith(color: WorkItemExt.withState(detail.fields.systemState).stateColor),
                 ),
               ],
             ),

@@ -57,8 +57,9 @@ class _WorkItemsController with FilterMixin {
     await _getData();
   }
 
-  void goToWorkItemDetail(WorkItem item) {
-    AppRouter.goToWorkItemDetail(item);
+  Future<void> goToWorkItemDetail(WorkItem item) async {
+    await AppRouter.goToWorkItemDetail(item);
+    await _getData();
   }
 
   void filterByProject(Project proj) {
