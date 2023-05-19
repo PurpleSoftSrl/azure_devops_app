@@ -31,6 +31,7 @@ class WorkItemType {
         isDisabled: json['isDisabled'] as bool,
         states:
             List<_State>.from((json['states'] as List<dynamic>).map((s) => _State.fromJson(s as Map<String, dynamic>))),
+        icon: _TypeIcon.fromJson(json['icon'] as Map<String, dynamic>),
       );
 
   WorkItemType({
@@ -40,6 +41,7 @@ class WorkItemType {
     required this.color,
     required this.isDisabled,
     required this.states,
+    this.icon,
   });
 
   final String name;
@@ -48,6 +50,7 @@ class WorkItemType {
   final String color;
   final bool isDisabled;
   final List<_State> states;
+  final _TypeIcon? icon;
 
   static WorkItemType get all {
     return WorkItemType(
@@ -70,6 +73,11 @@ class WorkItemType {
   @override
   int get hashCode {
     return name.hashCode;
+  }
+
+  @override
+  String toString() {
+    return 'WorkItemType(name: $name, referenceName: $referenceName, description: $description, color: $color, isDisabled: $isDisabled, states: $states, icon: $icon)';
   }
 }
 
@@ -109,4 +117,17 @@ class _EnumValues<T> {
   Map<T, String> get reverse {
     return reverseMap = map.map((k, v) => MapEntry(v, k));
   }
+}
+
+class _TypeIcon {
+  factory _TypeIcon.fromJson(Map<String, dynamic> map) {
+    return _TypeIcon(
+      id: map['id'] as String,
+      url: map['url'] as String,
+    );
+  }
+  _TypeIcon({required this.id, required this.url});
+
+  final String id;
+  final String url;
 }

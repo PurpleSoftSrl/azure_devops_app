@@ -46,6 +46,7 @@ class _RepositoryDetailController {
 
     if (branches.isNotEmpty) {
       currentBranch ??= branches.firstWhereOrNull((b) => b.isBaseVersion);
+      branches = [currentBranch!, ...branches.where((b) => b != currentBranch)];
     }
 
     await _getRepoItems();

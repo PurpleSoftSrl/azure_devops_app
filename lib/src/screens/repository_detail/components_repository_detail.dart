@@ -14,8 +14,9 @@ class _BranchRow extends StatelessWidget {
           values: ctrl.branches,
           currentFilter: ctrl.currentBranch,
           onSelected: ctrl.changeBranch,
-          formatLabel: (b) => '${b!.name} ${b.isBaseVersion ? '(default)' : ''}',
+          formatLabel: (b) => b == null ? '-' : '${b.name} ${b.isBaseVersion ? '(default)' : ''}',
           isDefaultFilter: false,
+          widgetBuilder: (_) => const Icon(DevOpsIcons.merge),
         ),
         const Spacer(),
         if (ctrl.currentBranch != null && ctrl.currentBranch!.behindCount > 0) ...[

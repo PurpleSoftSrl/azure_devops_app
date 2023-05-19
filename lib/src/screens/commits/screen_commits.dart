@@ -31,21 +31,23 @@ class _CommitsScreen extends StatelessWidget {
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: [
-          FilterMenu<Project>.bottomsheet(
+          FilterMenu<Project>(
             title: 'Project',
             values: ctrl.getProjects(ctrl.storageService),
             currentFilter: ctrl.projectFilter,
             onSelected: ctrl.filterByProject,
             formatLabel: (p) => p.name!,
             isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
+            widgetBuilder: (p) => ProjectFilterWidget(project: p),
           ),
-          FilterMenu<GraphUser>.bottomsheet(
+          FilterMenu<GraphUser>(
             title: 'Author',
             values: ctrl.getSortedUsers(ctrl.apiService),
             currentFilter: ctrl.userFilter,
             onSelected: ctrl.filterByUser,
             formatLabel: (u) => u.displayName!,
             isDefaultFilter: ctrl.userFilter == ctrl.userAll,
+            widgetBuilder: (u) => UserFilterWidget(user: u),
           ),
         ],
       ),

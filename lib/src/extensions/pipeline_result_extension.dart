@@ -15,10 +15,27 @@ extension PipelineStatusExt on PipelineStatus? {
           color: Colors.blue,
         );
         break;
-      case PipelineStatus.inProgress:
       case PipelineStatus.cancelling:
         icon = Icon(
+          DevOpsIcons.cancelled,
+          color: Colors.blue,
+        );
+        break;
+      case PipelineStatus.inProgress:
+        icon = Icon(
           DevOpsIcons.running,
+          color: Colors.blue,
+        );
+        break;
+      case PipelineStatus.completed:
+        icon = Icon(
+          DevOpsIcons.success,
+          color: Colors.blue,
+        );
+        break;
+      case PipelineStatus.postponed:
+        icon = Icon(
+          Icons.watch_later,
           color: Colors.blue,
         );
         break;
@@ -92,7 +109,7 @@ extension PipelineResultExt on PipelineResult? {
       default:
         icon = Icon(
           Icons.question_mark,
-          color: Colors.blue,
+          color: Colors.transparent,
         );
     }
 

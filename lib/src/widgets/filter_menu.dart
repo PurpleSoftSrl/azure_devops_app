@@ -1,6 +1,8 @@
 import 'package:azure_devops/src/extensions/context_extension.dart';
+import 'package:azure_devops/src/extensions/work_item_extension.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/user.dart';
+import 'package:azure_devops/src/models/work_item_type.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
@@ -8,6 +10,7 @@ import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class FiltersRow extends StatelessWidget {
   const FiltersRow({
@@ -51,15 +54,6 @@ class FiltersRow extends StatelessWidget {
 }
 
 class FilterMenu<T> extends StatelessWidget {
-  const FilterMenu.bottomsheet({
-    required this.title,
-    required this.values,
-    required this.currentFilter,
-    required this.onSelected,
-    this.formatLabel,
-    required this.isDefaultFilter,
-  }) : withBottomsheet = true;
-
   const FilterMenu({
     required this.title,
     required this.values,
@@ -67,19 +61,22 @@ class FilterMenu<T> extends StatelessWidget {
     required this.onSelected,
     this.formatLabel,
     required this.isDefaultFilter,
-  }) : withBottomsheet = false;
+    required this.widgetBuilder,
+  }) : isUser = false;
 
   final void Function(T)? onSelected;
   final List<T> values;
   final T currentFilter;
   final String title;
   final String Function(T)? formatLabel;
+  final Widget Function(T) widgetBuilder;
   final bool isDefaultFilter;
-  final bool withBottomsheet;
+
+  final bool isUser;
 
   @override
   Widget build(BuildContext context) {
-    final menu = Chip(
+    final chip = Chip(
       padding: EdgeInsets.zero,
       labelPadding: EdgeInsets.zero,
       backgroundColor: isDefaultFilter ? null : context.colorScheme.primary,
@@ -89,7 +86,7 @@ class FilterMenu<T> extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              isDefaultFilter ? title : (formatLabel?.call(currentFilter) ?? currentFilter.toString()),
+              isDefaultFilter ? title : (formatLabel?.call(currentFilter!) ?? currentFilter.toString()),
               style: context.textTheme.bodySmall!.copyWith(color: context.colorScheme.onBackground, height: 1),
             ),
             const SizedBox(
@@ -104,142 +101,67 @@ class FilterMenu<T> extends StatelessWidget {
       ),
     );
 
-    if (withBottomsheet) {
-      final apiService = AzureApiServiceInherited.of(context).apiService;
-      const imageSize = 35.0;
-      return InkWell(
-        key: ValueKey(title),
-        onTap: () {
-          OverlayService.bottomsheet(
-            isScrollControlled: true,
-            title: title,
-            builder: (context) => Container(
-              height: context.height * .8,
-              decoration: BoxDecoration(
-                color: context.colorScheme.background,
-                borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(12),
-                  topRight: const Radius.circular(12),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: ListView(
-                  children: values
-                      .map(
-                        (v) => InkWell(
-                          key: ValueKey(formatLabel?.call(v) ?? v.toString()),
-                          onTap: () {
-                            onSelected!(v);
-                            AppRouter.popRoute();
-                          },
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  if (v is GraphUser && (v.descriptor?.isNotEmpty ?? false))
-                                    MemberAvatar(
-                                      userDescriptor: v.descriptor!,
-                                      radius: imageSize,
-                                    )
-                                  else if (v is Project && v.defaultTeamImageUrl != null)
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(100),
-                                      child: apiService.isImageUnauthorized
-                                          ? const SizedBox(
-                                              height: imageSize,
-                                              width: imageSize,
-                                              child: Icon(DevOpsIcons.project),
-                                            )
-                                          : CachedNetworkImage(
-                                              imageUrl: v.defaultTeamImageUrl!,
-                                              httpHeaders: apiService.headers,
-                                              errorWidget: (_, __, ___) => Icon(DevOpsIcons.project),
-                                              width: imageSize,
-                                              height: imageSize,
-                                            ),
-                                    )
-                                  else
-                                    SizedBox(
-                                      height: imageSize,
-                                      width: imageSize,
-                                      child: Icon(v is Project ? DevOpsIcons.project : DevOpsIcons.users),
-                                    ),
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text(formatLabel?.call(v) ?? v.toString()),
-                                  if (currentFilter == v) ...[
-                                    const Spacer(),
-                                    Icon(DevOpsIcons.success),
-                                  ],
-                                ],
-                              ),
-                              if (v != values.last)
-                                const Divider(
-                                  height: 20,
-                                ),
-                            ],
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
+    const imageSize = 35.0;
+    return InkWell(
+      key: ValueKey(title),
+      onTap: () {
+        OverlayService.bottomsheet(
+          isScrollControlled: true,
+          title: title,
+          builder: (context) => Container(
+            height: context.height * .8,
+            decoration: BoxDecoration(
+              color: context.colorScheme.background,
+              borderRadius: BorderRadius.only(
+                topLeft: const Radius.circular(12),
+                topRight: const Radius.circular(12),
               ),
             ),
-          );
-        },
-        child: menu,
-      );
-    }
-
-    final children = values
-        .map(
-          (v) => PopupMenuItem<T>(
-            key: ValueKey(formatLabel?.call(v) ?? v.toString()),
-            value: v,
-            padding: EdgeInsets.zero,
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: v != values.last ? 15 : 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        formatLabel?.call(v) ?? v.toString(),
-                        style: context.textTheme.titleSmall,
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: ListView(
+                children: values
+                    .map(
+                      (v) => InkWell(
+                        key: ValueKey(formatLabel?.call(v) ?? v.toString()),
+                        onTap: () {
+                          onSelected!(v);
+                          AppRouter.popRoute();
+                        },
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                SizedBox(
+                                  height: imageSize,
+                                  width: imageSize,
+                                  child: widgetBuilder.call(v),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Text(formatLabel?.call(v) ?? v.toString()),
+                                if (currentFilter == v) ...[
+                                  const Spacer(),
+                                  Icon(DevOpsIcons.success),
+                                ],
+                              ],
+                            ),
+                            if (v != values.last)
+                              const Divider(
+                                height: 20,
+                              ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(
-                        width: 50,
-                      ),
-                      if (currentFilter == v) Icon(DevOpsIcons.success),
-                    ],
-                  ),
-                ),
-                if (v != values.last)
-                  const Divider(
-                    height: 0,
-                    thickness: 1,
-                  ),
-              ],
+                    )
+                    .toList(),
+              ),
             ),
           ),
-        )
-        .toList();
-
-    return PopupMenuButton(
-      key: ValueKey(title),
-      onSelected: onSelected,
-      itemBuilder: (_) => children,
-      elevation: 0,
-      tooltip: 'Filter $title',
-      offset: const Offset(0, 40),
-      shape: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
-      ),
-      child: menu,
+        );
+      },
+      child: chip,
     );
   }
 }
@@ -298,6 +220,78 @@ class _ResetFiltersMenu extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class UserFilterWidget extends StatelessWidget {
+  const UserFilterWidget({required this.user});
+
+  final GraphUser user;
+
+  @override
+  Widget build(BuildContext context) {
+    return user.descriptor == null
+        ? const SizedBox()
+        : MemberAvatar(
+            userDescriptor: user.descriptor!,
+          );
+  }
+}
+
+class WorkItemTypeFilter extends StatelessWidget {
+  const WorkItemTypeFilter({required this.type});
+
+  final WorkItemType type;
+
+  @override
+  Widget build(BuildContext context) {
+    return type.icon == null
+        ? const SizedBox()
+        : Padding(
+            padding: const EdgeInsets.all(7),
+            child: SvgPicture.network(
+              type.icon!.url,
+              width: 20,
+              height: 20,
+            ),
+          );
+  }
+}
+
+class WorkItemStateFilterWidget extends StatelessWidget {
+  const WorkItemStateFilterWidget({required this.state});
+
+  final String state;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: CircleAvatar(
+        backgroundColor: WorkItemExt.withState(state).stateColor,
+      ),
+    );
+  }
+}
+
+class ProjectFilterWidget extends StatelessWidget {
+  const ProjectFilterWidget({required this.project});
+
+  final Project project;
+
+  @override
+  Widget build(BuildContext context) {
+    final apiService = AzureApiServiceInherited.of(context).apiService;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(100),
+      child: project.defaultTeamImageUrl == null || apiService.isImageUnauthorized
+          ? const SizedBox()
+          : CachedNetworkImage(
+              imageUrl: project.defaultTeamImageUrl!,
+              httpHeaders: apiService.headers,
+              errorWidget: (_, __, ___) => Icon(DevOpsIcons.project),
+            ),
     );
   }
 }

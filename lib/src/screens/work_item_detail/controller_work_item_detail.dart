@@ -146,11 +146,10 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
                               values: statuses.map((s) => s.name).toList(),
                               currentFilter: newWorkItemStatus,
                               onSelected: (f) {
-                                setState(() {
-                                  newWorkItemStatus = f;
-                                });
+                                setState(() => newWorkItemStatus = f);
                               },
                               isDefaultFilter: false,
+                              widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
                             ),
                             const SizedBox(
                               height: 15,
@@ -175,6 +174,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
                                 setState(() => true);
                               },
                               isDefaultFilter: newWorkItemType == WorkItemType.all,
+                              widgetBuilder: (t) => WorkItemTypeFilter(type: t),
                             ),
                             const SizedBox(
                               height: 15,
@@ -183,17 +183,16 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
                             const SizedBox(
                               height: 5,
                             ),
-                            FilterMenu<GraphUser>.bottomsheet(
+                            FilterMenu<GraphUser>(
                               title: 'Assigned to',
                               values: getSortedUsers(apiService, withUserAll: false),
                               currentFilter: newWorkItemAssignedTo,
                               onSelected: (u) {
-                                setState(() {
-                                  newWorkItemAssignedTo = u;
-                                });
+                                setState(() => newWorkItemAssignedTo = u);
                               },
                               formatLabel: (u) => u.displayName!,
                               isDefaultFilter: newWorkItemAssignedTo.displayName == userAll.displayName,
+                              widgetBuilder: (u) => UserFilterWidget(user: u),
                             ),
                           ],
                         ),

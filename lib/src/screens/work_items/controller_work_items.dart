@@ -174,7 +174,7 @@ class _WorkItemsController with FilterMixin {
                               const SizedBox(
                                 height: 5,
                               ),
-                              FilterMenu<Project>.bottomsheet(
+                              FilterMenu<Project>(
                                 title: 'Project',
                                 values: getProjects(storageService).where((p) => p != projectAll).toList(),
                                 currentFilter: newWorkItemProject,
@@ -183,6 +183,7 @@ class _WorkItemsController with FilterMixin {
                                 },
                                 formatLabel: (p) => p.name!,
                                 isDefaultFilter: newWorkItemProject == projectAll,
+                                widgetBuilder: (p) => ProjectFilterWidget(project: p),
                               ),
                               const SizedBox(
                                 height: 15,
@@ -197,11 +198,10 @@ class _WorkItemsController with FilterMixin {
                                 currentFilter: newWorkItemType,
                                 formatLabel: (t) => t.name,
                                 onSelected: (f) {
-                                  setState(() {
-                                    newWorkItemType = f;
-                                  });
+                                  setState(() => newWorkItemType = f);
                                 },
                                 isDefaultFilter: newWorkItemType == WorkItemType.all,
+                                widgetBuilder: (t) => WorkItemTypeFilter(type: t),
                               ),
                               const SizedBox(
                                 height: 15,
@@ -210,19 +210,18 @@ class _WorkItemsController with FilterMixin {
                               const SizedBox(
                                 height: 5,
                               ),
-                              FilterMenu<GraphUser>.bottomsheet(
+                              FilterMenu<GraphUser>(
                                 title: 'Assigned to',
                                 values: getSortedUsers(apiService)
                                     .whereNot((u) => u.displayName == userAll.displayName)
                                     .toList(),
                                 currentFilter: newWorkItemAssignedTo,
                                 onSelected: (u) {
-                                  setState(() {
-                                    newWorkItemAssignedTo = u;
-                                  });
+                                  setState(() => newWorkItemAssignedTo = u);
                                 },
                                 formatLabel: (u) => u.displayName!,
                                 isDefaultFilter: newWorkItemAssignedTo.displayName == userAll.displayName,
+                                widgetBuilder: (u) => UserFilterWidget(user: u),
                               ),
                             ],
                           );

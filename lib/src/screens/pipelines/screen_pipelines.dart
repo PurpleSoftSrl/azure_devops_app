@@ -31,13 +31,14 @@ class _PipelinesScreen extends StatelessWidget {
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: [
-          FilterMenu<Project>.bottomsheet(
+          FilterMenu<Project>(
             title: 'Project',
             values: ctrl.getProjects(ctrl.storageService),
             currentFilter: ctrl.projectFilter,
             onSelected: ctrl.filterByProject,
             formatLabel: (p) => p.name!,
             isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
+            widgetBuilder: (p) => ProjectFilterWidget(project: p),
           ),
           FilterMenu<PipelineResult>(
             title: 'Result',
@@ -45,21 +46,25 @@ class _PipelinesScreen extends StatelessWidget {
             currentFilter: ctrl.resultFilter,
             onSelected: ctrl.filterByResult,
             isDefaultFilter: ctrl.resultFilter == PipelineResult.all,
+            widgetBuilder: (r) => r.icon,
           ),
-          FilterMenu<PipelineStatus>(
-            title: 'Status',
-            values: PipelineStatus.values.where((v) => v != PipelineStatus.none).toList(),
-            currentFilter: ctrl.statusFilter,
-            onSelected: ctrl.filterByStatus,
-            isDefaultFilter: ctrl.statusFilter == PipelineStatus.all,
-          ),
-          FilterMenu<GraphUser>.bottomsheet(
+          if (ctrl.resultFilter == PipelineResult.all)
+            FilterMenu<PipelineStatus>(
+              title: 'Status',
+              values: PipelineStatus.values.where((v) => v != PipelineStatus.none).toList(),
+              currentFilter: ctrl.statusFilter,
+              onSelected: ctrl.filterByStatus,
+              isDefaultFilter: ctrl.statusFilter == PipelineStatus.all,
+              widgetBuilder: (s) => s.icon,
+            ),
+          FilterMenu<GraphUser>(
             title: 'Triggered by',
             values: ctrl.getSortedUsers(ctrl.apiService),
             currentFilter: ctrl.userFilter,
             onSelected: ctrl.filterByUser,
             formatLabel: (u) => u.displayName!,
             isDefaultFilter: ctrl.userFilter == ctrl.userAll,
+            widgetBuilder: (u) => UserFilterWidget(user: u),
           ),
         ],
       ),

@@ -261,7 +261,7 @@ enum PullRequestState {
       case 'all':
         return PullRequestState.all;
       default:
-        throw 'Unknown enum value: $str';
+        return PullRequestState.all;
     }
   }
 
@@ -292,7 +292,7 @@ enum PullRequestState {
       case PullRequestState.notSet:
         return Icon(Icons.circle, color: color, size: 15);
       default:
-        throw 'Unknown enum value: $this';
+        return Icon(Icons.circle, color: color, size: 15);
     }
   }
 
@@ -307,7 +307,7 @@ enum PullRequestState {
       case PullRequestState.notSet:
         return Colors.transparent;
       default:
-        throw 'Unknown enum value: $this';
+        return Colors.transparent;
     }
   }
 }

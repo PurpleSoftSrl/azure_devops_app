@@ -31,28 +31,34 @@ class _PullRequestsScreen extends StatelessWidget {
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: [
-          FilterMenu<PullRequestState>(
-            title: 'Status',
-            values: PullRequestState.values,
-            currentFilter: ctrl.statusFilter,
-            onSelected: ctrl.filterByStatus,
-            isDefaultFilter: ctrl.statusFilter == PullRequestState.all,
-          ),
-          FilterMenu<GraphUser>.bottomsheet(
-            title: 'Opened by',
-            values: ctrl.getSortedUsers(ctrl.apiService),
-            currentFilter: ctrl.userFilter,
-            onSelected: ctrl.filterByUser,
-            formatLabel: (u) => u.displayName!,
-            isDefaultFilter: ctrl.userFilter == ctrl.userAll,
-          ),
-          FilterMenu<Project>.bottomsheet(
+          FilterMenu<Project>(
             title: 'Project',
             values: ctrl.getProjects(ctrl.storageService),
             currentFilter: ctrl.projectFilter,
             onSelected: ctrl.filterByProject,
             formatLabel: (p) => p.name!,
             isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
+            widgetBuilder: (p) => ProjectFilterWidget(project: p),
+          ),
+          FilterMenu<PullRequestState>(
+            title: 'Status',
+            values: PullRequestState.values.where((s) => s != PullRequestState.notSet).toList(),
+            currentFilter: ctrl.statusFilter,
+            onSelected: ctrl.filterByStatus,
+            isDefaultFilter: ctrl.statusFilter == PullRequestState.all,
+            widgetBuilder: (s) => Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircleAvatar(backgroundColor: s.color),
+            ),
+          ),
+          FilterMenu<GraphUser>(
+            title: 'Opened by',
+            values: ctrl.getSortedUsers(ctrl.apiService),
+            currentFilter: ctrl.userFilter,
+            onSelected: ctrl.filterByUser,
+            formatLabel: (u) => u.displayName!,
+            isDefaultFilter: ctrl.userFilter == ctrl.userAll,
+            widgetBuilder: (u) => UserFilterWidget(user: u),
           ),
         ],
       ),

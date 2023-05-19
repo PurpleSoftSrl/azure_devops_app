@@ -40,13 +40,14 @@ class _WorkItemsScreen extends StatelessWidget {
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: [
-          FilterMenu<Project>.bottomsheet(
+          FilterMenu<Project>(
             title: 'Project',
             values: ctrl.getProjects(ctrl.storageService),
             currentFilter: ctrl.projectFilter,
             onSelected: ctrl.filterByProject,
             formatLabel: (p) => p.name!,
             isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
+            widgetBuilder: (p) => ProjectFilterWidget(project: p),
           ),
           FilterMenu<String>(
             title: 'Status',
@@ -54,6 +55,7 @@ class _WorkItemsScreen extends StatelessWidget {
             currentFilter: ctrl.statusFilter,
             onSelected: ctrl.filterByStatus,
             isDefaultFilter: ctrl.statusFilter == ctrl._workItemStateAll,
+            widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
           ),
           FilterMenu<WorkItemType>(
             title: 'Type',
@@ -62,14 +64,16 @@ class _WorkItemsScreen extends StatelessWidget {
             currentFilter: ctrl.typeFilter,
             onSelected: ctrl.filterByType,
             isDefaultFilter: ctrl.typeFilter.name == 'All',
+            widgetBuilder: (t) => WorkItemTypeFilter(type: t),
           ),
-          FilterMenu<GraphUser>.bottomsheet(
+          FilterMenu<GraphUser>(
             title: 'Assigned to',
             values: ctrl.getSortedUsers(ctrl.apiService),
-            currentFilter: ctrl.userFilter,
             onSelected: ctrl.filterByUser,
-            formatLabel: (u) => u.displayName!,
+            formatLabel: (u) => u.displayName ?? '',
             isDefaultFilter: ctrl.userFilter == ctrl.userAll,
+            currentFilter: ctrl.userFilter,
+            widgetBuilder: (u) => UserFilterWidget(user: u),
           ),
         ],
       ),
