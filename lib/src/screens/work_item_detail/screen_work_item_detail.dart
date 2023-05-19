@@ -87,11 +87,17 @@ class _WorkItemDetailScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                WorkItemExt.withType(detail!.fields.systemWorkItemType).workItemTypeIcon,
+                SvgPicture.network(
+                  ctrl.apiService.workItemTypes[item.fields.systemTeamProject]!
+                      .firstWhere((t) => t.name == item.fields.systemWorkItemType)
+                      .icon!
+                      .url,
+                  width: 20,
+                ),
                 const SizedBox(
                   width: 20,
                 ),
-                Text(detail.fields.systemWorkItemType),
+                Text(detail!.fields.systemWorkItemType),
                 const SizedBox(
                   width: 10,
                 ),

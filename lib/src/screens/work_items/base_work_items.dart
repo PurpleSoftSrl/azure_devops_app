@@ -20,6 +20,7 @@ import 'package:azure_devops/src/widgets/form_field.dart';
 import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 part 'components_work_items.dart';
 part 'controller_work_items.dart';

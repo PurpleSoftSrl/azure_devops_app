@@ -14,6 +14,7 @@ class _WorkItemListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtitleStyle = context.textTheme.bodySmall!;
+    final apiService = AzureApiServiceInherited.of(context).apiService;
     return InkWell(
       onTap: onTap,
       key: ValueKey('work_item_${item.id}'),
@@ -23,7 +24,13 @@ class _WorkItemListTile extends StatelessWidget {
             leading: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                item.workItemTypeIcon,
+                SvgPicture.network(
+                  apiService.workItemTypes[item.fields.systemTeamProject]!
+                      .firstWhere((t) => t.name == item.fields.systemWorkItemType)
+                      .icon!
+                      .url,
+                  width: 20,
+                ),
               ],
             ),
             contentPadding: EdgeInsets.zero,
