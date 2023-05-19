@@ -1059,8 +1059,11 @@ class AzureApiServiceImpl implements AzureApiService {
     required String branch,
   }) async {
     final rerunRes = await _post(
-      '$_basePath/$projectId/_apis/build/builds?definitionId=$definitionId&$_apiVersion',
-      body: {'sourceBranch': branch},
+      '$_basePath/$projectId/_apis/build/builds?$_apiVersion',
+      body: {
+        'sourceBranch': branch,
+        'definition': {'id': definitionId},
+      },
     );
 
     if (rerunRes.isError) return ApiResponse.error(rerunRes);
