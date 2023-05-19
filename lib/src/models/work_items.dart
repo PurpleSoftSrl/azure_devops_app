@@ -94,11 +94,13 @@ class ItemFields {
         systemChangedBy: json['System.ChangedBy'] == null
             ? null
             : _SystemChangedBy.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
-        systemCommentCount: json['System.CommentCount'] as int,
+        systemCommentCount: json['System.CommentCount'] as int?,
         systemTitle: json['System.Title'] as String,
-        microsoftVstsCommonStateChangeDate:
-            DateTime.parse(json['Microsoft.VSTS.Common.StateChangeDate']!.toString()).toLocal(),
-        microsoftVstsCommonPriority: json['Microsoft.VSTS.Common.Priority'] as int,
+        microsoftVstsCommonStateChangeDate: json['Microsoft.VSTS.Common.StateChangeDate'] == null
+            ? null
+            : DateTime.parse(json['Microsoft.VSTS.Common.StateChangeDate']!.toString()).toLocal(),
+        microsoftVstsCommonPriority:
+            json['Microsoft.VSTS.Common.Priority'] == null ? null : json['Microsoft.VSTS.Common.Priority'] as int,
         systemDescription: json['System.Description'] as String?,
         microsoftVstsCommonClosedDate: json['Microsoft.VSTS.Common.ClosedDate'] == null
             ? null

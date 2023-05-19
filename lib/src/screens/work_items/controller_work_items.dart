@@ -37,6 +37,7 @@ class _WorkItemsController with FilterMixin {
   late String statusFilter = _workItemStateAll;
   WorkItemType typeFilter = WorkItemType.all;
 
+  Map<String, List<WorkItemType>> allProjectsWorkItemTypes = {};
   late List<WorkItemType> allWorkItemTypes = [typeFilter];
 
   void dispose() {
@@ -50,6 +51,7 @@ class _WorkItemsController with FilterMixin {
     final types = await apiService.getWorkItemTypes();
     if (!types.isError) {
       allWorkItemTypes.addAll(types.data!.values.expand((ts) => ts).toSet());
+      allProjectsWorkItemTypes = types.data!;
     }
 
     await _getData();
@@ -113,6 +115,8 @@ class _WorkItemsController with FilterMixin {
     var newWorkItemTitle = '';
     var newWorkItemDescription = '';
 
+    var projectWorkItemTypes = allWorkItemTypes;
+
     final titleFieldKey = GlobalKey<FormFieldState<dynamic>>();
 
     await OverlayService.bottomsheet(
@@ -143,67 +147,77 @@ class _WorkItemsController with FilterMixin {
                         height: 30,
                       ),
                       StatefulBuilder(
-                        builder: (_, setState) => Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Type'),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            FilterMenu<WorkItemType>(
-                              title: 'Type',
-                              values: allWorkItemTypes.where((t) => t.name != 'All').toList(),
-                              currentFilter: newWorkItemType,
-                              formatLabel: (t) => t.name,
-                              onSelected: (f) {
-                                setState(() {
-                                  newWorkItemType = f;
-                                });
-                              },
-                              isDefaultFilter: newWorkItemType == WorkItemType.all,
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Text('Project'),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            FilterMenu<Project>.bottomsheet(
-                              title: 'Project',
-                              values: getProjects(storageService).where((p) => p != projectAll).toList(),
-                              currentFilter: newWorkItemProject,
-                              onSelected: (p) {
-                                setState(() {
-                                  newWorkItemProject = p;
-                                });
-                              },
-                              formatLabel: (p) => p.name!,
-                              isDefaultFilter: newWorkItemProject == projectAll,
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Text('Assigned to'),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            FilterMenu<GraphUser>.bottomsheet(
-                              title: 'Assigned to',
-                              values: getSortedUsers(apiService)
-                                  .whereNot((u) => u.displayName == userAll.displayName)
-                                  .toList(),
-                              currentFilter: newWorkItemAssignedTo,
-                              onSelected: (u) {
-                                setState(() {
-                                  newWorkItemAssignedTo = u;
-                                });
-                              },
-                              formatLabel: (u) => u.displayName!,
-                              isDefaultFilter: newWorkItemAssignedTo.displayName == userAll.displayName,
-                            ),
-                          ],
-                        ),
+                        builder: (_, setState) {
+                          if (newWorkItemProject != projectAll) {
+                            projectWorkItemTypes = allProjectsWorkItemTypes[newWorkItemProject.name]!
+                                .where((t) => t.name != WorkItemType.all.name)
+                                .toList();
+
+                            if (!projectWorkItemTypes.contains(newWorkItemType)) {
+                              newWorkItemType = projectWorkItemTypes.first;
+                            }
+                          }
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Project'),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              FilterMenu<Project>.bottomsheet(
+                                title: 'Project',
+                                values: getProjects(storageService).where((p) => p != projectAll).toList(),
+                                currentFilter: newWorkItemProject,
+                                onSelected: (p) {
+                                  setState(() => newWorkItemProject = p);
+                                },
+                                formatLabel: (p) => p.name!,
+                                isDefaultFilter: newWorkItemProject == projectAll,
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Text('Type'),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              FilterMenu<WorkItemType>(
+                                title: 'Type',
+                                values: projectWorkItemTypes,
+                                currentFilter: newWorkItemType,
+                                formatLabel: (t) => t.name,
+                                onSelected: (f) {
+                                  setState(() {
+                                    newWorkItemType = f;
+                                  });
+                                },
+                                isDefaultFilter: newWorkItemType == WorkItemType.all,
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Text('Assigned to'),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              FilterMenu<GraphUser>.bottomsheet(
+                                title: 'Assigned to',
+                                values: getSortedUsers(apiService)
+                                    .whereNot((u) => u.displayName == userAll.displayName)
+                                    .toList(),
+                                currentFilter: newWorkItemAssignedTo,
+                                onSelected: (u) {
+                                  setState(() {
+                                    newWorkItemAssignedTo = u;
+                                  });
+                                },
+                                formatLabel: (u) => u.displayName!,
+                                isDefaultFilter: newWorkItemAssignedTo.displayName == userAll.displayName,
+                              ),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(
                         height: 40,

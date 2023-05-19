@@ -161,7 +161,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
                             ),
                             FilterMenu<WorkItemType>(
                               title: 'Type',
-                              values: projectWorkItemTypes.where((t) => t.name != 'All').toList(),
+                              values: projectWorkItemTypes,
                               currentFilter: newWorkItemType,
                               formatLabel: (t) => t.name,
                               onSelected: (f) async {
