@@ -1,5 +1,7 @@
 library pipelines;
 
+import 'dart:async';
+
 import 'package:azure_devops/src/extensions/pipeline_result_extension.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/pipeline.dart';

@@ -34,17 +34,38 @@ class _PipelinesController with FilterMixin {
 
   int get inProgressPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.inProgress).length ?? 0;
   int get queuedPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.notStarted).length ?? 0;
+  int get cancellingPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.cancelling).length ?? 0;
 
   PipelineResult resultFilter = PipelineResult.all;
   PipelineStatus statusFilter = PipelineStatus.all;
 
+  Timer? _timer;
+
   void dispose() {
+    _timer?.cancel();
+    _timer = null;
+
     instance = null;
     _instances.remove(project.hashCode);
   }
 
   Future<void> init() async {
     await _getData();
+
+    if (pipelines.value != null) {
+      final shouldRefresh = inProgressPipelines > 0 || queuedPipelines > 0 || cancellingPipelines > 0;
+
+      // auto refresh page every 10 seconds until all pipelines are completed
+      if (shouldRefresh && !(_timer?.isActive ?? false)) {
+        _timer = Timer.periodic(Duration(seconds: 10), (timer) async {
+          await _getData();
+          final shouldRefresh = inProgressPipelines > 0 || queuedPipelines > 0 || cancellingPipelines > 0;
+          if (!shouldRefresh) {
+            timer.cancel();
+          }
+        });
+      }
+    }
   }
 
   Future<void> _getData() async {
