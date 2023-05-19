@@ -63,24 +63,32 @@ class _WorkItemsController with FilterMixin {
   }
 
   void filterByProject(Project proj) {
+    if (proj.id == projectFilter.id) return;
+
     workItems.value = null;
     projectFilter = proj.name == projectAll.name ? projectAll : proj;
     _getData();
   }
 
   void filterByStatus(String state) {
+    if (state == statusFilter) return;
+
     workItems.value = null;
     statusFilter = state;
     _getData();
   }
 
   void filterByType(WorkItemType type) {
+    if (type.name == typeFilter.name) return;
+
     workItems.value = null;
     typeFilter = type;
     _getData();
   }
 
   void filterByUser(GraphUser user) {
+    if (user.mailAddress == userFilter.mailAddress) return;
+
     workItems.value = null;
     userFilter = user;
     _getData();

@@ -58,12 +58,16 @@ class _CommitsController with FilterMixin {
   }
 
   void filterByProject(Project proj) {
+    if (proj.id == projectFilter.id) return;
+
     recentCommits.value = null;
     projectFilter = proj.name! == projectAll.name ? projectAll : proj;
     _getData();
   }
 
   void filterByUser(GraphUser u) {
+    if (u.mailAddress == userFilter.mailAddress) return;
+
     recentCommits.value = null;
     userFilter = u;
     _getData();

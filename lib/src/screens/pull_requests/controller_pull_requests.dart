@@ -48,18 +48,24 @@ class _PullRequestsController with FilterMixin {
   }
 
   void filterByStatus(PullRequestState state) {
+    if (state == statusFilter) return;
+
     pullRequests.value = null;
     statusFilter = state;
     _getData();
   }
 
   void filterByUser(GraphUser u) {
+    if (u.mailAddress == userFilter.mailAddress) return;
+
     pullRequests.value = null;
     userFilter = u;
     _getData();
   }
 
   void filterByProject(Project proj) {
+    if (proj.id == projectFilter.id) return;
+
     pullRequests.value = null;
     projectFilter = proj.name! == projectAll.name ? projectAll : proj;
     _getData();

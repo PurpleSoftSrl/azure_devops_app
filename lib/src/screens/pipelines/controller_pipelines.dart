@@ -79,24 +79,32 @@ class _PipelinesController with FilterMixin {
   }
 
   void filterByProject(Project proj) {
+    if (proj.id == projectFilter.id) return;
+
     pipelines.value = null;
     projectFilter = proj.name! == projectAll.name ? projectAll : proj;
     _getData();
   }
 
   void filterByResult(PipelineResult result) {
+    if (result == resultFilter) return;
+
     pipelines.value = null;
     resultFilter = result;
     _getData();
   }
 
   void filterByStatus(PipelineStatus status) {
+    if (status == statusFilter) return;
+
     pipelines.value = null;
     statusFilter = status;
     _getData();
   }
 
   void filterByUser(GraphUser u) {
+    if (u.mailAddress == userFilter.mailAddress) return;
+
     pipelines.value = null;
     userFilter = u;
     _getData();
