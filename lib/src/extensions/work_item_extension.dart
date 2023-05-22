@@ -29,6 +29,12 @@ extension WorkItemExt on WorkItem {
     }
   }
 
+  bool get canBeChanged =>
+      fields.systemWorkItemType != 'Feedback Request' &&
+      fields.systemWorkItemType != 'Feedback Response' &&
+      fields.systemWorkItemType != 'Code Review Request' &&
+      fields.systemWorkItemType != 'Code Review Response';
+
   static List<String> get allStates => [
         'All',
         'New',

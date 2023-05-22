@@ -154,31 +154,33 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
                             const SizedBox(
                               height: 15,
                             ),
-                            Text('Type'),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            FilterMenu<WorkItemType>(
-                              title: 'Type',
-                              values: projectWorkItemTypes,
-                              currentFilter: newWorkItemType,
-                              formatLabel: (t) => t.name,
-                              onSelected: (f) async {
-                                newWorkItemType = f;
-                                await _getStatuses(newWorkItemType.name);
-                                if (!statuses.map((e) => e.name).contains(newWorkItemStatus)) {
-                                  // change status if new type doesn't support current status
-                                  newWorkItemStatus = statuses.firstOrNull?.name ?? newWorkItemStatus;
-                                }
+                            if (item.canBeChanged) ...[
+                              Text('Type'),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              FilterMenu<WorkItemType>(
+                                title: 'Type',
+                                values: projectWorkItemTypes,
+                                currentFilter: newWorkItemType,
+                                formatLabel: (t) => t.name,
+                                onSelected: (f) async {
+                                  newWorkItemType = f;
+                                  await _getStatuses(newWorkItemType.name);
+                                  if (!statuses.map((e) => e.name).contains(newWorkItemStatus)) {
+                                    // change status if new type doesn't support current status
+                                    newWorkItemStatus = statuses.firstOrNull?.name ?? newWorkItemStatus;
+                                  }
 
-                                setState(() => true);
-                              },
-                              isDefaultFilter: newWorkItemType == WorkItemType.all,
-                              widgetBuilder: (t) => WorkItemTypeFilter(type: t),
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
+                                  setState(() => true);
+                                },
+                                isDefaultFilter: newWorkItemType == WorkItemType.all,
+                                widgetBuilder: (t) => WorkItemTypeFilter(type: t),
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                            ],
                             Text('Assigned to'),
                             const SizedBox(
                               height: 5,
