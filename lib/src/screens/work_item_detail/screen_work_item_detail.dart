@@ -88,8 +88,8 @@ class _WorkItemDetailScreen extends StatelessWidget {
             Row(
               children: [
                 SvgPicture.network(
-                  ctrl.apiService.workItemTypes[item.fields.systemTeamProject]!
-                      .firstWhere((t) => t.name == item.fields.systemWorkItemType)
+                  ctrl.apiService.workItemTypes[detail!.fields.systemTeamProject]!
+                      .firstWhere((t) => t.name == detail.fields.systemWorkItemType)
                       .icon!
                       .url,
                   width: 20,
@@ -97,7 +97,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                 const SizedBox(
                   width: 20,
                 ),
-                Text(detail!.fields.systemWorkItemType),
+                Text(detail.fields.systemWorkItemType),
                 const SizedBox(
                   width: 10,
                 ),
