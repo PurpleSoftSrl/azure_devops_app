@@ -493,7 +493,29 @@ class AzureApiServiceImpl implements AzureApiService {
     GraphUser? assignedTo,
   }) async {
     final query = <String>[];
-    if (project != null) query.add(" [System.TeamProject] = '${project.name}' ");
+    if (project != null) {
+      query.add(" [System.TeamProject] = '${project.name}' ");
+    } else {
+      final projectsToSearch = (_chosenProjects ?? _projects).toList();
+
+      if (projectsToSearch.length == 1) {
+        query.add(" [System.TeamProject] = '${projectsToSearch.first.name}' ");
+      } else {
+        var projectsQuery = '';
+
+        for (var i = 0; i < projectsToSearch.length; i++) {
+          if (i == 0) {
+            projectsQuery += " ( [System.TeamProject] = '${projectsToSearch[i].name}' OR ";
+          } else if (i == projectsToSearch.length - 1) {
+            projectsQuery += " [System.TeamProject] = '${projectsToSearch[i].name}' ) ";
+          } else {
+            projectsQuery += " [System.TeamProject] = '${projectsToSearch[i].name}' OR ";
+          }
+        }
+
+        query.add(projectsQuery);
+      }
+    }
 
     if (type != null) query.add(" [System.WorkItemType] = '${type.name}' ");
 
