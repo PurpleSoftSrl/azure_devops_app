@@ -42,7 +42,7 @@ extension WorkItemExt on WorkItem {
         'Resolved',
         'Closed',
         'Removed',
-        'To',
+        'To Do',
         'Done',
         'Approved',
       ];
