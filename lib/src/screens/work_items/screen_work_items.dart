@@ -49,12 +49,13 @@ class _WorkItemsScreen extends StatelessWidget {
             isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
             widgetBuilder: (p) => ProjectFilterWidget(project: p),
           ),
-          FilterMenu<String>(
+          FilterMenu<WorkItemState>(
             title: 'Status',
-            values: WorkItemExt.allStates,
+            values: ctrl.allWorkItemState,
+            formatLabel: (t) => t.name,
             currentFilter: ctrl.statusFilter,
             onSelected: ctrl.filterByStatus,
-            isDefaultFilter: ctrl.statusFilter == ctrl._workItemStateAll,
+            isDefaultFilter: ctrl.statusFilter == WorkItemState.all,
             widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
           ),
           FilterMenu<WorkItemType>(

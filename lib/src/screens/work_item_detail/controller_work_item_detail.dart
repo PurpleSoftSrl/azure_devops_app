@@ -35,7 +35,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
 
   String get itemWebUrl => '${apiService.basePath}/${item.fields.systemTeamProject}/_workitems/edit/${item.id}';
 
-  List<WorkItemStatus> statuses = [];
+  List<WorkItemState> statuses = [];
 
   List<WorkItemUpdate> updates = [];
   final showUpdatesReversed = ValueNotifier(true);
@@ -50,21 +50,11 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
 
     await _getUpdates();
     itemDetail.value = res;
-
-    await _getStatuses(item.fields.systemWorkItemType);
   }
 
   Future<void> _getUpdates() async {
     final res = await apiService.getWorkItemUpdates(projectName: item.fields.systemTeamProject, workItemId: item.id);
     updates = res.data ?? [];
-  }
-
-  Future<void> _getStatuses(String workItemType) async {
-    final statusesRes = await apiService.getWorkItemStatuses(
-      projectName: item.fields.systemTeamProject,
-      type: workItemType,
-    );
-    statuses = statusesRes.data ?? [];
   }
 
   void toggleShowUpdatesReversed() {
@@ -85,15 +75,22 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
 
     final projectWorkItemTypes = apiService.workItemTypes[fields.systemTeamProject] ?? <WorkItemType>[];
 
-    var newWorkItemStatus = fields.systemState;
+    var newWorkItemStatus = apiService.workItemStates[fields.systemTeamProject]?[fields.systemWorkItemType]
+        ?.firstWhereOrNull((s) => s.name == fields.systemState);
+
     var newWorkItemType = projectWorkItemTypes.firstWhereOrNull((t) => t.name == fields.systemWorkItemType) ??
         WorkItemType(
           name: fields.systemWorkItemType,
           referenceName: fields.systemWorkItemType,
           color: '',
           isDisabled: false,
-          states: [],
+          customization: '',
+          description: '',
+          icon: '',
+          url: '',
         );
+
+    statuses = apiService.workItemStates[fields.systemTeamProject]![newWorkItemType.name] ?? [];
 
     var newWorkItemAssignedTo =
         getSortedUsers(apiService).firstWhereOrNull((u) => u.mailAddress == fields.systemAssignedTo?.uniqueName) ??
@@ -137,23 +134,26 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
                         builder: (_, setState) => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Status'),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            FilterMenu<String>(
-                              title: 'Status',
-                              values: statuses.map((s) => s.name).toList(),
-                              currentFilter: newWorkItemStatus,
-                              onSelected: (f) {
-                                setState(() => newWorkItemStatus = f);
-                              },
-                              isDefaultFilter: false,
-                              widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
+                            if (newWorkItemStatus != null) ...[
+                              Text('Status'),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              FilterMenu<WorkItemState>(
+                                title: 'Status',
+                                values: statuses,
+                                currentFilter: newWorkItemStatus!,
+                                formatLabel: (t) => t.name,
+                                onSelected: (f) {
+                                  setState(() => newWorkItemStatus = f);
+                                },
+                                isDefaultFilter: false,
+                                widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                            ],
                             if (item.canBeChanged) ...[
                               Text('Type'),
                               const SizedBox(
@@ -166,10 +166,11 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
                                 formatLabel: (t) => t.name,
                                 onSelected: (f) async {
                                   newWorkItemType = f;
-                                  await _getStatuses(newWorkItemType.name);
+                                  statuses =
+                                      apiService.workItemStates[fields.systemTeamProject]![newWorkItemType.name] ?? [];
                                   if (!statuses.map((e) => e.name).contains(newWorkItemStatus)) {
                                     // change status if new type doesn't support current status
-                                    newWorkItemStatus = statuses.firstOrNull?.name ?? newWorkItemStatus;
+                                    newWorkItemStatus = statuses.firstOrNull ?? newWorkItemStatus;
                                   }
 
                                   setState(() => true);
@@ -248,7 +249,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
     if (!shouldEdit) return;
 
     if (newWorkItemType.name == fields.systemWorkItemType &&
-        newWorkItemStatus == fields.systemState &&
+        (newWorkItemStatus?.name ?? '') == fields.systemState &&
         newWorkItemTitle == fields.systemTitle &&
         newWorkItemAssignedTo.displayName == (fields.systemAssignedTo?.displayName ?? userAll.displayName) &&
         newWorkItemDescription == (fields.systemDescription ?? '')) {
@@ -262,7 +263,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
       title: newWorkItemTitle,
       assignedTo: newWorkItemAssignedTo.displayName == userAll.displayName ? null : newWorkItemAssignedTo,
       description: newWorkItemDescription,
-      status: newWorkItemStatus,
+      status: newWorkItemStatus?.name,
     );
 
     if (res.isError) {

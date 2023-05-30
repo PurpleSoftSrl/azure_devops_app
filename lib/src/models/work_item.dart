@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class WorkItemDetail {
   factory WorkItemDetail.fromJson(Map<String, dynamic> json) => WorkItemDetail(
         id: json['id'] as int,
@@ -117,44 +115,4 @@ class _System {
   String toString() {
     return 'System(displayName: $displayName, id: $id, uniqueName: $uniqueName, imageUrl: $imageUrl, descriptor: $descriptor)';
   }
-}
-
-class GetWorkItemStatusesResponse {
-  GetWorkItemStatusesResponse({
-    required this.count,
-    required this.statuses,
-  });
-
-  factory GetWorkItemStatusesResponse.fromRawJson(String str) =>
-      GetWorkItemStatusesResponse.fromJson(json.decode(str) as Map<String, dynamic>);
-
-  factory GetWorkItemStatusesResponse.fromJson(Map<String, dynamic> json) => GetWorkItemStatusesResponse(
-        count: json['count'] as int,
-        statuses: List<WorkItemStatus>.from(
-          (json['value'] as List<dynamic>).map((x) => WorkItemStatus.fromJson(x as Map<String, dynamic>)),
-        ),
-      );
-
-  final int count;
-  final List<WorkItemStatus> statuses;
-}
-
-class WorkItemStatus {
-  WorkItemStatus({
-    required this.name,
-    required this.color,
-    required this.category,
-  });
-
-  factory WorkItemStatus.fromRawJson(String str) => WorkItemStatus.fromJson(json.decode(str) as Map<String, dynamic>);
-
-  factory WorkItemStatus.fromJson(Map<String, dynamic> json) => WorkItemStatus(
-        name: json['name'] as String,
-        color: json['color'] as String,
-        category: json['category'] as String,
-      );
-
-  final String name;
-  final String color;
-  final String category;
 }

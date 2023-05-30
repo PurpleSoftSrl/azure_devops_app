@@ -32,13 +32,13 @@ class _WorkItemsController with FilterMixin {
 
   final workItems = ValueNotifier<ApiResponse<List<WorkItem>?>?>(null);
 
-  final _workItemStateAll = 'All';
-
-  late String statusFilter = _workItemStateAll;
+  late WorkItemState statusFilter = WorkItemState.all;
   WorkItemType typeFilter = WorkItemType.all;
 
   Map<String, List<WorkItemType>> allProjectsWorkItemTypes = {};
   late List<WorkItemType> allWorkItemTypes = [typeFilter];
+
+  late List<WorkItemState> allWorkItemState = [statusFilter];
 
   void dispose() {
     instance = null;
@@ -47,11 +47,23 @@ class _WorkItemsController with FilterMixin {
 
   Future<void> init() async {
     allWorkItemTypes = [typeFilter];
+    allWorkItemState = [statusFilter];
 
     final types = await apiService.getWorkItemTypes();
     if (!types.isError) {
       allWorkItemTypes.addAll(types.data!.values.expand((ts) => ts).toSet());
       allProjectsWorkItemTypes = types.data!;
+
+      final allStatesToAdd = <WorkItemState>{};
+
+      for (final entry in apiService.workItemStates.values) {
+        final states = entry.values.expand((v) => v);
+        allStatesToAdd.addAll(states);
+      }
+
+      final sortedStates = allStatesToAdd.sorted((a, b) => a.name.compareTo(b.name));
+
+      allWorkItemState.addAll(sortedStates);
     }
 
     await _getData();
@@ -70,7 +82,7 @@ class _WorkItemsController with FilterMixin {
     _getData();
   }
 
-  void filterByStatus(String state) {
+  void filterByStatus(WorkItemState state) {
     if (state == statusFilter) return;
 
     workItems.value = null;
@@ -98,7 +110,7 @@ class _WorkItemsController with FilterMixin {
     final res = await apiService.getWorkItems(
       project: projectFilter == projectAll ? null : projectFilter,
       type: typeFilter == WorkItemType.all ? null : typeFilter,
-      status: statusFilter == _workItemStateAll ? null : statusFilter,
+      status: statusFilter == WorkItemState.all ? null : statusFilter,
       assignedTo: userFilter == userAll ? null : userFilter,
     );
     workItems.value = res;
@@ -106,7 +118,7 @@ class _WorkItemsController with FilterMixin {
 
   void resetFilters() {
     workItems.value = null;
-    statusFilter = _workItemStateAll;
+    statusFilter = WorkItemState.all;
     typeFilter = WorkItemType.all;
     projectFilter = projectAll;
     userFilter = userAll;
@@ -159,7 +171,7 @@ class _WorkItemsController with FilterMixin {
                         builder: (_, setState) {
                           if (newWorkItemProject != projectAll) {
                             projectWorkItemTypes = allProjectsWorkItemTypes[newWorkItemProject.name]!
-                                .where((t) => t.name != WorkItemType.all.name)
+                                .where((t) => t != WorkItemType.all)
                                 .toList();
 
                             if (!projectWorkItemTypes.contains(newWorkItemType)) {

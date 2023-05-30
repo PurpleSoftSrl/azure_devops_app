@@ -3,6 +3,7 @@ import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:azure_devops/src/models/file_diff.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
+import 'package:azure_devops/src/models/processes.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
@@ -13,7 +14,6 @@ import 'package:azure_devops/src/models/team_member.dart';
 import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/work_item.dart';
-import 'package:azure_devops/src/models/work_item_type.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
@@ -148,7 +148,7 @@ class AzureApiServiceMock implements AzureApiService {
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
     Project? project,
     WorkItemType? type,
-    String? status,
+    WorkItemState? status,
     GraphUser? assignedTo,
   }) {
     throw UnimplementedError();
@@ -275,11 +275,6 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<WorkItemStatus>>> getWorkItemStatuses({required String projectName, required String type}) {
-    throw UnimplementedError();
-  }
-
-  @override
   Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id}) {
     throw UnimplementedError();
   }
@@ -318,6 +313,9 @@ class AzureApiServiceMock implements AzureApiService {
   Future<ApiResponse<GraphUser>> getUserFromDisplayName({required String name}) {
     throw UnimplementedError();
   }
+
+  @override
+  Map<String, Map<String, List<WorkItemState>>> get workItemStates => throw UnimplementedError();
 }
 
 class StorageServiceMock implements StorageService {

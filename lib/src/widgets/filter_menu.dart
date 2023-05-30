@@ -1,16 +1,15 @@
 import 'package:azure_devops/src/extensions/context_extension.dart';
-import 'package:azure_devops/src/extensions/work_item_extension.dart';
+import 'package:azure_devops/src/models/processes.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/user.dart';
-import 'package:azure_devops/src/models/work_item_type.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
+import 'package:azure_devops/src/widgets/work_item_type_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class FiltersRow extends StatelessWidget {
   const FiltersRow({
@@ -246,30 +245,25 @@ class WorkItemTypeFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return type.icon == null
-        ? const SizedBox()
-        : Padding(
-            padding: const EdgeInsets.all(7),
-            child: SvgPicture.network(
-              type.icon!.url,
-              width: 20,
-              height: 20,
-            ),
-          );
+    return Padding(
+      padding: const EdgeInsets.all(7),
+      child: WorkItemTypeIcon(type: type),
+    );
   }
 }
 
 class WorkItemStateFilterWidget extends StatelessWidget {
   const WorkItemStateFilterWidget({required this.state});
 
-  final String state;
+  final WorkItemState state;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: CircleAvatar(
-        backgroundColor: WorkItemExt.withState(state).stateColor,
+        backgroundColor:
+            state == WorkItemState.all ? Colors.transparent : Color(int.parse(state.color, radix: 16)).withOpacity(1),
       ),
     );
   }

@@ -11,6 +11,7 @@ import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:azure_devops/src/models/file_diff.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
+import 'package:azure_devops/src/models/processes.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
@@ -23,7 +24,6 @@ import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/user_entitlements.dart';
 import 'package:azure_devops/src/models/work_item.dart';
-import 'package:azure_devops/src/models/work_item_type.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
@@ -50,6 +50,9 @@ abstract class AzureApiService {
 
   Map<String, List<WorkItemType>> get workItemTypes;
 
+  /// Work item states for each work item type for each project
+  Map<String, Map<String, List<WorkItemState>>> get workItemStates;
+
   String getUserAvatarUrl(String userDescriptor);
 
   Future<LoginStatus> login(String accessToken);
@@ -67,7 +70,7 @@ abstract class AzureApiService {
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
     Project? project,
     WorkItemType? type,
-    String? status,
+    WorkItemState? status,
     GraphUser? assignedTo,
   });
 
@@ -82,8 +85,6 @@ abstract class AzureApiService {
     required String projectName,
     required int workItemId,
   });
-
-  Future<ApiResponse<List<WorkItemStatus>>> getWorkItemStatuses({required String projectName, required String type});
 
   Future<ApiResponse<WorkItemDetail>> createWorkItem({
     required String projectName,
@@ -251,6 +252,10 @@ class AzureApiServiceImpl implements AzureApiService {
   @override
   Map<String, List<WorkItemType>> get workItemTypes => _workItemTypes;
   final Map<String, List<WorkItemType>> _workItemTypes = {};
+
+  @override
+  Map<String, Map<String, List<WorkItemState>>> get workItemStates => _workItemStates;
+  final Map<String, Map<String, List<WorkItemState>>> _workItemStates = {};
 
   void dispose() {
     instance = null;
@@ -488,7 +493,7 @@ class AzureApiServiceImpl implements AzureApiService {
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
     Project? project,
     WorkItemType? type,
-    String? status,
+    WorkItemState? status,
     GraphUser? assignedTo,
   }) async {
     final query = <String>[];
@@ -518,7 +523,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
     if (type != null) query.add(" [System.WorkItemType] = '${type.name}' ");
 
-    if (status != null) query.add(" [System.State] = '$status' ");
+    if (status != null) query.add(" [System.State] = '${status.name}' ");
 
     if (assignedTo != null) query.add(" [System.AssignedTo] = '${assignedTo.mailAddress}' ");
 
@@ -553,20 +558,53 @@ class AzureApiServiceImpl implements AzureApiService {
   Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes() async {
     if (_workItemTypes.isNotEmpty) return ApiResponse.ok(_workItemTypes);
 
-    final projects = StorageServiceCore().getChosenProjects();
+    final processesRes = await _get('$_basePath/_apis/work/processes?\$expand=projects&$_apiVersion');
+    if (processesRes.isError) return ApiResponse.error(processesRes);
+
+    final processes = GetProcessesResponse.fromJson(jsonDecode(processesRes.body) as Map<String, dynamic>)
+        .processes
+        .where((p) => p.projects.isNotEmpty)
+        .toList();
+
+    final processWorkItems = <WorkProcess, List<WorkItemType>>{};
 
     await Future.wait([
-      for (final p in projects)
-        _get('$_basePath/${p.id}/_apis/wit/workitemtypes?$_apiVersion').then(
-          (value) {
-            if (value.isError) return;
+      for (final proc in processes)
+        _get('$_basePath/_apis/work/processes/${proc.typeId}/workItemTypes?$_apiVersion').then(
+          (res) {
+            if (res.isError) return;
 
-            _workItemTypes.putIfAbsent(
-              p.name!,
-              () => WorkItemTypesResponse.fromRawJson(value.body).types.where((t) => !t.isDisabled).toList(),
-            );
+            final types = GetWorkItemTypesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>)
+                .types
+                .where((t) => !t.isDisabled)
+                .toList();
+
+            final projectsToSearch = proc.projects.where((p) => (_chosenProjects ?? _projects).contains(p));
+
+            for (final proj in projectsToSearch) {
+              _workItemTypes.putIfAbsent(proj.name!, () => types);
+              processWorkItems.putIfAbsent(proc, () => types);
+            }
           },
         ),
+    ]);
+
+    await Future.wait([
+      for (final procEntry in processWorkItems.entries)
+        for (final wt in procEntry.value)
+          _get('$_basePath/_apis/work/processes/${procEntry.key.typeId}/workItemTypes/${wt.referenceName}/states?$_apiVersion')
+              .then(
+            (res) {
+              if (res.isError) return;
+
+              final states = GetWorkItemStatesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).states;
+              final projectsToSearch = procEntry.key.projects.where((p) => (_chosenProjects ?? _projects).contains(p));
+              for (final proj in projectsToSearch) {
+                _workItemStates.putIfAbsent(proj.name!, () => {wt.name: states});
+                _workItemStates[proj.name]!.putIfAbsent(wt.name, () => states);
+              }
+            },
+          ),
     ]);
 
     return ApiResponse.ok(_workItemTypes);
@@ -594,19 +632,6 @@ class AzureApiServiceImpl implements AzureApiService {
 
     return ApiResponse.ok(
       WorkItemUpdatesResponse.fromJson(jsonDecode(workItemUpdatesRes.body) as Map<String, dynamic>).updates,
-    );
-  }
-
-  @override
-  Future<ApiResponse<List<WorkItemStatus>>> getWorkItemStatuses({
-    required String projectName,
-    required String type,
-  }) async {
-    final statusesRes = await _get('$_basePath/$projectName/_apis/wit/workitemtypes/$type/states?$_apiVersion');
-    if (statusesRes.isError) return ApiResponse.error(statusesRes);
-
-    return ApiResponse.ok(
-      GetWorkItemStatusesResponse.fromJson(jsonDecode(statusesRes.body) as Map<String, dynamic>).statuses,
     );
   }
 

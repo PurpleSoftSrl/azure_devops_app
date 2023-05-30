@@ -25,13 +25,7 @@ class _WorkItemListTile extends StatelessWidget {
           ListTile(
             leading: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (wt != null)
-                  SvgPicture.network(
-                    wt.icon!.url,
-                    width: 20,
-                  ),
-              ],
+              children: [WorkItemTypeIcon(type: wt)],
             ),
             contentPadding: EdgeInsets.zero,
             minLeadingWidth: 20,
