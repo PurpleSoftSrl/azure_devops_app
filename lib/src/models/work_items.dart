@@ -146,27 +146,27 @@ class ItemFields {
 
 class _SystemChangedBy {
   _SystemChangedBy({
-    required this.displayName,
-    required this.id,
-    required this.uniqueName,
-    required this.imageUrl,
-    required this.descriptor,
+    this.displayName,
+    this.id,
+    this.uniqueName,
+    this.imageUrl,
+    this.descriptor,
     this.inactive,
   });
 
   factory _SystemChangedBy.fromJson(Map<String, dynamic> json) => _SystemChangedBy(
-        displayName: json['displayName'] as String,
-        id: json['id'] as String,
-        uniqueName: json['uniqueName'] as String,
-        imageUrl: json['imageUrl'] as String,
-        descriptor: json['descriptor'] as String,
+        displayName: json['displayName'] as String?,
+        id: json['id'] as String?,
+        uniqueName: json['uniqueName'] as String?,
+        imageUrl: json['imageUrl'] as String?,
+        descriptor: json['descriptor'] as String?,
         inactive: json['inactive'] as bool?,
       );
 
-  final String displayName;
-  final String id;
-  final String uniqueName;
-  final String imageUrl;
-  final String descriptor;
+  final String? displayName;
+  final String? id;
+  final String? uniqueName;
+  final String? imageUrl;
+  final String? descriptor;
   final bool? inactive;
 }
