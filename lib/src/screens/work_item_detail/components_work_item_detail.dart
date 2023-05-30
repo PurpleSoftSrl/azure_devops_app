@@ -116,11 +116,12 @@ class _History extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  MemberAvatar(userDescriptor: update.revisedBy.descriptor, radius: 15),
+                  if (update.revisedBy.descriptor != null)
+                    MemberAvatar(userDescriptor: update.revisedBy.descriptor!, radius: 15),
                   const SizedBox(
                     width: 10,
                   ),
-                  Text(update.revisedBy.displayName),
+                  if (update.revisedBy.displayName != null) Text(update.revisedBy.displayName!),
                   const Spacer(),
                   if (fields.systemChangedDate?.newValue != null)
                     Text(DateTime.tryParse(fields.systemChangedDate!.newValue!)!.minutesAgo),

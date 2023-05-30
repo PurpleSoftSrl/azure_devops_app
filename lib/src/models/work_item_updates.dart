@@ -204,28 +204,28 @@ class _RevisedByUpdateValue {
 
 class _RevisedBy {
   factory _RevisedBy.fromJson(Map<String, dynamic> json) => _RevisedBy(
-        displayName: json['displayName'] as String,
-        id: json['id'] as String,
-        uniqueName: json['uniqueName'] as String,
-        imageUrl: json['imageUrl'] as String,
-        descriptor: json['descriptor'] as String,
+        displayName: json['displayName'] as String?,
+        id: json['id'] as String?,
+        uniqueName: json['uniqueName'] as String?,
+        imageUrl: json['imageUrl'] as String?,
+        descriptor: json['descriptor'] as String?,
         name: json['name'] as String?,
       );
 
   _RevisedBy({
-    required this.displayName,
-    required this.id,
-    required this.uniqueName,
-    required this.imageUrl,
-    required this.descriptor,
+    this.displayName,
+    this.id,
+    this.uniqueName,
+    this.imageUrl,
+    this.descriptor,
     this.name,
   });
 
-  final String displayName;
-  final String id;
-  final String uniqueName;
-  final String imageUrl;
-  final String descriptor;
+  final String? displayName;
+  final String? id;
+  final String? uniqueName;
+  final String? imageUrl;
+  final String? descriptor;
   final String? name;
 }
 
