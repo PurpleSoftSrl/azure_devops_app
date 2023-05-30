@@ -346,6 +346,9 @@ class AzureApiServiceImpl implements AzureApiService {
     return res;
   }
 
+  // error debouncer
+  static bool _isLoggingError = false;
+
   void _addSentryBreadcrumb(String url, String method, Response res, Object? body) {
     if (kDebugMode) {
       print('$method $url ${res.statusCode} ${res.reasonPhrase}');
@@ -362,6 +365,11 @@ class AzureApiServiceImpl implements AzureApiService {
     Sentry.addBreadcrumb(breadcrumb);
 
     if (res.isError && _user != null && ![401, 403].contains(res.statusCode)) {
+      if (_isLoggingError) return;
+
+      _isLoggingError = true;
+      Timer(Duration(seconds: 2), () => _isLoggingError = false);
+
       var msg = 'Reason: ${res.reasonPhrase}, Body: ${res.body}';
       if (body != null) {
         msg += ', Request body: $body';
