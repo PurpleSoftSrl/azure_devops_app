@@ -619,7 +619,7 @@ class AzureApiServiceImpl implements AzureApiService {
     required String description,
   }) async {
     final createRes = await _postList(
-      '$_basePath/$projectName/_apis/wit/workitems/\$${type.name}?bypassRules=true&$_apiVersion-preview',
+      '$_basePath/$projectName/_apis/wit/workitems/\$${type.name}?$_apiVersion-preview',
       body: [
         {
           'op': 'add',
@@ -657,7 +657,7 @@ class AzureApiServiceImpl implements AzureApiService {
     String? status,
   }) async {
     final editRes = await _patchList(
-      '$_basePath/$projectName/_apis/wit/workitems/$id?bypassRules=true&$_apiVersion-preview',
+      '$_basePath/$projectName/_apis/wit/workitems/$id?$_apiVersion-preview',
       body: [
         if (title != null)
           {
