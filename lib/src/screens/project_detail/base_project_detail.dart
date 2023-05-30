@@ -26,8 +26,8 @@ part 'screen_project_detail.dart';
 class ProjectDetailPage extends StatelessWidget {
   const ProjectDetailPage();
 
-  static const _smartphoneParameters = _ProjectDetailParameters(gridItemAspectRatio: 1.4);
-  static const _tabletParameters = _ProjectDetailParameters(gridItemAspectRatio: 2.4);
+  static const _smartphoneParameters = _ProjectDetailParameters(gridItemAspectRatio: 1.4, memberAvatarSize: 50);
+  static const _tabletParameters = _ProjectDetailParameters(gridItemAspectRatio: 2.4, memberAvatarSize: 75);
 
   @override
   Widget build(BuildContext context) {

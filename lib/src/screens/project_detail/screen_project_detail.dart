@@ -55,13 +55,14 @@ class _ProjectDetailScreen extends StatelessWidget {
             Wrap(
               children: ctrl.members
                   .map(
-                    (m) => Padding(
-                      padding: const EdgeInsets.only(right: 12, bottom: 12),
+                    (m) => Container(
+                      width: parameters.memberAvatarSize + 15,
+                      margin: const EdgeInsets.only(right: 12, bottom: 12),
                       child: Column(
                         children: [
                           MemberAvatar(
                             userDescriptor: m.identity!.descriptor!,
-                            radius: 50,
+                            radius: parameters.memberAvatarSize,
                           ),
                           const SizedBox(
                             height: 5,
@@ -69,6 +70,8 @@ class _ProjectDetailScreen extends StatelessWidget {
                           Text(
                             m.identity!.displayName!.split(' ').first,
                             style: context.textTheme.labelSmall,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),
