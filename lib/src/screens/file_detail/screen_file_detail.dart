@@ -16,6 +16,12 @@ class _FileDetailScreen extends StatelessWidget {
       onEmpty: (_) => Text('No file found'),
       padding: EdgeInsets.zero,
       showScrollbar: true,
+      actions: [
+        IconButton(
+          onPressed: ctrl.shareFile,
+          icon: Icon(DevOpsIcons.share),
+        ),
+      ],
       builder: (res) => ctrl.args.filePath!.isImage
           ? Image.memory(
               Uint8List.fromList(res!.content.codeUnits),
@@ -25,7 +31,8 @@ class _FileDetailScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 8),
                   child: MarkdownBody(
                     data: res!.content,
-                    styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
+                    styleSheet:
+                        MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
                   ),
                 )
               : res!.isBinary

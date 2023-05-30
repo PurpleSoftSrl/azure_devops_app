@@ -1,6 +1,6 @@
 part of file_detail;
 
-class _FileDetailController {
+class _FileDetailController with ShareMixin {
   factory _FileDetailController({required AzureApiService apiService, required RepoDetailArgs args}) {
     return instance ??= _FileDetailController._(apiService, args);
   }
@@ -28,4 +28,11 @@ class _FileDetailController {
 
     fileContent.value = fileRes;
   }
+
+  void shareFile() {
+    shareUrl(_fileUrl);
+  }
+
+  String get _fileUrl =>
+      '${apiService.basePath}/${args.projectName}/_git/${args.repositoryName}?path=${args.filePath}&version=GB${args.branch}';
 }
