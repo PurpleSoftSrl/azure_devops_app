@@ -10,6 +10,7 @@ class DevOpsFormField extends StatelessWidget {
     this.onFieldSubmitted,
     this.maxLines,
     this.initialValue,
+    this.textCapitalization,
   });
 
   final VoidCallback? onFieldSubmitted;
@@ -19,6 +20,7 @@ class DevOpsFormField extends StatelessWidget {
   final int? maxLines;
   final GlobalKey<FormFieldState<dynamic>>? formFieldKey;
   final String? initialValue;
+  final TextCapitalization? textCapitalization;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class DevOpsFormField extends StatelessWidget {
       validator: (s) => s!.isEmpty ? 'Fill this field' : null,
       maxLines: maxLines,
       initialValue: initialValue,
+      textCapitalization: textCapitalization ?? TextCapitalization.none,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),

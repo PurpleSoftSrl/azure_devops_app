@@ -234,6 +234,7 @@ class _WorkItemsController with FilterMixin {
                         onChanged: (value) => newWorkItemTitle = value,
                         label: 'Work item title',
                         formFieldKey: titleFieldKey,
+                        textCapitalization: TextCapitalization.sentences,
                       ),
                       const SizedBox(
                         height: 40,
@@ -243,6 +244,7 @@ class _WorkItemsController with FilterMixin {
                         label: 'Work item description',
                         maxLines: 3,
                         onFieldSubmitted: AppRouter.popRoute,
+                        textCapitalization: TextCapitalization.sentences,
                       ),
                       const SizedBox(
                         height: 60,
