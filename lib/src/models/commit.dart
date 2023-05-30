@@ -31,6 +31,7 @@ class Commit {
             json['changeCounts'] == null ? null : _ChangeCounts.fromJson(json['changeCounts'] as Map<String, dynamic>),
         url: json['url'] as String?,
         remoteUrl: json['remoteUrl'] as String?,
+        parents: json['parents'] == null ? null : List<String>.from(json['parents'] as List<dynamic>),
       );
 
   Commit({
@@ -41,6 +42,7 @@ class Commit {
     this.changeCounts,
     this.url,
     this.remoteUrl,
+    this.parents,
   });
 
   final String? commitId;
@@ -50,6 +52,7 @@ class Commit {
   final _ChangeCounts? changeCounts;
   final String? url;
   final String? remoteUrl;
+  final List<String>? parents;
 
   static Commit empty() {
     return Commit(
@@ -78,7 +81,7 @@ class Commit {
 
   @override
   String toString() {
-    return 'Commit(commitId: $commitId, author: $author, committer: $committer, comment: $comment, changeCounts: $changeCounts, url: $url, remoteUrl: $remoteUrl)';
+    return 'Commit(commitId: $commitId, author: $author, committer: $committer, comment: $comment, changeCounts: $changeCounts, url: $url, remoteUrl: $remoteUrl, parents: $parents)';
   }
 
   @override

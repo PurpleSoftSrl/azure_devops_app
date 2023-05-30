@@ -1,3 +1,5 @@
+// ignore_for_file: long-parameter-list
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -83,7 +85,6 @@ abstract class AzureApiService {
 
   Future<ApiResponse<List<WorkItemStatus>>> getWorkItemStatuses({required String projectName, required String type});
 
-  // ignore: long-parameter-list
   Future<ApiResponse<WorkItemDetail>> createWorkItem({
     required String projectName,
     required WorkItemType type,
@@ -92,7 +93,6 @@ abstract class AzureApiService {
     required String description,
   });
 
-  // ignore: long-parameter-list
   Future<ApiResponse<WorkItemDetail>> editWorkItem({
     required String projectName,
     required int id,
@@ -127,7 +127,6 @@ abstract class AzureApiService {
     required String repoName,
   });
 
-  // ignore: long-parameter-list
   Future<ApiResponse<FileDetailResponse>> getFileDetail({
     required String projectName,
     required String repoName,
@@ -612,7 +611,6 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  // ignore: long-parameter-list
   Future<ApiResponse<WorkItemDetail>> createWorkItem({
     required String projectName,
     required WorkItemType type,
@@ -649,7 +647,6 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  // ignore: long-parameter-list
   Future<ApiResponse<WorkItemDetail>> editWorkItem({
     required String projectName,
     required int id,
@@ -830,7 +827,6 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  // ignore: long-parameter-list
   Future<ApiResponse<FileDetailResponse>> getFileDetail({
     required String projectName,
     required String repoName,
@@ -1026,16 +1022,7 @@ class AzureApiServiceImpl implements AzureApiService {
     required bool isAdded,
     required bool isDeleted,
   }) async {
-    final prevCommitRes = await _get(
-      '$_basePath/${commit.projectId}/_apis/git/repositories/${commit.repositoryId}/commits?searchCriteria.toDate=${commit.author!.date}&searchCriteria.\$top=1&searchCriteria.\$skip=1&$_apiVersion',
-    );
-    if (prevCommitRes.isError) return ApiResponse.error(prevCommitRes);
-
-    final prevCommit = GetCommitsResponse.fromJson(jsonDecode(prevCommitRes.body) as Map<String, dynamic>);
-    final prevCommitId = prevCommit.commits.firstOrNull?.commitId;
-
-    if (prevCommitId == null) return ApiResponse.error(prevCommitRes);
-
+    final hasParent = commit.parents?.isNotEmpty ?? false;
     final repoId = commit.repositoryId;
     final diffRes = await _post(
       '$_basePath/_apis/contribution/hierarchyQuery/project/${commit.projectId}?$_apiVersion-preview',
@@ -1049,7 +1036,7 @@ class AzureApiServiceImpl implements AzureApiService {
               if (!isDeleted) 'modifiedPath': filePath,
               if (!isDeleted) 'modifiedVersion': 'GC${commit.commitId}',
               if (!isAdded) 'originalPath': filePath,
-              if (!isAdded) 'originalVersion': 'GC$prevCommitId',
+              if (!isAdded && hasParent) 'originalVersion': 'GC${commit.parents!.first}',
               'partialDiff': true,
               'forceLoad': false,
             },
