@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class GetWorkItemIds {
   GetWorkItemIds({
     required this.workItems,
@@ -53,6 +55,18 @@ class WorkItem {
   final int id;
   final int? rev;
   final ItemFields fields;
+
+  @visibleForTesting
+  static WorkItem empty() => WorkItem(
+        id: -1,
+        fields: ItemFields(
+          systemWorkItemType: '',
+          systemState: '',
+          systemTeamProject: '',
+          systemTitle: '',
+          systemChangedDate: DateTime.now(),
+        ),
+      );
 }
 
 class ItemFields {

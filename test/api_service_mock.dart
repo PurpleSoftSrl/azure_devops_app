@@ -127,8 +127,39 @@ class AzureApiServiceMock implements AzureApiService {
     required PullRequestState filter,
     GraphUser? creator,
     Project? project,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    final emptyWorkItem = PullRequest.empty();
+    final firstItem = emptyWorkItem.copyWith(
+      title: 'Pull request title 1',
+      createdBy: emptyWorkItem.createdBy.copyWith(
+        displayName: 'Test User 1',
+      ),
+      repository: emptyWorkItem.repository.copyWith(
+        name: 'Repository name 1',
+      ),
+      creationDate: DateTime(2000, 1, 5),
+    );
+    final secondItem = emptyWorkItem.copyWith(
+      title: 'Pull request title 2',
+      createdBy: emptyWorkItem.createdBy.copyWith(
+        displayName: 'Test User 2',
+      ),
+      repository: emptyWorkItem.repository.copyWith(
+        name: 'Repository name 2',
+      ),
+      creationDate: DateTime(2000, 1, 7),
+    );
+    final thirdItem = emptyWorkItem.copyWith(
+      title: 'Pull request title 3',
+      createdBy: emptyWorkItem.createdBy.copyWith(
+        displayName: 'Test User 3',
+      ),
+      repository: emptyWorkItem.repository.copyWith(
+        name: 'Repository name 3',
+      ),
+      creationDate: DateTime(2000, 1, 9),
+    );
+    return ApiResponse.ok([firstItem, secondItem, thirdItem]);
   }
 
   @override
@@ -152,13 +183,35 @@ class AzureApiServiceMock implements AzureApiService {
     WorkItemType? type,
     WorkItemState? status,
     GraphUser? assignedTo,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    final emptyWorkItem = WorkItem.empty();
+    final firstItem = emptyWorkItem.copyWith(
+      id: 1,
+      fields: emptyWorkItem.fields.copyWith(
+        systemTitle: 'Work item title 1',
+        systemTeamProject: 'Project 1',
+      ),
+    );
+    final secondItem = emptyWorkItem.copyWith(
+      id: 2,
+      fields: emptyWorkItem.fields.copyWith(
+        systemTitle: 'Work item title 2',
+        systemTeamProject: 'Project 2',
+      ),
+    );
+    final thirdItem = emptyWorkItem.copyWith(
+      id: 3,
+      fields: emptyWorkItem.fields.copyWith(
+        systemTitle: 'Work item title 3',
+        systemTeamProject: 'Project 3',
+      ),
+    );
+    return ApiResponse.ok([firstItem, secondItem, thirdItem]);
   }
 
   @override
-  Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes() {
-    throw UnimplementedError();
+  Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes() async {
+    return ApiResponse.ok(<String, List<WorkItemType>>{});
   }
 
   @override
@@ -326,7 +379,7 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Map<String, Map<String, List<WorkItemState>>> get workItemStates => throw UnimplementedError();
+  Map<String, Map<String, List<WorkItemState>>> get workItemStates => {};
 }
 
 class StorageServiceMock implements StorageService {
@@ -387,4 +440,95 @@ class StorageServiceMock implements StorageService {
 
   @override
   int get numberOfSessions => throw UnimplementedError();
+}
+
+extension on WorkItem {
+  WorkItem copyWith({
+    int? id,
+    int? rev,
+    ItemFields? fields,
+  }) {
+    return WorkItem(
+      id: id ?? this.id,
+      rev: rev ?? this.rev,
+      fields: fields ?? this.fields,
+    );
+  }
+}
+
+extension on ItemFields {
+  ItemFields copyWith({
+    String? systemTeamProject,
+    String? systemWorkItemType,
+    String? systemState,
+    DateTime? systemCreatedDate,
+    DateTime? systemChangedDate,
+    String? systemTitle,
+  }) {
+    return ItemFields(
+      systemTeamProject: systemTeamProject ?? this.systemTeamProject,
+      systemWorkItemType: systemWorkItemType ?? this.systemWorkItemType,
+      systemState: systemState ?? this.systemState,
+      systemCreatedDate: systemCreatedDate ?? this.systemCreatedDate,
+      systemChangedDate: systemChangedDate ?? this.systemChangedDate,
+      systemTitle: systemTitle ?? this.systemTitle,
+    );
+  }
+}
+
+extension on PullRequest {
+  PullRequest copyWith({
+    Repository? repository,
+    int? pullRequestId,
+    PullRequestState? status,
+    CreatedBy? createdBy,
+    DateTime? creationDate,
+    String? title,
+  }) {
+    return PullRequest(
+      codeReviewId: -1,
+      sourceRefName: '',
+      targetRefName: '',
+      isDraft: false,
+      mergeId: '',
+      reviewers: [],
+      url: '',
+      supportsIterations: false,
+      repository: repository ?? this.repository,
+      pullRequestId: pullRequestId ?? this.pullRequestId,
+      status: status ?? this.status,
+      createdBy: createdBy ?? this.createdBy,
+      creationDate: creationDate ?? this.creationDate,
+      title: title ?? this.title,
+    );
+  }
+}
+
+extension on CreatedBy {
+  CreatedBy copyWith({String? displayName}) {
+    return CreatedBy(
+      displayName: displayName ?? this.displayName,
+      url: url,
+      links: links,
+      id: id,
+      uniqueName: uniqueName,
+      imageUrl: imageUrl,
+      descriptor: descriptor,
+    );
+  }
+}
+
+extension on Repository {
+  Repository copyWith({
+    String? id,
+    String? name,
+    String? url,
+  }) {
+    return Repository(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      url: url ?? this.url,
+      project: project,
+    );
+  }
 }

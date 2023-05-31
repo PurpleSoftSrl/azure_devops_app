@@ -23,11 +23,11 @@ class GetPullRequestsResponse {
 
 class PullRequest {
   factory PullRequest.fromJson(Map<String, dynamic> json) => PullRequest(
-        repository: _Repository.fromJson(json['repository'] as Map<String, dynamic>),
+        repository: Repository.fromJson(json['repository'] as Map<String, dynamic>),
         pullRequestId: json['pullRequestId'] as int,
         codeReviewId: json['codeReviewId'] as int,
         status: PullRequestState.fromString(json['status'] as String),
-        createdBy: _CreatedBy.fromJson(json['createdBy'] as Map<String, dynamic>),
+        createdBy: CreatedBy.fromJson(json['createdBy'] as Map<String, dynamic>),
         creationDate: DateTime.parse(json['creationDate']!.toString()).toLocal(),
         title: json['title'] as String,
         description: json['description'] as String?,
@@ -55,20 +55,20 @@ class PullRequest {
     this.description,
     required this.sourceRefName,
     required this.targetRefName,
-    required this.mergeStatus,
+    this.mergeStatus,
     required this.isDraft,
     required this.mergeId,
     required this.reviewers,
-    required this.labels,
+    this.labels,
     required this.url,
     required this.supportsIterations,
   });
 
-  final _Repository repository;
+  final Repository repository;
   final int pullRequestId;
   final int codeReviewId;
   final PullRequestState status;
-  final _CreatedBy createdBy;
+  final CreatedBy createdBy;
   final DateTime creationDate;
   final String title;
   final String? description;
@@ -81,6 +81,49 @@ class PullRequest {
   final List<_Label>? labels;
   final String url;
   final bool supportsIterations;
+
+  @visibleForTesting
+  static PullRequest empty() => PullRequest(
+        repository: Repository(
+          id: '',
+          name: '',
+          url: '',
+          project: _Project(
+            id: '',
+            name: '',
+            state: '',
+            visibility: '',
+            lastUpdateTime: DateTime.now(),
+          ),
+        ),
+        pullRequestId: -1,
+        codeReviewId: -1,
+        status: PullRequestState.notSet,
+        createdBy: CreatedBy(
+          displayName: '',
+          url: '',
+          links: Links(
+            self: Avatar(href: ''),
+            memberships: Avatar(href: ''),
+            membershipState: Avatar(href: ''),
+            storageKey: Avatar(href: ''),
+            avatar: Avatar(href: ''),
+          ),
+          id: '',
+          uniqueName: '',
+          imageUrl: '',
+          descriptor: '',
+        ),
+        creationDate: DateTime.now(),
+        title: '',
+        sourceRefName: '',
+        targetRefName: '',
+        isDraft: false,
+        mergeId: '',
+        reviewers: [],
+        url: '',
+        supportsIterations: false,
+      );
 
   @override
   String toString() {
@@ -133,8 +176,8 @@ class PullRequest {
   }
 }
 
-class _CreatedBy {
-  factory _CreatedBy.fromJson(Map<String, dynamic> json) => _CreatedBy(
+class CreatedBy {
+  factory CreatedBy.fromJson(Map<String, dynamic> json) => CreatedBy(
         displayName: json['displayName'] as String,
         url: json['url'] as String,
         links: json['Links'] == null ? null : Links.fromJson(json['Links'] as Map<String, dynamic>),
@@ -144,7 +187,7 @@ class _CreatedBy {
         descriptor: json['descriptor'] as String,
       );
 
-  _CreatedBy({
+  CreatedBy({
     required this.displayName,
     required this.url,
     required this.links,
@@ -188,14 +231,14 @@ class _Label {
   String toString() => '_Label(id: $id, name: $name, active: $active)';
 }
 
-class _Repository {
-  factory _Repository.fromJson(Map<String, dynamic> json) => _Repository(
+class Repository {
+  factory Repository.fromJson(Map<String, dynamic> json) => Repository(
         id: json['id'] as String,
         name: json['name'] as String,
         url: json['url'] as String,
         project: _Project.fromJson(json['project'] as Map<String, dynamic>),
       );
-  _Repository({
+  Repository({
     required this.id,
     required this.name,
     required this.url,

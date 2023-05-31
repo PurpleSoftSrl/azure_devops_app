@@ -1,5 +1,6 @@
 import 'package:azure_devops/src/screens/pipelines/base_pipelines.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
+import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -12,9 +13,12 @@ void main() {
     'Pipelines are sorted by status',
     (t) async {
       final pipelinesPage = MaterialApp(
-        home: AzureApiServiceInherited(
-          apiService: AzureApiServiceMock(),
-          child: PipelinesPage(),
+        home: StorageServiceInherited(
+          storageService: StorageServiceMock(),
+          child: AzureApiServiceInherited(
+            apiService: AzureApiServiceMock(),
+            child: PipelinesPage(),
+          ),
         ),
       );
 

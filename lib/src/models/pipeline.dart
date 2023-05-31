@@ -95,7 +95,7 @@ class Pipeline {
   }
 
   Pipeline copyWithRequestedFor(String newName) {
-    return copyWith(requestedFor: requestedFor!.copyWith(displayName: newName));
+    return copyWith(requestedFor: (requestedFor ?? _LastChangedBy()).copyWith(displayName: newName));
   }
 
   static List<Pipeline>? listFromJson(
