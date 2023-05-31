@@ -234,7 +234,10 @@ class _WorkItemDetailScreen extends StatelessWidget {
                     valueListenable: ctrl.showUpdatesReversed,
                     builder: (_, showUpdatesReversed, __) {
                       final updates = showUpdatesReversed ? ctrl.updates.reversed.toList() : ctrl.updates;
-                      return _History(updates: updates);
+                      return _History(
+                        updates: updates,
+                        ctrl: ctrl,
+                      );
                     },
                   ),
                 ],

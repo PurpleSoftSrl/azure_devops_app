@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:azure_devops/src/models/file_diff.dart';
@@ -212,6 +214,15 @@ class AzureApiServiceMock implements AzureApiService {
   Future<ApiResponse<List<WorkItemUpdate>>> getWorkItemUpdates({
     required String projectName,
     required int workItemId,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<Uint8List>> getWorkItemAttachment({
+    required String projectName,
+    required String attachmentId,
+    required String fileName,
   }) {
     throw UnimplementedError();
   }

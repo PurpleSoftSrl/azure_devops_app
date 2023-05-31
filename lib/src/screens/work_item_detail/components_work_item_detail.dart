@@ -97,9 +97,10 @@ class _HtmlWidget extends StatelessWidget {
 }
 
 class _History extends StatelessWidget {
-  const _History({required this.updates});
+  const _History({required this.updates, required this.ctrl});
 
   final List<WorkItemUpdate> updates;
+  final _WorkItemDetailController ctrl;
 
   @override
   Widget build(BuildContext context) {
@@ -118,9 +119,7 @@ class _History extends StatelessWidget {
                 children: [
                   if (update.revisedBy.descriptor != null)
                     MemberAvatar(userDescriptor: update.revisedBy.descriptor!, radius: 15),
-                  const SizedBox(
-                    width: 10,
-                  ),
+                  const SizedBox(width: 10),
                   if (update.revisedBy.displayName != null) Text(update.revisedBy.displayName!),
                   const Spacer(),
                   if (fields.systemChangedDate?.newValue != null)
@@ -172,6 +171,8 @@ class _History extends StatelessWidget {
                             ? "Set title to '${fields.systemTitle?.newValue}'"
                             : "Changed title from '${fields.systemTitle?.oldValue}' to '${fields.systemTitle?.newValue}'",
                       ),
+                    if (update.relations?.added != null)
+                      for (final att in update.relations!.added!) _AttachmentRow(ctrl: ctrl, att: att),
                     if (fields.systemHistory != null)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,6 +200,50 @@ class _History extends StatelessWidget {
           );
         },
       ).toList(),
+    );
+  }
+}
+
+class _AttachmentRow extends StatelessWidget {
+  const _AttachmentRow({required this.ctrl, required this.att});
+
+  final _WorkItemDetailController ctrl;
+  final Relation att;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => ctrl.openAttachment(att),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          children: [
+            ValueListenableBuilder(
+              valueListenable: ctrl.isDownloadingAttachment,
+              builder: (_, isDownloading, __) => (isDownloading[att.attributes.id] ?? false)
+                  ? SizedBox(
+                      width: 15,
+                      height: 15,
+                      child: const CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : RotatedBox(
+                      quarterTurns: 1,
+                      child: Icon(Icons.attachment, size: 15),
+                    ),
+            ),
+            const SizedBox(width: 10),
+            Flexible(
+              child: Builder(
+                builder: (ctx) => Text(
+                  att.attributes.name,
+                  style: DefaultTextStyle.of(ctx).style.copyWith(decoration: TextDecoration.underline),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

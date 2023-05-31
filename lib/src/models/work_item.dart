@@ -5,6 +5,7 @@ class WorkItemDetail {
         fields: _GetWorkItemDetailResponseFields.fromJson(json['fields'] as Map<String, dynamic>),
         url: json['url'] as String,
       );
+
   WorkItemDetail({
     required this.id,
     required this.rev,

@@ -86,6 +86,12 @@ abstract class AzureApiService {
     required int workItemId,
   });
 
+  Future<ApiResponse<Uint8List>> getWorkItemAttachment({
+    required String projectName,
+    required String attachmentId,
+    required String fileName,
+  });
+
   Future<ApiResponse<WorkItemDetail>> createWorkItem({
     required String projectName,
     required WorkItemType type,
@@ -641,6 +647,19 @@ class AzureApiServiceImpl implements AzureApiService {
     return ApiResponse.ok(
       WorkItemUpdatesResponse.fromJson(jsonDecode(workItemUpdatesRes.body) as Map<String, dynamic>).updates,
     );
+  }
+
+  @override
+  Future<ApiResponse<Uint8List>> getWorkItemAttachment({
+    required String projectName,
+    required String attachmentId,
+    required String fileName,
+  }) async {
+    final attachmentRes =
+        await _get('$_basePath/$projectName/_apis/wit/attachments/$attachmentId?fileName=$fileName&$_apiVersion');
+    if (attachmentRes.isError) return ApiResponse.error(attachmentRes);
+
+    return ApiResponse.ok(attachmentRes.bodyBytes);
   }
 
   @override

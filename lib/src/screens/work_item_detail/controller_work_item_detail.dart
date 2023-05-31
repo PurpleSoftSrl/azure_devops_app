@@ -38,7 +38,9 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
   List<WorkItemState> statuses = [];
 
   List<WorkItemUpdate> updates = [];
-  final showUpdatesReversed = ValueNotifier(true);
+  final showUpdatesReversed = ValueNotifier<bool>(true);
+
+  final isDownloadingAttachment = ValueNotifier<Map<int, bool>>({});
 
   void dispose() {
     instance = null;
@@ -283,5 +285,63 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
     }
 
     AppRouter.pop();
+  }
+
+  Future<void> openAttachment(Relation attachment) async {
+    if (isDownloadingAttachment.value[attachment.attributes.id] ?? false) return;
+
+    final fileName = attachment.attributes.name;
+
+    final tmp = await getApplicationSupportDirectory();
+    final attributeId = attachment.attributes.id;
+    final filePath = path.join(tmp.path, '${attributeId}_$fileName');
+
+    // avoid downloading the same file multiple times
+    if (await File(filePath).exists()) {
+      await _openFile(filePath);
+      return;
+    }
+
+    // deleted files cannot be downloaded anymore
+    if (attachment.url == null) {
+      OverlayService.snackbar('This file has been deleted', isError: true);
+      return;
+    }
+
+    isDownloadingAttachment.value = {attachment.attributes.id: true};
+
+    final attachmentId = attachment.url!.split('/').last;
+    final res = await apiService.getWorkItemAttachment(
+      projectName: item.fields.systemTeamProject,
+      attachmentId: attachmentId,
+      fileName: fileName,
+    );
+    if (res.isError) {
+      isDownloadingAttachment.value = {};
+      OverlayService.snackbar('Error downloading attachment', isError: true);
+      return;
+    }
+
+    File(filePath).writeAsBytesSync(res.data!);
+
+    isDownloadingAttachment.value = {};
+
+    await _openFile(filePath);
+  }
+
+  Future<void> _openFile(String filePath) async {
+    final open = await OpenFilex.open(filePath);
+    switch (open.type) {
+      case ResultType.done:
+        break;
+      case ResultType.noAppToOpen:
+        await OverlayService.error('Error opening file', description: 'No app found to open this file');
+        break;
+      case ResultType.fileNotFound:
+      case ResultType.permissionDenied:
+      case ResultType.error:
+        await OverlayService.error('Error opening file', description: 'Something went wrong');
+        break;
+    }
   }
 }

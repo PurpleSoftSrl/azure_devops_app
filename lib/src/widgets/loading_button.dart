@@ -46,6 +46,7 @@ class _LoadingButtonState extends State<LoadingButton> {
             : Text(
                 widget.text,
                 style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onPrimary),
+                textAlign: TextAlign.center,
               ),
       ),
     );

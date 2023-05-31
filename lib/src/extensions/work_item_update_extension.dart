@@ -11,6 +11,8 @@ extension WorkItemUpdateExt on WorkItemUpdate {
         fields.systemAssignedTo?.newValue?.displayName != null ||
         fields.microsoftVstsSchedulingEffort != null ||
         fields.systemTitle != null ||
-        fields.systemHistory != null;
+        fields.systemHistory != null ||
+        // show only added attachments
+        (relations != null && relations!.added != null && relations!.added!.any((r) => r.rel == 'AttachedFile'));
   }
 }

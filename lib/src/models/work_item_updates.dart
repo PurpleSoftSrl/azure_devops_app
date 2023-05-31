@@ -23,6 +23,8 @@ class WorkItemUpdate {
         revisedBy: _RevisedBy.fromJson(json['revisedBy'] as Map<String, dynamic>),
         revisedDate: DateTime.parse(json['revisedDate']!.toString()).toLocal(),
         fields: json['fields'] == null ? null : _Fields.fromJson(json['fields'] as Map<String, dynamic>),
+        relations:
+            json['relations'] == null ? null : WorkItemRelations.fromJson(json['relations'] as Map<String, dynamic>),
       );
 
   WorkItemUpdate({
@@ -32,6 +34,7 @@ class WorkItemUpdate {
     required this.revisedBy,
     required this.revisedDate,
     required this.fields,
+    this.relations,
   });
 
   final int id;
@@ -40,10 +43,11 @@ class WorkItemUpdate {
   final _RevisedBy revisedBy;
   final DateTime revisedDate;
   final _Fields? fields;
+  final WorkItemRelations? relations;
 
   @override
   String toString() {
-    return 'WorkItemUpdate(id: $id, workItemId: $workItemId, rev: $rev, revisedBy: $revisedBy, revisedDate: $revisedDate, fields: $fields)';
+    return 'WorkItemUpdate(id: $id, workItemId: $workItemId, rev: $rev, revisedBy: $revisedBy, revisedDate: $revisedDate, relations: $relations, fields: $fields)';
   }
 }
 
@@ -272,4 +276,67 @@ class _SystemRevClass {
 
   final int? newValue;
   final int? oldValue;
+}
+
+class WorkItemRelations {
+  WorkItemRelations({this.added, this.removed, this.updated});
+
+  factory WorkItemRelations.fromJson(Map<String, dynamic> json) => WorkItemRelations(
+        added: List<Relation>.from(
+          (json['added'] as List<dynamic>? ?? []).map((r) => Relation.fromJson(r as Map<String, dynamic>)),
+        ),
+        removed: List<Relation>.from(
+          (json['removed'] as List<dynamic>? ?? []).map((r) => Relation.fromJson(r as Map<String, dynamic>)),
+        ),
+        updated: List<Relation>.from(
+          (json['updated'] as List<dynamic>? ?? []).map((r) => Relation.fromJson(r as Map<String, dynamic>)),
+        ),
+      );
+
+  final List<Relation>? added;
+  final List<Relation>? removed;
+  final List<Relation>? updated;
+
+  @override
+  String toString() => '_Relations(added: $added, removed: $removed, updated: $updated)';
+}
+
+class Relation {
+  Relation({required this.rel, this.url, required this.attributes});
+
+  factory Relation.fromJson(Map<String, dynamic> json) => Relation(
+        rel: json['rel'] as String,
+        url: json['url'] as String?,
+        attributes: _Attributes.fromJson(json['attributes'] as Map<String, dynamic>),
+      );
+
+  final String rel;
+  final String? url;
+  final _Attributes attributes;
+
+  @override
+  String toString() => '_Relation(rel: $rel, url: $url, attributes: $attributes)';
+}
+
+class _Attributes {
+  _Attributes({
+    required this.id,
+    this.resourceSize,
+    required this.name,
+  });
+
+  factory _Attributes.fromJson(Map<String, dynamic> json) => _Attributes(
+        id: json['id'] as int,
+        resourceSize: json['resourceSize'] as int?,
+        name: json['name'] as String,
+      );
+
+  final int id;
+  final int? resourceSize;
+  final String name;
+
+  @override
+  String toString() {
+    return '_Attributes(id: $id, resourceSize: $resourceSize, name: $name)';
+  }
 }
