@@ -376,16 +376,17 @@ class AzureApiServiceImpl implements AzureApiService {
       _isLoggingError = true;
       Timer(Duration(seconds: 2), () => _isLoggingError = false);
 
-      var msg = 'Reason: ${res.reasonPhrase}, Body: ${res.body}';
-      if (body != null) {
-        msg += ', Request body: $body';
-      }
+      final title = '${res.statusCode} ${res.reasonPhrase}';
 
       Sentry.captureEvent(
         SentryEvent(
           level: SentryLevel.warning,
           breadcrumbs: [breadcrumb],
-          message: SentryMessage(msg),
+          message: SentryMessage(
+            title,
+            template: 'Response body: %s, \n Request body: %s',
+            params: [if (res.body.isNotEmpty) res.body, if (body != null && body != '') body],
+          ),
         ),
       );
     }
