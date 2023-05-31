@@ -134,7 +134,7 @@ class Author {
   factory Author.fromJson(Map<String, dynamic> json) => Author(
         name: json['name'] as String?,
         email: json['email'] as String?,
-        date: DateTime.tryParse(json['date']?.toString() ?? '')?.toLocal(),
+        date: json['date'] == null ? null : DateTime.parse(json['date'].toString()).toLocal(),
       );
 
   Author({

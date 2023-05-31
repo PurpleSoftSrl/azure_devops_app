@@ -39,8 +39,9 @@ class _GetWorkItemDetailResponseFields {
         systemChangedBy: _System.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
         systemCommentCount: json['System.CommentCount'] as int,
         systemTitle: json['System.Title'] as String,
-        microsoftVstsCommonStateChangeDate:
-            DateTime.tryParse(json['Microsoft.VSTS.Common.StateChangeDate']?.toString() ?? '')?.toLocal(),
+        microsoftVstsCommonStateChangeDate: json['Microsoft.VSTS.Common.StateChangeDate'] == null
+            ? null
+            : DateTime.parse(json['Microsoft.VSTS.Common.StateChangeDate'].toString()).toLocal(),
         microsoftVstsCommonPriority: json['Microsoft.VSTS.Common.Priority'] as int?,
         microsoftVstsCommonValueArea: json['Microsoft.VSTS.Common.ValueArea'] as String?,
         systemDescription: json['System.Description'] as String?,

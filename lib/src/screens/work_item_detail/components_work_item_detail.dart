@@ -123,7 +123,7 @@ class _History extends StatelessWidget {
                   if (update.revisedBy.displayName != null) Text(update.revisedBy.displayName!),
                   const Spacer(),
                   if (fields.systemChangedDate?.newValue != null)
-                    Text(DateTime.tryParse(fields.systemChangedDate!.newValue!)!.minutesAgo),
+                    Text(DateTime.parse(fields.systemChangedDate!.newValue!).minutesAgo),
                 ],
               ),
               const SizedBox(

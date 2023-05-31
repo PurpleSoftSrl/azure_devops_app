@@ -74,16 +74,16 @@ class GitRepository {
       final json = value.cast<String, dynamic>();
 
       return GitRepository(
-        defaultBranch: json[r'defaultBranch'] as String?,
-        id: json[r'id'] as String?,
-        isDisabled: json[r'isDisabled'] as bool?,
-        isFork: json[r'isFork'] as bool?,
-        name: json[r'name'] as String?,
-        parentRepository: _GitRepositoryRef.fromJson(json[r'parentRepository']),
-        project: _TeamProjectReference.fromJson(json[r'project']),
-        remoteUrl: json[r'remoteUrl'] as String?,
-        size: json[r'size'] as int?,
-        url: json[r'url'] as String?,
+        defaultBranch: json['defaultBranch'] as String?,
+        id: json['id'] as String?,
+        isDisabled: json['isDisabled'] as bool?,
+        isFork: json['isFork'] as bool?,
+        name: json['name'] as String?,
+        parentRepository: _GitRepositoryRef.fromJson(json['parentRepository']),
+        project: _TeamProjectReference.fromJson(json['project']),
+        remoteUrl: json['remoteUrl'] as String?,
+        size: json['size'] as int?,
+        url: json['url'] as String?,
       );
     }
     return null;
@@ -152,12 +152,12 @@ class _GitRepositoryRef {
       final json = value.cast<String, dynamic>();
 
       return _GitRepositoryRef(
-        id: json[r'id'] as String?,
-        isFork: json[r'isFork'] as bool?,
-        name: json[r'name'] as String?,
-        project: _TeamProjectReference.fromJson(json[r'project']),
-        remoteUrl: json[r'remoteUrl'] as String?,
-        url: json[r'url'] as String?,
+        id: json['id'] as String?,
+        isFork: json['isFork'] as bool?,
+        name: json['name'] as String?,
+        project: _TeamProjectReference.fromJson(json['project']),
+        remoteUrl: json['remoteUrl'] as String?,
+        url: json['url'] as String?,
       );
     }
     return null;
@@ -226,16 +226,17 @@ class _TeamProjectReference {
       final json = value.cast<String, dynamic>();
 
       return _TeamProjectReference(
-        abbreviation: json[r'abbreviation'] as String?,
-        defaultTeamImageUrl: json[r'defaultTeamImageUrl'] as String?,
-        description: json[r'description'] as String?,
-        id: json[r'id'] as String,
-        lastUpdateTime: DateTime.tryParse(json[r'lastUpdateTime'].toString())?.toLocal(),
-        name: json[r'name'] as String,
-        revision: json[r'revision'] as int?,
-        state: _TeamProjectReferenceStateEnum.fromJson(json[r'state']),
-        url: json[r'url'] as String?,
-        visibility: _TeamProjectReferenceVisibilityEnum.fromJson(json[r'visibility']),
+        abbreviation: json['abbreviation'] as String?,
+        defaultTeamImageUrl: json['defaultTeamImageUrl'] as String?,
+        description: json['description'] as String?,
+        id: json['id'] as String,
+        lastUpdateTime:
+            json['lastUpdateTime'] == null ? null : DateTime.parse(json['lastUpdateTime'].toString()).toLocal(),
+        name: json['name'] as String,
+        revision: json['revision'] as int?,
+        state: _TeamProjectReferenceStateEnum.fromJson(json['state']),
+        url: json['url'] as String?,
+        visibility: _TeamProjectReferenceVisibilityEnum.fromJson(json['visibility']),
       );
     }
     return null;
@@ -251,13 +252,13 @@ class _TeamProjectReferenceStateEnum {
   @override
   String toString() => value;
 
-  static const deleting = _TeamProjectReferenceStateEnum._(r'deleting');
-  static const new_ = _TeamProjectReferenceStateEnum._(r'new');
-  static const wellFormed = _TeamProjectReferenceStateEnum._(r'wellFormed');
-  static const createPending = _TeamProjectReferenceStateEnum._(r'createPending');
-  static const all = _TeamProjectReferenceStateEnum._(r'all');
-  static const unchanged = _TeamProjectReferenceStateEnum._(r'unchanged');
-  static const deleted = _TeamProjectReferenceStateEnum._(r'deleted');
+  static const deleting = _TeamProjectReferenceStateEnum._('deleting');
+  static const new_ = _TeamProjectReferenceStateEnum._('new');
+  static const wellFormed = _TeamProjectReferenceStateEnum._('wellFormed');
+  static const createPending = _TeamProjectReferenceStateEnum._('createPending');
+  static const all = _TeamProjectReferenceStateEnum._('all');
+  static const unchanged = _TeamProjectReferenceStateEnum._('unchanged');
+  static const deleted = _TeamProjectReferenceStateEnum._('deleted');
 
   static _TeamProjectReferenceStateEnum? fromJson(dynamic value) =>
       _TeamProjectReferenceStateEnumTypeTransformer().decode(value);
@@ -274,19 +275,19 @@ class _TeamProjectReferenceStateEnumTypeTransformer {
   _TeamProjectReferenceStateEnum? decode(dynamic data, {bool allowNull = true}) {
     if (data != null) {
       switch (data) {
-        case r'deleting':
+        case 'deleting':
           return _TeamProjectReferenceStateEnum.deleting;
-        case r'new':
+        case 'new':
           return _TeamProjectReferenceStateEnum.new_;
-        case r'wellFormed':
+        case 'wellFormed':
           return _TeamProjectReferenceStateEnum.wellFormed;
-        case r'createPending':
+        case 'createPending':
           return _TeamProjectReferenceStateEnum.createPending;
-        case r'all':
+        case 'all':
           return _TeamProjectReferenceStateEnum.all;
-        case r'unchanged':
+        case 'unchanged':
           return _TeamProjectReferenceStateEnum.unchanged;
-        case r'deleted':
+        case 'deleted':
           return _TeamProjectReferenceStateEnum.deleted;
         default:
           if (!allowNull) {
@@ -309,8 +310,8 @@ class _TeamProjectReferenceVisibilityEnum {
   @override
   String toString() => value;
 
-  static const private = _TeamProjectReferenceVisibilityEnum._(r'private');
-  static const public = _TeamProjectReferenceVisibilityEnum._(r'public');
+  static const private = _TeamProjectReferenceVisibilityEnum._('private');
+  static const public = _TeamProjectReferenceVisibilityEnum._('public');
 
   static _TeamProjectReferenceVisibilityEnum? fromJson(dynamic value) =>
       _TeamProjectReferenceVisibilityEnumTypeTransformer().decode(value);
@@ -327,9 +328,9 @@ class _TeamProjectReferenceVisibilityEnumTypeTransformer {
   _TeamProjectReferenceVisibilityEnum? decode(dynamic data, {bool allowNull = true}) {
     if (data != null) {
       switch (data) {
-        case r'private':
+        case 'private':
           return _TeamProjectReferenceVisibilityEnum.private;
-        case r'public':
+        case 'public':
           return _TeamProjectReferenceVisibilityEnum.public;
         default:
           if (!allowNull) {

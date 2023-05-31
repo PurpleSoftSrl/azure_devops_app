@@ -13,10 +13,7 @@ Future<void> main(List<String> args) async {
 
   await StorageServiceCore().init();
 
-  PurpleThemeHandler().init(
-    defaultTheme: AppTheme.darkTheme,
-    allThemes: AppTheme.allThemes,
-  );
+  PurpleThemeHandler().init(defaultTheme: AppTheme.darkTheme, allThemes: AppTheme.allThemes);
 
   final sentryDns = const String.fromEnvironment('SENTRY_DNS');
 

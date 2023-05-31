@@ -19,7 +19,8 @@ class Project {
         state: json['state'] as String?,
         revision: json['revision'] as int?,
         visibility: json['visibility'] as String?,
-        lastUpdateTime: DateTime.tryParse(json['lastUpdateTime']?.toString() ?? '')?.toLocal(),
+        lastUpdateTime:
+            json['lastUpdateTime'] == null ? null : DateTime.parse(json['lastUpdateTime'].toString()).toLocal(),
         defaultTeamImageUrl: json['defaultTeamImageUrl'] as String?,
         defaultTeam:
             json['defaultTeam'] == null ? null : _DefaultTeam.fromJson(json['defaultTeam'] as Map<String, dynamic>),

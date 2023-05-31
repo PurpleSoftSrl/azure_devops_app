@@ -139,7 +139,7 @@ class UserMe {
         publicAlias: json['publicAlias'] as String?,
         emailAddress: json['emailAddress'] as String?,
         coreRevision: json['coreRevision'] as int?,
-        timeStamp: DateTime.tryParse(json['timeStamp']?.toString() ?? '')?.toLocal(),
+        timeStamp: json['timeStamp'] == null ? null : DateTime.parse(json['timeStamp'].toString()).toLocal(),
         id: json['id'] as String?,
         revision: json['revision'] as int?,
       );
