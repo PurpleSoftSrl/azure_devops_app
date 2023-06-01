@@ -43,11 +43,9 @@ class _ProjectDetailScreen extends StatelessWidget {
               project.description!,
               style: context.textTheme.bodyLarge,
             ),
-            SectionHeader.withIcon(
-              text: project.defaultTeam!.name,
-              icon: DevOpsIcons.users,
-            ),
-          ] else if (ctrl.members.isNotEmpty) ...[
+            const SizedBox(height: 24),
+          ],
+          if (ctrl.members.isNotEmpty) ...[
             SectionHeader.noMargin(
               text: project.defaultTeam!.name,
               icon: DevOpsIcons.users,
