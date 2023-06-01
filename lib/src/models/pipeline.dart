@@ -14,7 +14,7 @@ class GetPipelineResponse {
 
 class Pipeline {
   factory Pipeline.fromJson(Map<String, dynamic> json) => Pipeline(
-        triggerInfo: _TriggerInfo.fromJson(json['triggerInfo'] as Map<String, dynamic>),
+        triggerInfo: TriggerInfo.fromJson(json['triggerInfo'] as Map<String, dynamic>),
         id: json['id'] as int?,
         buildNumber: json['buildNumber'] as String?,
         status: PipelineStatus.fromString(json['status'] as String),
@@ -30,9 +30,9 @@ class Pipeline {
         sourceBranch: json['sourceBranch'] as String?,
         sourceVersion: json['sourceVersion'] as String?,
         reason: json['reason'] as String?,
-        requestedFor: _LastChangedBy.fromJson(json['requestedFor'] as Map<String, dynamic>),
-        requestedBy: _LastChangedBy.fromJson(json['requestedBy'] as Map<String, dynamic>),
-        repository: _Repository.fromJson(json['repository'] as Map<String, dynamic>),
+        requestedFor: LastChangedBy.fromJson(json['requestedFor'] as Map<String, dynamic>),
+        requestedBy: LastChangedBy.fromJson(json['requestedBy'] as Map<String, dynamic>),
+        repository: PipelineRepository.fromJson(json['repository'] as Map<String, dynamic>),
       );
 
   Pipeline({
@@ -57,7 +57,7 @@ class Pipeline {
     this.repository,
   });
 
-  final _TriggerInfo? triggerInfo;
+  final TriggerInfo? triggerInfo;
   final int? id;
   final String? buildNumber;
   final PipelineStatus? status;
@@ -73,9 +73,9 @@ class Pipeline {
   final String? sourceBranch;
   final String? sourceVersion;
   final String? reason;
-  final _LastChangedBy? requestedFor;
-  final _LastChangedBy? requestedBy;
-  final _Repository? repository;
+  final LastChangedBy? requestedFor;
+  final LastChangedBy? requestedBy;
+  final PipelineRepository? repository;
 
   @visibleForTesting
   static Pipeline empty() {
@@ -95,7 +95,7 @@ class Pipeline {
   }
 
   Pipeline copyWithRequestedFor(String newName) {
-    return copyWith(requestedFor: (requestedFor ?? _LastChangedBy()).copyWith(displayName: newName));
+    return copyWith(requestedFor: (requestedFor ?? LastChangedBy()).copyWith(displayName: newName));
   }
 
   static List<Pipeline>? listFromJson(
@@ -113,7 +113,7 @@ class Pipeline {
   }
 
   Pipeline copyWith({
-    _TriggerInfo? triggerInfo,
+    TriggerInfo? triggerInfo,
     int? id,
     String? buildNumber,
     PipelineStatus? status,
@@ -129,9 +129,9 @@ class Pipeline {
     String? sourceBranch,
     String? sourceVersion,
     String? reason,
-    _LastChangedBy? requestedFor,
-    _LastChangedBy? requestedBy,
-    _Repository? repository,
+    LastChangedBy? requestedFor,
+    LastChangedBy? requestedBy,
+    PipelineRepository? repository,
   }) {
     return Pipeline(
       triggerInfo: triggerInfo ?? this.triggerInfo,
@@ -237,8 +237,8 @@ class _Definition {
   }
 }
 
-class _LastChangedBy {
-  factory _LastChangedBy.fromJson(Map<String, dynamic> json) => _LastChangedBy(
+class LastChangedBy {
+  factory LastChangedBy.fromJson(Map<String, dynamic> json) => LastChangedBy(
         displayName: json['displayName'] as String?,
         url: json['url'] as String?,
         id: json['id'] as String?,
@@ -247,7 +247,7 @@ class _LastChangedBy {
         descriptor: json['descriptor'] as String?,
       );
 
-  _LastChangedBy({
+  LastChangedBy({
     this.displayName,
     this.url,
     this.id,
@@ -263,7 +263,7 @@ class _LastChangedBy {
   final String? imageUrl;
   final String? descriptor;
 
-  _LastChangedBy copyWith({
+  LastChangedBy copyWith({
     String? displayName,
     String? url,
     String? id,
@@ -271,7 +271,7 @@ class _LastChangedBy {
     String? imageUrl,
     String? descriptor,
   }) {
-    return _LastChangedBy(
+    return LastChangedBy(
       displayName: displayName ?? this.displayName,
       url: url ?? this.url,
       id: id ?? this.id,
@@ -287,47 +287,41 @@ class _LastChangedBy {
   }
 }
 
-class _Repository {
-  factory _Repository.fromJson(Map<String, dynamic> json) => _Repository(
+class PipelineRepository {
+  factory PipelineRepository.fromJson(Map<String, dynamic> json) => PipelineRepository(
         id: json['id'] as String?,
         type: json['type'] as String?,
         name: json['name'] as String?,
         url: json['url'] as String?,
-        clean: json['clean'],
-        checkoutSubmodules: json['checkoutSubmodules'] as bool?,
       );
 
-  _Repository({
+  PipelineRepository({
     required this.id,
     required this.type,
     required this.name,
     required this.url,
-    required this.clean,
-    required this.checkoutSubmodules,
   });
 
   final String? id;
   final String? type;
   final String? name;
   final String? url;
-  final dynamic clean;
-  final bool? checkoutSubmodules;
 
   @override
   String toString() {
-    return '_Repository(id: $id, type: $type, name: $name, url: $url, clean: $clean, checkoutSubmodules: $checkoutSubmodules)';
+    return '_Repository(id: $id, type: $type, name: $name, url: $url)';
   }
 }
 
-class _TriggerInfo {
-  factory _TriggerInfo.fromJson(Map<String, dynamic> json) => _TriggerInfo(
+class TriggerInfo {
+  factory TriggerInfo.fromJson(Map<String, dynamic> json) => TriggerInfo(
         ciSourceBranch: json['ci.sourceBranch'] as String?,
         ciSourceSha: json['ci.sourceSha'] as String?,
         ciMessage: json['ci.message'] as String?,
         ciTriggerRepository: json['ci.triggerRepository'] as String?,
       );
 
-  _TriggerInfo({
+  TriggerInfo({
     this.ciSourceBranch,
     this.ciSourceSha,
     this.ciMessage,
@@ -339,13 +333,13 @@ class _TriggerInfo {
   final String? ciMessage;
   final String? ciTriggerRepository;
 
-  _TriggerInfo copyWith({
+  TriggerInfo copyWith({
     String? ciSourceBranch,
     String? ciSourceSha,
     String? ciMessage,
     String? ciTriggerRepository,
   }) {
-    return _TriggerInfo(
+    return TriggerInfo(
       ciSourceBranch: ciSourceBranch ?? this.ciSourceBranch,
       ciSourceSha: ciSourceSha ?? this.ciSourceSha,
       ciMessage: ciMessage ?? this.ciMessage,

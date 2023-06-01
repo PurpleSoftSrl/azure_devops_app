@@ -2,7 +2,7 @@ class WorkItemDetail {
   factory WorkItemDetail.fromJson(Map<String, dynamic> json) => WorkItemDetail(
         id: json['id'] as int,
         rev: json['rev'] as int,
-        fields: _GetWorkItemDetailResponseFields.fromJson(json['fields'] as Map<String, dynamic>),
+        fields: WorkItemDetailFields.fromJson(json['fields'] as Map<String, dynamic>),
         url: json['url'] as String,
       );
 
@@ -15,7 +15,7 @@ class WorkItemDetail {
 
   final int id;
   final int rev;
-  final _GetWorkItemDetailResponseFields fields;
+  final WorkItemDetailFields fields;
   final String url;
 
   @override
@@ -24,19 +24,19 @@ class WorkItemDetail {
   }
 }
 
-class _GetWorkItemDetailResponseFields {
-  factory _GetWorkItemDetailResponseFields.fromJson(Map<String, dynamic> json) => _GetWorkItemDetailResponseFields(
+class WorkItemDetailFields {
+  factory WorkItemDetailFields.fromJson(Map<String, dynamic> json) => WorkItemDetailFields(
         systemTeamProject: json['System.TeamProject'] as String,
         systemWorkItemType: json['System.WorkItemType'] as String,
         systemState: json['System.State'] as String,
         systemReason: json['System.Reason'] as String,
         systemAssignedTo: json['System.AssignedTo'] == null
             ? null
-            : _System.fromJson(json['System.AssignedTo'] as Map<String, dynamic>),
+            : WorkItemUser.fromJson(json['System.AssignedTo'] as Map<String, dynamic>),
         systemCreatedDate: DateTime.parse(json['System.CreatedDate']!.toString()).toLocal(),
-        systemCreatedBy: _System.fromJson(json['System.CreatedBy'] as Map<String, dynamic>),
+        systemCreatedBy: WorkItemUser.fromJson(json['System.CreatedBy'] as Map<String, dynamic>),
         systemChangedDate: DateTime.parse(json['System.ChangedDate']!.toString()).toLocal(),
-        systemChangedBy: _System.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
+        systemChangedBy: WorkItemUser.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
         systemCommentCount: json['System.CommentCount'] as int,
         systemTitle: json['System.Title'] as String,
         microsoftVstsCommonStateChangeDate: json['Microsoft.VSTS.Common.StateChangeDate'] == null
@@ -48,12 +48,12 @@ class _GetWorkItemDetailResponseFields {
         reproSteps: json['Microsoft.VSTS.TCM.ReproSteps'] as String?,
       );
 
-  _GetWorkItemDetailResponseFields({
+  WorkItemDetailFields({
     required this.systemTeamProject,
     required this.systemWorkItemType,
     required this.systemState,
     required this.systemReason,
-    required this.systemAssignedTo,
+    this.systemAssignedTo,
     required this.systemCreatedDate,
     required this.systemCreatedBy,
     required this.systemChangedDate,
@@ -61,21 +61,21 @@ class _GetWorkItemDetailResponseFields {
     required this.systemCommentCount,
     required this.systemTitle,
     required this.microsoftVstsCommonStateChangeDate,
-    required this.microsoftVstsCommonPriority,
-    required this.microsoftVstsCommonValueArea,
-    required this.systemDescription,
-    required this.reproSteps,
+    this.microsoftVstsCommonPriority,
+    this.microsoftVstsCommonValueArea,
+    this.systemDescription,
+    this.reproSteps,
   });
 
   final String systemTeamProject;
   final String systemWorkItemType;
   final String systemState;
   final String systemReason;
-  final _System? systemAssignedTo;
+  final WorkItemUser? systemAssignedTo;
   final DateTime systemCreatedDate;
-  final _System systemCreatedBy;
+  final WorkItemUser systemCreatedBy;
   final DateTime systemChangedDate;
-  final _System systemChangedBy;
+  final WorkItemUser systemChangedBy;
   final int systemCommentCount;
   final String systemTitle;
   final DateTime? microsoftVstsCommonStateChangeDate;
@@ -90,8 +90,8 @@ class _GetWorkItemDetailResponseFields {
   }
 }
 
-class _System {
-  factory _System.fromJson(Map<String, dynamic> json) => _System(
+class WorkItemUser {
+  factory WorkItemUser.fromJson(Map<String, dynamic> json) => WorkItemUser(
         displayName: json['displayName'] as String,
         id: json['id'] as String,
         uniqueName: json['uniqueName'] as String,
@@ -99,7 +99,7 @@ class _System {
         descriptor: json['descriptor'] as String,
       );
 
-  _System({
+  WorkItemUser({
     required this.displayName,
     required this.id,
     required this.uniqueName,

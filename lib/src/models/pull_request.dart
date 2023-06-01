@@ -88,7 +88,7 @@ class PullRequest {
           id: '',
           name: '',
           url: '',
-          project: _Project(
+          project: RepositoryProject(
             id: '',
             name: '',
             state: '',
@@ -190,7 +190,7 @@ class CreatedBy {
   CreatedBy({
     required this.displayName,
     required this.url,
-    required this.links,
+    this.links,
     required this.id,
     required this.uniqueName,
     required this.imageUrl,
@@ -236,7 +236,7 @@ class Repository {
         id: json['id'] as String,
         name: json['name'] as String,
         url: json['url'] as String,
-        project: _Project.fromJson(json['project'] as Map<String, dynamic>),
+        project: RepositoryProject.fromJson(json['project'] as Map<String, dynamic>),
       );
   Repository({
     required this.id,
@@ -248,7 +248,7 @@ class Repository {
   final String id;
   final String name;
   final String url;
-  final _Project project;
+  final RepositoryProject project;
 
   @override
   String toString() {
@@ -256,15 +256,15 @@ class Repository {
   }
 }
 
-class _Project {
-  factory _Project.fromJson(Map<String, dynamic> json) => _Project(
+class RepositoryProject {
+  factory RepositoryProject.fromJson(Map<String, dynamic> json) => RepositoryProject(
         id: json['id'] as String,
         name: json['name'] as String,
         state: json['state'] as String,
         visibility: json['visibility'] as String,
         lastUpdateTime: DateTime.parse(json['lastUpdateTime']!.toString()).toLocal(),
       );
-  _Project({
+  RepositoryProject({
     required this.id,
     required this.name,
     required this.state,

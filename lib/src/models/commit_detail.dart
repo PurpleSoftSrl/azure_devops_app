@@ -1,6 +1,6 @@
 class CommitChanges {
   factory CommitChanges.fromJson(Map<String, dynamic> json) => CommitChanges(
-        changeCounts: _ChangeCounts.fromJson(json['changeCounts'] as Map<String, dynamic>),
+        changeCounts: ChangeCounts.fromJson(json['changeCounts'] as Map<String, dynamic>),
         changes: json['changes'] == null
             ? []
             : List<Change?>.from(
@@ -12,20 +12,20 @@ class CommitChanges {
     required this.changes,
   });
 
-  final _ChangeCounts? changeCounts;
+  final ChangeCounts? changeCounts;
   final List<Change?>? changes;
 
   @override
   String toString() => 'CommitDetail(changeCounts: $changeCounts, changes: $changes)';
 }
 
-class _ChangeCounts {
-  factory _ChangeCounts.fromJson(Map<String, dynamic> json) => _ChangeCounts(
+class ChangeCounts {
+  factory ChangeCounts.fromJson(Map<String, dynamic> json) => ChangeCounts(
         edit: json['Edit'] as int?,
         add: json['Add'] as int?,
         delete: json['Delete'] as int?,
       );
-  _ChangeCounts({
+  ChangeCounts({
     required this.edit,
     required this.add,
     required this.delete,
@@ -41,7 +41,7 @@ class _ChangeCounts {
 
 class Change {
   factory Change.fromJson(Map<String, dynamic> json) => Change(
-        item: _Item.fromJson(json['item'] as Map<String, dynamic>),
+        item: Item.fromJson(json['item'] as Map<String, dynamic>),
         changeType: json['changeType'] as String?,
       );
   Change({
@@ -49,15 +49,15 @@ class Change {
     required this.changeType,
   });
 
-  final _Item? item;
+  final Item? item;
   final String? changeType;
 
   @override
   String toString() => 'Change(item: $item, changeType: $changeType)';
 }
 
-class _Item {
-  factory _Item.fromJson(Map<String, dynamic> json) => _Item(
+class Item {
+  factory Item.fromJson(Map<String, dynamic> json) => Item(
         objectId: json['objectId'] as String?,
         originalObjectId: json['originalObjectId'] as String?,
         gitObjectType: json['gitObjectType'] as String?,
@@ -65,7 +65,7 @@ class _Item {
         path: json['path'] as String?,
         url: json['url'] as String?,
       );
-  _Item({
+  Item({
     required this.objectId,
     required this.originalObjectId,
     required this.gitObjectType,

@@ -47,8 +47,19 @@ class AzureApiServiceMock implements AzureApiService {
     required String projectId,
     required String repositoryId,
     required String commitId,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    return ApiResponse.ok(
+      Commit(
+        commitId: '123456789',
+        comment: 'Test commit message',
+        author: Author(
+          name: 'Test author',
+          email: 'test@author.email',
+          date: DateTime.now(),
+        ),
+        remoteUrl: 'https://dev.azure.com/xamapps/TestProject/_git/test_repo/commit/123456789',
+      ),
+    );
   }
 
   @override
@@ -56,8 +67,53 @@ class AzureApiServiceMock implements AzureApiService {
     required String projectId,
     required String repositoryId,
     required String commitId,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    return ApiResponse.ok(
+      CommitChanges(
+        changeCounts: ChangeCounts(
+          edit: 1,
+          add: 3,
+          delete: 5,
+        ),
+        changes: [
+          for (var i = 0; i < 3; i++)
+            Change(
+              item: Item(
+                objectId: '',
+                originalObjectId: '',
+                gitObjectType: 'blob',
+                commitId: commitId,
+                path: 'added_file.$i',
+                url: '',
+              ),
+              changeType: 'add',
+            ),
+          for (var i = 0; i < 5; i++)
+            Change(
+              item: Item(
+                objectId: '',
+                originalObjectId: '',
+                gitObjectType: 'blob',
+                commitId: commitId,
+                path: 'edited_file.$i',
+                url: '',
+              ),
+              changeType: 'edit',
+            ),
+          Change(
+            item: Item(
+              objectId: '',
+              originalObjectId: '',
+              gitObjectType: 'blob',
+              commitId: commitId,
+              path: 'deleted_file.0',
+              url: '',
+            ),
+            changeType: 'delete',
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -164,12 +220,12 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   String getUserAvatarUrl(String userDescriptor) {
-    throw UnimplementedError();
+    return '';
   }
 
   @override
-  Future<ApiResponse<GraphUser>> getUserFromEmail({required String email}) {
-    throw UnimplementedError();
+  Future<ApiResponse<GraphUser>> getUserFromEmail({required String email}) async {
+    return ApiResponse.ok(GraphUser(mailAddress: email));
   }
 
   @override
@@ -215,7 +271,7 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Map<String, String>? get headers => throw UnimplementedError();
+  Map<String, String>? get headers => {};
 
   @override
   Future<LoginStatus> login(String accessToken) async {
@@ -259,16 +315,54 @@ class AzureApiServiceMock implements AzureApiService {
   Future<ApiResponse<WorkItemDetail>> getWorkItemDetail({
     required String projectName,
     required int workItemId,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    return ApiResponse.ok(
+      WorkItemDetail(
+        id: 1234,
+        rev: 0,
+        url: '',
+        fields: WorkItemDetailFields(
+          systemTeamProject: 'TestProject',
+          systemWorkItemType: 'TestType',
+          systemState: 'Active',
+          systemCreatedDate: DateTime.now(),
+          systemChangedDate: DateTime.now(),
+          systemTitle: 'Test work item title',
+          systemReason: '',
+          systemCommentCount: 0,
+          microsoftVstsCommonStateChangeDate: DateTime.now(),
+          systemAssignedTo: WorkItemUser(
+            id: '',
+            imageUrl: '',
+            descriptor: '',
+            uniqueName: 'Test User Assignee',
+            displayName: 'Test User Assignee',
+          ),
+          systemCreatedBy: WorkItemUser(
+            id: '',
+            imageUrl: '',
+            descriptor: '',
+            uniqueName: 'Test User Creator',
+            displayName: 'Test User Creator',
+          ),
+          systemChangedBy: WorkItemUser(
+            id: '',
+            imageUrl: '',
+            descriptor: '',
+            uniqueName: 'Test User Creator',
+            displayName: 'Test User Creator',
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Future<ApiResponse<List<WorkItemUpdate>>> getWorkItemUpdates({
     required String projectName,
     required int workItemId,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    return ApiResponse.ok(<WorkItemUpdate>[]);
   }
 
   @override
@@ -281,13 +375,59 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<Pipeline>> getPipeline({required String projectName, required int id}) {
-    throw UnimplementedError();
+  Future<ApiResponse<Pipeline>> getPipeline({required String projectName, required int id}) async {
+    return ApiResponse.ok(
+      Pipeline(
+        id: 1234,
+        project: Project(name: 'TestProject'),
+        buildNumber: '5678',
+        queueTime: DateTime.now(),
+        repository: PipelineRepository(id: '', type: '', name: 'test_repo', url: ''),
+        requestedFor: LastChangedBy(displayName: 'Test User'),
+        triggerInfo: TriggerInfo(ciMessage: 'Test commit message', ciSourceSha: '123456789'),
+        sourceBranch: 'refs/heads/test_branch',
+      ),
+    );
   }
 
   @override
-  Future<ApiResponse<PullRequest>> getPullRequest({required String projectName, required int id}) {
-    throw UnimplementedError();
+  Future<ApiResponse<PullRequest>> getPullRequest({required String projectName, required int id}) async {
+    return ApiResponse.ok(
+      PullRequest(
+        pullRequestId: 1234,
+        status: PullRequestState.active,
+        creationDate: DateTime.now(),
+        title: 'Test pull request title',
+        sourceRefName: 'dev',
+        targetRefName: 'main',
+        repository: Repository(
+          id: '1',
+          name: 'test_repo',
+          url: '',
+          project: RepositoryProject(
+            id: '1',
+            name: 'TestProject',
+            state: '',
+            visibility: '',
+            lastUpdateTime: DateTime.now(),
+          ),
+        ),
+        codeReviewId: 1,
+        createdBy: CreatedBy(
+          displayName: 'Test User Creator',
+          url: '',
+          id: '1',
+          uniqueName: 'Test User Creator',
+          imageUrl: '',
+          descriptor: '',
+        ),
+        isDraft: false,
+        mergeId: '',
+        reviewers: [],
+        url: '',
+        supportsIterations: false,
+      ),
+    );
   }
 
   @override
@@ -301,8 +441,8 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<Record>>> getPipelineTimeline({required String projectName, required int id}) {
-    throw UnimplementedError();
+  Future<ApiResponse<List<Record>>> getPipelineTimeline({required String projectName, required int id}) async {
+    return ApiResponse.ok(<Record>[]);
   }
 
   @override
