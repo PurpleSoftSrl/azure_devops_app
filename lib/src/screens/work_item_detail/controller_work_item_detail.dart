@@ -92,7 +92,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
           url: '',
         );
 
-    statuses = apiService.workItemStates[fields.systemTeamProject]![newWorkItemType.name] ?? [];
+    statuses = apiService.workItemStates[fields.systemTeamProject]?[newWorkItemType.name] ?? [];
 
     var newWorkItemAssignedTo =
         getSortedUsers(apiService).firstWhereOrNull((u) => u.mailAddress == fields.systemAssignedTo?.uniqueName) ??
