@@ -54,6 +54,10 @@ class _MemberDetailController {
   }
 
   void goToCommitDetail(Commit commit) {
-    AppRouter.goToCommitDetail(commit);
+    AppRouter.goToCommitDetail(
+      project: commit.projectName,
+      repository: commit.repositoryName,
+      commitId: commit.commitId!,
+    );
   }
 }

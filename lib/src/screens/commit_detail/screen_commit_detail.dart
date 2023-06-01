@@ -62,11 +62,11 @@ class _CommitDetailScreen extends StatelessWidget {
                   ),
                   ProjectChip(
                     onTap: ctrl.goToProject,
-                    projectName: ctrl.commit.projectName,
+                    projectName: ctrl.args.project,
                   ),
                   RepositoryChip(
                     onTap: ctrl.goToRepo,
-                    repositoryName: ctrl.commit.repositoryName,
+                    repositoryName: ctrl.args.repository,
                   ),
                   const SizedBox(
                     height: 10,
@@ -76,7 +76,7 @@ class _CommitDetailScreen extends StatelessWidget {
                     style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                   ),
                   Text(
-                    ctrl.commit.comment!,
+                    ctrl.commitDetail!.comment!,
                   ),
                   const SizedBox(
                     height: 20,
@@ -85,7 +85,7 @@ class _CommitDetailScreen extends StatelessWidget {
                     'CommitId: ',
                     style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                   ),
-                  SelectableText(ctrl.commit.commitId!),
+                  SelectableText(ctrl.args.commitId),
                   const SizedBox(
                     height: 20,
                   ),
@@ -97,7 +97,7 @@ class _CommitDetailScreen extends StatelessWidget {
                           style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                         ),
                         TextSpan(
-                          text: ctrl.commit.author!.date!.toSimpleDate(),
+                          text: ctrl.commitDetail!.author!.date!.toSimpleDate(),
                           style: context.textTheme.titleSmall,
                         ),
                       ],

@@ -1,27 +1,27 @@
 part of pipeline_detail;
 
 class _PipelineDetailController with ShareMixin {
-  factory _PipelineDetailController({required Pipeline pipeline, required AzureApiService apiService}) {
+  factory _PipelineDetailController({required PipelineDetailArgs args, required AzureApiService apiService}) {
     // handle page already in memory with a different build
-    if (_instances[pipeline.hashCode] != null) {
-      return _instances[pipeline.hashCode]!;
+    if (_instances[args.hashCode] != null) {
+      return _instances[args.hashCode]!;
     }
 
-    if (instance != null && pipeline.id != instance!.pipeline.id) {
-      instance = _PipelineDetailController._(pipeline, apiService);
+    if (instance != null && args.id != instance!.args.id) {
+      instance = _PipelineDetailController._(args, apiService);
     }
 
-    instance ??= _PipelineDetailController._(pipeline, apiService);
-    return _instances.putIfAbsent(pipeline.hashCode, () => instance!);
+    instance ??= _PipelineDetailController._(args, apiService);
+    return _instances.putIfAbsent(args.hashCode, () => instance!);
   }
 
-  _PipelineDetailController._(this.pipeline, this.apiService);
+  _PipelineDetailController._(this.args, this.apiService);
 
   static _PipelineDetailController? instance;
 
   static final Map<int, _PipelineDetailController> _instances = {};
 
-  final Pipeline pipeline;
+  final PipelineDetailArgs args;
   final AzureApiService apiService;
 
   final buildDetail = ValueNotifier<ApiResponse<Pipeline?>?>(null);
@@ -30,12 +30,14 @@ class _PipelineDetailController with ShareMixin {
 
   Timer? _timer;
 
+  Pipeline get pipeline => buildDetail.value!.data!;
+
   void dispose() {
     _timer?.cancel();
     _timer = null;
 
     instance = null;
-    _instances.remove(pipeline.hashCode);
+    _instances.remove(args.hashCode);
   }
 
   Future<void> init() async {
@@ -57,12 +59,12 @@ class _PipelineDetailController with ShareMixin {
   }
 
   Future<void> _init() async {
-    final res = await apiService.getPipeline(projectName: pipeline.project!.name!, id: pipeline.id!);
+    final res = await apiService.getPipeline(projectName: args.project, id: args.id);
     buildDetail.value = res;
 
     if (buildDetail.value?.isError ?? true) return;
 
-    final logs = await apiService.getPipelineTimeline(projectName: pipeline.project!.name!, id: pipeline.id!);
+    final logs = await apiService.getPipelineTimeline(projectName: args.project, id: args.id);
 
     if (logs.data == null) return;
 
@@ -126,7 +128,7 @@ class _PipelineDetailController with ShareMixin {
     );
     if (!confirm) return;
 
-    final res = await apiService.cancelPipeline(buildId: pipeline.id!, projectId: pipeline.project!.id!);
+    final res = await apiService.cancelPipeline(buildId: args.id, projectId: pipeline.project!.id!);
 
     if (res.isError) {
       return OverlayService.error('Build not canceled', description: 'Try again');
@@ -156,7 +158,7 @@ class _PipelineDetailController with ShareMixin {
   }
 
   String getBuildWebUrl() {
-    return '${apiService.basePath}/${pipeline.project!.name}/_build/results?buildId=${pipeline.id}&view=results';
+    return '${apiService.basePath}/${pipeline.project!.name}/_build/results?buildId=${args.id}&view=results';
   }
 
   void shareBuild() {
@@ -192,19 +194,11 @@ class _PipelineDetailController with ShareMixin {
   }
 
   void goToCommitDetail() {
-    final commit = Commit(
-      commitId: pipeline.triggerInfo!.ciSourceSha,
-      author: Author(
-        date: pipeline.queueTime,
-        email: pipeline.requestedFor!.uniqueName,
-        name: pipeline.requestedFor!.displayName,
-      ),
-      comment: pipeline.triggerInfo!.ciMessage,
-      remoteUrl:
-          '${apiService.basePath}/${pipeline.project!.name}/_git/${pipeline.repository!.name}/commit/${pipeline.triggerInfo!.ciSourceSha}',
+    AppRouter.goToCommitDetail(
+      project: pipeline.project!.name!,
+      repository: pipeline.repository!.name!,
+      commitId: pipeline.triggerInfo!.ciSourceSha!,
     );
-
-    AppRouter.goToCommitDetail(commit);
   }
 
   void seeLogs(Record t) {

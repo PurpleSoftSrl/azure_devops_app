@@ -32,8 +32,8 @@ class PullRequestDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final pullRequest = AppRouter.getPullRequestDetailArgs(context);
-    final ctrl = _PullRequestDetailController(pullRequest: pullRequest, apiService: apiService);
+    final args = AppRouter.getPullRequestDetailArgs(context);
+    final ctrl = _PullRequestDetailController(args: args, apiService: apiService);
     return LayoutBuilder(
       builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
           ? _PullRequestDetailScreen(ctrl, _smartphoneParameters)

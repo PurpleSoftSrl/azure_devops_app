@@ -48,8 +48,12 @@ class _ProfileController {
     recentCommits.value = commits.copyWith(data: res);
   }
 
-  Future<void> goToCommitDetail(Commit c) async {
-    await AppRouter.goToCommitDetail(c);
+  Future<void> goToCommitDetail(Commit commit) async {
+    await AppRouter.goToCommitDetail(
+      project: commit.projectName,
+      repository: commit.repositoryName,
+      commitId: commit.commitId!,
+    );
   }
 
   Future<ApiResponse<List<Commit>>> _getData() async {

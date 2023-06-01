@@ -1,5 +1,6 @@
 library repository_detail;
 
+import 'package:azure_devops/src/extensions/commit_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/repository_branches.dart';

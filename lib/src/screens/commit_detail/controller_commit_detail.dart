@@ -1,27 +1,27 @@
 part of commit_detail;
 
 class _CommitDetailController with ShareMixin {
-  factory _CommitDetailController({required Commit commit, required AzureApiService apiService}) {
+  factory _CommitDetailController({required CommitDetailArgs args, required AzureApiService apiService}) {
     // handle page already in memory with a different commit
-    if (_instances[commit.hashCode] != null) {
-      return _instances[commit.hashCode]!;
+    if (_instances[args.hashCode] != null) {
+      return _instances[args.hashCode]!;
     }
 
-    if (instance != null && commit.commitId != instance!.commit.commitId) {
-      instance = _CommitDetailController._(commit, apiService);
+    if (instance != null && args.commitId != instance!.args.commitId) {
+      instance = _CommitDetailController._(args, apiService);
     }
 
-    instance ??= _CommitDetailController._(commit, apiService);
-    return _instances.putIfAbsent(commit.hashCode, () => instance!);
+    instance ??= _CommitDetailController._(args, apiService);
+    return _instances.putIfAbsent(args.hashCode, () => instance!);
   }
 
-  _CommitDetailController._(this.commit, this.apiService);
+  _CommitDetailController._(this.args, this.apiService);
 
   static _CommitDetailController? instance;
 
   static final Map<int, _CommitDetailController> _instances = {};
 
-  final Commit commit;
+  final CommitDetailArgs args;
   final AzureApiService apiService;
 
   final commitChanges = ValueNotifier<ApiResponse<CommitChanges?>?>(null);
@@ -44,20 +44,20 @@ class _CommitDetailController with ShareMixin {
 
   void dispose() {
     instance = null;
-    _instances.remove(commit.hashCode);
+    _instances.remove(args.hashCode);
   }
 
   Future<void> init() async {
     final changesRes = await apiService.getCommitChanges(
-      projectId: commit.projectName,
-      repositoryId: commit.repositoryName,
-      commitId: commit.commitId!,
+      projectId: args.project,
+      repositoryId: args.repository,
+      commitId: args.commitId,
     );
 
     final detailRes = await apiService.getCommitDetail(
-      projectId: commit.projectName,
-      repositoryId: commit.repositoryName,
-      commitId: commit.commitId!,
+      projectId: args.project,
+      repositoryId: args.repository,
+      commitId: args.commitId,
     );
 
     commitDetail = detailRes.data;

@@ -95,7 +95,7 @@ class _PipelinesController with FilterMixin {
   }
 
   Future<void> goToPipelineDetail(Pipeline pipeline) async {
-    await AppRouter.goToPipelineDetail(pipeline);
+    await AppRouter.goToPipelineDetail(id: pipeline.id!, project: pipeline.project!.name!);
     await init();
   }
 

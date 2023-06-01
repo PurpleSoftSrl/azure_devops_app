@@ -8,11 +8,10 @@ class _WorkItemDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final item = ctrl.item;
     return AppPage<WorkItemDetail?>(
       init: ctrl.init,
       dispose: ctrl.dispose,
-      title: 'Work Item #${item.id}',
+      title: 'Work Item #${ctrl.args.id}',
       notifier: ctrl.itemDetail,
       onEmpty: (_) => Text('No work item found'),
       actions: [
@@ -81,8 +80,8 @@ class _WorkItemDetailScreen extends StatelessWidget {
         ),
       ],
       builder: (detail) {
-        final wType = ctrl.apiService.workItemTypes[detail!.fields.systemTeamProject]!
-            .firstWhereOrNull((t) => t.name == detail.fields.systemWorkItemType);
+        final wType = ctrl.apiService.workItemTypes[detail!.fields.systemTeamProject]
+            ?.firstWhereOrNull((t) => t.name == detail.fields.systemWorkItemType);
         return DefaultTextStyle(
           style: context.textTheme.titleSmall!,
           child: Column(

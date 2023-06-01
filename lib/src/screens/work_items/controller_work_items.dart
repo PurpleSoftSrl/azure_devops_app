@@ -70,7 +70,7 @@ class _WorkItemsController with FilterMixin {
   }
 
   Future<void> goToWorkItemDetail(WorkItem item) async {
-    await AppRouter.goToWorkItemDetail(item);
+    await AppRouter.goToWorkItemDetail(project: item.fields.systemTeamProject, id: item.id);
     await _getData();
   }
 

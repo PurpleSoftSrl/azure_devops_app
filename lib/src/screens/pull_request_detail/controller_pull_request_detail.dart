@@ -1,48 +1,48 @@
 part of pull_request_detail;
 
 class _PullRequestDetailController with ShareMixin {
-  factory _PullRequestDetailController({required PullRequest pullRequest, required AzureApiService apiService}) {
+  factory _PullRequestDetailController({required PullRequestDetailArgs args, required AzureApiService apiService}) {
     // handle page already in memory with a different work item
-    if (_instances[pullRequest.hashCode] != null) {
-      return _instances[pullRequest.hashCode]!;
+    if (_instances[args.hashCode] != null) {
+      return _instances[args.hashCode]!;
     }
 
-    if (instance != null && instance!.pullRequest != pullRequest) {
-      instance = _PullRequestDetailController._(pullRequest, apiService);
+    if (instance != null && instance!.args != args) {
+      instance = _PullRequestDetailController._(args, apiService);
     }
 
-    instance ??= _PullRequestDetailController._(pullRequest, apiService);
-    return _instances.putIfAbsent(pullRequest.hashCode, () => instance!);
+    instance ??= _PullRequestDetailController._(args, apiService);
+    return _instances.putIfAbsent(args.hashCode, () => instance!);
   }
 
-  _PullRequestDetailController._(this.pullRequest, this.apiService);
+  _PullRequestDetailController._(this.args, this.apiService);
 
   static _PullRequestDetailController? instance;
 
   static final Map<int, _PullRequestDetailController> _instances = {};
 
-  final PullRequest pullRequest;
+  final PullRequestDetailArgs args;
 
   final AzureApiService apiService;
 
   final prDetail = ValueNotifier<ApiResponse<PullRequest?>?>(null);
 
   String get prWebUrl =>
-      '${apiService.basePath}/${pullRequest.repository.project.name}/_git/${pullRequest.repository.name}/pullrequest/${pullRequest.pullRequestId}';
+      '${apiService.basePath}/${prDetail.value!.data!.repository.project.name}/_git/${prDetail.value!.data!.repository.name}/pullrequest/${prDetail.value!.data!.pullRequestId}';
 
   final reviewers = <_RevWithDescriptor>[];
 
   void dispose() {
     instance = null;
-    _instances.remove(pullRequest.hashCode);
+    _instances.remove(args.hashCode);
   }
 
   Future<void> init() async {
     reviewers.clear();
 
     final res = await apiService.getPullRequest(
-      projectName: pullRequest.repository.project.name,
-      id: pullRequest.pullRequestId,
+      projectName: args.project,
+      id: args.id,
     );
 
     res.data?.reviewers.sort((a, b) => a.isRequired ? -1 : 1);
@@ -61,12 +61,12 @@ class _PullRequestDetailController with ShareMixin {
 
   void goToRepo() {
     AppRouter.goToRepositoryDetail(
-      RepoDetailArgs(projectName: pullRequest.repository.project.name, repositoryName: pullRequest.repository.name),
+      RepoDetailArgs(projectName: args.project, repositoryName: prDetail.value!.data!.repository.name),
     );
   }
 
   void goToProject() {
-    AppRouter.goToProjectDetail(pullRequest.repository.project.name);
+    AppRouter.goToProjectDetail(prDetail.value!.data!.repository.project.name);
   }
 
   Future<String> _getReviewerDescriptor(Reviewer r) async {

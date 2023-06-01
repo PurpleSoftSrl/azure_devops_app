@@ -8,7 +8,6 @@ import 'package:azure_devops/src/extensions/duration_extension.dart';
 import 'package:azure_devops/src/extensions/pipeline_extension.dart';
 import 'package:azure_devops/src/extensions/pipeline_result_extension.dart';
 import 'package:azure_devops/src/mixins/share_mixin.dart';
-import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/router/router.dart';
@@ -37,9 +36,9 @@ class PipelineDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pipeline = AppRouter.getPipelineDetailArgs(context);
+    final args = AppRouter.getPipelineDetailArgs(context);
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final ctrl = _PipelineDetailController(pipeline: pipeline, apiService: apiService);
+    final ctrl = _PipelineDetailController(args: args, apiService: apiService);
     return LayoutBuilder(
       builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
           ? _PipelineDetailScreen(ctrl, _smartphoneParameters)

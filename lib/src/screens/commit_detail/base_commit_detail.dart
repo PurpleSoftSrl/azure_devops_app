@@ -30,8 +30,8 @@ class CommitDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final commit = AppRouter.getCommitDetailArgs(context);
-    final ctrl = _CommitDetailController(commit: commit, apiService: apiService);
+    final args = AppRouter.getCommitDetailArgs(context);
+    final ctrl = _CommitDetailController(args: args, apiService: apiService);
     return LayoutBuilder(
       builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
           ? _CommitDetailScreen(ctrl, _smartphoneParameters)

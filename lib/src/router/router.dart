@@ -1,9 +1,7 @@
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/project.dart';
-import 'package:azure_devops/src/models/pull_request.dart';
 import 'package:azure_devops/src/models/timeline.dart';
-import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/screens/choose_projects/base_choose_projects.dart';
 import 'package:azure_devops/src/screens/commit_detail/base_commit_detail.dart';
 import 'package:azure_devops/src/screens/commits/base_commits.dart';
@@ -112,12 +110,13 @@ class AppRouter {
     return ModalRoute.of(context)!.settings.arguments as Project?;
   }
 
-  static Future<void> goToPipelineDetail(Pipeline pipeline) async {
-    await _currentNavigator!.pushNamed(_pipelineDetail, arguments: pipeline);
+  static Future<void> goToPipelineDetail({required int id, required String project}) async {
+    final args = PipelineDetailArgs(id: id, project: project);
+    await _currentNavigator!.pushNamed(_pipelineDetail, arguments: args);
   }
 
-  static Pipeline getPipelineDetailArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as Pipeline;
+  static PipelineDetailArgs getPipelineDetailArgs(BuildContext context) {
+    return ModalRoute.of(context)!.settings.arguments as PipelineDetailArgs;
   }
 
   static Future<void> goToPipelineLogs(PipelineLogsArgs pipeline) async {
@@ -136,12 +135,17 @@ class AppRouter {
     return ModalRoute.of(context)!.settings.arguments as Project?;
   }
 
-  static Future<void> goToCommitDetail(Commit commit) async {
-    await _currentNavigator!.pushNamed(_commitDetail, arguments: commit);
+  static Future<void> goToCommitDetail({
+    required String project,
+    required String repository,
+    required String commitId,
+  }) async {
+    final args = CommitDetailArgs(project: project, repository: repository, commitId: commitId);
+    await _currentNavigator!.pushNamed(_commitDetail, arguments: args);
   }
 
-  static Commit getCommitDetailArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as Commit;
+  static CommitDetailArgs getCommitDetailArgs(BuildContext context) {
+    return ModalRoute.of(context)!.settings.arguments as CommitDetailArgs;
   }
 
   static Future<void> goToFileDiff(FileDiffArgs args) async {
@@ -168,12 +172,13 @@ class AppRouter {
     return ModalRoute.of(context)!.settings.arguments as Project?;
   }
 
-  static Future<void> goToWorkItemDetail(WorkItem item) async {
-    await _currentNavigator!.pushNamed(_workItemDetail, arguments: item);
+  static Future<void> goToWorkItemDetail({required String project, required int id}) async {
+    final args = WorkItemDetailArgs(project: project, id: id);
+    await _currentNavigator!.pushNamed(_workItemDetail, arguments: args);
   }
 
-  static WorkItem getWorkItemDetailArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as WorkItem;
+  static WorkItemDetailArgs getWorkItemDetailArgs(BuildContext context) {
+    return ModalRoute.of(context)!.settings.arguments as WorkItemDetailArgs;
   }
 
   static Future<void> goToPullRequests({Project? project}) async {
@@ -184,12 +189,13 @@ class AppRouter {
     return ModalRoute.of(context)!.settings.arguments as Project?;
   }
 
-  static Future<void> goToPullRequestDetail(PullRequest pr) async {
-    await _currentNavigator!.pushNamed(_pullRequestDetail, arguments: pr);
+  static Future<void> goToPullRequestDetail({required String project, required int id}) async {
+    final args = PullRequestDetailArgs(project: project, id: id);
+    await _currentNavigator!.pushNamed(_pullRequestDetail, arguments: args);
   }
 
-  static PullRequest getPullRequestDetailArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as PullRequest;
+  static PullRequestDetailArgs getPullRequestDetailArgs(BuildContext context) {
+    return ModalRoute.of(context)!.settings.arguments as PullRequestDetailArgs;
   }
 
   static Future<void> goToRepositoryDetail(RepoDetailArgs args) async {
@@ -258,6 +264,20 @@ class AppRouter {
     final shouldPop = await OverlayService.confirm('Attention', description: 'Do you really want to close the app?');
     return shouldPop;
   }
+}
+
+class PullRequestDetailArgs {
+  PullRequestDetailArgs({required this.project, required this.id});
+
+  final String project;
+  final int id;
+}
+
+class WorkItemDetailArgs {
+  WorkItemDetailArgs({required this.project, required this.id});
+
+  final String project;
+  final int id;
 }
 
 class RepoDetailArgs {
@@ -337,4 +357,29 @@ class FileDiffArgs {
 
   @override
   String toString() => 'FileDiffArgs(commit: $commit, filePath: $filePath, isAdded: $isAdded, isDeleted: $isDeleted)';
+}
+
+class CommitDetailArgs {
+  CommitDetailArgs({
+    required this.project,
+    required this.repository,
+    required this.commitId,
+  });
+
+  final String project;
+  final String repository;
+  final String commitId;
+
+  @override
+  String toString() => 'CommitDetailArgs(project: $project, repository: $repository, commitId: $commitId)';
+}
+
+class PipelineDetailArgs {
+  PipelineDetailArgs({required this.id, required this.project});
+
+  final int id;
+  final String project;
+
+  @override
+  String toString() => 'PipelineDetailArgs(id: $id, project: $project)';
 }

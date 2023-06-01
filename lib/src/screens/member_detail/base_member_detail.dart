@@ -1,5 +1,6 @@
 library member_detail;
 
+import 'package:azure_devops/src/extensions/commit_extension.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/router/router.dart';

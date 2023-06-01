@@ -2,30 +2,30 @@ part of work_item_detail;
 
 class _WorkItemDetailController with ShareMixin, FilterMixin {
   factory _WorkItemDetailController({
-    required WorkItem item,
+    required WorkItemDetailArgs args,
     required AzureApiService apiService,
     required StorageService storageService,
   }) {
     // handle page already in memory with a different work item
-    if (_instances[item.hashCode] != null) {
-      return _instances[item.hashCode]!;
+    if (_instances[args.hashCode] != null) {
+      return _instances[args.hashCode]!;
     }
 
-    if (instance != null && instance!.item != item) {
-      instance = _WorkItemDetailController._(item, apiService, storageService);
+    if (instance != null && instance!.args != args) {
+      instance = _WorkItemDetailController._(args, apiService, storageService);
     }
 
-    instance ??= _WorkItemDetailController._(item, apiService, storageService);
-    return _instances.putIfAbsent(item.hashCode, () => instance!);
+    instance ??= _WorkItemDetailController._(args, apiService, storageService);
+    return _instances.putIfAbsent(args.hashCode, () => instance!);
   }
 
-  _WorkItemDetailController._(this.item, this.apiService, this.storageService);
+  _WorkItemDetailController._(this.args, this.apiService, this.storageService);
 
   static _WorkItemDetailController? instance;
 
   static final Map<int, _WorkItemDetailController> _instances = {};
 
-  final WorkItem item;
+  final WorkItemDetailArgs args;
 
   final AzureApiService apiService;
 
@@ -33,7 +33,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
 
   final itemDetail = ValueNotifier<ApiResponse<WorkItemDetail?>?>(null);
 
-  String get itemWebUrl => '${apiService.basePath}/${item.fields.systemTeamProject}/_workitems/edit/${item.id}';
+  String get itemWebUrl => '${apiService.basePath}/${args.project}/_workitems/edit/${args.id}';
 
   List<WorkItemState> statuses = [];
 
@@ -44,18 +44,18 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
 
   void dispose() {
     instance = null;
-    _instances.remove(item.hashCode);
+    _instances.remove(args.hashCode);
   }
 
   Future<void> init() async {
-    final res = await apiService.getWorkItemDetail(projectName: item.fields.systemTeamProject, workItemId: item.id);
+    final res = await apiService.getWorkItemDetail(projectName: args.project, workItemId: args.id);
 
     await _getUpdates();
     itemDetail.value = res;
   }
 
   Future<void> _getUpdates() async {
-    final res = await apiService.getWorkItemUpdates(projectName: item.fields.systemTeamProject, workItemId: item.id);
+    final res = await apiService.getWorkItemUpdates(projectName: args.project, workItemId: args.id);
     updates = res.data ?? [];
   }
 
@@ -68,7 +68,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
   }
 
   void goToProject() {
-    AppRouter.goToProjectDetail(item.fields.systemTeamProject);
+    AppRouter.goToProjectDetail(args.project);
   }
 
   // ignore: long-method
@@ -156,7 +156,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
                                 height: 15,
                               ),
                             ],
-                            if (item.canBeChanged) ...[
+                            if (itemDetail.value!.data!.canBeChanged) ...[
                               Text('Type'),
                               const SizedBox(
                                 height: 5,
@@ -259,8 +259,8 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
     }
 
     final res = await apiService.editWorkItem(
-      projectName: item.fields.systemTeamProject,
-      id: item.id,
+      projectName: args.project,
+      id: args.id,
       type: newWorkItemType,
       title: newWorkItemTitle,
       assignedTo: newWorkItemAssignedTo.displayName == userAll.displayName ? null : newWorkItemAssignedTo,
@@ -279,7 +279,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
     final conf = await OverlayService.confirm('Attention', description: 'Do you really want to delete this work item?');
     if (!conf) return;
 
-    final res = await apiService.deleteWorkItem(projectName: item.fields.systemTeamProject, id: item.id);
+    final res = await apiService.deleteWorkItem(projectName: args.project, id: args.id);
     if (!(res.data ?? false)) {
       return OverlayService.error('Error', description: 'Work item not deleted');
     }
@@ -312,7 +312,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
 
     final attachmentId = attachment.url!.split('/').last;
     final res = await apiService.getWorkItemAttachment(
-      projectName: item.fields.systemTeamProject,
+      projectName: args.project,
       attachmentId: attachmentId,
       fileName: fileName,
     );

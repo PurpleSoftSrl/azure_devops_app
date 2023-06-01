@@ -53,8 +53,12 @@ class _CommitsController with FilterMixin {
     recentCommits.value = res.copyWith(data: commits);
   }
 
-  Future<void> goToCommitDetail(Commit c) async {
-    await AppRouter.goToCommitDetail(c);
+  Future<void> goToCommitDetail(Commit commit) async {
+    await AppRouter.goToCommitDetail(
+      project: commit.projectName,
+      repository: commit.repositoryName,
+      commitId: commit.commitId!,
+    );
   }
 
   void filterByProject(Project proj) {

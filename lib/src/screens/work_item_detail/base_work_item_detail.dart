@@ -13,7 +13,6 @@ import 'package:azure_devops/src/models/processes.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/work_item.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
-import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
@@ -53,8 +52,8 @@ class WorkItemDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final storageService = StorageServiceInherited.of(context).storageService;
-    final item = AppRouter.getWorkItemDetailArgs(context);
-    final ctrl = _WorkItemDetailController(item: item, apiService: apiService, storageService: storageService);
+    final args = AppRouter.getWorkItemDetailArgs(context);
+    final ctrl = _WorkItemDetailController(args: args, apiService: apiService, storageService: storageService);
     return LayoutBuilder(
       builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
           ? _WorkItemDetailScreen(ctrl, _smartphoneParameters)

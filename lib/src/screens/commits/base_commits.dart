@@ -1,5 +1,6 @@
 library commits;
 
+import 'package:azure_devops/src/extensions/commit_extension.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/project.dart';
