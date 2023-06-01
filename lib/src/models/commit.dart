@@ -56,7 +56,7 @@ class Commit {
 
   static Commit empty() {
     return Commit(
-      author: Author(name: null, email: null, date: null),
+      author: Author(),
       remoteUrl: 'https://dev.azure.com/TestOrg/TestProject/_git/TestRepo/commit/testCommitId',
     );
   }
@@ -135,17 +135,20 @@ class Author {
         name: json['name'] as String?,
         email: json['email'] as String?,
         date: json['date'] == null ? null : DateTime.parse(json['date'].toString()).toLocal(),
+        imageUrl: json['imageUrl'] as String?,
       );
 
   Author({
-    required this.name,
-    required this.email,
-    required this.date,
+    this.name,
+    this.email,
+    this.date,
+    this.imageUrl,
   });
 
   final String? name;
   final String? email;
   final DateTime? date;
+  final String? imageUrl;
 
   Author copyWith({
     String? name,

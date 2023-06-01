@@ -31,7 +31,7 @@ class _CommitDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (ctrl.author != null)
+                  if (ctrl.commitDetail!.author != null)
                     Row(
                       children: [
                         Text(
@@ -42,12 +42,16 @@ class _CommitDetailScreen extends StatelessWidget {
                           ctrl.commitDetail!.author!.name!,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        if (ctrl.apiService.organization.isNotEmpty && ctrl.author!.descriptor != null) ...[
+                        if (ctrl.apiService.organization.isNotEmpty && ctrl.commitDetail!.author!.imageUrl != null) ...[
                           const SizedBox(
                             width: 20,
                           ),
                           MemberAvatar(
-                            userDescriptor: ctrl.author!.descriptor!,
+                            // shows placeholder image for committers not inside the organization
+                            imageUrl: ctrl.commitDetail!.author!.imageUrl!.startsWith(ctrl.apiService.basePath)
+                                ? null
+                                : ctrl.commitDetail!.author!.imageUrl,
+                            userDescriptor: ctrl.commitDetail!.author!.imageUrl!.split('/').last,
                           ),
                           const SizedBox(
                             width: 10,

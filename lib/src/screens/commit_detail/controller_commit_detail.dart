@@ -28,8 +28,6 @@ class _CommitDetailController with ShareMixin {
 
   Commit? commitDetail;
 
-  GraphUser? author;
-
   Iterable<Change?> get changedFiles =>
       commitChanges.value?.data!.changes!.where((c) => c!.item!.gitObjectType == 'blob') ?? [];
 
@@ -61,11 +59,6 @@ class _CommitDetailController with ShareMixin {
     );
 
     commitDetail = detailRes.data;
-
-    if (commitDetail != null) {
-      final authorRes = await apiService.getUserFromEmail(email: commitDetail!.author!.email!);
-      author = authorRes.data;
-    }
 
     commitChanges.value = changesRes;
   }

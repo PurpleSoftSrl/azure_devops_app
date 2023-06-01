@@ -7,10 +7,12 @@ class MemberAvatar extends StatelessWidget {
   const MemberAvatar({
     super.key,
     required this.userDescriptor,
+    this.imageUrl,
     this.radius = 40,
     this.tappable = true,
   });
 
+  final String? imageUrl;
   final String userDescriptor;
   final double radius;
   final bool tappable;
@@ -22,7 +24,7 @@ class MemberAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final url = apiService.getUserAvatarUrl(userDescriptor);
+    final url = imageUrl ?? apiService.getUserAvatarUrl(userDescriptor);
     return InkWell(
       onTap: tappable ? _goToMemberDetail : null,
       child: ClipRRect(
