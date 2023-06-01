@@ -93,7 +93,6 @@ class WorkItemType {
     required this.color,
     required this.icon,
     required this.isDisabled,
-    this.inherits,
   });
 
   factory WorkItemType.fromJson(Map<String, dynamic> json) => WorkItemType(
@@ -105,7 +104,6 @@ class WorkItemType {
         color: json['color'] as String,
         icon: json['icon'] as String,
         isDisabled: json['isDisabled'] as bool,
-        inherits: json['inherits'] as bool?,
       );
 
   static WorkItemType get all {
@@ -129,7 +127,6 @@ class WorkItemType {
   final String color;
   final String icon;
   final bool isDisabled;
-  final dynamic inherits;
 
   @override
   bool operator ==(Object other) {
