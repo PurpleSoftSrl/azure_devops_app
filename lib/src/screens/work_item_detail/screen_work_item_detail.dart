@@ -8,7 +8,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPage<WorkItemDetail?>(
+    return AppPage<WorkItem?>(
       init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Work Item #${ctrl.args.id}',
@@ -112,29 +112,30 @@ class _WorkItemDetailScreen extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              Row(
-                children: [
-                  Text(
-                    'Created by: ',
-                    style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                  ),
-                  Text(detail.fields.systemCreatedBy.displayName),
-                  if (ctrl.apiService.organization.isNotEmpty) ...[
-                    const SizedBox(
-                      width: 10,
+              if (detail.fields.systemCreatedBy != null)
+                Row(
+                  children: [
+                    Text(
+                      'Created by: ',
+                      style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                     ),
-                    MemberAvatar(
-                      userDescriptor: detail.fields.systemCreatedBy.descriptor,
-                      radius: 30,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
+                    Text(detail.fields.systemCreatedBy!.displayName!),
+                    if (ctrl.apiService.organization.isNotEmpty) ...[
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      MemberAvatar(
+                        userDescriptor: detail.fields.systemCreatedBy!.descriptor!,
+                        radius: 30,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                    ],
+                    const Spacer(),
+                    Text(detail.fields.systemCreatedDate!.minutesAgo),
                   ],
-                  const Spacer(),
-                  Text(detail.fields.systemCreatedDate.minutesAgo),
-                ],
-              ),
+                ),
               const SizedBox(
                 height: 20,
               ),
@@ -183,13 +184,13 @@ class _WorkItemDetailScreen extends StatelessWidget {
                   children: [
                     TextTitleDescription(
                       title: 'Assigned to: ',
-                      description: detail.fields.systemAssignedTo!.displayName,
+                      description: detail.fields.systemAssignedTo!.displayName!,
                     ),
                     const SizedBox(
                       width: 20,
                     ),
                     MemberAvatar(
-                      userDescriptor: detail.fields.systemAssignedTo!.descriptor,
+                      userDescriptor: detail.fields.systemAssignedTo!.descriptor!,
                       radius: 30,
                     ),
                   ],
@@ -199,7 +200,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
               ),
               TextTitleDescription(
                 title: 'Created at: ',
-                description: detail.fields.systemCreatedDate.toSimpleDate(),
+                description: detail.fields.systemCreatedDate!.toSimpleDate(),
               ),
               const SizedBox(
                 height: 10,

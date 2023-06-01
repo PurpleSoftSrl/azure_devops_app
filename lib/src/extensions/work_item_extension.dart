@@ -1,5 +1,4 @@
 import 'package:azure_devops/src/extensions/context_extension.dart';
-import 'package:azure_devops/src/models/work_item.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +28,12 @@ extension WorkItemExt on WorkItem {
         return AppRouter.rootNavigator!.context.colorScheme.onBackground;
     }
   }
+
+  bool get canBeChanged =>
+      fields.systemWorkItemType != 'Feedback Request' &&
+      fields.systemWorkItemType != 'Feedback Response' &&
+      fields.systemWorkItemType != 'Code Review Request' &&
+      fields.systemWorkItemType != 'Code Review Response';
 
   static List<String> get allStates => [
         'All',
@@ -63,12 +68,4 @@ extension WorkItemExt on WorkItem {
           systemChangedDate: DateTime.now(),
         ),
       );
-}
-
-extension WorkItemDetailExt on WorkItemDetail {
-  bool get canBeChanged =>
-      fields.systemWorkItemType != 'Feedback Request' &&
-      fields.systemWorkItemType != 'Feedback Response' &&
-      fields.systemWorkItemType != 'Code Review Request' &&
-      fields.systemWorkItemType != 'Code Review Response';
 }

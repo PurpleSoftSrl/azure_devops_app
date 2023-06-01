@@ -23,7 +23,6 @@ import 'package:azure_devops/src/models/team_member.dart';
 import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/user_entitlements.dart';
-import 'package:azure_devops/src/models/work_item.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
@@ -76,7 +75,7 @@ abstract class AzureApiService {
 
   Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes();
 
-  Future<ApiResponse<WorkItemDetail>> getWorkItemDetail({
+  Future<ApiResponse<WorkItem>> getWorkItemDetail({
     required String projectName,
     required int workItemId,
   });
@@ -92,7 +91,7 @@ abstract class AzureApiService {
     required String fileName,
   });
 
-  Future<ApiResponse<WorkItemDetail>> createWorkItem({
+  Future<ApiResponse<WorkItem>> createWorkItem({
     required String projectName,
     required WorkItemType type,
     required GraphUser? assignedTo,
@@ -100,7 +99,7 @@ abstract class AzureApiService {
     required String description,
   });
 
-  Future<ApiResponse<WorkItemDetail>> editWorkItem({
+  Future<ApiResponse<WorkItem>> editWorkItem({
     required String projectName,
     required int id,
     WorkItemType? type,
@@ -626,14 +625,14 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<WorkItemDetail>> getWorkItemDetail({
+  Future<ApiResponse<WorkItem>> getWorkItemDetail({
     required String projectName,
     required int workItemId,
   }) async {
     final workItemRes = await _get('$_basePath/$projectName/_apis/wit/workitems/$workItemId?$_apiVersion');
     if (workItemRes.isError) return ApiResponse.error(workItemRes);
 
-    return ApiResponse.ok(WorkItemDetail.fromJson(jsonDecode(workItemRes.body) as Map<String, dynamic>));
+    return ApiResponse.ok(WorkItem.fromJson(jsonDecode(workItemRes.body) as Map<String, dynamic>));
   }
 
   @override
@@ -664,7 +663,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<WorkItemDetail>> createWorkItem({
+  Future<ApiResponse<WorkItem>> createWorkItem({
     required String projectName,
     required WorkItemType type,
     required GraphUser? assignedTo,
@@ -696,11 +695,11 @@ class AzureApiServiceImpl implements AzureApiService {
 
     if (createRes.isError) return ApiResponse.error(createRes);
 
-    return ApiResponse.ok(WorkItemDetail.fromJson(jsonDecode(createRes.body) as Map<String, dynamic>));
+    return ApiResponse.ok(WorkItem.fromJson(jsonDecode(createRes.body) as Map<String, dynamic>));
   }
 
   @override
-  Future<ApiResponse<WorkItemDetail>> editWorkItem({
+  Future<ApiResponse<WorkItem>> editWorkItem({
     required String projectName,
     required int id,
     WorkItemType? type,
@@ -748,7 +747,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
     if (editRes.isError) return ApiResponse.error(editRes);
 
-    return ApiResponse.ok(WorkItemDetail.fromJson(jsonDecode(editRes.body) as Map<String, dynamic>));
+    return ApiResponse.ok(WorkItem.fromJson(jsonDecode(editRes.body) as Map<String, dynamic>));
   }
 
   @override

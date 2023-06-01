@@ -31,7 +31,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
 
   final StorageService storageService;
 
-  final itemDetail = ValueNotifier<ApiResponse<WorkItemDetail?>?>(null);
+  final itemDetail = ValueNotifier<ApiResponse<WorkItem?>?>(null);
 
   String get itemWebUrl => '${apiService.basePath}/${args.project}/_workitems/edit/${args.id}';
 

@@ -102,13 +102,13 @@ class ItemFields {
         systemReason: json['System.Reason'] as String?,
         systemAssignedTo: json['System.AssignedTo'] == null
             ? null
-            : SystemChangedBy.fromJson(json['System.AssignedTo'] as Map<String, dynamic>),
+            : WorkItemUser.fromJson(json['System.AssignedTo'] as Map<String, dynamic>),
         systemCreatedDate: DateTime.parse(json['System.CreatedDate']!.toString()).toLocal(),
-        systemCreatedBy: SystemChangedBy.fromJson(json['System.CreatedBy'] as Map<String, dynamic>),
+        systemCreatedBy: WorkItemUser.fromJson(json['System.CreatedBy'] as Map<String, dynamic>),
         systemChangedDate: DateTime.parse(json['System.ChangedDate']!.toString()).toLocal(),
         systemChangedBy: json['System.ChangedBy'] == null
             ? null
-            : SystemChangedBy.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
+            : WorkItemUser.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
         systemCommentCount: json['System.CommentCount'] as int?,
         systemTitle: json['System.Title'] as String,
         microsoftVstsCommonStateChangeDate: json['Microsoft.VSTS.Common.StateChangeDate'] == null
@@ -123,13 +123,13 @@ class ItemFields {
             : DateTime.parse(json['Microsoft.VSTS.Common.ClosedDate']!.toString()).toLocal(),
         microsoftVstsCommonClosedBy: json['Microsoft.VSTS.Common.ClosedBy'] == null
             ? null
-            : SystemChangedBy.fromJson(json['Microsoft.VSTS.Common.ClosedBy'] as Map<String, dynamic>),
+            : WorkItemUser.fromJson(json['Microsoft.VSTS.Common.ClosedBy'] as Map<String, dynamic>),
         microsoftVstsCommonActivatedDate: json['Microsoft.VSTS.Common.ActivatedDate'] == null
             ? null
             : DateTime.parse(json['Microsoft.VSTS.Common.ActivatedDate']!.toString()).toLocal(),
         microsoftVstsCommonActivatedBy: json['Microsoft.VSTS.Common.ActivatedBy'] == null
             ? null
-            : SystemChangedBy.fromJson(json['Microsoft.VSTS.Common.ActivatedBy'] as Map<String, dynamic>),
+            : WorkItemUser.fromJson(json['Microsoft.VSTS.Common.ActivatedBy'] as Map<String, dynamic>),
         microsoftVstsCommonResolvedDate: json['Microsoft.VSTS.Common.ResolvedDate'] == null
             ? null
             : DateTime.parse(json['Microsoft.VSTS.Common.ResolvedDate']!.toString()).toLocal(),
@@ -141,11 +141,11 @@ class ItemFields {
   final String systemWorkItemType;
   final String systemState;
   final String? systemReason;
-  final SystemChangedBy? systemAssignedTo;
+  final WorkItemUser? systemAssignedTo;
   final DateTime? systemCreatedDate;
-  final SystemChangedBy? systemCreatedBy;
+  final WorkItemUser? systemCreatedBy;
   final DateTime systemChangedDate;
-  final SystemChangedBy? systemChangedBy;
+  final WorkItemUser? systemChangedBy;
   final int? systemCommentCount;
   final String systemTitle;
   final DateTime? microsoftVstsCommonStateChangeDate;
@@ -153,16 +153,16 @@ class ItemFields {
   final String? systemDescription;
   final String? reproSteps;
   final DateTime? microsoftVstsCommonClosedDate;
-  final SystemChangedBy? microsoftVstsCommonClosedBy;
+  final WorkItemUser? microsoftVstsCommonClosedBy;
   final DateTime? microsoftVstsCommonActivatedDate;
-  final SystemChangedBy? microsoftVstsCommonActivatedBy;
+  final WorkItemUser? microsoftVstsCommonActivatedBy;
   final DateTime? microsoftVstsCommonResolvedDate;
   final String? systemHistory;
   final String? systemTags;
 }
 
-class SystemChangedBy {
-  SystemChangedBy({
+class WorkItemUser {
+  WorkItemUser({
     this.displayName,
     this.id,
     this.uniqueName,
@@ -171,7 +171,7 @@ class SystemChangedBy {
     this.inactive,
   });
 
-  factory SystemChangedBy.fromJson(Map<String, dynamic> json) => SystemChangedBy(
+  factory WorkItemUser.fromJson(Map<String, dynamic> json) => WorkItemUser(
         displayName: json['displayName'] as String?,
         id: json['id'] as String?,
         uniqueName: json['uniqueName'] as String?,

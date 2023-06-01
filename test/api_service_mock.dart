@@ -15,7 +15,6 @@ import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/team_member.dart';
 import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
-import 'package:azure_devops/src/models/work_item.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
@@ -312,16 +311,15 @@ class AzureApiServiceMock implements AzureApiService {
   UserMe? get user => throw UnimplementedError();
 
   @override
-  Future<ApiResponse<WorkItemDetail>> getWorkItemDetail({
+  Future<ApiResponse<WorkItem>> getWorkItemDetail({
     required String projectName,
     required int workItemId,
   }) async {
     return ApiResponse.ok(
-      WorkItemDetail(
+      WorkItem(
         id: 1234,
         rev: 0,
-        url: '',
-        fields: WorkItemDetailFields(
+        fields: ItemFields(
           systemTeamProject: 'TestProject',
           systemWorkItemType: 'TestType',
           systemState: 'Active',
@@ -455,7 +453,7 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<WorkItemDetail>> createWorkItem({
+  Future<ApiResponse<WorkItem>> createWorkItem({
     required String projectName,
     required WorkItemType type,
     required GraphUser? assignedTo,
@@ -466,7 +464,7 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<WorkItemDetail>> editWorkItem({
+  Future<ApiResponse<WorkItem>> editWorkItem({
     required String projectName,
     required int id,
     WorkItemType? type,
