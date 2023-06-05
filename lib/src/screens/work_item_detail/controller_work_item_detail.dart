@@ -288,13 +288,16 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
   }
 
   Future<void> openAttachment(Relation attachment) async {
-    if (isDownloadingAttachment.value[attachment.attributes.id] ?? false) return;
+    final attributes = attachment.attributes;
 
-    final fileName = attachment.attributes.name;
+    if (attributes?.id == null || attributes?.name == null) return;
+
+    if (isDownloadingAttachment.value[attributes!.id] ?? false) return;
+
+    final fileName = attributes.name!;
 
     final tmp = await getApplicationSupportDirectory();
-    final attributeId = attachment.attributes.id;
-    final filePath = path.join(tmp.path, '${attributeId}_$fileName');
+    final filePath = path.join(tmp.path, '${attributes.id}_$fileName');
 
     // avoid downloading the same file multiple times
     if (await File(filePath).exists()) {
@@ -308,7 +311,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
       return;
     }
 
-    isDownloadingAttachment.value = {attachment.attributes.id: true};
+    isDownloadingAttachment.value = {attributes.id!: true};
 
     final attachmentId = attachment.url!.split('/').last;
     final res = await apiService.getWorkItemAttachment(

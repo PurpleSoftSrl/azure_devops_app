@@ -220,7 +220,7 @@ class _AttachmentRow extends StatelessWidget {
           children: [
             ValueListenableBuilder(
               valueListenable: ctrl.isDownloadingAttachment,
-              builder: (_, isDownloading, __) => (isDownloading[att.attributes.id] ?? false)
+              builder: (_, isDownloading, __) => (isDownloading[att.attributes?.id] ?? false)
                   ? SizedBox(
                       width: 15,
                       height: 15,
@@ -235,7 +235,7 @@ class _AttachmentRow extends StatelessWidget {
             Flexible(
               child: Builder(
                 builder: (ctx) => Text(
-                  att.attributes.name,
+                  att.attributes?.name ?? '-',
                   style: DefaultTextStyle.of(ctx).style.copyWith(decoration: TextDecoration.underline),
                   overflow: TextOverflow.ellipsis,
                 ),

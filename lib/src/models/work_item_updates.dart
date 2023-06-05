@@ -305,14 +305,15 @@ class Relation {
   Relation({required this.rel, this.url, required this.attributes});
 
   factory Relation.fromJson(Map<String, dynamic> json) => Relation(
-        rel: json['rel'] as String,
+        rel: json['rel'] as String?,
         url: json['url'] as String?,
-        attributes: _Attributes.fromJson(json['attributes'] as Map<String, dynamic>),
+        attributes:
+            json['attributes'] == null ? null : _Attributes.fromJson(json['attributes'] as Map<String, dynamic>),
       );
 
-  final String rel;
+  final String? rel;
   final String? url;
-  final _Attributes attributes;
+  final _Attributes? attributes;
 
   @override
   String toString() => '_Relation(rel: $rel, url: $url, attributes: $attributes)';
@@ -320,20 +321,20 @@ class Relation {
 
 class _Attributes {
   _Attributes({
-    required this.id,
+    this.id,
     this.resourceSize,
-    required this.name,
+    this.name,
   });
 
   factory _Attributes.fromJson(Map<String, dynamic> json) => _Attributes(
-        id: json['id'] as int,
+        id: json['id'] as int?,
         resourceSize: json['resourceSize'] as int?,
-        name: json['name'] as String,
+        name: json['name'] as String?,
       );
 
-  final int id;
+  final int? id;
   final int? resourceSize;
-  final String name;
+  final String? name;
 
   @override
   String toString() {
