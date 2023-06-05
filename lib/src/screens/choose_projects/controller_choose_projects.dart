@@ -22,6 +22,8 @@ class _ChooseProjectsController {
 
   final chooseAll = ValueNotifier(false);
 
+  final _initiallyChosenProjects = <Project>[];
+
   void dispose() {
     instance = null;
   }
@@ -62,6 +64,8 @@ class _ChooseProjectsController {
       ),
       errorResponse: projectsRes.errorResponse,
     );
+
+    _initiallyChosenProjects.addAll(chosenProjects.value!.data!.projects);
   }
 
   void toggleChooseAll() {
@@ -95,6 +99,12 @@ class _ChooseProjectsController {
     if (removeRoutes) {
       unawaited(AppRouter.goToTabs());
     } else {
+      final hasChangedProjects = _initiallyChosenProjects != chosenProjects.value!.data!.projects;
+      if (hasChangedProjects) {
+        // get new work item types to avoid errors in work items creation
+        unawaited(apiService.getWorkItemTypes(force: true));
+      }
+
       AppRouter.popRoute();
     }
   }

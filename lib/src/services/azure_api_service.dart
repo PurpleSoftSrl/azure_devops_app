@@ -73,7 +73,7 @@ abstract class AzureApiService {
     GraphUser? assignedTo,
   });
 
-  Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes();
+  Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes({bool force = false});
 
   Future<ApiResponse<WorkItem>> getWorkItemDetail({
     required String projectName,
@@ -569,8 +569,11 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes() async {
-    if (_workItemTypes.isNotEmpty) return ApiResponse.ok(_workItemTypes);
+  Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes({bool force = false}) async {
+    if (_workItemTypes.isNotEmpty && !force) {
+      // return cached types to avoid too many api calls
+      return ApiResponse.ok(_workItemTypes);
+    }
 
     final processesRes = await _get('$_basePath/_apis/work/processes?\$expand=projects&$_apiVersion');
     if (processesRes.isError) return ApiResponse.error(processesRes);

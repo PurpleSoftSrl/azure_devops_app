@@ -37,7 +37,7 @@ class _HtmlWidget extends StatelessWidget {
             Widget image;
             if (isNetworkImage) {
               image = CachedNetworkImage(
-                imageUrl: ctx.tree.attributes['src']!,
+                imageUrl: src,
                 httpHeaders: apiService.headers,
                 fit: BoxFit.contain,
                 height: double.tryParse(ctx.tree.attributes['height'] ?? ''),
