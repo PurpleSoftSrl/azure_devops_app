@@ -28,14 +28,28 @@ class _HtmlWidget extends StatelessWidget {
       customRenders: {
         (ctx) => ctx.tree.element?.localName == 'img': CustomRender.widget(
           widget: (ctx, child) {
-            final image = CachedNetworkImage(
-              imageUrl: ctx.tree.attributes['src']!,
-              httpHeaders: apiService.headers,
-              fit: BoxFit.contain,
-              height: double.tryParse(ctx.tree.attributes['height'] ?? ''),
-              width: double.tryParse(ctx.tree.attributes['width'] ?? ''),
-              placeholder: (_, __) => Center(child: const CircularProgressIndicator()),
-            );
+            final src = ctx.tree.attributes['src'];
+            if (src == null) return const SizedBox();
+
+            final isNetworkImage = src.startsWith('http');
+            final isBase64 = src.startsWith('data:');
+
+            Widget image;
+            if (isNetworkImage) {
+              image = CachedNetworkImage(
+                imageUrl: ctx.tree.attributes['src']!,
+                httpHeaders: apiService.headers,
+                fit: BoxFit.contain,
+                height: double.tryParse(ctx.tree.attributes['height'] ?? ''),
+                width: double.tryParse(ctx.tree.attributes['width'] ?? ''),
+                placeholder: (_, __) => Center(child: const CircularProgressIndicator()),
+              );
+            } else if (isBase64) {
+              final data = src.split(',').last;
+              image = Image.memory(base64Decode(data));
+            } else {
+              image = const SizedBox();
+            }
 
             late OverlayEntry entry;
 
