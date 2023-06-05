@@ -67,6 +67,9 @@ class WorkItem {
           systemChangedDate: DateTime.now(),
         ),
       );
+
+  @override
+  String toString() => 'WorkItem(id: $id, rev: $rev, fields: $fields)';
 }
 
 class ItemFields {
@@ -159,6 +162,11 @@ class ItemFields {
   final DateTime? microsoftVstsCommonResolvedDate;
   final String? systemHistory;
   final String? systemTags;
+
+  @override
+  String toString() {
+    return 'ItemFields(systemTeamProject: $systemTeamProject, systemWorkItemType: $systemWorkItemType, systemState: $systemState, systemReason: $systemReason, systemAssignedTo: $systemAssignedTo, systemCreatedDate: $systemCreatedDate, systemCreatedBy: $systemCreatedBy, systemChangedDate: $systemChangedDate, systemChangedBy: $systemChangedBy, systemCommentCount: $systemCommentCount, systemTitle: $systemTitle, microsoftVstsCommonStateChangeDate: $microsoftVstsCommonStateChangeDate, microsoftVstsCommonPriority: $microsoftVstsCommonPriority, systemDescription: $systemDescription, reproSteps: $reproSteps, microsoftVstsCommonClosedDate: $microsoftVstsCommonClosedDate, microsoftVstsCommonClosedBy: $microsoftVstsCommonClosedBy, microsoftVstsCommonActivatedDate: $microsoftVstsCommonActivatedDate, microsoftVstsCommonActivatedBy: $microsoftVstsCommonActivatedBy, microsoftVstsCommonResolvedDate: $microsoftVstsCommonResolvedDate, systemHistory: $systemHistory, systemTags: $systemTags)';
+  }
 }
 
 class WorkItemUser {
@@ -186,4 +194,9 @@ class WorkItemUser {
   final String? imageUrl;
   final String? descriptor;
   final bool? inactive;
+
+  @override
+  String toString() {
+    return 'WorkItemUser(displayName: $displayName, id: $id, uniqueName: $uniqueName, imageUrl: $imageUrl, descriptor: $descriptor, inactive: $inactive)';
+  }
 }
