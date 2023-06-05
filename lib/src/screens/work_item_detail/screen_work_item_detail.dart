@@ -174,6 +174,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                 ),
                 _HtmlWidget(
                   data: detail.fields.reproSteps!,
+                  style: context.textTheme.titleSmall,
                 ),
               ],
               const Divider(

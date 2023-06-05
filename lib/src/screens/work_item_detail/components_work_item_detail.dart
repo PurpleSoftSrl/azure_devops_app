@@ -73,7 +73,7 @@ class _HtmlWidget extends StatelessWidget {
           },
         ),
         (ctx) => ctx.tree.element?.localName == 'br': CustomRender.widget(
-          widget: (ctx, child) => const Text('\n'),
+          widget: (ctx, child) => const Text(''),
         ),
         (ctx) => ctx.tree.element?.localName == 'a' && ctx.tree.attributes['data-vss-mention'] != null:
             CustomRender.widget(
