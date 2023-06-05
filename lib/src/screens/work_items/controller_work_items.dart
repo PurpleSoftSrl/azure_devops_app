@@ -170,9 +170,10 @@ class _WorkItemsController with FilterMixin {
                       StatefulBuilder(
                         builder: (_, setState) {
                           if (newWorkItemProject != projectAll) {
-                            projectWorkItemTypes = allProjectsWorkItemTypes[newWorkItemProject.name]!
-                                .where((t) => t != WorkItemType.all)
-                                .toList();
+                            projectWorkItemTypes = allProjectsWorkItemTypes[newWorkItemProject.name]
+                                    ?.where((t) => t != WorkItemType.all)
+                                    .toList() ??
+                                [];
 
                             if (!projectWorkItemTypes.contains(newWorkItemType)) {
                               newWorkItemType = projectWorkItemTypes.first;
