@@ -916,10 +916,9 @@ class AzureApiServiceImpl implements AzureApiService {
     if (pipelineRes.isError) return ApiResponse.error(pipelineRes);
 
     final timelineRes = await _get('$_basePath/$projectName/_apis/build/builds/$id/timeline?$_apiVersion');
-    if (timelineRes.isError) return ApiResponse.error(timelineRes);
 
     final pipeline = Pipeline.fromResponse(pipelineRes);
-    final timeline = GetTimelineResponse.fromResponse(timelineRes);
+    final timeline = timelineRes.isError ? <Record>[] : GetTimelineResponse.fromResponse(timelineRes);
     return ApiResponse.ok(PipelineWithTimeline(pipeline: pipeline, timeline: timeline));
   }
 

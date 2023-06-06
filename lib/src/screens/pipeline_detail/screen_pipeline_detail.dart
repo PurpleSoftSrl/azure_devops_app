@@ -190,13 +190,6 @@ class _PipelineDetailScreen extends StatelessWidget {
               const SizedBox(
                 height: 40,
               ),
-              Text(
-                'Timeline:',
-                style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
               ValueListenableBuilder<List<_Stage>?>(
                 valueListenable: ctrl.pipeStages,
                 builder: (_, records, __) => records == null
@@ -204,98 +197,107 @@ class _PipelineDetailScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 20),
                         child: Center(child: const CircularProgressIndicator()),
                       )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: records
-                            .map(
-                              (stage) => Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  if (stage.stage.name != '__default')
-                                    Row(
-                                      children: [
-                                        if (stage.stage.state == TaskStatus.inProgress)
-                                          InProgressPipelineIcon(
-                                            child: stage.stage.state.icon,
-                                          )
-                                        else
-                                          stage.stage.state == TaskStatus.completed && stage.stage.result != null
-                                              ? stage.stage.result!.icon
-                                              : stage.stage.state.icon,
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Expanded(child: Text('${stage.stage.name} (${stage.stage.type})')),
-                                      ],
-                                    ),
-                                  ...stage.phases.expand((phase) => phase.jobs).map(
-                                        (job) => Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 10, top: 5),
-                                              child: Row(
-                                                children: [
-                                                  if (job.job.state == TaskStatus.inProgress)
-                                                    InProgressPipelineIcon(
-                                                      child: job.job.state.icon,
-                                                    )
-                                                  else
-                                                    job.job.state == TaskStatus.completed && job.job.result != null
-                                                        ? job.job.result!.icon
-                                                        : job.job.state.icon,
-                                                  const SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Expanded(child: Text('${job.job.name} (${job.job.type})')),
-                                                ],
+                    : records.isEmpty
+                        ? const SizedBox()
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Timeline:',
+                                style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              ...records.map(
+                                (stage) => Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (stage.stage.name != '__default')
+                                      Row(
+                                        children: [
+                                          if (stage.stage.state == TaskStatus.inProgress)
+                                            InProgressPipelineIcon(
+                                              child: stage.stage.state.icon,
+                                            )
+                                          else
+                                            stage.stage.state == TaskStatus.completed && stage.stage.result != null
+                                                ? stage.stage.result!.icon
+                                                : stage.stage.state.icon,
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Expanded(child: Text('${stage.stage.name} (${stage.stage.type})')),
+                                        ],
+                                      ),
+                                    ...stage.phases.expand((phase) => phase.jobs).map(
+                                          (job) => Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 10, top: 5),
+                                                child: Row(
+                                                  children: [
+                                                    if (job.job.state == TaskStatus.inProgress)
+                                                      InProgressPipelineIcon(
+                                                        child: job.job.state.icon,
+                                                      )
+                                                    else
+                                                      job.job.state == TaskStatus.completed && job.job.result != null
+                                                          ? job.job.result!.icon
+                                                          : job.job.state.icon,
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Expanded(child: Text('${job.job.name} (${job.job.type})')),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                            ...job.tasks.map(
-                                              (task) => InkWell(
-                                                onTap: () => ctrl.seeLogs(task),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(bottom: 5, left: 20),
-                                                  child: Row(
-                                                    children: [
-                                                      if (task.state == TaskStatus.inProgress)
-                                                        InProgressPipelineIcon(
-                                                          child: task.state.icon,
-                                                        )
-                                                      else
-                                                        task.state == TaskStatus.completed && task.result != null
-                                                            ? task.result!.icon
-                                                            : task.state.icon,
-                                                      const SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      Expanded(
-                                                        child: Text(
-                                                          task.name,
-                                                          style: context.textTheme.titleSmall!
-                                                              .copyWith(decoration: TextDecoration.underline),
-                                                          overflow: TextOverflow.ellipsis,
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                              ...job.tasks.map(
+                                                (task) => InkWell(
+                                                  onTap: () => ctrl.seeLogs(task),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(bottom: 5, left: 20),
+                                                    child: Row(
+                                                      children: [
+                                                        if (task.state == TaskStatus.inProgress)
+                                                          InProgressPipelineIcon(
+                                                            child: task.state.icon,
+                                                          )
+                                                        else
+                                                          task.state == TaskStatus.completed && task.result != null
+                                                              ? task.result!.icon
+                                                              : task.state.icon,
+                                                        const SizedBox(
+                                                          width: 10,
                                                         ),
-                                                      ),
-                                                    ],
+                                                        Expanded(
+                                                          child: Text(
+                                                            task.name,
+                                                            style: context.textTheme.titleSmall!
+                                                                .copyWith(decoration: TextDecoration.underline),
+                                                            overflow: TextOverflow.ellipsis,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                ],
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            )
-                            .toList(),
-                      ),
+                            ],
+                          ),
               ),
             ],
           ),
