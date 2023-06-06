@@ -1,9 +1,8 @@
 import 'dart:convert';
 
-class GetRepoItemsResponse {
-  factory GetRepoItemsResponse.fromRawJson(String str) =>
-      GetRepoItemsResponse.fromJson(json.decode(str) as Map<String, dynamic>);
+import 'package:http/http.dart';
 
+class GetRepoItemsResponse {
   factory GetRepoItemsResponse.fromJson(Map<String, dynamic> json) => GetRepoItemsResponse(
         count: json['count'] as int,
         repoItems: List<RepoItem>.from(
@@ -15,6 +14,9 @@ class GetRepoItemsResponse {
     required this.count,
     required this.repoItems,
   });
+
+  static List<RepoItem> fromResponse(Response res) =>
+      GetRepoItemsResponse.fromJson(json.decode(res.body) as Map<String, dynamic>).repoItems;
 
   final int count;
   final List<RepoItem> repoItems;

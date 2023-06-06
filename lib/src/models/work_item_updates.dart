@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:http/http.dart';
+
 class WorkItemUpdatesResponse {
   factory WorkItemUpdatesResponse.fromJson(Map<String, dynamic> json) => WorkItemUpdatesResponse(
         count: json['count'] as int,
@@ -10,6 +14,9 @@ class WorkItemUpdatesResponse {
     required this.count,
     required this.updates,
   });
+
+  static List<WorkItemUpdate> fromResponse(Response res) =>
+      WorkItemUpdatesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).updates;
 
   final int count;
   final List<WorkItemUpdate> updates;

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:azure_devops/src/models/project.dart';
+import 'package:http/http.dart';
 
 class GetProcessesResponse {
   GetProcessesResponse({
@@ -12,6 +15,9 @@ class GetProcessesResponse {
           (json['value'] as List<dynamic>).map((p) => WorkProcess.fromJson(p as Map<String, dynamic>)),
         ),
       );
+
+  static List<WorkProcess> fromResponse(Response res) =>
+      GetProcessesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).processes;
 
   final int count;
   final List<WorkProcess> processes;
@@ -78,6 +84,9 @@ class GetWorkItemTypesResponse {
           (json['value'] as List<dynamic>).map((t) => WorkItemType.fromJson(t as Map<String, dynamic>)),
         ),
       );
+
+  static List<WorkItemType> fromResponse(Response res) =>
+      GetWorkItemTypesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).types;
 
   final int count;
   final List<WorkItemType> types;
@@ -153,6 +162,9 @@ class GetWorkItemStatesResponse {
           (json['value'] as List<dynamic>).map((s) => WorkItemState.fromJson(s as Map<String, dynamic>)),
         ),
       );
+
+  static List<WorkItemState> fromResponse(Response res) =>
+      GetWorkItemStatesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).states;
 
   final int count;
   final List<WorkItemState> states;

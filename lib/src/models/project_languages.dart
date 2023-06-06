@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:http/http.dart';
+
 class GetProjectLanguagesResponse {
   factory GetProjectLanguagesResponse.fromJson(Map<String, dynamic> json) => GetProjectLanguagesResponse(
         languageBreakdown: List<LanguageBreakdown>.from(
@@ -16,6 +20,9 @@ class GetProjectLanguagesResponse {
     required this.repositoryLanguageAnalytics,
     required this.id,
   });
+
+  static List<LanguageBreakdown> fromResponse(Response res) =>
+      GetProjectLanguagesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).languageBreakdown;
 
   final List<LanguageBreakdown> languageBreakdown;
   final List<_RepositoryLanguageAnalytic> repositoryLanguageAnalytics;

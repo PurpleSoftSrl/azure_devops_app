@@ -454,9 +454,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
     if (orgsRes.isError) return ApiResponse.error(orgsRes);
 
-    return ApiResponse.ok(
-      GetOrganizationsResponse.fromJson(jsonDecode(orgsRes.body) as Map<String, dynamic>).organizations,
-    );
+    return ApiResponse.ok(GetOrganizationsResponse.fromResponse(orgsRes));
   }
 
   @override
@@ -473,8 +471,7 @@ class AzureApiServiceImpl implements AzureApiService {
     final projectsRes = await _get('$_basePath/_apis/projects?$_apiVersion&getDefaultTeamImageUrl=true');
     if (projectsRes.isError) return ApiResponse.error(projectsRes);
 
-    final res = GetProjectsResponse.fromJson(jsonDecode(projectsRes.body) as Map<String, dynamic>);
-    _projects = res.projects;
+    _projects = GetProjectsResponse.fromResponse(projectsRes);
 
     // check if user is authorized to get images. This is done to avoid throwing many exceptions
     if (_projects.isNotEmpty) {
@@ -493,9 +490,7 @@ class AzureApiServiceImpl implements AzureApiService {
     final projectRes = await _get('$_basePath/_apis/projects/$projectName?$_apiVersion');
     if (projectRes.isError) return ApiResponse.error(projectRes);
 
-    final project = Project.fromJson(jsonDecode(projectRes.body) as Map<String, dynamic>);
-
-    return ApiResponse.ok(project);
+    return ApiResponse.ok(Project.fromResponse(projectRes));
   }
 
   @override
@@ -549,7 +544,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
     if (workItemIdsRes.isError) return ApiResponse.error(workItemIdsRes);
 
-    final workItemIds = GetWorkItemIds.fromJson(jsonDecode(workItemIdsRes.body) as Map<String, dynamic>).workItems;
+    final workItemIds = GetWorkItemIds.fromResponse(workItemIdsRes);
     if (workItemIds.isEmpty) return ApiResponse.ok([]);
 
     final ids = workItemIds.map((e) => e.id).join(',');
@@ -558,9 +553,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
     if (allWorkItemsRes.isError) return ApiResponse.error(allWorkItemsRes);
 
-    return ApiResponse.ok(
-      GetWorkItemsResponse.fromJson(jsonDecode(allWorkItemsRes.body) as Map<String, dynamic>).items,
-    );
+    return ApiResponse.ok(GetWorkItemsResponse.fromResponse(allWorkItemsRes));
   }
 
   @override
@@ -573,10 +566,7 @@ class AzureApiServiceImpl implements AzureApiService {
     final processesRes = await _get('$_basePath/_apis/work/processes?\$expand=projects&$_apiVersion');
     if (processesRes.isError) return ApiResponse.error(processesRes);
 
-    final processes = GetProcessesResponse.fromJson(jsonDecode(processesRes.body) as Map<String, dynamic>)
-        .processes
-        .where((p) => p.projects.isNotEmpty)
-        .toList();
+    final processes = GetProcessesResponse.fromResponse(processesRes).where((p) => p.projects.isNotEmpty).toList();
 
     final processWorkItems = <WorkProcess, List<WorkItemType>>{};
 
@@ -586,10 +576,7 @@ class AzureApiServiceImpl implements AzureApiService {
           (res) {
             if (res.isError) return;
 
-            final types = GetWorkItemTypesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>)
-                .types
-                .where((t) => !t.isDisabled)
-                .toList();
+            final types = GetWorkItemTypesResponse.fromResponse(res).where((t) => !t.isDisabled).toList();
 
             final projectsToSearch = proc.projects.where((p) => (_chosenProjects ?? _projects).contains(p));
 
@@ -609,7 +596,7 @@ class AzureApiServiceImpl implements AzureApiService {
             (res) {
               if (res.isError) return;
 
-              final states = GetWorkItemStatesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).states;
+              final states = GetWorkItemStatesResponse.fromResponse(res);
               final projectsToSearch = procEntry.key.projects.where((p) => (_chosenProjects ?? _projects).contains(p));
               for (final proj in projectsToSearch) {
                 _workItemStates.putIfAbsent(proj.name!, () => {wt.name: states});
@@ -634,11 +621,8 @@ class AzureApiServiceImpl implements AzureApiService {
         await _get('$_basePath/$projectName/_apis/wit/workitems/$workItemId/updates?$_apiVersion');
     if (workItemUpdatesRes.isError) return ApiResponse.error(workItemUpdatesRes);
 
-    final item = WorkItem.fromJson(jsonDecode(workItemRes.body) as Map<String, dynamic>);
-
-    final updates =
-        WorkItemUpdatesResponse.fromJson(jsonDecode(workItemUpdatesRes.body) as Map<String, dynamic>).updates;
-
+    final item = WorkItem.fromResponse(workItemRes);
+    final updates = WorkItemUpdatesResponse.fromResponse(workItemUpdatesRes);
     return ApiResponse.ok(WorkItemWithUpdates(item: item, updates: updates));
   }
 
@@ -688,7 +672,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
     if (createRes.isError) return ApiResponse.error(createRes);
 
-    return ApiResponse.ok(WorkItem.fromJson(jsonDecode(createRes.body) as Map<String, dynamic>));
+    return ApiResponse.ok(WorkItem.fromResponse(createRes));
   }
 
   @override
@@ -740,7 +724,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
     if (editRes.isError) return ApiResponse.error(editRes);
 
-    return ApiResponse.ok(WorkItem.fromJson(jsonDecode(editRes.body) as Map<String, dynamic>));
+    return ApiResponse.ok(WorkItem.fromResponse(editRes));
   }
 
   @override
@@ -764,9 +748,7 @@ class AzureApiServiceImpl implements AzureApiService {
           await _get('https://vsaex.dev.azure.com/$_organization/_apis/userentitlements?$_apiVersion$creatorSearch');
       if (entitlementRes.isError) return ApiResponse.error(entitlementRes);
 
-      final member = GetUserEntitlementsResponse.fromJson(jsonDecode(entitlementRes.body) as Map<String, dynamic>)
-          .members
-          .firstOrNull;
+      final member = GetUserEntitlementsResponse.fromResponse(entitlementRes).firstOrNull;
       if (member == null) return ApiResponse.error(null);
 
       creatorFilter = '&searchCriteria.creatorId=${member.id}';
@@ -790,11 +772,7 @@ class AzureApiServiceImpl implements AzureApiService {
     if (isAllError) return ApiResponse.error(allProjectPrs.firstOrNull);
 
     return ApiResponse.ok(
-      allProjectPrs
-          .where((r) => !r.isError)
-          .map((r) => GetPullRequestsResponse.fromJson(jsonDecode(r.body) as Map<String, dynamic>).pullRequests)
-          .expand((b) => b)
-          .toList(),
+      allProjectPrs.where((r) => !r.isError).map(GetPullRequestsResponse.fromResponse).expand((b) => b).toList(),
     );
   }
 
@@ -803,9 +781,7 @@ class AzureApiServiceImpl implements AzureApiService {
     final repositoriesRes = await _get('$_basePath/$projectName/_apis/git/repositories?$_apiVersion');
     if (repositoriesRes.isError) return ApiResponse.error(repositoriesRes);
 
-    return ApiResponse.ok(
-      GetRepositoriesResponse.fromJson(jsonDecode(repositoriesRes.body) as Map<String, dynamic>).repositories,
-    );
+    return ApiResponse.ok(GetRepositoriesResponse.fromResponse(repositoriesRes));
   }
 
   @override
@@ -813,7 +789,7 @@ class AzureApiServiceImpl implements AzureApiService {
     final teamsRes = await _get('$_basePath/_apis/teams?$_apiVersion-preview');
     if (teamsRes.isError) return ApiResponse.error(teamsRes);
 
-    final teams = GetTeamsResponse.fromJson(jsonDecode(teamsRes.body) as Map<String, dynamic>).teams!;
+    final teams = GetTeamsResponse.fromResponse(teamsRes);
     final team = teams.firstWhereOrNull((t) => t!.projectId == projectId || t.projectName == projectId);
 
     if (team == null) {
@@ -823,9 +799,7 @@ class AzureApiServiceImpl implements AzureApiService {
     final membersRes = await _get('$_basePath/_apis/projects/$projectId/teams/${team.id}/members?$_apiVersion');
     if (membersRes.isError) return ApiResponse.error(membersRes);
 
-    return ApiResponse.ok(
-      GetTeamMembersResponse.fromJson(jsonDecode(membersRes.body) as Map<String, dynamic>).members,
-    );
+    return ApiResponse.ok(GetTeamMembersResponse.fromResponse(membersRes));
   }
 
   @override
@@ -833,7 +807,7 @@ class AzureApiServiceImpl implements AzureApiService {
     final prRes = await _get('$_basePath/$projectName/_apis/git/pullrequests/$id?$_apiVersion');
     if (prRes.isError) return ApiResponse.error(prRes);
 
-    return ApiResponse.ok(PullRequest.fromJson(jsonDecode(prRes.body) as Map<String, dynamic>));
+    return ApiResponse.ok(PullRequest.fromResponse(prRes));
   }
 
   @override
@@ -855,7 +829,7 @@ class AzureApiServiceImpl implements AzureApiService {
     );
     if (itemsRes.isError) return ApiResponse.error(itemsRes);
 
-    return ApiResponse.ok(GetRepoItemsResponse.fromRawJson(itemsRes.body).repoItems);
+    return ApiResponse.ok(GetRepoItemsResponse.fromResponse(itemsRes));
   }
 
   @override
@@ -863,12 +837,11 @@ class AzureApiServiceImpl implements AzureApiService {
     required String projectName,
     required String repoName,
   }) async {
-    final branchesRes = await _get(
-      '$_basePath/$projectName/_apis/git/repositories/$repoName/stats/branches?$_apiVersion',
-    );
+    final branchesRes =
+        await _get('$_basePath/$projectName/_apis/git/repositories/$repoName/stats/branches?$_apiVersion');
     if (branchesRes.isError) return ApiResponse.error(branchesRes);
 
-    return ApiResponse.ok(RepositoryBranchesResponse.fromRawJson(branchesRes.body).branches);
+    return ApiResponse.ok(RepositoryBranchesResponse.fromResponse(branchesRes));
   }
 
   @override
@@ -905,17 +878,10 @@ class AzureApiServiceImpl implements AzureApiService {
 
   @override
   Future<ApiResponse<List<LanguageBreakdown>>> getProjectLanguages({required String projectName}) async {
-    final langsRes = await _get(
-      '$_basePath/$projectName/_apis/projectanalysis/languagemetrics',
-    );
-
+    final langsRes = await _get('$_basePath/$projectName/_apis/projectanalysis/languagemetrics');
     if (langsRes.isError) return ApiResponse.error(langsRes);
 
-    return ApiResponse.ok(
-      GetProjectLanguagesResponse.fromJson(jsonDecode(langsRes.body) as Map<String, dynamic>)
-          .languageBreakdown
-          .toList(),
-    );
+    return ApiResponse.ok(GetProjectLanguagesResponse.fromResponse(langsRes));
   }
 
   @override
@@ -946,11 +912,8 @@ class AzureApiServiceImpl implements AzureApiService {
 
     if (isAllError) return ApiResponse.error(allProjectPipelines.firstOrNull);
 
-    final res = allProjectPipelines
-        .where((r) => !r.isError)
-        .map((r) => GetPipelineResponse.fromJson(jsonDecode(r.body) as Map<String, dynamic>).pipelines)
-        .expand((b) => b)
-        .toList();
+    final res =
+        allProjectPipelines.where((r) => !r.isError).map(GetPipelineResponse.fromResponse).expand((b) => b).toList();
 
     return ApiResponse.ok(res);
   }
@@ -958,12 +921,9 @@ class AzureApiServiceImpl implements AzureApiService {
   @override
   Future<ApiResponse<Pipeline>> getPipeline({required String projectName, required int id}) async {
     final pipelineRes = await _get('$_basePath/$projectName/_apis/build/builds/$id?$_apiVersion');
-
     if (pipelineRes.isError) return ApiResponse.error(pipelineRes);
 
-    final pipeline = Pipeline.fromJson(jsonDecode(pipelineRes.body) as Map<String, dynamic>);
-
-    return ApiResponse.ok(pipeline);
+    return ApiResponse.ok(Pipeline.fromResponse(pipelineRes));
   }
 
   @override
@@ -971,7 +931,7 @@ class AzureApiServiceImpl implements AzureApiService {
     final timelineRes = await _get('$_basePath/$projectName/_apis/build/builds/$id/timeline?$_apiVersion');
     if (timelineRes.isError) return ApiResponse.error(timelineRes);
 
-    return ApiResponse.ok(GetTimelineResponse.fromRawJson(timelineRes.body).records);
+    return ApiResponse.ok(GetTimelineResponse.fromResponse(timelineRes));
   }
 
   @override
@@ -1002,11 +962,8 @@ class AzureApiServiceImpl implements AzureApiService {
 
     if (isAllError) return ApiResponse.error(allProjectRepos.firstOrNull);
 
-    final repos = allProjectRepos
-        .where((r) => !r.isError)
-        .map((r) => GetRepositoriesResponse.fromJson(jsonDecode(r.body) as Map<String, dynamic>).repositories)
-        .expand((r) => r)
-        .toList();
+    final repos =
+        allProjectRepos.where((r) => !r.isError).map(GetRepositoriesResponse.fromResponse).expand((r) => r).toList();
 
     final authorSearch = author != null ? '&searchCriteria.author=$author' : '';
     final topSearch = maxCount != null ? '&searchCriteria.\$top=$maxCount' : '';
@@ -1026,10 +983,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
     if (isAllCommitsError) return ApiResponse.error(allProjectCommits.firstOrNull);
 
-    final res = allProjectCommits
-        .map((res) => GetCommitsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).commits)
-        .expand((c) => c)
-        .toList();
+    final res = allProjectCommits.map(GetCommitsResponse.fromResponse).expand((c) => c).toList();
 
     return ApiResponse.ok(res);
   }
@@ -1044,7 +998,7 @@ class AzureApiServiceImpl implements AzureApiService {
         await _get('$_basePath/$projectId/_apis/git/repositories/$repositoryId/commits/$commitId/changes?$_apiVersion');
     if (changesRes.isError) return ApiResponse.error(changesRes);
 
-    return ApiResponse.ok(CommitChanges.fromJson(jsonDecode(changesRes.body) as Map<String, dynamic>));
+    return ApiResponse.ok(CommitChanges.fromResponse(changesRes));
   }
 
   @override
@@ -1057,7 +1011,7 @@ class AzureApiServiceImpl implements AzureApiService {
         await _get('$_basePath/$projectId/_apis/git/repositories/$repositoryId/commits/$commitId?$_apiVersion');
     if (detailRes.isError) return ApiResponse.error(detailRes);
 
-    return ApiResponse.ok(Commit.fromJson(jsonDecode(detailRes.body) as Map<String, dynamic>));
+    return ApiResponse.ok(Commit.fromResponse(detailRes));
   }
 
   @override
@@ -1091,7 +1045,7 @@ class AzureApiServiceImpl implements AzureApiService {
     );
     if (diffRes.isError) return ApiResponse.error(diffRes);
 
-    return ApiResponse.ok(GetFileDiffResponse.fromRawJson(diffRes.body).data.diff);
+    return ApiResponse.ok(GetFileDiffResponse.fromResponse(diffRes));
   }
 
   @override
@@ -1102,8 +1056,7 @@ class AzureApiServiceImpl implements AzureApiService {
     );
     if (cancelRes.isError) return ApiResponse.error(cancelRes);
 
-    final res = Pipeline.fromJson(jsonDecode(cancelRes.body) as Map<String, dynamic>);
-    return ApiResponse.ok(res);
+    return ApiResponse.ok(Pipeline.fromResponse(cancelRes));
   }
 
   @override
@@ -1119,20 +1072,16 @@ class AzureApiServiceImpl implements AzureApiService {
         'definition': {'id': definitionId},
       },
     );
-
     if (rerunRes.isError) return ApiResponse.error(rerunRes);
 
-    final res = Pipeline.fromJson(jsonDecode(rerunRes.body) as Map<String, dynamic>);
-    return ApiResponse.ok(res);
+    return ApiResponse.ok(Pipeline.fromResponse(rerunRes));
   }
 
   @override
   Future<ApiResponse<GraphUser>> getUserFromEmail({
     required String email,
   }) async {
-    if (_allUsers.isEmpty) {
-      await _getUsers();
-    }
+    if (_allUsers.isEmpty) await _getUsers();
 
     return ApiResponse.ok(_allUsers.firstWhereOrNull((u) => u.mailAddress == email));
   }
@@ -1141,9 +1090,7 @@ class AzureApiServiceImpl implements AzureApiService {
   Future<ApiResponse<GraphUser>> getUserFromDescriptor({
     required String descriptor,
   }) async {
-    if (_allUsers.isEmpty) {
-      await _getUsers();
-    }
+    if (_allUsers.isEmpty) await _getUsers();
 
     final user = _allUsers.firstWhereOrNull((u) => u.descriptor == descriptor);
     if (user == null) {
@@ -1157,9 +1104,7 @@ class AzureApiServiceImpl implements AzureApiService {
   Future<ApiResponse<GraphUser>> getUserFromDisplayName({
     required String name,
   }) async {
-    if (_allUsers.isEmpty) {
-      await _getUsers();
-    }
+    if (_allUsers.isEmpty) await _getUsers();
 
     final user = _allUsers.firstWhereOrNull((u) => u.displayName == name);
     if (user == null) {
@@ -1169,11 +1114,11 @@ class AzureApiServiceImpl implements AzureApiService {
     return ApiResponse.ok(user);
   }
 
-  Future<ApiResponse> _getUsers() async {
+  Future<ApiResponse<List<GraphUser>>> _getUsers() async {
     final usersRes = await _get('$_usersBasePath/$_organization/_apis/graph/users?$_apiVersion-preview');
     if (usersRes.isError) return ApiResponse.error(usersRes);
 
-    _allUsers = GetUsersResponse.fromJson(jsonDecode(usersRes.body) as Map<String, dynamic>).users!;
+    _allUsers = GetUsersResponse.fromResponse(usersRes);
     return ApiResponse.ok(_allUsers);
   }
 

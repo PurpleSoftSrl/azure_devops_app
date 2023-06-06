@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:http/http.dart';
+
 class GetTeamsResponse {
   GetTeamsResponse({
     required this.teams,
@@ -10,6 +14,9 @@ class GetTeamsResponse {
             : List<_Team?>.from((json['value'] as List<dynamic>).map((x) => _Team.fromJson(x as Map<String, dynamic>))),
         count: json['count'] as int?,
       );
+
+  static List<_Team?> fromResponse(Response res) =>
+      GetTeamsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).teams ?? [];
 
   final List<_Team?>? teams;
   final int? count;

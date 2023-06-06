@@ -3,16 +3,23 @@ import 'dart:convert';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class GetPipelineResponse {
   factory GetPipelineResponse.fromJson(Map<String, dynamic> source) =>
       GetPipelineResponse(pipelines: Pipeline.listFromJson(json.decode(jsonEncode(source['value'])))!);
+
   GetPipelineResponse({required this.pipelines});
+
+  static List<Pipeline> fromResponse(Response res) =>
+      GetPipelineResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).pipelines;
 
   final List<Pipeline> pipelines;
 }
 
 class Pipeline {
+  factory Pipeline.fromResponse(Response res) => Pipeline.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+
   factory Pipeline.fromJson(Map<String, dynamic> json) => Pipeline(
         triggerInfo: TriggerInfo.fromJson(json['triggerInfo'] as Map<String, dynamic>),
         id: json['id'] as int?,

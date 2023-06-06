@@ -4,6 +4,7 @@ import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class GetTimelineResponse {
   factory GetTimelineResponse.fromJson(Map<String, dynamic> json) => GetTimelineResponse(
@@ -24,8 +25,8 @@ class GetTimelineResponse {
     required this.changeId,
   });
 
-  factory GetTimelineResponse.fromRawJson(String str) =>
-      GetTimelineResponse.fromJson(json.decode(str) as Map<String, dynamic>);
+  static List<Record> fromResponse(Response res) =>
+      GetTimelineResponse.fromJson(json.decode(res.body) as Map<String, dynamic>).records;
 
   final List<Record> records;
   final String lastChangedBy;

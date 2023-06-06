@@ -1,16 +1,20 @@
+import 'dart:convert';
+
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
 
 class GetWorkItemIds {
-  GetWorkItemIds({
-    required this.workItems,
-  });
+  GetWorkItemIds({required this.workItems});
 
   factory GetWorkItemIds.fromJson(Map<String, dynamic> json) => GetWorkItemIds(
         workItems: List<_WorkItemId>.from(
           (json['workItems'] as List<dynamic>).map((w) => _WorkItemId.fromJson(w as Map<String, dynamic>)),
         ),
       );
+
+  static List<_WorkItemId> fromResponse(Response res) =>
+      GetWorkItemIds.fromJson(jsonDecode(res.body) as Map<String, dynamic>).workItems;
 
   final List<_WorkItemId> workItems;
 }
@@ -35,6 +39,9 @@ class GetWorkItemsResponse {
           (json['value'] as List<dynamic>).map((i) => WorkItem.fromJson(i as Map<String, dynamic>)),
         ),
       );
+
+  static List<WorkItem> fromResponse(Response res) =>
+      GetWorkItemsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).items;
 
   final int count;
   final List<WorkItem> items;
@@ -65,6 +72,8 @@ class WorkItem {
         rev: json['rev'] as int?,
         fields: ItemFields.fromJson(json['fields'] as Map<String, dynamic>),
       );
+
+  static WorkItem fromResponse(Response res) => WorkItem.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
   final int id;
   final int? rev;

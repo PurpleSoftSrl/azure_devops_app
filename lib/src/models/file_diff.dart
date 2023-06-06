@@ -1,16 +1,16 @@
 import 'dart:convert';
 
-class GetFileDiffResponse {
-  factory GetFileDiffResponse.fromRawJson(String str) =>
-      GetFileDiffResponse.fromJson(json.decode(str) as Map<String, dynamic>);
+import 'package:http/http.dart';
 
+class GetFileDiffResponse {
   factory GetFileDiffResponse.fromJson(Map<String, dynamic> json) => GetFileDiffResponse(
         data: _DataProviders.fromJson(json['dataProviders'] as Map<String, dynamic>),
       );
 
-  GetFileDiffResponse({
-    required this.data,
-  });
+  GetFileDiffResponse({required this.data});
+
+  static Diff fromResponse(Response res) =>
+      GetFileDiffResponse.fromJson(json.decode(res.body) as Map<String, dynamic>).data.diff;
 
   final _DataProviders data;
 }

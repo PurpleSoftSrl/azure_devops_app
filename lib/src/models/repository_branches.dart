@@ -1,18 +1,21 @@
 import 'dart:convert';
 
-class RepositoryBranchesResponse {
-  factory RepositoryBranchesResponse.fromRawJson(String str) =>
-      RepositoryBranchesResponse.fromJson(json.decode(str) as Map<String, dynamic>);
+import 'package:http/http.dart';
 
+class RepositoryBranchesResponse {
   factory RepositoryBranchesResponse.fromJson(Map<String, dynamic> json) => RepositoryBranchesResponse(
         count: json['count'] as int,
         branches:
             List<Branch>.from((json['value'] as List<dynamic>).map((b) => Branch.fromJson(b as Map<String, dynamic>))),
       );
+
   RepositoryBranchesResponse({
     required this.count,
     required this.branches,
   });
+
+  static List<Branch> fromResponse(Response res) =>
+      RepositoryBranchesResponse.fromJson(json.decode(res.body) as Map<String, dynamic>).branches;
 
   final int count;
   final List<Branch> branches;

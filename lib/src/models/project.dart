@@ -1,9 +1,15 @@
 import 'dart:convert';
 
+import 'package:http/http.dart';
+
 class GetProjectsResponse {
-  factory GetProjectsResponse.fromJson(Map<String, dynamic> source) =>
-      GetProjectsResponse(projects: Project.listFromJson(json.decode(jsonEncode(source['value'])))!);
   GetProjectsResponse({required this.projects});
+
+  factory GetProjectsResponse.fromJson(Map<String, dynamic> source) =>
+      GetProjectsResponse(projects: Project.listFromJson(source['value'])!);
+
+  static List<Project> fromResponse(Response res) =>
+      GetProjectsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).projects;
 
   List<Project> projects;
 }
@@ -49,6 +55,8 @@ class Project {
   final DateTime? lastUpdateTime;
   final _DefaultTeam? defaultTeam;
   final String? defaultTeamImageUrl;
+
+  static Project fromResponse(Response res) => Project.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
   static List<Project>? listFromJson(
     dynamic json, {

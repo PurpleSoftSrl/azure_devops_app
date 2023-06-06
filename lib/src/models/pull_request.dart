@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:azure_devops/src/models/shared.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class GetPullRequestsResponse {
   factory GetPullRequestsResponse.fromJson(Map<String, dynamic> json) => GetPullRequestsResponse(
@@ -9,10 +12,14 @@ class GetPullRequestsResponse {
         ),
         count: json['count'] as int,
       );
+
   GetPullRequestsResponse({
     required this.pullRequests,
     required this.count,
   });
+
+  static List<PullRequest> fromResponse(Response res) =>
+      GetPullRequestsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).pullRequests;
 
   final List<PullRequest> pullRequests;
   final int count;
@@ -63,6 +70,8 @@ class PullRequest {
     required this.url,
     required this.supportsIterations,
   });
+
+  static PullRequest fromResponse(Response res) => PullRequest.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
   final Repository repository;
   final int pullRequestId;

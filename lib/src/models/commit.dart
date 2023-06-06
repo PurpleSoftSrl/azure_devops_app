@@ -1,12 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
 
 class GetCommitsResponse {
   GetCommitsResponse({required this.commits});
 
   factory GetCommitsResponse.fromJson(Map<String, dynamic> source) =>
       GetCommitsResponse(commits: Commit.listFromJson(json.decode(jsonEncode(source['value'])))!);
+
+  static List<Commit> fromResponse(Response res) =>
+      GetCommitsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).commits;
 
   final List<Commit> commits;
 
@@ -22,6 +26,8 @@ class GetCommitsResponse {
 }
 
 class Commit {
+  factory Commit.fromResponse(Response res) => Commit.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+
   factory Commit.fromJson(Map<String, dynamic> json) => Commit(
         commitId: json['commitId'] as String?,
         author: Author.fromJson(json['author'] as Map<String, dynamic>),

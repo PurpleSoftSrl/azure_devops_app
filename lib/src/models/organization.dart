@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
 
 class GetOrganizationsResponse {
   GetOrganizationsResponse({
@@ -14,6 +17,9 @@ class GetOrganizationsResponse {
                 (json['value'] as List<dynamic>).map((x) => Organization.fromJson(x as Map<String, dynamic>)),
               ),
       );
+
+  static List<Organization> fromResponse(Response res) =>
+      GetOrganizationsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).organizations ?? [];
 
   final int? count;
   final List<Organization>? organizations;

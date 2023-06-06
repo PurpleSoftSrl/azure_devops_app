@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:http/http.dart';
+
 class GetUserEntitlementsResponse {
   factory GetUserEntitlementsResponse.fromJson(Map<String, dynamic> json) => GetUserEntitlementsResponse(
         members: List<_Member>.from(
@@ -6,6 +10,9 @@ class GetUserEntitlementsResponse {
       );
 
   GetUserEntitlementsResponse({required this.members});
+
+  static List<_Member> fromResponse(Response res) =>
+      GetUserEntitlementsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).members;
 
   final List<_Member> members;
 }

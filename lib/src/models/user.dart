@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:azure_devops/src/models/shared.dart';
+import 'package:http/http.dart';
 
 class GetUsersResponse {
   GetUsersResponse({
@@ -14,6 +17,9 @@ class GetUsersResponse {
                 (json['value'] as List<dynamic>).map((x) => GraphUser.fromJson(x as Map<String, dynamic>)),
               ),
       );
+
+  static List<GraphUser> fromResponse(Response res) =>
+      GetUsersResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).users ?? [];
 
   final int? count;
   final List<GraphUser>? users;

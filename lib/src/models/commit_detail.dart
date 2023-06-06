@@ -1,4 +1,11 @@
+import 'dart:convert';
+
+import 'package:http/http.dart';
+
 class CommitChanges {
+  factory CommitChanges.fromResponse(Response res) =>
+      CommitChanges.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+
   factory CommitChanges.fromJson(Map<String, dynamic> json) => CommitChanges(
         changeCounts: ChangeCounts.fromJson(json['changeCounts'] as Map<String, dynamic>),
         changes: json['changes'] == null
@@ -7,6 +14,7 @@ class CommitChanges {
                 (json['changes'] as List<dynamic>).map((e) => Change.fromJson(e as Map<String, dynamic>)),
               ),
       );
+
   CommitChanges({
     required this.changeCounts,
     required this.changes,
