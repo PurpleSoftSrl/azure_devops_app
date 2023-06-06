@@ -11,6 +11,8 @@ class DevOpsFormField extends StatelessWidget {
     this.maxLines,
     this.initialValue,
     this.textCapitalization,
+    this.autofocus = false,
+    this.textInputAction,
   });
 
   final VoidCallback? onFieldSubmitted;
@@ -21,6 +23,8 @@ class DevOpsFormField extends StatelessWidget {
   final GlobalKey<FormFieldState<dynamic>>? formFieldKey;
   final String? initialValue;
   final TextCapitalization? textCapitalization;
+  final bool autofocus;
+  final TextInputAction? textInputAction;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +35,8 @@ class DevOpsFormField extends StatelessWidget {
       maxLines: maxLines,
       initialValue: initialValue,
       textCapitalization: textCapitalization ?? TextCapitalization.none,
+      textInputAction: textInputAction,
+      autofocus: autofocus,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -51,7 +57,7 @@ class DevOpsFormField extends StatelessWidget {
         children: [
           Text(
             label!,
-            style: context.textTheme.labelMedium,
+            style: context.textTheme.labelSmall!.copyWith(height: 1, fontWeight: FontWeight.bold),
           ),
           const SizedBox(
             height: 10,
