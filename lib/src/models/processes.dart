@@ -4,10 +4,7 @@ import 'package:azure_devops/src/models/project.dart';
 import 'package:http/http.dart';
 
 class GetProcessesResponse {
-  GetProcessesResponse({
-    required this.count,
-    required this.processes,
-  });
+  GetProcessesResponse({required this.count, required this.processes});
 
   factory GetProcessesResponse.fromJson(Map<String, dynamic> json) => GetProcessesResponse(
         count: json['count'] as int,
@@ -73,10 +70,7 @@ class WorkProcess {
 }
 
 class GetWorkItemTypesResponse {
-  GetWorkItemTypesResponse({
-    required this.count,
-    required this.types,
-  });
+  GetWorkItemTypesResponse({required this.count, required this.types});
 
   factory GetWorkItemTypesResponse.fromJson(Map<String, dynamic> json) => GetWorkItemTypesResponse(
         count: json['count'] as int,
@@ -96,9 +90,6 @@ class WorkItemType {
   WorkItemType({
     required this.referenceName,
     required this.name,
-    required this.description,
-    required this.url,
-    required this.customization,
     required this.color,
     required this.icon,
     required this.isDisabled,
@@ -107,9 +98,6 @@ class WorkItemType {
   factory WorkItemType.fromJson(Map<String, dynamic> json) => WorkItemType(
         referenceName: json['referenceName'] as String,
         name: json['name'] as String,
-        description: json['description'] as String,
-        url: json['url'] as String,
-        customization: json['customization'] as String,
         color: json['color'] as String,
         icon: json['icon'] as String,
         isDisabled: json['isDisabled'] as bool,
@@ -119,20 +107,14 @@ class WorkItemType {
     return WorkItemType(
       name: 'All',
       referenceName: 'All',
-      description: 'All types',
       color: '',
       isDisabled: false,
-      customization: '',
       icon: '',
-      url: '',
     );
   }
 
   final String referenceName;
   final String name;
-  final String description;
-  final String url;
-  final String customization;
   final String color;
   final String icon;
   final bool isDisabled;
@@ -151,10 +133,7 @@ class WorkItemType {
 }
 
 class GetWorkItemStatesResponse {
-  GetWorkItemStatesResponse({
-    required this.count,
-    required this.states,
-  });
+  GetWorkItemStatesResponse({required this.count, required this.states});
 
   factory GetWorkItemStatesResponse.fromJson(Map<String, dynamic> json) => GetWorkItemStatesResponse(
         count: json['count'] as int,
@@ -171,45 +150,25 @@ class GetWorkItemStatesResponse {
 }
 
 class WorkItemState {
-  WorkItemState({
-    required this.id,
-    required this.name,
-    required this.color,
-    required this.stateCategory,
-    required this.order,
-    required this.url,
-    required this.customizationType,
-  });
+  WorkItemState({required this.id, required this.name, required this.color});
 
   factory WorkItemState.fromJson(Map<String, dynamic> json) => WorkItemState(
         id: json['id'] as String,
         name: json['name'] as String,
         color: json['color'] as String,
-        stateCategory: json['stateCategory'] as String,
-        order: json['order'] as int,
-        url: json['url'] as String,
-        customizationType: json['customizationType'] as String,
       );
 
   static WorkItemState get all {
     return WorkItemState(
       name: 'All',
       color: '',
-      url: '',
-      customizationType: '',
       id: '',
-      order: 0,
-      stateCategory: '',
     );
   }
 
   final String id;
   final String name;
   final String color;
-  final String stateCategory;
-  final int order;
-  final String url;
-  final String customizationType;
 
   @override
   bool operator ==(Object other) {

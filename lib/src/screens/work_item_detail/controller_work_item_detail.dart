@@ -81,10 +81,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
           referenceName: fields.systemWorkItemType,
           color: '',
           isDisabled: false,
-          customization: '',
-          description: '',
           icon: '',
-          url: '',
         );
 
     statuses = apiService.workItemStates[fields.systemTeamProject]?[newWorkItemType.name] ?? [];
