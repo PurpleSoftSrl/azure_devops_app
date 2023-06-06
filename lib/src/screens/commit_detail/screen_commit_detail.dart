@@ -52,6 +52,7 @@ class _CommitDetailScreen extends StatelessWidget {
                                 ? null
                                 : ctrl.commitDetail!.author!.imageUrl,
                             userDescriptor: ctrl.commitDetail!.author!.imageUrl!.split('/').last,
+                            radius: 30,
                           ),
                           const SizedBox(
                             width: 10,
@@ -138,64 +139,35 @@ class _CommitDetailScreen extends StatelessWidget {
                         '${ctrl.addedFilesCount} added file${ctrl.addedFilesCount == 1 ? '' : 's'}',
                         style: context.textTheme.titleLarge,
                       ),
-                      ...ctrl.addedFiles.map(
-                        (c2) => InkWell(
-                          onTap: () => ctrl.goToFileDiff(filePath: c2.item!.path!, isAdded: true),
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              c2!.item!.path!.startsWith('/') ? c2.item!.path!.substring(1) : c2.item!.path!,
-                              style: context.textTheme.titleSmall!.copyWith(
-                                color: context.colorScheme.onSecondary,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
-                        ),
+                      _GroupedFiles(
+                        groupedFiles: ctrl.groupedAddedFiles,
+                        onTap: (path) => ctrl.goToFileDiff(filePath: path, isAdded: true),
                       ),
                     ],
                     if (ctrl.editedFilesCount > 0) ...[
+                      const SizedBox(
+                        height: 20,
+                      ),
                       Text(
                         '${ctrl.editedFilesCount} edited file${ctrl.editedFilesCount == 1 ? '' : 's'}',
                         style: context.textTheme.titleLarge,
                       ),
-                      ...ctrl.editedFiles.map(
-                        (c2) => InkWell(
-                          onTap: () => ctrl.goToFileDiff(filePath: c2.item!.path!),
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              c2!.item!.path!.startsWith('/') ? c2.item!.path!.substring(1) : c2.item!.path!,
-                              maxLines: 1,
-                              softWrap: false,
-                              style: context.textTheme.titleSmall!.copyWith(
-                                color: context.colorScheme.onSecondary,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
-                        ),
+                      _GroupedFiles(
+                        groupedFiles: ctrl.groupedEditedFiles,
+                        onTap: (path) => ctrl.goToFileDiff(filePath: path),
                       ),
                     ],
                     if (ctrl.deletedFilesCount > 0) ...[
+                      const SizedBox(
+                        height: 20,
+                      ),
                       Text(
                         '${ctrl.deletedFilesCount} deleted file${ctrl.deletedFilesCount == 1 ? '' : 's'}',
                         style: context.textTheme.titleLarge,
                       ),
-                      ...ctrl.deletedFiles.map(
-                        (c2) => InkWell(
-                          onTap: () => ctrl.goToFileDiff(filePath: c2.item!.path!, isDeleted: true),
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              c2!.item!.path!.startsWith('/') ? c2.item!.path!.substring(1) : c2.item!.path!,
-                              style: context.textTheme.titleSmall!.copyWith(
-                                color: context.colorScheme.onSecondary,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
-                        ),
+                      _GroupedFiles(
+                        groupedFiles: ctrl.groupedDeletedFiles,
+                        onTap: (path) => ctrl.goToFileDiff(filePath: path, isDeleted: true),
                       ),
                     ],
                   ],

@@ -44,6 +44,10 @@ class _CommitDetailController with ShareMixin {
   int get editedLines => commitChanges.value?.data?.changes?.changeCounts?.edit ?? 0;
   int get deletedLines => commitChanges.value?.data?.changes?.changeCounts?.delete ?? 0;
 
+  final groupedEditedFiles = <String, Set<String>>{};
+  final groupedAddedFiles = <String, Set<String>>{};
+  final groupedDeletedFiles = <String, Set<String>>{};
+
   void dispose() {
     instance = null;
     _instances.remove(args.hashCode);
@@ -57,6 +61,26 @@ class _CommitDetailController with ShareMixin {
     );
 
     commitDetail = detailRes.data?.commit;
+
+    final changes = detailRes.data?.changes?.changes ?? <Change>[];
+
+    for (final file in changes.where((f) => f?.item?.gitObjectType == 'blob' && f?.item?.path != null)) {
+      final path = file!.item!.path!;
+      final directory = dirname(path);
+      final fileName = basename(path);
+
+      if (file.changeType == 'add') {
+        groupedAddedFiles.putIfAbsent(directory, () => {fileName});
+        groupedAddedFiles[directory]!.add(fileName);
+      } else if (file.changeType == 'edit') {
+        groupedEditedFiles.putIfAbsent(directory, () => {fileName});
+        groupedEditedFiles[directory]!.add(fileName);
+      } else if (file.changeType == 'delete') {
+        groupedDeletedFiles.putIfAbsent(directory, () => {fileName});
+        groupedDeletedFiles[directory]!.add(fileName);
+      }
+    }
+
     commitChanges.value = detailRes;
   }
 
