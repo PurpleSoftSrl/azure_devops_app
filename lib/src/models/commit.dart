@@ -30,7 +30,7 @@ class CommitWithChanges {
   CommitWithChanges({required this.commit, required this.changes});
 
   final Commit commit;
-  final CommitChanges changes;
+  final CommitChanges? changes;
 
   @override
   String toString() => 'CommitWithChanges(commit: $commit, changes: $changes)';

@@ -120,10 +120,11 @@ class _CommitDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Details',
-                      style: context.textTheme.titleLarge,
-                    ),
+                    if (detail?.changes?.changeCounts != null)
+                      Text(
+                        'Details',
+                        style: context.textTheme.titleLarge,
+                      ),
                     if (ctrl.editedLines > 0)
                       Text('${ctrl.editedLines} line${ctrl.editedLines == 1 ? '' : 's'} edited'),
                     if (ctrl.addedLines > 0) Text('${ctrl.addedLines} line${ctrl.addedLines == 1 ? '' : 's'} added'),

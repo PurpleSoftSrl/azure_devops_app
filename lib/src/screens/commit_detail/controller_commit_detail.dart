@@ -29,7 +29,7 @@ class _CommitDetailController with ShareMixin {
   Commit? commitDetail;
 
   Iterable<Change?> get changedFiles =>
-      commitChanges.value?.data?.changes.changes?.where((c) => c!.item!.gitObjectType == 'blob') ?? [];
+      commitChanges.value?.data?.changes?.changes?.where((c) => c!.item!.gitObjectType == 'blob') ?? [];
 
   Iterable<Change?> get addedFiles => changedFiles.where((f) => f!.changeType == 'add');
   int get addedFilesCount => addedFiles.length;
@@ -40,9 +40,9 @@ class _CommitDetailController with ShareMixin {
   Iterable<Change?> get deletedFiles => changedFiles.where((f) => f!.changeType == 'delete');
   int get deletedFilesCount => deletedFiles.length;
 
-  int get addedLines => commitChanges.value?.data?.changes.changeCounts?.add ?? 0;
-  int get editedLines => commitChanges.value?.data?.changes.changeCounts?.edit ?? 0;
-  int get deletedLines => commitChanges.value?.data?.changes.changeCounts?.delete ?? 0;
+  int get addedLines => commitChanges.value?.data?.changes?.changeCounts?.add ?? 0;
+  int get editedLines => commitChanges.value?.data?.changes?.changeCounts?.edit ?? 0;
+  int get deletedLines => commitChanges.value?.data?.changes?.changeCounts?.delete ?? 0;
 
   void dispose() {
     instance = null;

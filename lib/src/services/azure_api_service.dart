@@ -988,10 +988,9 @@ class AzureApiServiceImpl implements AzureApiService {
 
     final changesRes =
         await _get('$_basePath/$projectId/_apis/git/repositories/$repositoryId/commits/$commitId/changes?$_apiVersion');
-    if (changesRes.isError) return ApiResponse.error(changesRes);
 
     final commit = Commit.fromResponse(detailRes);
-    final changes = CommitChanges.fromResponse(changesRes);
+    final changes = changesRes.isError ? null : CommitChanges.fromResponse(changesRes);
     return ApiResponse.ok(CommitWithChanges(commit: commit, changes: changes));
   }
 
