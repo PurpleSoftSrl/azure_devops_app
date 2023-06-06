@@ -13,7 +13,6 @@ import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/team_member.dart';
-import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
@@ -367,17 +366,20 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<Pipeline>> getPipeline({required String projectName, required int id}) async {
+  Future<ApiResponse<PipelineWithTimeline>> getPipeline({required String projectName, required int id}) async {
     return ApiResponse.ok(
-      Pipeline(
-        id: 1234,
-        project: Project(name: 'TestProject'),
-        buildNumber: '5678',
-        queueTime: DateTime.now(),
-        repository: PipelineRepository(id: '', type: '', name: 'test_repo', url: ''),
-        requestedFor: LastChangedBy(displayName: 'Test User'),
-        triggerInfo: TriggerInfo(ciMessage: 'Test commit message', ciSourceSha: '123456789'),
-        sourceBranch: 'refs/heads/test_branch',
+      PipelineWithTimeline(
+        pipeline: Pipeline(
+          id: 1234,
+          project: Project(name: 'TestProject'),
+          buildNumber: '5678',
+          queueTime: DateTime.now(),
+          repository: PipelineRepository(id: '', type: '', name: 'test_repo', url: ''),
+          requestedFor: LastChangedBy(displayName: 'Test User'),
+          triggerInfo: TriggerInfo(ciMessage: 'Test commit message', ciSourceSha: '123456789'),
+          sourceBranch: 'refs/heads/test_branch',
+        ),
+        timeline: [],
       ),
     );
   }
@@ -430,11 +432,6 @@ class AzureApiServiceMock implements AzureApiService {
   @override
   Future<ApiResponse<List<LanguageBreakdown>>> getProjectLanguages({required String projectName}) {
     throw UnimplementedError();
-  }
-
-  @override
-  Future<ApiResponse<List<Record>>> getPipelineTimeline({required String projectName, required int id}) async {
-    return ApiResponse.ok(<Record>[]);
   }
 
   @override

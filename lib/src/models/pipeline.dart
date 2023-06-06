@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:azure_devops/src/models/project.dart';
+import 'package:azure_devops/src/models/timeline.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -15,6 +16,16 @@ class GetPipelineResponse {
       GetPipelineResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).pipelines;
 
   final List<Pipeline> pipelines;
+}
+
+class PipelineWithTimeline {
+  PipelineWithTimeline({required this.pipeline, required this.timeline});
+
+  final Pipeline pipeline;
+  final List<Record> timeline;
+
+  @override
+  String toString() => 'PipelineWithTimeline(pipeline: $pipeline, timeline: $timeline)';
 }
 
 class Pipeline {

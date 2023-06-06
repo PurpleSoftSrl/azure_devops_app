@@ -165,9 +165,7 @@ abstract class AzureApiService {
     String? triggeredBy,
   });
 
-  Future<ApiResponse<Pipeline>> getPipeline({required String projectName, required int id});
-
-  Future<ApiResponse<List<Record>>> getPipelineTimeline({required String projectName, required int id});
+  Future<ApiResponse<PipelineWithTimeline>> getPipeline({required String projectName, required int id});
 
   Future<ApiResponse<String>> getPipelineTaskLogs({
     required String projectName,
@@ -919,19 +917,16 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<Pipeline>> getPipeline({required String projectName, required int id}) async {
+  Future<ApiResponse<PipelineWithTimeline>> getPipeline({required String projectName, required int id}) async {
     final pipelineRes = await _get('$_basePath/$projectName/_apis/build/builds/$id?$_apiVersion');
     if (pipelineRes.isError) return ApiResponse.error(pipelineRes);
 
-    return ApiResponse.ok(Pipeline.fromResponse(pipelineRes));
-  }
-
-  @override
-  Future<ApiResponse<List<Record>>> getPipelineTimeline({required String projectName, required int id}) async {
     final timelineRes = await _get('$_basePath/$projectName/_apis/build/builds/$id/timeline?$_apiVersion');
     if (timelineRes.isError) return ApiResponse.error(timelineRes);
 
-    return ApiResponse.ok(GetTimelineResponse.fromResponse(timelineRes));
+    final pipeline = Pipeline.fromResponse(pipelineRes);
+    final timeline = GetTimelineResponse.fromResponse(timelineRes);
+    return ApiResponse.ok(PipelineWithTimeline(pipeline: pipeline, timeline: timeline));
   }
 
   @override

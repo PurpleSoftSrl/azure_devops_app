@@ -24,13 +24,13 @@ class _PipelineDetailController with ShareMixin {
   final PipelineDetailArgs args;
   final AzureApiService apiService;
 
-  final buildDetail = ValueNotifier<ApiResponse<Pipeline?>?>(null);
+  final buildDetail = ValueNotifier<ApiResponse<PipelineWithTimeline?>?>(null);
 
   final pipeStages = ValueNotifier<List<_Stage>?>(null);
 
   Timer? _timer;
 
-  Pipeline get pipeline => buildDetail.value!.data!;
+  Pipeline get pipeline => buildDetail.value!.data!.pipeline;
 
   void dispose() {
     _timer?.cancel();
@@ -44,13 +44,13 @@ class _PipelineDetailController with ShareMixin {
     await _init();
 
     if (buildDetail.value != null) {
-      final pipeStatus = buildDetail.value!.data!.status;
+      final pipeStatus = pipeline.status;
 
       // auto refresh page every 10 seconds until pipeline is completed
       if (pipeStatus == PipelineStatus.notStarted || pipeStatus == PipelineStatus.inProgress) {
         _timer = Timer.periodic(Duration(seconds: 10), (timer) async {
           await _init();
-          if (buildDetail.value!.data!.status == PipelineStatus.completed) {
+          if (pipeline.status == PipelineStatus.completed) {
             timer.cancel();
           }
         });
@@ -64,11 +64,7 @@ class _PipelineDetailController with ShareMixin {
 
     if (buildDetail.value?.isError ?? true) return;
 
-    final logs = await apiService.getPipelineTimeline(projectName: args.project, id: args.id);
-
-    if (logs.data == null) return;
-
-    final realLogs = logs.data!.where((r) => r.order != null && r.order! < 1000);
+    final realLogs = res.data!.timeline.where((r) => r.order != null && r.order! < 1000);
 
     final stages = realLogs.where((r) => r.type == 'Stage').sorted((a, b) => a.order!.compareTo(b.order!));
     final phases = realLogs.where((r) => r.type == 'Phase').sorted((a, b) => a.order!.compareTo(b.order!));
