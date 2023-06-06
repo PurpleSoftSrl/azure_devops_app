@@ -75,12 +75,7 @@ abstract class AzureApiService {
 
   Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes({bool force = false});
 
-  Future<ApiResponse<WorkItem>> getWorkItemDetail({
-    required String projectName,
-    required int workItemId,
-  });
-
-  Future<ApiResponse<List<WorkItemUpdate>>> getWorkItemUpdates({
+  Future<ApiResponse<WorkItemWithUpdates>> getWorkItemDetail({
     required String projectName,
     required int workItemId,
   });
@@ -628,28 +623,23 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<WorkItem>> getWorkItemDetail({
+  Future<ApiResponse<WorkItemWithUpdates>> getWorkItemDetail({
     required String projectName,
     required int workItemId,
   }) async {
     final workItemRes = await _get('$_basePath/$projectName/_apis/wit/workitems/$workItemId?$_apiVersion');
     if (workItemRes.isError) return ApiResponse.error(workItemRes);
 
-    return ApiResponse.ok(WorkItem.fromJson(jsonDecode(workItemRes.body) as Map<String, dynamic>));
-  }
-
-  @override
-  Future<ApiResponse<List<WorkItemUpdate>>> getWorkItemUpdates({
-    required String projectName,
-    required int workItemId,
-  }) async {
     final workItemUpdatesRes =
         await _get('$_basePath/$projectName/_apis/wit/workitems/$workItemId/updates?$_apiVersion');
     if (workItemUpdatesRes.isError) return ApiResponse.error(workItemUpdatesRes);
 
-    return ApiResponse.ok(
-      WorkItemUpdatesResponse.fromJson(jsonDecode(workItemUpdatesRes.body) as Map<String, dynamic>).updates,
-    );
+    final item = WorkItem.fromJson(jsonDecode(workItemRes.body) as Map<String, dynamic>);
+
+    final updates =
+        WorkItemUpdatesResponse.fromJson(jsonDecode(workItemUpdatesRes.body) as Map<String, dynamic>).updates;
+
+    return ApiResponse.ok(WorkItemWithUpdates(item: item, updates: updates));
   }
 
   @override

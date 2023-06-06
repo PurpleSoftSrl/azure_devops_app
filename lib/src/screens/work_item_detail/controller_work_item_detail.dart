@@ -31,7 +31,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
 
   final StorageService storageService;
 
-  final itemDetail = ValueNotifier<ApiResponse<WorkItem?>?>(null);
+  final itemDetail = ValueNotifier<ApiResponse<WorkItemWithUpdates?>?>(null);
 
   String get itemWebUrl => '${apiService.basePath}/${args.project}/_workitems/edit/${args.id}';
 
@@ -50,13 +50,8 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
   Future<void> init() async {
     final res = await apiService.getWorkItemDetail(projectName: args.project, workItemId: args.id);
 
-    await _getUpdates();
     itemDetail.value = res;
-  }
-
-  Future<void> _getUpdates() async {
-    final res = await apiService.getWorkItemUpdates(projectName: args.project, workItemId: args.id);
-    updates = res.data ?? [];
+    updates = itemDetail.value?.data?.updates ?? [];
   }
 
   void toggleShowUpdatesReversed() {
@@ -73,7 +68,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
 
   // ignore: long-method
   Future<void> editWorkItem() async {
-    final fields = itemDetail.value!.data!.fields;
+    final fields = itemDetail.value!.data!.item.fields;
 
     final projectWorkItemTypes = apiService.workItemTypes[fields.systemTeamProject] ?? <WorkItemType>[];
 
@@ -156,7 +151,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
                                 height: 15,
                               ),
                             ],
-                            if (itemDetail.value!.data!.canBeChanged) ...[
+                            if (itemDetail.value!.data!.item.canBeChanged) ...[
                               Text('Type'),
                               const SizedBox(
                                 height: 5,

@@ -8,7 +8,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPage<WorkItem?>(
+    return AppPage<WorkItemWithUpdates?>(
       init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Work Item #${ctrl.args.id}',
@@ -79,8 +79,9 @@ class _WorkItemDetailScreen extends StatelessWidget {
           width: 8,
         ),
       ],
-      builder: (detail) {
-        final wType = ctrl.apiService.workItemTypes[detail!.fields.systemTeamProject]
+      builder: (detWithUpdates) {
+        final detail = detWithUpdates!.item;
+        final wType = ctrl.apiService.workItemTypes[detail.fields.systemTeamProject]
             ?.firstWhereOrNull((t) => t.name == detail.fields.systemWorkItemType);
         return DefaultTextStyle(
           style: context.textTheme.titleSmall!,

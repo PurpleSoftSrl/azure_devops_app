@@ -15,7 +15,6 @@ import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/team_member.dart';
 import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
-import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
@@ -311,56 +310,51 @@ class AzureApiServiceMock implements AzureApiService {
   UserMe? get user => throw UnimplementedError();
 
   @override
-  Future<ApiResponse<WorkItem>> getWorkItemDetail({
+  Future<ApiResponse<WorkItemWithUpdates>> getWorkItemDetail({
     required String projectName,
     required int workItemId,
   }) async {
     return ApiResponse.ok(
-      WorkItem(
-        id: 1234,
-        rev: 0,
-        fields: ItemFields(
-          systemTeamProject: 'TestProject',
-          systemWorkItemType: 'TestType',
-          systemState: 'Active',
-          systemCreatedDate: DateTime.now(),
-          systemChangedDate: DateTime.now(),
-          systemTitle: 'Test work item title',
-          systemReason: '',
-          systemCommentCount: 0,
-          microsoftVstsCommonStateChangeDate: DateTime.now(),
-          systemAssignedTo: WorkItemUser(
-            id: '',
-            imageUrl: '',
-            descriptor: '',
-            uniqueName: 'Test User Assignee',
-            displayName: 'Test User Assignee',
-          ),
-          systemCreatedBy: WorkItemUser(
-            id: '',
-            imageUrl: '',
-            descriptor: '',
-            uniqueName: 'Test User Creator',
-            displayName: 'Test User Creator',
-          ),
-          systemChangedBy: WorkItemUser(
-            id: '',
-            imageUrl: '',
-            descriptor: '',
-            uniqueName: 'Test User Creator',
-            displayName: 'Test User Creator',
+      WorkItemWithUpdates(
+        item: WorkItem(
+          id: 1234,
+          rev: 0,
+          fields: ItemFields(
+            systemTeamProject: 'TestProject',
+            systemWorkItemType: 'TestType',
+            systemState: 'Active',
+            systemCreatedDate: DateTime.now(),
+            systemChangedDate: DateTime.now(),
+            systemTitle: 'Test work item title',
+            systemReason: '',
+            systemCommentCount: 0,
+            microsoftVstsCommonStateChangeDate: DateTime.now(),
+            systemAssignedTo: WorkItemUser(
+              id: '',
+              imageUrl: '',
+              descriptor: '',
+              uniqueName: 'Test User Assignee',
+              displayName: 'Test User Assignee',
+            ),
+            systemCreatedBy: WorkItemUser(
+              id: '',
+              imageUrl: '',
+              descriptor: '',
+              uniqueName: 'Test User Creator',
+              displayName: 'Test User Creator',
+            ),
+            systemChangedBy: WorkItemUser(
+              id: '',
+              imageUrl: '',
+              descriptor: '',
+              uniqueName: 'Test User Creator',
+              displayName: 'Test User Creator',
+            ),
           ),
         ),
+        updates: [],
       ),
     );
-  }
-
-  @override
-  Future<ApiResponse<List<WorkItemUpdate>>> getWorkItemUpdates({
-    required String projectName,
-    required int workItemId,
-  }) async {
-    return ApiResponse.ok(<WorkItemUpdate>[]);
   }
 
   @override

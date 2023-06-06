@@ -1,3 +1,4 @@
+import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:flutter/foundation.dart';
 
 class GetWorkItemIds {
@@ -37,6 +38,19 @@ class GetWorkItemsResponse {
 
   final int count;
   final List<WorkItem> items;
+}
+
+class WorkItemWithUpdates {
+  WorkItemWithUpdates({
+    required this.item,
+    required this.updates,
+  });
+
+  final WorkItem item;
+  final List<WorkItemUpdate> updates;
+
+  @override
+  String toString() => 'WorkItemWithUpdates(item: $item, updates: $updates)';
 }
 
 class WorkItem {
