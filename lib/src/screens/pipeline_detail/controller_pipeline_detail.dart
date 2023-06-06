@@ -188,6 +188,8 @@ class _PipelineDetailController with ShareMixin {
   }
 
   Future<void> goToRepo() async {
+    if (pipeline.repository?.name == null) return;
+
     await AppRouter.goToRepositoryDetail(
       RepoDetailArgs(projectName: pipeline.project!.name!, repositoryName: pipeline.repository!.name!),
     );
