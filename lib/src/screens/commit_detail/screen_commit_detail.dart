@@ -8,7 +8,7 @@ class _CommitDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppPage<CommitChanges?>(
+    return AppPage<CommitWithChanges?>(
       init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Commit detail',
@@ -124,12 +124,11 @@ class _CommitDetailScreen extends StatelessWidget {
                       'Details',
                       style: context.textTheme.titleLarge,
                     ),
-                    if (detail!.changeCounts?.edit != null)
-                      Text('${detail.changeCounts!.edit} line${detail.changeCounts!.edit == 1 ? '' : 's'} edited'),
-                    if (detail.changeCounts?.add != null)
-                      Text('${detail.changeCounts!.add} line${detail.changeCounts!.add == 1 ? '' : 's'} added'),
-                    if (detail.changeCounts?.delete != null)
-                      Text('${detail.changeCounts!.delete} line${detail.changeCounts!.delete == 1 ? '' : 's'} deleted'),
+                    if (ctrl.editedLines > 0)
+                      Text('${ctrl.editedLines} line${ctrl.editedLines == 1 ? '' : 's'} edited'),
+                    if (ctrl.addedLines > 0) Text('${ctrl.addedLines} line${ctrl.addedLines == 1 ? '' : 's'} added'),
+                    if (ctrl.deletedLines > 0)
+                      Text('${ctrl.deletedLines} line${ctrl.deletedLines == 1 ? '' : 's'} deleted'),
                     const SizedBox(
                       height: 20,
                     ),

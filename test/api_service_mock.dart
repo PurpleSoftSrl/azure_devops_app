@@ -40,75 +40,67 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<Commit>> getCommitDetail({
+  Future<ApiResponse<CommitWithChanges>> getCommitDetail({
     required String projectId,
     required String repositoryId,
     required String commitId,
   }) async {
     return ApiResponse.ok(
-      Commit(
-        commitId: '123456789',
-        comment: 'Test commit message',
-        author: Author(
-          name: 'Test author',
-          email: 'test@author.email',
-          date: DateTime.now(),
-        ),
-        remoteUrl: 'https://dev.azure.com/xamapps/TestProject/_git/test_repo/commit/123456789',
-      ),
-    );
-  }
-
-  @override
-  Future<ApiResponse<CommitChanges>> getCommitChanges({
-    required String projectId,
-    required String repositoryId,
-    required String commitId,
-  }) async {
-    return ApiResponse.ok(
-      CommitChanges(
-        changeCounts: ChangeCounts(
-          edit: 1,
-          add: 3,
-          delete: 5,
-        ),
-        changes: [
-          for (var i = 0; i < 3; i++)
-            Change(
-              item: Item(
-                objectId: '',
-                originalObjectId: '',
-                gitObjectType: 'blob',
-                commitId: commitId,
-                path: 'added_file.$i',
-                url: '',
-              ),
-              changeType: 'add',
-            ),
-          for (var i = 0; i < 5; i++)
-            Change(
-              item: Item(
-                objectId: '',
-                originalObjectId: '',
-                gitObjectType: 'blob',
-                commitId: commitId,
-                path: 'edited_file.$i',
-                url: '',
-              ),
-              changeType: 'edit',
-            ),
-          Change(
-            item: Item(
-              objectId: '',
-              originalObjectId: '',
-              gitObjectType: 'blob',
-              commitId: commitId,
-              path: 'deleted_file.0',
-              url: '',
-            ),
-            changeType: 'delete',
+      CommitWithChanges(
+        commit: Commit(
+          commitId: '123456789',
+          comment: 'Test commit message',
+          author: Author(
+            name: 'Test author',
+            email: 'test@author.email',
+            date: DateTime.now(),
           ),
-        ],
+          remoteUrl: 'https://dev.azure.com/xamapps/TestProject/_git/test_repo/commit/123456789',
+        ),
+        changes: CommitChanges(
+          changeCounts: ChangeCounts(
+            edit: 1,
+            add: 3,
+            delete: 5,
+          ),
+          changes: [
+            for (var i = 0; i < 3; i++)
+              Change(
+                item: Item(
+                  objectId: '',
+                  originalObjectId: '',
+                  gitObjectType: 'blob',
+                  commitId: commitId,
+                  path: 'added_file.$i',
+                  url: '',
+                ),
+                changeType: 'add',
+              ),
+            for (var i = 0; i < 5; i++)
+              Change(
+                item: Item(
+                  objectId: '',
+                  originalObjectId: '',
+                  gitObjectType: 'blob',
+                  commitId: commitId,
+                  path: 'edited_file.$i',
+                  url: '',
+                ),
+                changeType: 'edit',
+              ),
+            Change(
+              item: Item(
+                objectId: '',
+                originalObjectId: '',
+                gitObjectType: 'blob',
+                commitId: commitId,
+                path: 'deleted_file.0',
+                url: '',
+              ),
+              changeType: 'delete',
+            ),
+          ],
+        ),
       ),
     );
   }

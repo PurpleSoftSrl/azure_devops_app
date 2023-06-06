@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
@@ -23,6 +24,16 @@ class GetCommitsResponse {
 
   @override
   int get hashCode => commits.hashCode;
+}
+
+class CommitWithChanges {
+  CommitWithChanges({required this.commit, required this.changes});
+
+  final Commit commit;
+  final CommitChanges changes;
+
+  @override
+  String toString() => 'CommitWithChanges(commit: $commit, changes: $changes)';
 }
 
 class Commit {

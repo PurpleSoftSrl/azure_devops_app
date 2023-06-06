@@ -24,12 +24,12 @@ class _CommitDetailController with ShareMixin {
   final CommitDetailArgs args;
   final AzureApiService apiService;
 
-  final commitChanges = ValueNotifier<ApiResponse<CommitChanges?>?>(null);
+  final commitChanges = ValueNotifier<ApiResponse<CommitWithChanges?>?>(null);
 
   Commit? commitDetail;
 
   Iterable<Change?> get changedFiles =>
-      commitChanges.value?.data!.changes!.where((c) => c!.item!.gitObjectType == 'blob') ?? [];
+      commitChanges.value?.data?.changes.changes?.where((c) => c!.item!.gitObjectType == 'blob') ?? [];
 
   Iterable<Change?> get addedFiles => changedFiles.where((f) => f!.changeType == 'add');
   int get addedFilesCount => addedFiles.length;
@@ -40,27 +40,24 @@ class _CommitDetailController with ShareMixin {
   Iterable<Change?> get deletedFiles => changedFiles.where((f) => f!.changeType == 'delete');
   int get deletedFilesCount => deletedFiles.length;
 
+  int get addedLines => commitChanges.value?.data?.changes.changeCounts?.add ?? 0;
+  int get editedLines => commitChanges.value?.data?.changes.changeCounts?.edit ?? 0;
+  int get deletedLines => commitChanges.value?.data?.changes.changeCounts?.delete ?? 0;
+
   void dispose() {
     instance = null;
     _instances.remove(args.hashCode);
   }
 
   Future<void> init() async {
-    final changesRes = await apiService.getCommitChanges(
-      projectId: args.project,
-      repositoryId: args.repository,
-      commitId: args.commitId,
-    );
-
     final detailRes = await apiService.getCommitDetail(
       projectId: args.project,
       repositoryId: args.repository,
       commitId: args.commitId,
     );
 
-    commitDetail = detailRes.data;
-
-    commitChanges.value = changesRes;
+    commitDetail = detailRes.data?.commit;
+    commitChanges.value = detailRes;
   }
 
   void shareDiff() {

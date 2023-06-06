@@ -139,13 +139,7 @@ abstract class AzureApiService {
 
   Future<ApiResponse<List<Commit>>> getRecentCommits({Project? project, String? author, int? maxCount});
 
-  Future<ApiResponse<Commit>> getCommitDetail({
-    required String projectId,
-    required String repositoryId,
-    required String commitId,
-  });
-
-  Future<ApiResponse<CommitChanges>> getCommitChanges({
+  Future<ApiResponse<CommitWithChanges>> getCommitDetail({
     required String projectId,
     required String repositoryId,
     required String commitId,
@@ -984,20 +978,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<CommitChanges>> getCommitChanges({
-    required String projectId,
-    required String repositoryId,
-    required String commitId,
-  }) async {
-    final changesRes =
-        await _get('$_basePath/$projectId/_apis/git/repositories/$repositoryId/commits/$commitId/changes?$_apiVersion');
-    if (changesRes.isError) return ApiResponse.error(changesRes);
-
-    return ApiResponse.ok(CommitChanges.fromResponse(changesRes));
-  }
-
-  @override
-  Future<ApiResponse<Commit>> getCommitDetail({
+  Future<ApiResponse<CommitWithChanges>> getCommitDetail({
     required String projectId,
     required String repositoryId,
     required String commitId,
@@ -1006,7 +987,13 @@ class AzureApiServiceImpl implements AzureApiService {
         await _get('$_basePath/$projectId/_apis/git/repositories/$repositoryId/commits/$commitId?$_apiVersion');
     if (detailRes.isError) return ApiResponse.error(detailRes);
 
-    return ApiResponse.ok(Commit.fromResponse(detailRes));
+    final changesRes =
+        await _get('$_basePath/$projectId/_apis/git/repositories/$repositoryId/commits/$commitId/changes?$_apiVersion');
+    if (changesRes.isError) return ApiResponse.error(changesRes);
+
+    final commit = Commit.fromResponse(detailRes);
+    final changes = CommitChanges.fromResponse(changesRes);
+    return ApiResponse.ok(CommitWithChanges(commit: commit, changes: changes));
   }
 
   @override
