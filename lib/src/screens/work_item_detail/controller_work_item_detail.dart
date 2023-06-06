@@ -103,169 +103,141 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
     await OverlayService.bottomsheet(
       isScrollControlled: true,
       title: 'Edit work item',
+      heightPercentage: .9,
+      padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
       builder: (context) {
         final style = context.textTheme.bodySmall!.copyWith(height: 1, fontWeight: FontWeight.bold);
-        return Container(
-          height: context.height * .9,
-          decoration: BoxDecoration(
-            color: context.colorScheme.background,
-            borderRadius: BorderRadius.only(
-              topLeft: const Radius.circular(12),
-              topRight: const Radius.circular(12),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-            child: Scaffold(
-              body: Column(
+        return ListView(
+          children: [
+            StatefulBuilder(
+              builder: (_, setState) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Edit work item',
-                    style: context.textTheme.titleLarge,
-                  ),
-                  Expanded(
-                    child: ListView(
+                  if (newWorkItemStatus != null) ...[
+                    Row(
                       children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        StatefulBuilder(
-                          builder: (_, setState) => Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (newWorkItemStatus != null) ...[
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Status:',
-                                      style: style,
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    FilterMenu<WorkItemState>(
-                                      title: 'Status',
-                                      values: statuses,
-                                      currentFilter: newWorkItemStatus!,
-                                      formatLabel: (t) => t.name,
-                                      onSelected: (f) {
-                                        setState(() => newWorkItemStatus = f);
-                                      },
-                                      isDefaultFilter: false,
-                                      widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                              ],
-                              if (itemDetail.value!.data!.item.canBeChanged) ...[
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Type:',
-                                      style: style,
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    FilterMenu<WorkItemType>(
-                                      title: 'Type',
-                                      values: projectWorkItemTypes,
-                                      currentFilter: newWorkItemType,
-                                      formatLabel: (t) => t.name,
-                                      onSelected: (f) async {
-                                        newWorkItemType = f;
-                                        statuses = apiService
-                                                .workItemStates[fields.systemTeamProject]![newWorkItemType.name] ??
-                                            [];
-                                        if (!statuses.map((e) => e.name).contains(newWorkItemStatus)) {
-                                          // change status if new type doesn't support current status
-                                          newWorkItemStatus = statuses.firstOrNull ?? newWorkItemStatus;
-                                        }
-
-                                        setState(() => true);
-                                      },
-                                      isDefaultFilter: newWorkItemType == WorkItemType.all,
-                                      widgetBuilder: (t) => WorkItemTypeFilter(type: t),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                              ],
-                              Row(
-                                children: [
-                                  Text(
-                                    'Assigned to:',
-                                    style: style,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  FilterMenu<GraphUser>(
-                                    title: 'Assigned to',
-                                    values: getSortedUsers(apiService, withUserAll: false),
-                                    currentFilter: newWorkItemAssignedTo,
-                                    onSelected: (u) {
-                                      setState(() => newWorkItemAssignedTo = u);
-                                    },
-                                    formatLabel: (u) => u.displayName!,
-                                    isDefaultFilter: newWorkItemAssignedTo.displayName == userAll.displayName,
-                                    widgetBuilder: (u) => UserFilterWidget(user: u),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                        Text(
+                          'Status:',
+                          style: style,
                         ),
                         const SizedBox(
-                          height: 20,
+                          width: 10,
                         ),
-                        DevOpsFormField(
-                          initialValue: newWorkItemTitle,
-                          onChanged: (value) => newWorkItemTitle = value,
-                          label: 'Title',
-                          formFieldKey: titleFieldKey,
-                          textCapitalization: TextCapitalization.sentences,
-                          autofocus: true,
-                          textInputAction: TextInputAction.next,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        DevOpsFormField(
-                          initialValue: newWorkItemDescription,
-                          onChanged: (value) => newWorkItemDescription = value,
-                          label: 'Description',
-                          maxLines: 3,
-                          onFieldSubmitted: AppRouter.popRoute,
-                          textCapitalization: TextCapitalization.sentences,
-                        ),
-                        const SizedBox(
-                          height: 60,
-                        ),
-                        LoadingButton(
-                          onPressed: () {
-                            if (titleFieldKey.currentState!.validate()) {
-                              shouldEdit = true;
-                              AppRouter.popRoute();
-                            }
+                        FilterMenu<WorkItemState>(
+                          title: 'Status',
+                          values: statuses,
+                          currentFilter: newWorkItemStatus!,
+                          formatLabel: (t) => t.name,
+                          onSelected: (f) {
+                            setState(() => newWorkItemStatus = f);
                           },
-                          text: 'Confirm',
-                        ),
-                        const SizedBox(
-                          height: 40,
+                          isDefaultFilter: false,
+                          widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
                         ),
                       ],
                     ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                  if (itemDetail.value!.data!.item.canBeChanged) ...[
+                    Row(
+                      children: [
+                        Text(
+                          'Type:',
+                          style: style,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        FilterMenu<WorkItemType>(
+                          title: 'Type',
+                          values: projectWorkItemTypes,
+                          currentFilter: newWorkItemType,
+                          formatLabel: (t) => t.name,
+                          onSelected: (f) async {
+                            newWorkItemType = f;
+                            statuses = apiService.workItemStates[fields.systemTeamProject]![newWorkItemType.name] ?? [];
+                            if (!statuses.map((e) => e.name).contains(newWorkItemStatus)) {
+                              // change status if new type doesn't support current status
+                              newWorkItemStatus = statuses.firstOrNull ?? newWorkItemStatus;
+                            }
+
+                            setState(() => true);
+                          },
+                          isDefaultFilter: newWorkItemType == WorkItemType.all,
+                          widgetBuilder: (t) => WorkItemTypeFilter(type: t),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                  Row(
+                    children: [
+                      Text(
+                        'Assigned to:',
+                        style: style,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      FilterMenu<GraphUser>(
+                        title: 'Assigned to',
+                        values: getSortedUsers(apiService, withUserAll: false),
+                        currentFilter: newWorkItemAssignedTo,
+                        onSelected: (u) {
+                          setState(() => newWorkItemAssignedTo = u);
+                        },
+                        formatLabel: (u) => u.displayName!,
+                        isDefaultFilter: newWorkItemAssignedTo.displayName == userAll.displayName,
+                        widgetBuilder: (u) => UserFilterWidget(user: u),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-          ),
+            const SizedBox(
+              height: 20,
+            ),
+            DevOpsFormField(
+              initialValue: newWorkItemTitle,
+              onChanged: (value) => newWorkItemTitle = value,
+              label: 'Title',
+              formFieldKey: titleFieldKey,
+              textCapitalization: TextCapitalization.sentences,
+              autofocus: true,
+              textInputAction: TextInputAction.next,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            DevOpsFormField(
+              initialValue: newWorkItemDescription,
+              onChanged: (value) => newWorkItemDescription = value,
+              label: 'Description',
+              maxLines: 3,
+              onFieldSubmitted: AppRouter.popRoute,
+              textCapitalization: TextCapitalization.sentences,
+            ),
+            const SizedBox(
+              height: 60,
+            ),
+            LoadingButton(
+              onPressed: () {
+                if (titleFieldKey.currentState!.validate()) {
+                  shouldEdit = true;
+                  AppRouter.popRoute();
+                }
+              },
+              text: 'Confirm',
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+          ],
         );
       },
     );

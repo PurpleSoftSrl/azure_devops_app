@@ -106,57 +106,44 @@ class FilterMenu<T> extends StatelessWidget {
       onTap: () {
         OverlayService.bottomsheet(
           isScrollControlled: true,
-          title: title,
-          builder: (context) => Container(
-            height: context.height * .8,
-            decoration: BoxDecoration(
-              color: context.colorScheme.background,
-              borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(12),
-                topRight: const Radius.circular(12),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(15),
-              child: ListView(
-                children: values
-                    .map(
-                      (v) => InkWell(
-                        key: ValueKey(formatLabel?.call(v) ?? v.toString()),
-                        onTap: () {
-                          onSelected!(v);
-                          AppRouter.popRoute();
-                        },
-                        child: Column(
+          spaceUnderTitle: false,
+          builder: (context) => ListView(
+            children: values
+                .map(
+                  (v) => InkWell(
+                    key: ValueKey(formatLabel?.call(v) ?? v.toString()),
+                    onTap: () {
+                      onSelected!(v);
+                      AppRouter.popRoute();
+                    },
+                    child: Column(
+                      children: [
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  height: imageSize,
-                                  width: imageSize,
-                                  child: widgetBuilder.call(v),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Text(formatLabel?.call(v) ?? v.toString()),
-                                if (currentFilter == v) ...[
-                                  const Spacer(),
-                                  Icon(DevOpsIcons.success),
-                                ],
-                              ],
+                            SizedBox(
+                              height: imageSize,
+                              width: imageSize,
+                              child: widgetBuilder.call(v),
                             ),
-                            if (v != values.last)
-                              const Divider(
-                                height: 20,
-                              ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Text(formatLabel?.call(v) ?? v.toString()),
+                            if (currentFilter == v) ...[
+                              const Spacer(),
+                              Icon(DevOpsIcons.success),
+                            ],
                           ],
                         ),
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
+                        if (v != values.last)
+                          const Divider(
+                            height: 20,
+                          ),
+                      ],
+                    ),
+                  ),
+                )
+                .toList(),
           ),
         );
       },

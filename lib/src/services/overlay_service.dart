@@ -133,11 +133,15 @@ class OverlayService {
     );
   }
 
+  // ignore: long-parameter-list
   static Future<void> bottomsheet({
     required WidgetBuilder builder,
     bool isDismissible = true,
     bool isScrollControlled = false,
-    required String title,
+    String? title,
+    double heightPercentage = .8,
+    EdgeInsets padding = const EdgeInsets.all(15),
+    bool spaceUnderTitle = true,
   }) async {
     final context = AppRouter.rootNavigator!.context;
 
@@ -148,7 +152,33 @@ class OverlayService {
       isDismissible: isDismissible,
       isScrollControlled: isScrollControlled,
       routeSettings: RouteSettings(name: 'bs_$title'),
-      builder: builder,
+      builder: (ctx) => ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: const Radius.circular(12),
+          topRight: const Radius.circular(12),
+        ),
+        child: Container(
+          height: context.height * heightPercentage,
+          decoration: BoxDecoration(
+            color: context.colorScheme.background,
+          ),
+          child: Scaffold(
+            body: Padding(
+              padding: padding,
+              child: Column(
+                children: [
+                  if (title != null) Text(title),
+                  if (spaceUnderTitle)
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  Expanded(child: builder(ctx)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 

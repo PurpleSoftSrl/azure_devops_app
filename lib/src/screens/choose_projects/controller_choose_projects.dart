@@ -145,34 +145,23 @@ class _ChooseProjectsController {
     await OverlayService.bottomsheet(
       isDismissible: false,
       title: 'Select your organization',
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          children: [
-            Text('Select your organization'),
-            Expanded(
-              child: ListView(
-                children: [
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  ...orgs.map(
-                    (u) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: LoadingButton(
-                        onPressed: () {
-                          selectedOrg = u;
-                          AppRouter.popRoute();
-                        },
-                        text: u.accountName!,
-                      ),
-                    ),
-                  ),
-                ],
+      isScrollControlled: true,
+      heightPercentage: .7,
+      builder: (context) => ListView(
+        children: [
+          ...orgs.map(
+            (u) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: LoadingButton(
+                onPressed: () {
+                  selectedOrg = u;
+                  AppRouter.popRoute();
+                },
+                text: u.accountName!,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
     return selectedOrg;

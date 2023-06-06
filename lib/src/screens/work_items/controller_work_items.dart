@@ -143,168 +143,140 @@ class _WorkItemsController with FilterMixin {
     await OverlayService.bottomsheet(
       isScrollControlled: true,
       title: 'Create a new work item',
-      builder: (context) => Container(
-        height: context.height * .9,
-        decoration: BoxDecoration(
-          color: context.colorScheme.background,
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(12),
-            topRight: const Radius.circular(12),
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-          child: Scaffold(
-            body: Column(
-              children: [
-                Text(
-                  'Create a new work item',
-                  style: context.textTheme.titleLarge,
-                ),
-                Expanded(
-                  child: ListView(
+      heightPercentage: .9,
+      padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+      builder: (context) => ListView(
+        children: [
+          StatefulBuilder(
+            builder: (_, setState) {
+              if (newWorkItemProject != projectAll) {
+                projectWorkItemTypes =
+                    allProjectsWorkItemTypes[newWorkItemProject.name]?.where((t) => t != WorkItemType.all).toList() ??
+                        [];
+
+                if (!projectWorkItemTypes.contains(newWorkItemType)) {
+                  newWorkItemType = projectWorkItemTypes.first;
+                }
+              }
+
+              final style = context.textTheme.bodySmall!.copyWith(height: 1, fontWeight: FontWeight.bold);
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      const SizedBox(
-                        height: 20,
+                      Text(
+                        'Project:',
+                        style: style,
                       ),
-                      StatefulBuilder(
-                        builder: (_, setState) {
-                          if (newWorkItemProject != projectAll) {
-                            projectWorkItemTypes = allProjectsWorkItemTypes[newWorkItemProject.name]
-                                    ?.where((t) => t != WorkItemType.all)
-                                    .toList() ??
-                                [];
-
-                            if (!projectWorkItemTypes.contains(newWorkItemType)) {
-                              newWorkItemType = projectWorkItemTypes.first;
-                            }
-                          }
-
-                          final style = context.textTheme.bodySmall!.copyWith(height: 1, fontWeight: FontWeight.bold);
-
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    'Project:',
-                                    style: style,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  FilterMenu<Project>(
-                                    title: 'Project',
-                                    values: getProjects(storageService).where((p) => p != projectAll).toList(),
-                                    currentFilter: newWorkItemProject,
-                                    onSelected: (p) {
-                                      setState(() => newWorkItemProject = p);
-                                    },
-                                    formatLabel: (p) => p.name!,
-                                    isDefaultFilter: newWorkItemProject == projectAll,
-                                    widgetBuilder: (p) => ProjectFilterWidget(project: p),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Type:',
-                                    style: style,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  FilterMenu<WorkItemType>(
-                                    title: 'Type',
-                                    values: projectWorkItemTypes,
-                                    currentFilter: newWorkItemType,
-                                    formatLabel: (t) => t.name,
-                                    onSelected: (f) {
-                                      setState(() => newWorkItemType = f);
-                                    },
-                                    isDefaultFilter: newWorkItemType == WorkItemType.all,
-                                    widgetBuilder: (t) => WorkItemTypeFilter(type: t),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Assigned to:',
-                                    style: style,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  FilterMenu<GraphUser>(
-                                    title: 'Assigned to',
-                                    values: getSortedUsers(apiService)
-                                        .whereNot((u) => u.displayName == userAll.displayName)
-                                        .toList(),
-                                    currentFilter: newWorkItemAssignedTo,
-                                    onSelected: (u) {
-                                      setState(() => newWorkItemAssignedTo = u);
-                                    },
-                                    formatLabel: (u) => u.displayName!,
-                                    isDefaultFilter: newWorkItemAssignedTo.displayName == userAll.displayName,
-                                    widgetBuilder: (u) => UserFilterWidget(user: u),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      FilterMenu<Project>(
+                        title: 'Project',
+                        values: getProjects(storageService).where((p) => p != projectAll).toList(),
+                        currentFilter: newWorkItemProject,
+                        onSelected: (p) {
+                          setState(() => newWorkItemProject = p);
                         },
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      DevOpsFormField(
-                        onChanged: (value) => newWorkItemTitle = value,
-                        label: 'Title',
-                        formFieldKey: titleFieldKey,
-                        textCapitalization: TextCapitalization.sentences,
-                        autofocus: true,
-                        textInputAction: TextInputAction.next,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      DevOpsFormField(
-                        onChanged: (value) => newWorkItemDescription = value,
-                        label: 'Description',
-                        maxLines: 3,
-                        onFieldSubmitted: AppRouter.popRoute,
-                        textCapitalization: TextCapitalization.sentences,
-                      ),
-                      const SizedBox(
-                        height: 60,
-                      ),
-                      LoadingButton(
-                        onPressed: () {
-                          if (titleFieldKey.currentState!.validate()) {
-                            AppRouter.popRoute();
-                          }
-                        },
-                        text: 'Confirm',
-                      ),
-                      const SizedBox(
-                        height: 40,
+                        formatLabel: (p) => p.name!,
+                        isDefaultFilter: newWorkItemProject == projectAll,
+                        widgetBuilder: (p) => ProjectFilterWidget(project: p),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'Type:',
+                        style: style,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      FilterMenu<WorkItemType>(
+                        title: 'Type',
+                        values: projectWorkItemTypes,
+                        currentFilter: newWorkItemType,
+                        formatLabel: (t) => t.name,
+                        onSelected: (f) {
+                          setState(() => newWorkItemType = f);
+                        },
+                        isDefaultFilter: newWorkItemType == WorkItemType.all,
+                        widgetBuilder: (t) => WorkItemTypeFilter(type: t),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'Assigned to:',
+                        style: style,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      FilterMenu<GraphUser>(
+                        title: 'Assigned to',
+                        values:
+                            getSortedUsers(apiService).whereNot((u) => u.displayName == userAll.displayName).toList(),
+                        currentFilter: newWorkItemAssignedTo,
+                        onSelected: (u) {
+                          setState(() => newWorkItemAssignedTo = u);
+                        },
+                        formatLabel: (u) => u.displayName!,
+                        isDefaultFilter: newWorkItemAssignedTo.displayName == userAll.displayName,
+                        widgetBuilder: (u) => UserFilterWidget(user: u),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
           ),
-        ),
+          const SizedBox(
+            height: 20,
+          ),
+          DevOpsFormField(
+            onChanged: (value) => newWorkItemTitle = value,
+            label: 'Title',
+            formFieldKey: titleFieldKey,
+            textCapitalization: TextCapitalization.sentences,
+            autofocus: true,
+            textInputAction: TextInputAction.next,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          DevOpsFormField(
+            onChanged: (value) => newWorkItemDescription = value,
+            label: 'Description',
+            maxLines: 3,
+            onFieldSubmitted: AppRouter.popRoute,
+            textCapitalization: TextCapitalization.sentences,
+          ),
+          const SizedBox(
+            height: 60,
+          ),
+          LoadingButton(
+            onPressed: () {
+              if (titleFieldKey.currentState!.validate()) {
+                AppRouter.popRoute();
+              }
+            },
+            text: 'Confirm',
+          ),
+          const SizedBox(
+            height: 40,
+          ),
+        ],
       ),
     );
 

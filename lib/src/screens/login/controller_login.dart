@@ -74,45 +74,28 @@ class _LoginController {
     await OverlayService.bottomsheet(
       title: 'Insert your organization',
       isScrollControlled: true,
-      builder: (context) => Container(
-        height: context.height * .8,
-        decoration: BoxDecoration(
-          color: context.colorScheme.background,
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(12),
-            topRight: const Radius.circular(12),
+      builder: (context) => Column(
+        children: [
+          DevOpsFormField(
+            label: 'Organization',
+            onChanged: (s) => manualOrg = s,
+            onFieldSubmitted: () {
+              hasSetOrg = true;
+              AppRouter.pop();
+            },
+            maxLines: 1,
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Text('Insert your organization name'),
-              const SizedBox(
-                height: 20,
-              ),
-              DevOpsFormField(
-                label: 'Organization',
-                onChanged: (s) => manualOrg = s,
-                onFieldSubmitted: () {
-                  hasSetOrg = true;
-                  AppRouter.pop();
-                },
-                maxLines: 1,
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              LoadingButton(
-                onPressed: () {
-                  hasSetOrg = true;
-                  AppRouter.pop();
-                },
-                text: 'Confirm',
-              ),
-            ],
+          const SizedBox(
+            height: 40,
           ),
-        ),
+          LoadingButton(
+            onPressed: () {
+              hasSetOrg = true;
+              AppRouter.pop();
+            },
+            text: 'Confirm',
+          ),
+        ],
       ),
     );
 
