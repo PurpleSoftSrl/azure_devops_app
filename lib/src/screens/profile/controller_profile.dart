@@ -1,15 +1,16 @@
 part of profile;
 
-class _ProfileController {
-  factory _ProfileController({required AzureApiService apiService}) {
-    return instance ??= _ProfileController._(apiService);
+class _ProfileController with FilterMixin {
+  factory _ProfileController({required AzureApiService apiService, required StorageService storageService}) {
+    return instance ??= _ProfileController._(apiService, storageService);
   }
 
-  _ProfileController._(this.apiService);
+  _ProfileController._(this.apiService, this.storageService);
 
   static _ProfileController? instance;
 
   final AzureApiService apiService;
+  final StorageService storageService;
 
   final recentCommits = ValueNotifier<ApiResponse<List<Commit>?>?>(null);
 
@@ -29,6 +30,8 @@ class _ProfileController {
     };
   }
 
+  final myWorkItems = <WorkItem>[];
+
   void dispose() {
     instance = null;
   }
@@ -45,6 +48,9 @@ class _ProfileController {
 
     final res = commits.data?.take(100).toList();
 
+    final myWorkItemsRes = await apiService.getMyRecentWorkItems();
+    myWorkItems.addAll(myWorkItemsRes.data ?? []);
+
     recentCommits.value = commits.copyWith(data: res);
   }
 
@@ -60,12 +66,27 @@ class _ProfileController {
     return apiService.getRecentCommits(author: gitUsername);
   }
 
-  String getSummary() {
+  String getCommitsSummary() {
     final projectsCount = todaysCommitsPerRepo.keys.length;
     final reposCount = todaysCommitsPerRepo.values.fold(0, (a, b) => a + b.keys.length);
     final commits = todaysCommitsCount == 1 ? 'commit' : 'commits';
     final repos = reposCount == 1 ? 'repo' : 'repos';
     final projects = projectsCount == 1 ? 'project' : 'projects';
     return '$todaysCommitsCount $commits in $reposCount $repos in $projectsCount $projects';
+  }
+
+  String getWorkItemsSummary() {
+    final workItemsCount = myWorkItems.length;
+    final items = workItemsCount > 1 ? 'items' : 'item';
+    return '$workItemsCount work $items updated';
+  }
+
+  void goToWorkItemDetail(WorkItem item) {
+    AppRouter.goToWorkItemDetail(project: item.fields.systemTeamProject, id: item.id);
+  }
+
+  void goToCommits(Commit commit) {
+    final project = getProjects(storageService).firstWhereOrNull((p) => p.id == commit.projectId);
+    AppRouter.goToCommits(project: project);
   }
 }

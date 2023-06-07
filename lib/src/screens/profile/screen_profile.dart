@@ -35,7 +35,7 @@ class _ProfileScreen extends StatelessWidget {
               ],
             ),
           ],
-          if (ctrl.todaysCommitsPerRepo.isNotEmpty) ...[
+          if (ctrl.todaysCommitsPerRepo.isNotEmpty || ctrl.myWorkItems.isNotEmpty) ...[
             SectionHeader(text: "Today's summary"),
             Container(
               decoration: BoxDecoration(
@@ -47,27 +47,55 @@ class _ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    ctrl.getSummary(),
-                    textAlign: TextAlign.center,
-                    style: context.textTheme.bodyMedium!.copyWith(color: context.colorScheme.onSecondary),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ...ctrl.todaysCommitsPerRepo.entries.map(
-                    (p) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ...p.value.entries.map(
-                          (e) => Text('${e.key} ${e.value.length}'),
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                      ],
+                  if (ctrl.todaysCommitsPerRepo.isNotEmpty) ...[
+                    Text(
+                      ctrl.getCommitsSummary(),
+                      textAlign: TextAlign.center,
+                      style: context.textTheme.bodyMedium!.copyWith(color: context.colorScheme.onSecondary),
                     ),
-                  ),
+                    const SizedBox(
+                      height: 6,
+                    ),
+                    ...ctrl.todaysCommitsPerRepo.entries.map(
+                      (p) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ...p.value.entries.map(
+                            (e) => InkWell(
+                              onTap: () => ctrl.goToCommits(e.value.first),
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 4),
+                                child: Text('${e.key} ${e.value.length}'),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  if (ctrl.myWorkItems.isNotEmpty) ...[
+                    if (ctrl.todaysCommitsPerRepo.isNotEmpty)
+                      const SizedBox(
+                        height: 10,
+                      ),
+                    Text(
+                      ctrl.getWorkItemsSummary(),
+                      textAlign: TextAlign.center,
+                      style: context.textTheme.bodyMedium!.copyWith(color: context.colorScheme.onSecondary),
+                    ),
+                    const SizedBox(
+                      height: 6,
+                    ),
+                    ...ctrl.myWorkItems.map(
+                      (item) => InkWell(
+                        onTap: () => ctrl.goToWorkItemDetail(item),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Text('#${item.id} ${item.fields.systemTeamProject} (${item.fields.systemState})'),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),

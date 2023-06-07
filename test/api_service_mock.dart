@@ -255,6 +255,11 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
+  Future<ApiResponse<List<WorkItem>>> getMyRecentWorkItems() {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes({bool force = false}) async {
     return ApiResponse.ok(<String, List<WorkItemType>>{});
   }

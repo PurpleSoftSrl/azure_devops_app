@@ -5,10 +5,13 @@ import 'dart:async';
 import 'package:azure_devops/src/extensions/commit_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
+import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/user.dart';
+import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
+import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
@@ -32,7 +35,8 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final ctrl = _ProfileController(apiService: apiService);
+    final storageService = StorageServiceInherited.of(context).storageService;
+    final ctrl = _ProfileController(apiService: apiService, storageService: storageService);
     return LayoutBuilder(
       builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
           ? _ProfileScreen(ctrl, _smartphoneParameters)

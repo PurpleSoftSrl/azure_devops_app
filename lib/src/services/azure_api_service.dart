@@ -73,6 +73,8 @@ abstract class AzureApiService {
     GraphUser? assignedTo,
   });
 
+  Future<ApiResponse<List<WorkItem>>> getMyRecentWorkItems();
+
   Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes({bool force = false});
 
   Future<ApiResponse<WorkItemWithUpdates>> getWorkItemDetail({
@@ -533,7 +535,6 @@ class AzureApiServiceImpl implements AzureApiService {
       '$_basePath/_apis/wit/wiql?\$top=200&$_apiVersion',
       body: {'query': 'Select [System.Id] From WorkItems $queryStr Order By [System.ChangedDate] desc'},
     );
-
     if (workItemIdsRes.isError) return ApiResponse.error(workItemIdsRes);
 
     final workItemIds = GetWorkItemIds.fromResponse(workItemIdsRes);
@@ -546,6 +547,26 @@ class AzureApiServiceImpl implements AzureApiService {
     if (allWorkItemsRes.isError) return ApiResponse.error(allWorkItemsRes);
 
     return ApiResponse.ok(GetWorkItemsResponse.fromResponse(allWorkItemsRes));
+  }
+
+  @override
+  Future<ApiResponse<List<WorkItem>>> getMyRecentWorkItems() async {
+    final myQueryStr = ' Where [System.ChangedDate] = @today AND [System.ChangedBy] = @Me ';
+    final myWorkItemIdsRes = await _post(
+      '$_basePath/_apis/wit/wiql?\$top=200&$_apiVersion',
+      body: {'query': 'Select [System.Id] From WorkItems $myQueryStr Order By [System.ChangedDate] desc'},
+    );
+    if (myWorkItemIdsRes.isError) return ApiResponse.error(myWorkItemIdsRes);
+
+    final workItemIds = GetWorkItemIds.fromResponse(myWorkItemIdsRes);
+    if (workItemIds.isEmpty) return ApiResponse.ok([]);
+
+    final ids = workItemIds.map((e) => e.id).join(',');
+
+    final myWorkItemsRes = await _get('$_basePath/_apis/wit/workitems?ids=$ids&$_apiVersion');
+    if (myWorkItemsRes.isError) return ApiResponse.error(myWorkItemsRes);
+
+    return ApiResponse.ok(GetWorkItemsResponse.fromResponse(myWorkItemsRes));
   }
 
   @override
