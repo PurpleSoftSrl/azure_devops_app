@@ -13,7 +13,6 @@ class _PullRequestDetailScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: 'Pull request',
       notifier: ctrl.prDetail,
-      onEmpty: (_) => Text('No pull request found'),
       actions: [
         IconButton(
           onPressed: ctrl.sharePr,

@@ -13,7 +13,6 @@ class _WorkItemDetailScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: 'Work Item #${ctrl.args.id}',
       notifier: ctrl.itemDetail,
-      onEmpty: (_) => Text('No work item found'),
       actions: [
         PopupMenuButton<void>(
           key: ValueKey('Popup menu work item detail'),

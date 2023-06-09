@@ -19,7 +19,6 @@ class _CommitDetailScreen extends StatelessWidget {
         ),
       ],
       notifier: ctrl.commitChanges,
-      onEmpty: (_) => Text('No commit found'),
       padding: const EdgeInsets.only(left: 16),
       builder: (detail) => DefaultTextStyle(
         style: context.textTheme.titleSmall!,

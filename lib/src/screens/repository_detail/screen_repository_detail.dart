@@ -14,7 +14,7 @@ class _RepositoryDetailScreen extends StatelessWidget {
       title: (ctrl.args.filePath?.startsWith('/') ?? false ? ctrl.args.filePath?.substring(1) : ctrl.args.filePath) ??
           ctrl.args.repositoryName,
       notifier: ctrl.repoItems,
-      onEmpty: (_) => Text('No repo found'),
+      onEmpty: 'No items found',
       builder: (items) {
         final pathPrefix = ctrl.args.filePath != null ? '${ctrl.args.filePath}' : '';
         return Column(

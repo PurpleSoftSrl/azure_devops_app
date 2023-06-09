@@ -13,7 +13,7 @@ class _ProfileScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: 'Profile',
       notifier: ctrl.recentCommits,
-      onEmpty: (_) => Text('No commits found'),
+      onEmpty: 'No commits found',
       showScrollbar: true,
       builder: (commits) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,

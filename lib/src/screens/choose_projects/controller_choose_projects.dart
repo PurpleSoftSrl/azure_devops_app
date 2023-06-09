@@ -17,7 +17,7 @@ class _ChooseProjectsController {
   final bool removeRoutes;
   final StorageService storageService;
 
-  final chosenProjects = ValueNotifier<ApiResponse<GetProjectsResponse?>?>(null);
+  final chosenProjects = ValueNotifier<ApiResponse<List<Project>?>?>(null);
   List<Project> allProjects = <Project>[];
 
   final chooseAll = ValueNotifier(false);
@@ -37,7 +37,7 @@ class _ChooseProjectsController {
     allProjects = [];
 
     final projectsRes = await apiService.getProjects();
-    final projects = projectsRes.data ?? [];
+    final projects = projectsRes.data ?? <Project>[];
 
     final alreadyChosenProjects =
         storageService.getChosenProjects().where((p) => projects.map((p1) => p1.id!).contains(p.id!));
@@ -59,33 +59,31 @@ class _ChooseProjectsController {
 
     chosenProjects.value = ApiResponse(
       isError: projectsRes.isError,
-      data: GetProjectsResponse(
-        projects: (alreadyChosenProjects.isNotEmpty ? alreadyChosenProjects : projects).toList(),
-      ),
+      data: (alreadyChosenProjects.isNotEmpty ? alreadyChosenProjects : projects).toList(),
       errorResponse: projectsRes.errorResponse,
     );
 
-    _initiallyChosenProjects.addAll(chosenProjects.value!.data!.projects);
+    _initiallyChosenProjects.addAll(chosenProjects.value!.data!);
   }
 
   void toggleChooseAll() {
-    chosenProjects.value = ApiResponse.ok(GetProjectsResponse(projects: chooseAll.value ? [] : allProjects));
+    chosenProjects.value = ApiResponse.ok(chooseAll.value ? [] : allProjects);
 
     chooseAll.value = !chooseAll.value;
   }
 
   void toggleChosenProject(Project p) {
-    if (chosenProjects.value!.data!.projects.contains(p)) {
-      chosenProjects.value!.data!.projects.remove(p);
+    if (chosenProjects.value!.data!.contains(p)) {
+      chosenProjects.value!.data!.remove(p);
     } else {
-      chosenProjects.value!.data!.projects.add(p);
+      chosenProjects.value!.data!.add(p);
     }
 
-    chosenProjects.value = ApiResponse.ok(GetProjectsResponse(projects: chosenProjects.value!.data!.projects));
+    chosenProjects.value = ApiResponse.ok(chosenProjects.value!.data!);
   }
 
   Future<void> goToHome() async {
-    if (chosenProjects.value!.data!.projects.isEmpty) {
+    if (chosenProjects.value!.data!.isEmpty) {
       return OverlayService.error(
         'No projects chosen',
         description: 'You have to choose at least one project',
@@ -93,13 +91,13 @@ class _ChooseProjectsController {
     }
 
     apiService.setChosenProjects(
-      chosenProjects.value!.data!.projects..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)),
+      chosenProjects.value!.data!..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)),
     );
 
     if (removeRoutes) {
       unawaited(AppRouter.goToTabs());
     } else {
-      final hasChangedProjects = _initiallyChosenProjects != chosenProjects.value!.data!.projects;
+      final hasChangedProjects = _initiallyChosenProjects != chosenProjects.value!.data!;
       if (hasChangedProjects) {
         // get new work item types to avoid errors in work items creation
         unawaited(apiService.getWorkItemTypes(force: true));

@@ -14,7 +14,6 @@ class _ProjectDetailScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: ctrl.projectName,
       notifier: ctrl.project,
-      onEmpty: (_) => Text('No projects found'),
       actions: [
         Padding(
           padding: const EdgeInsets.all(8),

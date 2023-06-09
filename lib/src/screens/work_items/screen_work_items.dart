@@ -24,19 +24,7 @@ class _WorkItemsScreen extends StatelessWidget {
         ),
       ],
       onResetFilters: ctrl.resetFilters,
-      onEmpty: (onRetry) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('No work items found'),
-          const SizedBox(
-            height: 50,
-          ),
-          LoadingButton(
-            onPressed: onRetry,
-            text: 'Reset filters',
-          ),
-        ],
-      ),
+      onEmpty: 'No work items found',
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: [

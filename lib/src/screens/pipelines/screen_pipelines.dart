@@ -15,19 +15,7 @@ class _PipelinesScreen extends StatelessWidget {
       notifier: ctrl.pipelines,
       showScrollbar: true,
       onResetFilters: ctrl.resetFilters,
-      onEmpty: (onRetry) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('No pipelines found'),
-          const SizedBox(
-            height: 50,
-          ),
-          LoadingButton(
-            onPressed: onRetry,
-            text: 'Reset filters',
-          ),
-        ],
-      ),
+      onEmpty: 'No pipelines found',
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: [

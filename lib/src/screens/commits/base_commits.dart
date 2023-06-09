@@ -12,7 +12,6 @@ import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/commit_list_tile.dart';
 import 'package:azure_devops/src/widgets/filter_menu.dart';
-import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
 
 part 'components_commits.dart';

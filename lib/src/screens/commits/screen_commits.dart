@@ -15,19 +15,7 @@ class _CommitsScreen extends StatelessWidget {
       notifier: ctrl.recentCommits,
       showScrollbar: true,
       onResetFilters: ctrl.resetFilters,
-      onEmpty: (onRetry) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('No commits found'),
-          const SizedBox(
-            height: 50,
-          ),
-          LoadingButton(
-            onPressed: onRetry,
-            text: 'Reset filters',
-          ),
-        ],
-      ),
+      onEmpty: 'No commits found',
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: [

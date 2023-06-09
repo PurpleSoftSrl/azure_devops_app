@@ -17,7 +17,7 @@ Future<void> main(List<String> args) async {
 
   final sentryDns = const String.fromEnvironment('SENTRY_DNS');
 
-  if (sentryDns.isEmpty) {
+  if (sentryDns.isEmpty || kDebugMode) {
     runApp(const AzureDevOps());
   } else {
     await SentryFlutter.init(

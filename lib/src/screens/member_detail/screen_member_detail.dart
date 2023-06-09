@@ -13,7 +13,6 @@ class _MemberDetailScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: 'User detail',
       notifier: ctrl.user,
-      onEmpty: (_) => Text('User not found'),
       builder: (user) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

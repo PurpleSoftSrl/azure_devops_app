@@ -10,12 +10,12 @@ class _ChooseProjectsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        AppPage<GetProjectsResponse?>(
+        AppPage<List<Project>?>(
           init: ctrl.init,
           dispose: ctrl.dispose,
           title: 'Choose projects',
           notifier: ctrl.chosenProjects,
-          onEmpty: (_) => Text('No projects found'),
+          onEmpty: 'No projects found',
           safeAreaBottom: false,
           showScrollbar: true,
           builder: (projects) => Column(
@@ -55,7 +55,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
               ...ctrl.allProjects.map(
                 (p) => CheckboxListTile(
                   title: Text(p.name!),
-                  value: projects!.projects.contains(p),
+                  value: projects!.contains(p),
                   onChanged: (_) => ctrl.toggleChosenProject(p),
                   contentPadding: EdgeInsets.only(right: 4),
                 ),
@@ -70,9 +70,9 @@ class _ChooseProjectsScreen extends StatelessWidget {
           bottom: max(MediaQuery.of(context).padding.bottom, 24),
           right: 0,
           left: 0,
-          child: ValueListenableBuilder<ApiResponse<GetProjectsResponse?>?>(
+          child: ValueListenableBuilder<ApiResponse<List<Project>?>?>(
             valueListenable: ctrl.chosenProjects,
-            builder: (_, projects, __) => projects?.data == null || projects!.data!.projects.isEmpty
+            builder: (_, projects, __) => projects?.data == null || projects!.data!.isEmpty
                 ? const SizedBox()
                 : LoadingButton(
                     onPressed: ctrl.goToHome,

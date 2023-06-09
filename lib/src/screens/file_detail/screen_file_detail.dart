@@ -13,7 +13,6 @@ class _FileDetailScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: ctrl.args.filePath!.startsWith('/') ? ctrl.args.filePath!.substring(1) : ctrl.args.filePath!,
       notifier: ctrl.fileContent,
-      onEmpty: (_) => Text('No file found'),
       padding: EdgeInsets.zero,
       showScrollbar: true,
       actions: [

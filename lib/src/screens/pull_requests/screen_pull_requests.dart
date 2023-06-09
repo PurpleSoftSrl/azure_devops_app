@@ -15,19 +15,7 @@ class _PullRequestsScreen extends StatelessWidget {
       notifier: ctrl.pullRequests,
       showScrollbar: true,
       onResetFilters: ctrl.resetFilters,
-      onEmpty: (onRetry) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('No pull requests found'),
-          const SizedBox(
-            height: 50,
-          ),
-          LoadingButton(
-            onPressed: onRetry,
-            text: 'Reset filters',
-          ),
-        ],
-      ),
+      onEmpty: 'No pull requests found',
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: [

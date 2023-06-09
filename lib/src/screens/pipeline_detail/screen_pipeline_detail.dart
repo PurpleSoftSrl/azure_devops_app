@@ -13,7 +13,6 @@ class _PipelineDetailScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: 'Pipeline detail',
       notifier: ctrl.buildDetail,
-      onEmpty: (_) => Text('No pipeline found'),
       actions: [
         PopupMenuButton<void>(
           key: ValueKey('Popup menu pipeline detail'),
