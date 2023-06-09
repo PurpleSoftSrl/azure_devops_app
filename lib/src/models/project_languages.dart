@@ -32,21 +32,21 @@ class GetProjectLanguagesResponse {
 class LanguageBreakdown {
   factory LanguageBreakdown.fromJson(Map<String, dynamic> json) => LanguageBreakdown(
         name: json['name'] as String,
-        files: json['files'] as int,
-        filesPercentage: json['filesPercentage'] as double,
+        files: json['files'] as int?,
+        filesPercentage: json['filesPercentage'] as double?,
         languagePercentage: json['languagePercentage'] as double?,
       );
 
   LanguageBreakdown({
     required this.name,
-    required this.files,
-    required this.filesPercentage,
+    this.files,
+    this.filesPercentage,
     this.languagePercentage,
   });
 
   final String name;
-  final int files;
-  final double filesPercentage;
+  final int? files;
+  final double? filesPercentage;
   final double? languagePercentage;
 }
 
