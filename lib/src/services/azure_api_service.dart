@@ -977,12 +977,20 @@ class AzureApiServiceImpl implements AzureApiService {
     final authorSearch = author != null ? '&searchCriteria.author=$author' : '';
     final topSearch = maxCount != null ? '&searchCriteria.\$top=$maxCount' : '';
 
-    final allProjectCommits = await Future.wait([
-      for (final repo in repos)
-        _get(
-          '$_basePath/${repo.project!.name}/_apis/git/repositories/${repo.name}/commits?$_apiVersion$authorSearch$topSearch',
-        ),
-    ]);
+    final allProjectCommits = <Response>[];
+
+    // get commits in slices to avoid 'too many open files' error happening on iOS
+    final slices = repos.slices(50);
+    for (final slice in slices) {
+      allProjectCommits.addAll(
+        await Future.wait([
+          for (final repo in slice)
+            _get(
+              '$_basePath/${repo.project!.name}/_apis/git/repositories/${repo.name}/commits?$_apiVersion$authorSearch$topSearch',
+            ),
+        ]),
+      );
+    }
 
     var isAllCommitsError = true;
 
