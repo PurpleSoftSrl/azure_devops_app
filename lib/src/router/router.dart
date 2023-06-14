@@ -128,12 +128,10 @@ class AppRouter {
 
   static Project? getPipelinesArgs(BuildContext context) => _getArgs(context);
 
-  static Future<void> goToPipelineDetail({required int id, required String project}) async {
-    final args = PipelineDetailArgs(id: id, project: project);
-    await _goTo(_pipelineDetail, args: args);
-  }
+  static Future<void> goToPipelineDetail({required int id, required String project}) =>
+      _goTo(_pipelineDetail, args: (id: id, project: project));
 
-  static PipelineDetailArgs getPipelineDetailArgs(BuildContext context) => _getArgs(context);
+  static ({String project, int id}) getPipelineDetailArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToPipelineLogs(PipelineLogsArgs pipeline) => _goTo(_pipelineLogs, args: pipeline);
 
@@ -166,23 +164,19 @@ class AppRouter {
 
   static Project? getWorkItemsArgs(BuildContext context) => _getArgs(context);
 
-  static Future<void> goToWorkItemDetail({required String project, required int id}) async {
-    final args = WorkItemDetailArgs(project: project, id: id);
-    await _goTo(_workItemDetail, args: args);
-  }
+  static Future<void> goToWorkItemDetail({required String project, required int id}) =>
+      _goTo(_workItemDetail, args: (project: project, id: id));
 
-  static WorkItemDetailArgs getWorkItemDetailArgs(BuildContext context) => _getArgs(context);
+  static ({String project, int id}) getWorkItemDetailArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToPullRequests({Project? project}) => _goTo(_pullRequests, args: project);
 
   static Project? getPullRequestsArgs(BuildContext context) => _getArgs(context);
 
-  static Future<void> goToPullRequestDetail({required String project, required int id}) async {
-    final args = PullRequestDetailArgs(project: project, id: id);
-    await _goTo(_pullRequestDetail, args: args);
-  }
+  static Future<void> goToPullRequestDetail({required String project, required int id}) =>
+      _goTo(_pullRequestDetail, args: (project: project, id: id));
 
-  static PullRequestDetailArgs getPullRequestDetailArgs(BuildContext context) => _getArgs(context);
+  static ({String project, int id}) getPullRequestDetailArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToRepositoryDetail(RepoDetailArgs args) => _goTo(_repoDetail, args: args);
 
@@ -214,20 +208,6 @@ class AppRouter {
   static Future<void> _goTo(String page, {Object? args}) => _currentNavigator!.pushNamed(page, arguments: args);
 
   static T _getArgs<T extends Object?>(BuildContext context) => ModalRoute.of(context)!.settings.arguments as T;
-}
-
-class PullRequestDetailArgs {
-  PullRequestDetailArgs({required this.project, required this.id});
-
-  final String project;
-  final int id;
-}
-
-class WorkItemDetailArgs {
-  WorkItemDetailArgs({required this.project, required this.id});
-
-  final String project;
-  final int id;
 }
 
 class RepoDetailArgs {
@@ -322,14 +302,4 @@ class CommitDetailArgs {
 
   @override
   String toString() => 'CommitDetailArgs(project: $project, repository: $repository, commitId: $commitId)';
-}
-
-class PipelineDetailArgs {
-  PipelineDetailArgs({required this.id, required this.project});
-
-  final int id;
-  final String project;
-
-  @override
-  String toString() => 'PipelineDetailArgs(id: $id, project: $project)';
 }

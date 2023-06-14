@@ -1,4 +1,3 @@
-import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/screens/pull_request_detail/base_pull_request_detail.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
@@ -20,7 +19,7 @@ void main() {
             onGenerateRoute: (_) => MaterialPageRoute(
               builder: (_) => PullRequestDetailPage(),
               settings: RouteSettings(
-                arguments: PullRequestDetailArgs(id: 1234, project: 'TestProject'),
+                arguments: (id: 1234, project: 'TestProject'),
               ),
             ),
           ),

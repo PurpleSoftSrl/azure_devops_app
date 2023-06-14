@@ -1,4 +1,3 @@
-import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/screens/work_item_detail/base_work_item_detail.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
@@ -20,7 +19,7 @@ void main() {
             onGenerateRoute: (_) => MaterialPageRoute(
               builder: (_) => WorkItemDetailPage(),
               settings: RouteSettings(
-                arguments: WorkItemDetailArgs(project: 'TestProject', id: 1234),
+                arguments: (project: 'TestProject', id: 1234),
               ),
             ),
           ),

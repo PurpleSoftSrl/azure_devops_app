@@ -1,7 +1,10 @@
 part of pull_request_detail;
 
 class _PullRequestDetailController with ShareMixin {
-  factory _PullRequestDetailController({required PullRequestDetailArgs args, required AzureApiService apiService}) {
+  factory _PullRequestDetailController({
+    required ({String project, int id}) args,
+    required AzureApiService apiService,
+  }) {
     // handle page already in memory with a different work item
     if (_instances[args.hashCode] != null) {
       return _instances[args.hashCode]!;
@@ -21,7 +24,7 @@ class _PullRequestDetailController with ShareMixin {
 
   static final Map<int, _PullRequestDetailController> _instances = {};
 
-  final PullRequestDetailArgs args;
+  final ({String project, int id}) args;
 
   final AzureApiService apiService;
 

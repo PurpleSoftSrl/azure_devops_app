@@ -1,7 +1,7 @@
 part of pipeline_detail;
 
 class _PipelineDetailController with ShareMixin {
-  factory _PipelineDetailController({required PipelineDetailArgs args, required AzureApiService apiService}) {
+  factory _PipelineDetailController({required ({String project, int id}) args, required AzureApiService apiService}) {
     // handle page already in memory with a different build
     if (_instances[args.hashCode] != null) {
       return _instances[args.hashCode]!;
@@ -21,7 +21,7 @@ class _PipelineDetailController with ShareMixin {
 
   static final Map<int, _PipelineDetailController> _instances = {};
 
-  final PipelineDetailArgs args;
+  final ({String project, int id}) args;
   final AzureApiService apiService;
 
   final buildDetail = ValueNotifier<ApiResponse<PipelineWithTimeline?>?>(null);
