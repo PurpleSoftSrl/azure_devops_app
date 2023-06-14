@@ -78,162 +78,6 @@ class AppRouter {
     _keys = keys;
   }
 
-  static Future<void> goToSplash() async {
-    await rootNavigator!.pushNamedAndRemoveUntil(_splash, (_) => false);
-  }
-
-  static Future<void> goToLogin() async {
-    await rootNavigator!.pushNamedAndRemoveUntil(_login, (_) => false);
-  }
-
-  static Future<void> goToTabs() async {
-    await rootNavigator!.pushNamedAndRemoveUntil(_tabs, (_) => false);
-  }
-
-  static Future<void> goToChooseProjects({bool removeRoutes = true}) async {
-    if (removeRoutes) {
-      await rootNavigator!.pushNamedAndRemoveUntil(_chooseProjects, (_) => false, arguments: removeRoutes);
-    } else {
-      await rootNavigator!.pushNamed(_chooseProjects, arguments: removeRoutes);
-    }
-  }
-
-  static bool getChooseProjectArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as bool;
-  }
-
-  static Future<void> goToPipelines({Project? project}) async {
-    await _currentNavigator!.pushNamed(_pipelines, arguments: project);
-  }
-
-  static Project? getPipelinesArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as Project?;
-  }
-
-  static Future<void> goToPipelineDetail({required int id, required String project}) async {
-    final args = PipelineDetailArgs(id: id, project: project);
-    await _currentNavigator!.pushNamed(_pipelineDetail, arguments: args);
-  }
-
-  static PipelineDetailArgs getPipelineDetailArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as PipelineDetailArgs;
-  }
-
-  static Future<void> goToPipelineLogs(PipelineLogsArgs pipeline) async {
-    await _currentNavigator!.pushNamed(_pipelineLogs, arguments: pipeline);
-  }
-
-  static PipelineLogsArgs getPipelineLogsArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as PipelineLogsArgs;
-  }
-
-  static Future<void> goToCommits({Project? project}) async {
-    await _currentNavigator!.pushNamed(_commits, arguments: project);
-  }
-
-  static Project? getCommitsArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as Project?;
-  }
-
-  static Future<void> goToCommitDetail({
-    required String project,
-    required String repository,
-    required String commitId,
-  }) async {
-    final args = CommitDetailArgs(project: project, repository: repository, commitId: commitId);
-    await _currentNavigator!.pushNamed(_commitDetail, arguments: args);
-  }
-
-  static CommitDetailArgs getCommitDetailArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as CommitDetailArgs;
-  }
-
-  static Future<void> goToFileDiff(FileDiffArgs args) async {
-    await _currentNavigator!.pushNamed(_fileDiff, arguments: args);
-  }
-
-  static FileDiffArgs getCommitDiffArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as FileDiffArgs;
-  }
-
-  static Future<void> goToProjectDetail(String projectName) async {
-    await _currentNavigator!.pushNamed(_projectDetail, arguments: projectName);
-  }
-
-  static String getProjectDetailArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as String;
-  }
-
-  static Future<void> goToWorkItems({Project? project}) async {
-    await _currentNavigator!.pushNamed(_workItems, arguments: project);
-  }
-
-  static Project? getWorkItemsArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as Project?;
-  }
-
-  static Future<void> goToWorkItemDetail({required String project, required int id}) async {
-    final args = WorkItemDetailArgs(project: project, id: id);
-    await _currentNavigator!.pushNamed(_workItemDetail, arguments: args);
-  }
-
-  static WorkItemDetailArgs getWorkItemDetailArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as WorkItemDetailArgs;
-  }
-
-  static Future<void> goToPullRequests({Project? project}) async {
-    await _currentNavigator!.pushNamed(_pullRequests, arguments: project);
-  }
-
-  static Project? getPullRequestsArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as Project?;
-  }
-
-  static Future<void> goToPullRequestDetail({required String project, required int id}) async {
-    final args = PullRequestDetailArgs(project: project, id: id);
-    await _currentNavigator!.pushNamed(_pullRequestDetail, arguments: args);
-  }
-
-  static PullRequestDetailArgs getPullRequestDetailArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as PullRequestDetailArgs;
-  }
-
-  static Future<void> goToRepositoryDetail(RepoDetailArgs args) async {
-    await _currentNavigator!.pushNamed(_repoDetail, arguments: args);
-  }
-
-  static RepoDetailArgs getRepositoryDetailArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as RepoDetailArgs;
-  }
-
-  static Future<void> goToFileDetail(RepoDetailArgs args) async {
-    await _currentNavigator!.pushNamed(_fileDetail, arguments: args);
-  }
-
-  static RepoDetailArgs getFileDetailArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as RepoDetailArgs;
-  }
-
-  static Future<void> goToMemberDetail(String userDescriptor) async {
-    await _currentNavigator!.pushNamed(_memberDetail, arguments: userDescriptor);
-  }
-
-  static String getMemberDetailArgs(BuildContext context) {
-    return ModalRoute.of(context)!.settings.arguments as String;
-  }
-
-  static Future<void> goToError({required String description}) async {
-    await _currentNavigator!.pushNamed(_error, arguments: description);
-  }
-
-  static void pop({bool? result}) {
-    _currentNavigator!.pop(result);
-  }
-
-  static void popRoute() {
-    rootNavigator!.pop();
-  }
-
   static Map<String, Widget Function(BuildContext)> routes = {
     _login: (_) => LoginPage(),
     _tabs: (_) => TabsPage(),
@@ -255,15 +99,121 @@ class AppRouter {
     _memberDetail: (_) => MemberDetailPage(),
     _workItemDetail: (_) => WorkItemDetailPage(),
     _pullRequestDetail: (_) => PullRequestDetailPage(),
-    _error: (_) => Material(
-          child: ErrorPage(description: 'Something went wrong', onRetry: goToSplash),
-        ),
+    _error: (_) => ErrorPage(description: 'Something went wrong', onRetry: goToSplash),
   };
+
+  static Future<void> goToSplash() async {
+    await rootNavigator!.pushNamedAndRemoveUntil(_splash, (_) => false);
+  }
+
+  static Future<void> goToLogin() async {
+    await rootNavigator!.pushNamedAndRemoveUntil(_login, (_) => false);
+  }
+
+  static Future<void> goToTabs() async {
+    await rootNavigator!.pushNamedAndRemoveUntil(_tabs, (_) => false);
+  }
+
+  static Future<void> goToChooseProjects({bool removeRoutes = true}) async {
+    if (removeRoutes) {
+      await rootNavigator!.pushNamedAndRemoveUntil(_chooseProjects, (_) => false, arguments: removeRoutes);
+    } else {
+      await rootNavigator!.pushNamed(_chooseProjects, arguments: removeRoutes);
+    }
+  }
+
+  static bool getChooseProjectArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToPipelines({Project? project}) => _goTo(_pipelines, args: project);
+
+  static Project? getPipelinesArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToPipelineDetail({required int id, required String project}) async {
+    final args = PipelineDetailArgs(id: id, project: project);
+    await _goTo(_pipelineDetail, args: args);
+  }
+
+  static PipelineDetailArgs getPipelineDetailArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToPipelineLogs(PipelineLogsArgs pipeline) => _goTo(_pipelineLogs, args: pipeline);
+
+  static PipelineLogsArgs getPipelineLogsArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToCommits({Project? project}) => _goTo(_commits, args: project);
+
+  static Project? getCommitsArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToCommitDetail({
+    required String project,
+    required String repository,
+    required String commitId,
+  }) async {
+    final args = CommitDetailArgs(project: project, repository: repository, commitId: commitId);
+    await _goTo(_commitDetail, args: args);
+  }
+
+  static CommitDetailArgs getCommitDetailArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToFileDiff(FileDiffArgs args) => _goTo(_fileDiff, args: args);
+
+  static FileDiffArgs getCommitDiffArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToProjectDetail(String projectName) => _goTo(_projectDetail, args: projectName);
+
+  static String getProjectDetailArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToWorkItems({Project? project}) => _goTo(_workItems, args: project);
+
+  static Project? getWorkItemsArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToWorkItemDetail({required String project, required int id}) async {
+    final args = WorkItemDetailArgs(project: project, id: id);
+    await _goTo(_workItemDetail, args: args);
+  }
+
+  static WorkItemDetailArgs getWorkItemDetailArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToPullRequests({Project? project}) => _goTo(_pullRequests, args: project);
+
+  static Project? getPullRequestsArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToPullRequestDetail({required String project, required int id}) async {
+    final args = PullRequestDetailArgs(project: project, id: id);
+    await _goTo(_pullRequestDetail, args: args);
+  }
+
+  static PullRequestDetailArgs getPullRequestDetailArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToRepositoryDetail(RepoDetailArgs args) => _goTo(_repoDetail, args: args);
+
+  static RepoDetailArgs getRepositoryDetailArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToFileDetail(RepoDetailArgs args) => _goTo(_fileDetail, args: args);
+
+  static RepoDetailArgs getFileDetailArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToMemberDetail(String userDescriptor) => _goTo(_memberDetail, args: userDescriptor);
+
+  static String getMemberDetailArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToError({required String description}) => _goTo(_error, args: description);
+
+  static void pop({bool? result}) {
+    _currentNavigator!.pop(result);
+  }
+
+  static void popRoute() {
+    rootNavigator!.pop();
+  }
 
   static Future<bool> askBeforeClosingApp() async {
     final shouldPop = await OverlayService.confirm('Attention', description: 'Do you really want to close the app?');
     return shouldPop;
   }
+
+  static Future<void> _goTo(String page, {Object? args}) => _currentNavigator!.pushNamed(page, arguments: args);
+
+  static T _getArgs<T extends Object?>(BuildContext context) => ModalRoute.of(context)!.settings.arguments as T;
 }
 
 class PullRequestDetailArgs {
