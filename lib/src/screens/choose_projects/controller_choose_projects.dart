@@ -67,7 +67,7 @@ class _ChooseProjectsController {
   }
 
   void toggleChooseAll() {
-    chosenProjects.value = ApiResponse.ok(chooseAll.value ? [] : allProjects);
+    chosenProjects.value = ApiResponse.ok(chooseAll.value ? [] : [...allProjects]);
 
     chooseAll.value = !chooseAll.value;
   }
