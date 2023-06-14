@@ -72,9 +72,9 @@ class AppTheme {
 
   // ignore: long-method
   static ThemeData _getCustomTheme(ColorScheme colorScheme) {
-    final letterSpacing = .5;
+    const letterSpacing = .5;
 
-    final isTablet = (MediaQueryData.fromWindow(window).size.width) >= tabletBeakpoint;
+    final isTablet = (MediaQueryData.fromView(PlatformDispatcher.instance.views.first).size.width) >= tabletBeakpoint;
 
     final fsMultiplier = isTablet ? 1.2 : 1.0;
 
@@ -84,53 +84,53 @@ class AppTheme {
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
           fontWeight: FontWeight.w700,
-          fontSize: 57 * fsMultiplier,
-          height: 64 / (57 * fsMultiplier),
+          fontSize: fsMultiplier * 57,
+          height: 64 / (fsMultiplier * 57),
           letterSpacing: letterSpacing,
         ),
         displayMedium: TextStyle(
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
-          fontSize: 45 * fsMultiplier,
+          fontSize: fsMultiplier * 45,
           fontWeight: FontWeight.w500,
-          height: 52 / (45 * fsMultiplier),
+          height: 52 / (fsMultiplier * 45),
           letterSpacing: letterSpacing,
         ),
         displaySmall: TextStyle(
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
-          fontSize: 36 * fsMultiplier,
+          fontSize: fsMultiplier * 36,
           fontWeight: FontWeight.w700,
-          height: 44 / (36 * fsMultiplier),
+          height: 44 / (fsMultiplier * 36),
           letterSpacing: letterSpacing,
         ),
         headlineLarge: TextStyle(
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
-          fontSize: 32 * fsMultiplier,
+          fontSize: fsMultiplier * 32,
           fontWeight: FontWeight.w600,
-          height: 40 / (32 * fsMultiplier),
+          height: 40 / (fsMultiplier * 32),
           letterSpacing: letterSpacing,
         ),
         headlineMedium: TextStyle(
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
-          fontSize: 28 * fsMultiplier,
+          fontSize: fsMultiplier * 28,
           fontWeight: FontWeight.w600,
-          height: 36 / (28 * fsMultiplier),
+          height: 36 / (fsMultiplier * 28),
           letterSpacing: letterSpacing,
         ),
         headlineSmall: TextStyle(
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
-          fontSize: 24 * fsMultiplier,
+          fontSize: fsMultiplier * 24,
           fontWeight: FontWeight.w600,
           letterSpacing: letterSpacing,
         ),
         titleLarge: TextStyle(
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
-          fontSize: 20 * fsMultiplier,
+          fontSize: fsMultiplier * 20,
           fontWeight: FontWeight.w600,
           letterSpacing: letterSpacing,
         ),
@@ -138,64 +138,64 @@ class AppTheme {
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
           fontWeight: FontWeight.w600,
-          fontSize: 16 * fsMultiplier,
+          fontSize: fsMultiplier * 16,
           letterSpacing: letterSpacing,
         ),
         titleSmall: TextStyle(
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
-          fontSize: 14 * fsMultiplier,
+          fontSize: fsMultiplier * 14,
           fontWeight: FontWeight.w500,
-          height: 20 / (14 * fsMultiplier),
+          height: 20 / (fsMultiplier * 14),
           letterSpacing: letterSpacing,
         ),
         bodyLarge: TextStyle(
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
-          fontSize: 16 * fsMultiplier,
-          height: 24 / (16 * fsMultiplier),
+          fontSize: fsMultiplier * 16,
+          height: 24 / (fsMultiplier * 16),
           fontWeight: FontWeight.w500,
           letterSpacing: letterSpacing,
         ),
         bodyMedium: TextStyle(
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
-          fontSize: 14 * fsMultiplier,
-          height: 20 / (14 * fsMultiplier),
+          fontSize: fsMultiplier * 14,
+          height: 20 / (fsMultiplier * 14),
           fontWeight: FontWeight.w700,
           letterSpacing: letterSpacing,
         ),
         bodySmall: TextStyle(
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
-          fontSize: 12 * fsMultiplier,
+          fontSize: fsMultiplier * 12,
           fontWeight: FontWeight.w400,
-          height: 16 / (12 * fsMultiplier),
+          height: 16 / (fsMultiplier * 12),
           letterSpacing: letterSpacing,
         ),
         labelLarge: TextStyle(
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
-          fontSize: 14 * fsMultiplier,
+          fontSize: fsMultiplier * 14,
           fontWeight: FontWeight.w500,
-          height: 20 / (14 * fsMultiplier),
+          height: 20 / (fsMultiplier * 14),
           letterSpacing: letterSpacing,
         ),
         labelMedium: TextStyle(
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
-          fontSize: 12 * fsMultiplier,
+          fontSize: fsMultiplier * 12,
           fontWeight: FontWeight.w600,
-          height: 16 / (12 * fsMultiplier),
+          height: 16 / (fsMultiplier * 12),
           letterSpacing: letterSpacing,
         ),
         labelSmall: TextStyle(
           fontFamily: defaultFont,
           color: colorScheme.onBackground,
-          fontSize: 11 * fsMultiplier,
+          fontSize: fsMultiplier * 11,
           fontWeight: FontWeight.w500,
           letterSpacing: letterSpacing,
-          height: 16 / (11 * fsMultiplier),
+          height: 16 / (fsMultiplier * 11),
         ),
       ),
     );
@@ -278,7 +278,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(6),
         ),
-        fillColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+        fillColor: MaterialStateProperty.resolveWith((states) {
           return states.contains(MaterialState.selected) ? colorScheme.primary : colorScheme.onBackground;
         }),
         side: BorderSide(

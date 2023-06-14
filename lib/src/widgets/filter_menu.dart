@@ -247,7 +247,7 @@ class WorkItemStateFilterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8),
       child: CircleAvatar(
         backgroundColor:
             state == WorkItemState.all ? Colors.transparent : Color(int.parse(state.color, radix: 16)).withOpacity(1),

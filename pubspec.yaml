@@ -28,6 +28,7 @@ dependencies:
   path: ^1.8.2
   path_provider: ^2.0.15
   open_filex: ^4.3.2
+  collection: ^1.17.1
   purple_theme:
    git:
     url: https://github.com/PurpleSoftSrl/flutter_theme_manager

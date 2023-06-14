@@ -5,7 +5,7 @@ import 'package:share_plus/share_plus.dart';
 
 mixin ShareMixin {
   void shareUrl(String url) {
-    final size = MediaQueryData.fromWindow(window).size;
+    final size = MediaQueryData.fromView(PlatformDispatcher.instance.views.first).size;
     Share.share(
       url,
       sharePositionOrigin: Rect.fromCenter(

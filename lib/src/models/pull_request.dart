@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 
 import 'package:azure_devops/src/models/shared.dart';
@@ -6,17 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 class GetPullRequestsResponse {
+  GetPullRequestsResponse({
+    required this.pullRequests,
+    required this.count,
+  });
+
   factory GetPullRequestsResponse.fromJson(Map<String, dynamic> json) => GetPullRequestsResponse(
         pullRequests: List<PullRequest>.from(
           (json['value'] as List<dynamic>).map((e) => PullRequest.fromJson(e as Map<String, dynamic>)),
         ),
         count: json['count'] as int,
       );
-
-  GetPullRequestsResponse({
-    required this.pullRequests,
-    required this.count,
-  });
 
   static List<PullRequest> fromResponse(Response res) =>
       GetPullRequestsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).pullRequests;
@@ -29,6 +31,26 @@ class GetPullRequestsResponse {
 }
 
 class PullRequest {
+  PullRequest({
+    required this.repository,
+    required this.pullRequestId,
+    required this.codeReviewId,
+    required this.status,
+    required this.createdBy,
+    required this.creationDate,
+    required this.title,
+    this.description,
+    required this.sourceRefName,
+    required this.targetRefName,
+    this.mergeStatus,
+    required this.isDraft,
+    required this.mergeId,
+    required this.reviewers,
+    this.labels,
+    required this.url,
+    required this.supportsIterations,
+  });
+
   factory PullRequest.fromJson(Map<String, dynamic> json) => PullRequest(
         repository: Repository.fromJson(json['repository'] as Map<String, dynamic>),
         pullRequestId: json['pullRequestId'] as int,
@@ -50,26 +72,6 @@ class PullRequest {
         url: json['url'] as String,
         supportsIterations: json['supportsIterations'] as bool,
       );
-
-  PullRequest({
-    required this.repository,
-    required this.pullRequestId,
-    required this.codeReviewId,
-    required this.status,
-    required this.createdBy,
-    required this.creationDate,
-    required this.title,
-    this.description,
-    required this.sourceRefName,
-    required this.targetRefName,
-    this.mergeStatus,
-    required this.isDraft,
-    required this.mergeId,
-    required this.reviewers,
-    this.labels,
-    required this.url,
-    required this.supportsIterations,
-  });
 
   static PullRequest fromResponse(Response res) => PullRequest.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
@@ -186,16 +188,6 @@ class PullRequest {
 }
 
 class CreatedBy {
-  factory CreatedBy.fromJson(Map<String, dynamic> json) => CreatedBy(
-        displayName: json['displayName'] as String,
-        url: json['url'] as String,
-        links: json['Links'] == null ? null : Links.fromJson(json['Links'] as Map<String, dynamic>),
-        id: json['id'] as String,
-        uniqueName: json['uniqueName'] as String,
-        imageUrl: json['imageUrl'] as String,
-        descriptor: json['descriptor'] as String,
-      );
-
   CreatedBy({
     required this.displayName,
     required this.url,
@@ -205,6 +197,16 @@ class CreatedBy {
     required this.imageUrl,
     required this.descriptor,
   });
+
+  factory CreatedBy.fromJson(Map<String, dynamic> json) => CreatedBy(
+        displayName: json['displayName'] as String,
+        url: json['url'] as String,
+        links: json['Links'] == null ? null : Links.fromJson(json['Links'] as Map<String, dynamic>),
+        id: json['id'] as String,
+        uniqueName: json['uniqueName'] as String,
+        imageUrl: json['imageUrl'] as String,
+        descriptor: json['descriptor'] as String,
+      );
 
   final String displayName;
   final String url;
@@ -221,16 +223,17 @@ class CreatedBy {
 }
 
 class _Label {
-  factory _Label.fromJson(Map<String, dynamic> json) => _Label(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        active: json['active'] as bool,
-      );
   _Label({
     required this.id,
     required this.name,
     required this.active,
   });
+
+  factory _Label.fromJson(Map<String, dynamic> json) => _Label(
+        id: json['id'] as String,
+        name: json['name'] as String,
+        active: json['active'] as bool,
+      );
 
   final String id;
   final String name;
@@ -241,18 +244,19 @@ class _Label {
 }
 
 class Repository {
-  factory Repository.fromJson(Map<String, dynamic> json) => Repository(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        url: json['url'] as String,
-        project: RepositoryProject.fromJson(json['project'] as Map<String, dynamic>),
-      );
   Repository({
     required this.id,
     required this.name,
     required this.url,
     required this.project,
   });
+
+  factory Repository.fromJson(Map<String, dynamic> json) => Repository(
+        id: json['id'] as String,
+        name: json['name'] as String,
+        url: json['url'] as String,
+        project: RepositoryProject.fromJson(json['project'] as Map<String, dynamic>),
+      );
 
   final String id;
   final String name;
@@ -266,13 +270,6 @@ class Repository {
 }
 
 class RepositoryProject {
-  factory RepositoryProject.fromJson(Map<String, dynamic> json) => RepositoryProject(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        state: json['state'] as String,
-        visibility: json['visibility'] as String,
-        lastUpdateTime: DateTime.parse(json['lastUpdateTime']!.toString()).toLocal(),
-      );
   RepositoryProject({
     required this.id,
     required this.name,
@@ -280,6 +277,14 @@ class RepositoryProject {
     required this.visibility,
     required this.lastUpdateTime,
   });
+
+  factory RepositoryProject.fromJson(Map<String, dynamic> json) => RepositoryProject(
+        id: json['id'] as String,
+        name: json['name'] as String,
+        state: json['state'] as String,
+        visibility: json['visibility'] as String,
+        lastUpdateTime: DateTime.parse(json['lastUpdateTime']!.toString()).toLocal(),
+      );
 
   final String id;
   final String name;
@@ -365,20 +370,6 @@ enum PullRequestState {
 }
 
 class Reviewer {
-  factory Reviewer.fromJson(Map<String, dynamic> json) => Reviewer(
-        reviewerUrl: json['reviewerUrl'] as String,
-        vote: json['vote'] as int,
-        hasDeclined: json['hasDeclined'] as bool,
-        isFlagged: json['isFlagged'] as bool,
-        isRequired: json['isRequired'] as bool? ?? false,
-        displayName: json['displayName'] as String,
-        url: json['url'] as String,
-        links: json['Links'] == null ? null : Links.fromJson(json['Links'] as Map<String, dynamic>),
-        id: json['id'] as String,
-        uniqueName: json['uniqueName'] as String,
-        imageUrl: json['imageUrl'] as String,
-      );
-
   Reviewer({
     required this.reviewerUrl,
     required this.vote,
@@ -392,6 +383,20 @@ class Reviewer {
     required this.uniqueName,
     required this.imageUrl,
   });
+
+  factory Reviewer.fromJson(Map<String, dynamic> json) => Reviewer(
+        reviewerUrl: json['reviewerUrl'] as String,
+        vote: json['vote'] as int,
+        hasDeclined: json['hasDeclined'] as bool,
+        isFlagged: json['isFlagged'] as bool,
+        isRequired: json['isRequired'] as bool? ?? false,
+        displayName: json['displayName'] as String,
+        url: json['url'] as String,
+        links: json['Links'] == null ? null : Links.fromJson(json['Links'] as Map<String, dynamic>),
+        id: json['id'] as String,
+        uniqueName: json['uniqueName'] as String,
+        imageUrl: json['imageUrl'] as String,
+      );
 
   final String reviewerUrl;
   final int vote;

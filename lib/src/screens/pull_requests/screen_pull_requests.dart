@@ -35,7 +35,7 @@ class _PullRequestsScreen extends StatelessWidget {
             onSelected: ctrl.filterByStatus,
             isDefaultFilter: ctrl.statusFilter == PullRequestState.all,
             widgetBuilder: (s) => Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8),
               child: CircleAvatar(backgroundColor: s.color),
             ),
           ),

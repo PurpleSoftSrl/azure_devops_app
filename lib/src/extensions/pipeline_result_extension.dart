@@ -14,31 +14,26 @@ extension PipelineStatusExt on PipelineStatus? {
           DevOpsIcons.queued,
           color: Colors.blue,
         );
-        break;
       case PipelineStatus.cancelling:
         icon = Icon(
           DevOpsIcons.cancelled,
           color: Colors.blue,
         );
-        break;
       case PipelineStatus.inProgress:
         icon = Icon(
           DevOpsIcons.running,
           color: Colors.blue,
         );
-        break;
       case PipelineStatus.completed:
         icon = Icon(
           DevOpsIcons.success,
           color: Colors.blue,
         );
-        break;
       case PipelineStatus.postponed:
         icon = Icon(
           Icons.watch_later,
           color: Colors.blue,
         );
-        break;
       default:
         icon = Icon(
           Icons.warning,
@@ -81,31 +76,26 @@ extension PipelineResultExt on PipelineResult? {
           DevOpsIcons.cancelled,
           color: AppRouter.rootNavigator!.context.colorScheme.onBackground,
         );
-        break;
       case PipelineResult.failed:
         icon = Icon(
           DevOpsIcons.failed,
           color: Colors.red,
         );
-        break;
       case PipelineResult.none:
         icon = Icon(
           Icons.question_mark,
           color: Colors.grey,
         );
-        break;
       case PipelineResult.partiallySucceeded:
         icon = Icon(
           Icons.checklist,
           color: Colors.cyanAccent,
         );
-        break;
       case PipelineResult.succeeded:
         icon = Icon(
           DevOpsIcons.success,
           color: Colors.green,
         );
-        break;
       default:
         icon = Icon(
           Icons.question_mark,

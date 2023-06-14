@@ -42,7 +42,7 @@ class DevOpsFormField extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         hintText: hint,
         hintStyle: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSurface.withOpacity(.4)),
         fillColor: context.colorScheme.surface,

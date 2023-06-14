@@ -37,35 +37,35 @@ class StorageServiceCore implements StorageService {
 
   static StorageServiceCore? instance;
 
-  static _StorageServiceHelper? _helper;
+  late _StorageServiceHelper _helper;
 
   void dispose() {
     instance = null;
   }
 
   Future<void> init() async {
-    await _helper!.init();
+    await _helper.init();
   }
 
   @override
   String getOrganization() {
-    return _helper!.getString(_Keys.org) ?? '';
+    return _helper.getString(_Keys.org) ?? '';
   }
 
   @override
   void setOrganization(String organization) {
-    _helper!.setString(_Keys.org, organization);
+    _helper.setString(_Keys.org, organization);
   }
 
   @override
   Iterable<Project> getChosenProjects() {
-    final strings = _helper!.getStringList(_Keys.chosenProjects) ?? [];
+    final strings = _helper.getStringList(_Keys.chosenProjects) ?? [];
     return strings.map((p) => Project.fromJson(jsonDecode(p) as Map<String, dynamic>));
   }
 
   @override
   void setChosenProjects(Iterable<Project> projects) {
-    _helper!.setStringList(
+    _helper.setStringList(
       _Keys.chosenProjects,
       projects.map(jsonEncode).toList(),
     );
@@ -73,46 +73,46 @@ class StorageServiceCore implements StorageService {
 
   @override
   String getThemeMode() {
-    return _helper!.getString(_Keys.theme) ?? '';
+    return _helper.getString(_Keys.theme) ?? '';
   }
 
   @override
   void setThemeMode(String mode) {
-    _helper!.setString(_Keys.theme, mode.toLowerCase());
+    _helper.setString(_Keys.theme, mode.toLowerCase());
   }
 
   @override
   String getToken() {
-    return _helper!.getString(_Keys.token) ?? '';
+    return _helper.getString(_Keys.token) ?? '';
   }
 
   @override
   void setToken(String accessToken) {
-    _helper!.setString(_Keys.token, accessToken);
+    _helper.setString(_Keys.token, accessToken);
   }
 
   @override
   void clearNoToken() {
-    final keys = _helper!.getKeys();
+    final keys = _helper.getKeys();
 
     for (final k in keys) {
       if (k == _Keys.token) continue;
 
-      _helper!.remove(k);
+      _helper.remove(k);
     }
   }
 
   @override
   void clear() {
-    _helper!.clear();
+    _helper.clear();
   }
 
   @override
-  int get numberOfSessions => _helper!.getInt(_Keys.numberOfSessions) ?? 0;
+  int get numberOfSessions => _helper.getInt(_Keys.numberOfSessions) ?? 0;
 
   @override
   void increaseNumberOfSessions() {
-    _helper!.setInt(_Keys.numberOfSessions, numberOfSessions + 1);
+    _helper.setInt(_Keys.numberOfSessions, numberOfSessions + 1);
   }
 }
 

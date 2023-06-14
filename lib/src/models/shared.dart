@@ -23,9 +23,7 @@ class Links {
 }
 
 class Avatar {
-  Avatar({
-    required this.href,
-  });
+  Avatar({required this.href});
 
   factory Avatar.fromJson(Map<String, dynamic> json) => Avatar(
         href: json['href'] as String?,

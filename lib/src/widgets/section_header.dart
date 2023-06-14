@@ -2,6 +2,11 @@ import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:flutter/material.dart';
 
 class SectionHeader extends StatelessWidget {
+  const SectionHeader({
+    required this.text,
+  })  : icon = null,
+        marginTop = 24;
+
   const SectionHeader.withIcon({
     required this.text,
     required this.icon,
@@ -12,11 +17,6 @@ class SectionHeader extends StatelessWidget {
     required this.text,
     this.icon,
   }) : marginTop = 0;
-
-  const SectionHeader({
-    required this.text,
-  })  : icon = null,
-        marginTop = 24;
 
   final String text;
   final IconData? icon;

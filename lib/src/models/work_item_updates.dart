@@ -1,19 +1,21 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 
 import 'package:http/http.dart';
 
 class WorkItemUpdatesResponse {
+  WorkItemUpdatesResponse({
+    required this.count,
+    required this.updates,
+  });
+
   factory WorkItemUpdatesResponse.fromJson(Map<String, dynamic> json) => WorkItemUpdatesResponse(
         count: json['count'] as int,
         updates: List<WorkItemUpdate>.from(
           (json['value'] as List<dynamic>).map((x) => WorkItemUpdate.fromJson(x as Map<String, dynamic>)),
         ),
       );
-
-  WorkItemUpdatesResponse({
-    required this.count,
-    required this.updates,
-  });
 
   static List<WorkItemUpdate> fromResponse(Response res) =>
       WorkItemUpdatesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).updates;
@@ -23,6 +25,16 @@ class WorkItemUpdatesResponse {
 }
 
 class WorkItemUpdate {
+  WorkItemUpdate({
+    required this.id,
+    required this.workItemId,
+    required this.rev,
+    required this.revisedBy,
+    required this.revisedDate,
+    required this.fields,
+    this.relations,
+  });
+
   factory WorkItemUpdate.fromJson(Map<String, dynamic> json) => WorkItemUpdate(
         id: json['id'] as int,
         workItemId: json['workItemId'] as int,
@@ -33,16 +45,6 @@ class WorkItemUpdate {
         relations:
             json['relations'] == null ? null : WorkItemRelations.fromJson(json['relations'] as Map<String, dynamic>),
       );
-
-  WorkItemUpdate({
-    required this.id,
-    required this.workItemId,
-    required this.rev,
-    required this.revisedBy,
-    required this.revisedDate,
-    required this.fields,
-    this.relations,
-  });
 
   final int id;
   final int workItemId;
@@ -59,6 +61,34 @@ class WorkItemUpdate {
 }
 
 class _Fields {
+  _Fields({
+    this.systemId,
+    required this.systemAuthorizedDate,
+    required this.systemRevisedDate,
+    this.systemWorkItemType,
+    this.systemState,
+    this.systemReason,
+    this.systemAssignedTo,
+    this.systemCreatedDate,
+    this.systemCreatedBy,
+    required this.systemChangedDate,
+    this.systemChangedBy,
+    this.systemAuthorizedAs,
+    this.systemPersonId,
+    this.systemCommentCount,
+    this.systemTeamProject,
+    this.systemTitle,
+    this.microsoftVstsCommonPriority,
+    this.microsoftVstsCommonValueArea,
+    this.microsoftVstsCommonStateChangeDate,
+    this.systemHistory,
+    this.microsoftVstsCommonActivatedBy,
+    this.microsoftVstsCommonActivatedDate,
+    this.microsoftVstsCommonResolvedDate,
+    this.microsoftVstsCommonResolvedBy,
+    this.microsoftVstsSchedulingEffort,
+  });
+
   // ignore: long-method
   factory _Fields.fromJson(Map<String, dynamic> json) => _Fields(
         systemId: json['System.Id'] == null
@@ -138,34 +168,6 @@ class _Fields {
             : _MicrosoftVstsCommonPriority.fromJson(json['Microsoft.VSTS.Scheduling.Effort'] as Map<String, dynamic>),
       );
 
-  _Fields({
-    this.systemId,
-    required this.systemAuthorizedDate,
-    required this.systemRevisedDate,
-    this.systemWorkItemType,
-    this.systemState,
-    this.systemReason,
-    this.systemAssignedTo,
-    this.systemCreatedDate,
-    this.systemCreatedBy,
-    required this.systemChangedDate,
-    this.systemChangedBy,
-    this.systemAuthorizedAs,
-    this.systemPersonId,
-    this.systemCommentCount,
-    this.systemTeamProject,
-    this.systemTitle,
-    this.microsoftVstsCommonPriority,
-    this.microsoftVstsCommonValueArea,
-    this.microsoftVstsCommonStateChangeDate,
-    this.systemHistory,
-    this.microsoftVstsCommonActivatedBy,
-    this.microsoftVstsCommonActivatedDate,
-    this.microsoftVstsCommonResolvedDate,
-    this.microsoftVstsCommonResolvedBy,
-    this.microsoftVstsSchedulingEffort,
-  });
-
   final _MicrosoftVstsCommonPriority? systemId;
   final _StringUpdateValue systemAuthorizedDate;
   final _StringUpdateValue systemRevisedDate;
@@ -199,30 +201,21 @@ class _Fields {
 }
 
 class _RevisedByUpdateValue {
-  factory _RevisedByUpdateValue.fromJson(Map<String, dynamic> json) => _RevisedByUpdateValue(
-        newValue: json['newValue'] == null ? null : _RevisedBy.fromJson(json['newValue'] as Map<String, dynamic>),
-        oldValue: json['oldValue'] == null ? null : _RevisedBy.fromJson(json['oldValue'] as Map<String, dynamic>),
-      );
-
   _RevisedByUpdateValue({
     this.newValue,
     this.oldValue,
   });
+
+  factory _RevisedByUpdateValue.fromJson(Map<String, dynamic> json) => _RevisedByUpdateValue(
+        newValue: json['newValue'] == null ? null : _RevisedBy.fromJson(json['newValue'] as Map<String, dynamic>),
+        oldValue: json['oldValue'] == null ? null : _RevisedBy.fromJson(json['oldValue'] as Map<String, dynamic>),
+      );
 
   final _RevisedBy? newValue;
   final _RevisedBy? oldValue;
 }
 
 class _RevisedBy {
-  factory _RevisedBy.fromJson(Map<String, dynamic> json) => _RevisedBy(
-        displayName: json['displayName'] as String?,
-        id: json['id'] as String?,
-        uniqueName: json['uniqueName'] as String?,
-        imageUrl: json['imageUrl'] as String?,
-        descriptor: json['descriptor'] as String?,
-        name: json['name'] as String?,
-      );
-
   _RevisedBy({
     this.displayName,
     this.id,
@@ -231,6 +224,15 @@ class _RevisedBy {
     this.descriptor,
     this.name,
   });
+
+  factory _RevisedBy.fromJson(Map<String, dynamic> json) => _RevisedBy(
+        displayName: json['displayName'] as String?,
+        id: json['id'] as String?,
+        uniqueName: json['uniqueName'] as String?,
+        imageUrl: json['imageUrl'] as String?,
+        descriptor: json['descriptor'] as String?,
+        name: json['name'] as String?,
+      );
 
   final String? displayName;
   final String? id;
@@ -241,45 +243,45 @@ class _RevisedBy {
 }
 
 class _MicrosoftVstsCommonPriority {
-  factory _MicrosoftVstsCommonPriority.fromJson(Map<String, dynamic> json) => _MicrosoftVstsCommonPriority(
-        oldValue: (json['oldValue'] as num?)?.toDouble(),
-        newValue: (json['newValue'] as num?)?.toDouble(),
-      );
-
   _MicrosoftVstsCommonPriority({
     required this.oldValue,
     required this.newValue,
   });
+
+  factory _MicrosoftVstsCommonPriority.fromJson(Map<String, dynamic> json) => _MicrosoftVstsCommonPriority(
+        oldValue: (json['oldValue'] as num?)?.toDouble(),
+        newValue: (json['newValue'] as num?)?.toDouble(),
+      );
 
   final double? oldValue;
   final double? newValue;
 }
 
 class _StringUpdateValue {
-  factory _StringUpdateValue.fromJson(Map<String, dynamic> json) => _StringUpdateValue(
-        oldValue: json['oldValue'] as String?,
-        newValue: json['newValue'] as String?,
-      );
-
   _StringUpdateValue({
     required this.oldValue,
     required this.newValue,
   });
+
+  factory _StringUpdateValue.fromJson(Map<String, dynamic> json) => _StringUpdateValue(
+        oldValue: json['oldValue'] as String?,
+        newValue: json['newValue'] as String?,
+      );
 
   final String? oldValue;
   final String? newValue;
 }
 
 class _SystemRevClass {
-  factory _SystemRevClass.fromJson(Map<String, dynamic> json) => _SystemRevClass(
-        newValue: json['newValue'] as int?,
-        oldValue: json['oldValue'] as int?,
-      );
-
   _SystemRevClass({
     required this.newValue,
     this.oldValue,
   });
+
+  factory _SystemRevClass.fromJson(Map<String, dynamic> json) => _SystemRevClass(
+        newValue: json['newValue'] as int?,
+        oldValue: json['oldValue'] as int?,
+      );
 
   final int? newValue;
   final int? oldValue;

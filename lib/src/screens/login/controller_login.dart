@@ -19,6 +19,7 @@ class _LoginController {
     instance = null;
   }
 
+  // ignore: use_setters_to_change_properties
   void setPat(String value) {
     pat = value;
   }

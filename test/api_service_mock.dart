@@ -1,3 +1,5 @@
+//ignore_for_file: avoid-top-level-members-in-tests
+
 import 'dart:typed_data';
 
 import 'package:azure_devops/src/models/commit.dart';

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 
 import 'package:azure_devops/src/models/commit_detail.dart';
@@ -37,6 +39,17 @@ class CommitWithChanges {
 }
 
 class Commit {
+  Commit({
+    this.commitId,
+    this.author,
+    this.committer,
+    this.comment,
+    this.changeCounts,
+    this.url,
+    this.remoteUrl,
+    this.parents,
+  });
+
   factory Commit.fromResponse(Response res) => Commit.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
   factory Commit.fromJson(Map<String, dynamic> json) => Commit(
@@ -50,17 +63,6 @@ class Commit {
         remoteUrl: json['remoteUrl'] as String?,
         parents: json['parents'] == null ? null : List<String>.from(json['parents'] as List<dynamic>),
       );
-
-  Commit({
-    this.commitId,
-    this.author,
-    this.committer,
-    this.comment,
-    this.changeCounts,
-    this.url,
-    this.remoteUrl,
-    this.parents,
-  });
 
   final String? commitId;
   final Author? author;
@@ -148,19 +150,19 @@ class Commit {
 }
 
 class Author {
-  factory Author.fromJson(Map<String, dynamic> json) => Author(
-        name: json['name'] as String?,
-        email: json['email'] as String?,
-        date: json['date'] == null ? null : DateTime.parse(json['date'].toString()).toLocal(),
-        imageUrl: json['imageUrl'] as String?,
-      );
-
   Author({
     this.name,
     this.email,
     this.date,
     this.imageUrl,
   });
+
+  factory Author.fromJson(Map<String, dynamic> json) => Author(
+        name: json['name'] as String?,
+        email: json['email'] as String?,
+        date: json['date'] == null ? null : DateTime.parse(json['date'].toString()).toLocal(),
+        imageUrl: json['imageUrl'] as String?,
+      );
 
   final String? name;
   final String? email;
@@ -184,17 +186,17 @@ class Author {
 }
 
 class _ChangeCounts {
-  factory _ChangeCounts.fromJson(Map<String, dynamic> json) => _ChangeCounts(
-        add: json['Add'] as int?,
-        edit: json['Edit'] as int?,
-        delete: json['Delete'] as int?,
-      );
-
   _ChangeCounts({
     required this.add,
     required this.edit,
     required this.delete,
   });
+
+  factory _ChangeCounts.fromJson(Map<String, dynamic> json) => _ChangeCounts(
+        add: json['Add'] as int?,
+        edit: json['Edit'] as int?,
+        delete: json['Delete'] as int?,
+      );
 
   final int? add;
   final int? edit;

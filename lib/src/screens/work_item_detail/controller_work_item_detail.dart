@@ -101,7 +101,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
       isScrollControlled: true,
       title: 'Edit work item',
       heightPercentage: .9,
-      padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+      padding: const EdgeInsets.only(left: 15, top: 15, right: 15),
       builder: (context) {
         final style = context.textTheme.bodySmall!.copyWith(height: 1, fontWeight: FontWeight.bold);
         return ListView(
@@ -155,7 +155,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
                           onSelected: (f) async {
                             newWorkItemType = f;
                             statuses = apiService.workItemStates[fields.systemTeamProject]![newWorkItemType.name] ?? [];
-                            if (!statuses.map((e) => e.name).contains(newWorkItemStatus)) {
+                            if (!statuses.contains(newWorkItemStatus)) {
                               // change status if new type doesn't support current status
                               newWorkItemStatus = statuses.firstOrNull ?? newWorkItemStatus;
                             }
@@ -330,12 +330,10 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
         break;
       case ResultType.noAppToOpen:
         await OverlayService.error('Error opening file', description: 'No app found to open this file');
-        break;
       case ResultType.fileNotFound:
       case ResultType.permissionDenied:
       case ResultType.error:
         await OverlayService.error('Error opening file', description: 'Something went wrong');
-        break;
     }
   }
 }

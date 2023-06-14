@@ -26,8 +26,6 @@ class GetUsersResponse {
 }
 
 class GraphUser {
-  factory GraphUser.all() => GraphUser(displayName: 'All');
-
   GraphUser({
     this.subjectKind,
     this.domain,
@@ -42,6 +40,8 @@ class GraphUser {
     this.metaType,
     this.directoryAlias,
   });
+
+  factory GraphUser.all() => GraphUser(displayName: 'All');
 
   factory GraphUser.fromJson(Map<String, dynamic> json) => GraphUser(
         subjectKind: json['subjectKind'] as String?,

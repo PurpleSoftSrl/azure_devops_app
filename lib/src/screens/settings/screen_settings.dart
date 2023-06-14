@@ -153,7 +153,7 @@ class _SettingsScreen extends StatelessWidget {
                   onTap: link,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+                    children: const [
                       Text('GitHub repository'),
                       Icon(DevOpsIcons.github_mark),
                     ],
@@ -180,7 +180,7 @@ class _SettingsScreen extends StatelessWidget {
                   onTap: () => ctrl.openPurplesoftWebsite(link),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+                    children: const [
                       Text('Made with \u2764 by Purplesoft Srl'),
                       Icon(DevOpsIcons.link),
                     ],
@@ -203,7 +203,7 @@ class _SettingsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(15),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: const [
                     Text('Leave a review'),
                     Icon(Icons.rate_review_outlined),
                   ],
@@ -225,7 +225,7 @@ class _SettingsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(15),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: const [
                     Text('Logout'),
                     Icon(DevOpsIcons.logout),
                   ],
@@ -247,7 +247,7 @@ class _SettingsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(15),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: const [
                     Text('Clear cache'),
                     Icon(Icons.cleaning_services),
                   ],

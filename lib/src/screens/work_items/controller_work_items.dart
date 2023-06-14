@@ -144,7 +144,7 @@ class _WorkItemsController with FilterMixin {
       isScrollControlled: true,
       title: 'Create a new work item',
       heightPercentage: .9,
-      padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+      padding: const EdgeInsets.only(left: 15, top: 15, right: 15),
       builder: (context) => ListView(
         children: [
           StatefulBuilder(

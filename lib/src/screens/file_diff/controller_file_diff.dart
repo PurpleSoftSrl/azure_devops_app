@@ -91,7 +91,7 @@ class _FileDiffController with ShareMixin {
 
   int _getTextWidth(String b) {
     return (TextPainter(
-      text: TextSpan(text: b.trimRight(), style: AppRouter.navigatorKey.currentContext!.textTheme.titleSmall!),
+      text: TextSpan(text: b.trimRight(), style: AppRouter.navigatorKey.currentContext!.textTheme.titleSmall),
       maxLines: 1,
       textScaleFactor: MediaQuery.of(AppRouter.navigatorKey.currentContext!).textScaleFactor,
       textDirection: TextDirection.ltr,

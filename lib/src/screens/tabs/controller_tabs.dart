@@ -25,7 +25,7 @@ class _TabsController {
   Future<void> init() async {
     navPages = _getTabPages();
 
-    AppRouter.setTabKeys(navPages.map((e) => e.key).toList());
+    AppRouter.tabKeys = navPages.map((e) => e.key).toList();
     AppRouter.index = 0;
   }
 

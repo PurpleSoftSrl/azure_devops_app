@@ -34,7 +34,7 @@ class _LoadingButtonState extends State<LoadingButton> {
           try {
             await widget.onPressed();
           } catch (e) {
-            print(e);
+            debugPrint(e.toString());
           }
 
           if (mounted) setState(() => _isLoading = false);

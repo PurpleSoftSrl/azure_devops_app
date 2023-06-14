@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 
 import 'package:azure_devops/src/models/project.dart';
@@ -7,10 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 class GetPipelineResponse {
+  GetPipelineResponse({required this.pipelines});
+
   factory GetPipelineResponse.fromJson(Map<String, dynamic> source) =>
       GetPipelineResponse(pipelines: Pipeline.listFromJson(json.decode(jsonEncode(source['value'])))!);
-
-  GetPipelineResponse({required this.pipelines});
 
   static List<Pipeline> fromResponse(Response res) =>
       GetPipelineResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).pipelines;
@@ -29,6 +31,28 @@ class PipelineWithTimeline {
 }
 
 class Pipeline {
+  Pipeline({
+    this.triggerInfo,
+    this.id,
+    this.buildNumber,
+    this.status,
+    this.result,
+    this.queueTime,
+    this.startTime,
+    this.finishTime,
+    this.url,
+    this.definition,
+    this.buildNumberRevision,
+    this.project,
+    this.uri,
+    this.sourceBranch,
+    this.sourceVersion,
+    this.reason,
+    this.requestedFor,
+    this.requestedBy,
+    this.repository,
+  });
+
   factory Pipeline.fromResponse(Response res) => Pipeline.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
   factory Pipeline.fromJson(Map<String, dynamic> json) => Pipeline(
@@ -52,28 +76,6 @@ class Pipeline {
         requestedBy: LastChangedBy.fromJson(json['requestedBy'] as Map<String, dynamic>),
         repository: PipelineRepository.fromJson(json['repository'] as Map<String, dynamic>),
       );
-
-  Pipeline({
-    this.triggerInfo,
-    this.id,
-    this.buildNumber,
-    this.status,
-    this.result,
-    this.queueTime,
-    this.startTime,
-    this.finishTime,
-    this.url,
-    this.definition,
-    this.buildNumberRevision,
-    this.project,
-    this.uri,
-    this.sourceBranch,
-    this.sourceVersion,
-    this.reason,
-    this.requestedFor,
-    this.requestedBy,
-    this.repository,
-  });
 
   final TriggerInfo? triggerInfo;
   final int? id;
@@ -230,19 +232,19 @@ class Pipeline {
 }
 
 class _Definition {
-  factory _Definition.fromJson(Map<String, dynamic> json) => _Definition(
-        id: json['id'] as int?,
-        name: json['name'] as String?,
-        revision: json['revision'] as int?,
-        project: Project.fromJson(json['project'] as Map<String, dynamic>),
-      );
-
   _Definition({
     required this.id,
     required this.name,
     required this.revision,
     required this.project,
   });
+
+  factory _Definition.fromJson(Map<String, dynamic> json) => _Definition(
+        id: json['id'] as int?,
+        name: json['name'] as String?,
+        revision: json['revision'] as int?,
+        project: Project.fromJson(json['project'] as Map<String, dynamic>),
+      );
 
   final int? id;
   final String? name;
@@ -256,15 +258,6 @@ class _Definition {
 }
 
 class LastChangedBy {
-  factory LastChangedBy.fromJson(Map<String, dynamic> json) => LastChangedBy(
-        displayName: json['displayName'] as String?,
-        url: json['url'] as String?,
-        id: json['id'] as String?,
-        uniqueName: json['uniqueName'] as String?,
-        imageUrl: json['imageUrl'] as String?,
-        descriptor: json['descriptor'] as String?,
-      );
-
   LastChangedBy({
     this.displayName,
     this.url,
@@ -273,6 +266,15 @@ class LastChangedBy {
     this.imageUrl,
     this.descriptor,
   });
+
+  factory LastChangedBy.fromJson(Map<String, dynamic> json) => LastChangedBy(
+        displayName: json['displayName'] as String?,
+        url: json['url'] as String?,
+        id: json['id'] as String?,
+        uniqueName: json['uniqueName'] as String?,
+        imageUrl: json['imageUrl'] as String?,
+        descriptor: json['descriptor'] as String?,
+      );
 
   final String? displayName;
   final String? url;
@@ -306,19 +308,19 @@ class LastChangedBy {
 }
 
 class PipelineRepository {
-  factory PipelineRepository.fromJson(Map<String, dynamic> json) => PipelineRepository(
-        id: json['id'] as String?,
-        type: json['type'] as String?,
-        name: json['name'] as String?,
-        url: json['url'] as String?,
-      );
-
   PipelineRepository({
     required this.id,
     required this.type,
     required this.name,
     required this.url,
   });
+
+  factory PipelineRepository.fromJson(Map<String, dynamic> json) => PipelineRepository(
+        id: json['id'] as String?,
+        type: json['type'] as String?,
+        name: json['name'] as String?,
+        url: json['url'] as String?,
+      );
 
   final String? id;
   final String? type;
@@ -332,19 +334,19 @@ class PipelineRepository {
 }
 
 class TriggerInfo {
-  factory TriggerInfo.fromJson(Map<String, dynamic> json) => TriggerInfo(
-        ciSourceBranch: json['ci.sourceBranch'] as String?,
-        ciSourceSha: json['ci.sourceSha'] as String?,
-        ciMessage: json['ci.message'] as String?,
-        ciTriggerRepository: json['ci.triggerRepository'] as String?,
-      );
-
   TriggerInfo({
     this.ciSourceBranch,
     this.ciSourceSha,
     this.ciMessage,
     this.ciTriggerRepository,
   });
+
+  factory TriggerInfo.fromJson(Map<String, dynamic> json) => TriggerInfo(
+        ciSourceBranch: json['ci.sourceBranch'] as String?,
+        ciSourceSha: json['ci.sourceSha'] as String?,
+        ciMessage: json['ci.message'] as String?,
+        ciTriggerRepository: json['ci.triggerRepository'] as String?,
+      );
 
   final String? ciSourceBranch;
   final String? ciSourceSha;

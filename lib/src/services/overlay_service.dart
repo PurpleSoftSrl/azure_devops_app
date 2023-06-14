@@ -216,7 +216,7 @@ class OverlayService {
             ),
           ),
         ),
-        actions: [Text('')],
+        actions: const [Text('')],
         elevation: 5,
         onVisible: () =>
             Timer(Duration(seconds: 3), () => scaffoldMessengerKey.currentState!.hideCurrentMaterialBanner()),

@@ -150,7 +150,7 @@ class _PipelineDetailScreen extends StatelessWidget {
                       text: 'Branch: ',
                       style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                     ),
-                    TextSpan(text: pipeline.sourceBranchShort!),
+                    TextSpan(text: pipeline.sourceBranchShort),
                   ],
                 ),
               ),

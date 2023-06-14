@@ -1,12 +1,14 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 
 import 'package:http/http.dart';
 
 class GetRepositoriesResponse {
+  GetRepositoriesResponse({required this.repositories});
+
   factory GetRepositoriesResponse.fromJson(Map<String, dynamic> source) =>
       GetRepositoriesResponse(repositories: GitRepository.listFromJson(json.decode(jsonEncode(source['value'])))!);
-
-  GetRepositoriesResponse({required this.repositories});
 
   static List<GitRepository> fromResponse(Response res) =>
       GetRepositoriesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).repositories;

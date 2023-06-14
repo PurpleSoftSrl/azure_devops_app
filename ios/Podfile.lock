@@ -12,19 +12,19 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - Sentry/HybridSDK (8.7.1):
-    - SentryPrivate (= 8.7.1)
+  - Sentry/HybridSDK (8.7.3):
+    - SentryPrivate (= 8.7.3)
   - sentry_flutter (0.0.1):
     - Flutter
     - FlutterMacOS
-    - Sentry/HybridSDK (= 8.7.1)
-  - SentryPrivate (8.7.1)
+    - Sentry/HybridSDK (= 8.7.3)
+  - SentryPrivate (8.7.3)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - sqflite (0.0.2):
+  - sqflite (0.0.3):
     - Flutter
     - FMDB (>= 2.7.5)
   - url_launcher_ios (0.0.1):
@@ -35,10 +35,10 @@ DEPENDENCIES:
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
   - open_filex (from `.symlinks/plugins/open_filex/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
-  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
-  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/ios`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
@@ -58,13 +58,13 @@ EXTERNAL SOURCES:
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
-    :path: ".symlinks/plugins/path_provider_foundation/ios"
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
   sentry_flutter:
     :path: ".symlinks/plugins/sentry_flutter/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
-    :path: ".symlinks/plugins/shared_preferences_foundation/ios"
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
   url_launcher_ios:
@@ -77,14 +77,14 @@ SPEC CHECKSUMS:
   open_filex: 6e26e659846ec990262224a12ef1c528bb4edbe4
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
-  Sentry: 11776f6a25a128808d793d0d41bb7ad873b5ae4f
-  sentry_flutter: 886dbeb2674ba1232f540c54311a774bb50fda42
-  SentryPrivate: b3c448eacdabe9eab7679a2e0af609c608f91572
+  Sentry: c7a86f43510a7d5678d4de28d78c28ab351d295b
+  sentry_flutter: f2710a4f537e9a7143b02562b8754ccdc8224751
+  SentryPrivate: 2eaabf598a46d4b9b8822aef766df2a84caf2e6f
   share_plus: 599aa54e4ea31d4b4c0e9c911bcc26c55e791028
   shared_preferences_foundation: e2dae3258e06f44cc55f49d42024fd8dd03c590c
-  sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
+  sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
   url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
 
 PODFILE CHECKSUM: c21346b97a589f99fe5c0d8cd983e72c8b9ac686
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.12.1

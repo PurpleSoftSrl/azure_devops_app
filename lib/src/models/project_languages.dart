@@ -1,8 +1,16 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 
 import 'package:http/http.dart';
 
 class GetProjectLanguagesResponse {
+  GetProjectLanguagesResponse({
+    required this.languageBreakdown,
+    required this.repositoryLanguageAnalytics,
+    required this.id,
+  });
+
   factory GetProjectLanguagesResponse.fromJson(Map<String, dynamic> json) => GetProjectLanguagesResponse(
         languageBreakdown: List<LanguageBreakdown>.from(
           (json['languageBreakdown'] as List<dynamic>)
@@ -15,12 +23,6 @@ class GetProjectLanguagesResponse {
         id: json['id'] as String,
       );
 
-  GetProjectLanguagesResponse({
-    required this.languageBreakdown,
-    required this.repositoryLanguageAnalytics,
-    required this.id,
-  });
-
   static List<LanguageBreakdown> fromResponse(Response res) =>
       GetProjectLanguagesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).languageBreakdown;
 
@@ -30,19 +32,19 @@ class GetProjectLanguagesResponse {
 }
 
 class LanguageBreakdown {
-  factory LanguageBreakdown.fromJson(Map<String, dynamic> json) => LanguageBreakdown(
-        name: json['name'] as String,
-        files: json['files'] as int?,
-        filesPercentage: json['filesPercentage'] as double?,
-        languagePercentage: json['languagePercentage'] as double?,
-      );
-
   LanguageBreakdown({
     required this.name,
     this.files,
     this.filesPercentage,
     this.languagePercentage,
   });
+
+  factory LanguageBreakdown.fromJson(Map<String, dynamic> json) => LanguageBreakdown(
+        name: json['name'] as String,
+        files: json['files'] as int?,
+        filesPercentage: json['filesPercentage'] as double?,
+        languagePercentage: json['languagePercentage'] as double?,
+      );
 
   final String name;
   final int? files;
@@ -51,6 +53,13 @@ class LanguageBreakdown {
 }
 
 class _RepositoryLanguageAnalytic {
+  _RepositoryLanguageAnalytic({
+    required this.name,
+    required this.updatedTime,
+    required this.languageBreakdown,
+    required this.id,
+  });
+
   factory _RepositoryLanguageAnalytic.fromJson(Map<String, dynamic> json) => _RepositoryLanguageAnalytic(
         name: json['name'] as String,
         updatedTime: DateTime.parse(json['updatedTime']!.toString()).toLocal(),
@@ -60,13 +69,6 @@ class _RepositoryLanguageAnalytic {
         ),
         id: json['id'] as String,
       );
-
-  _RepositoryLanguageAnalytic({
-    required this.name,
-    required this.updatedTime,
-    required this.languageBreakdown,
-    required this.id,
-  });
 
   final String name;
   final DateTime updatedTime;

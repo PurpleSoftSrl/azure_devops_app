@@ -74,7 +74,7 @@ class AppRouter {
     return _keys![index].currentState;
   }
 
-  static void setTabKeys(List<GlobalKey<NavigatorState>> keys) {
+  static set tabKeys(List<GlobalKey<NavigatorState>> keys) {
     _keys = keys;
   }
 

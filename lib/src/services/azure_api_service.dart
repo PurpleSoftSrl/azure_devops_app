@@ -261,7 +261,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   Future<Response> _get(String url) async {
-    print('GET $url');
+    debugPrint('GET $url');
     final res = await _client.get(
       Uri.parse(url),
       headers: headers,
@@ -273,7 +273,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   Future<Response> _patch(String url, {Map<String, String>? body}) async {
-    print('PATCH $url');
+    debugPrint('PATCH $url');
     final res = await _client.patch(
       Uri.parse(url),
       headers: headers,
@@ -286,7 +286,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   Future<Response> _patchList(String url, {List<Map<String, dynamic>>? body, String? contentType}) async {
-    print('PATCH $url');
+    debugPrint('PATCH $url');
     final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
 
     final res = await _client.patch(
@@ -301,7 +301,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   Future<Response> _post(String url, {Map<String, dynamic>? body}) async {
-    print('POST $url');
+    debugPrint('POST $url');
     final res = await _client.post(
       Uri.parse(url),
       headers: headers,
@@ -314,7 +314,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   Future<Response> _postList(String url, {List<Map<String, dynamic>>? body, String? contentType}) async {
-    print('POST $url');
+    debugPrint('POST $url');
     final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
 
     final res = await _client.post(
@@ -329,7 +329,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   Future<Response> _delete(String url) async {
-    print('DELETE $url');
+    debugPrint('DELETE $url');
     final res = await _client.delete(
       Uri.parse(url),
       headers: headers,
@@ -551,7 +551,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
   @override
   Future<ApiResponse<List<WorkItem>>> getMyRecentWorkItems() async {
-    final myQueryStr = ' Where [System.ChangedDate] = @today AND [System.ChangedBy] = @Me ';
+    const myQueryStr = ' Where [System.ChangedDate] = @today AND [System.ChangedBy] = @Me ';
     final myWorkItemIdsRes = await _post(
       '$_basePath/_apis/wit/wiql?\$top=200&$_apiVersion',
       body: {'query': 'Select [System.Id] From WorkItems $myQueryStr Order By [System.ChangedDate] desc'},
@@ -904,7 +904,7 @@ class AzureApiServiceImpl implements AzureApiService {
     PipelineStatus status = PipelineStatus.all,
     String? triggeredBy,
   }) async {
-    final orderSearch = '&queryOrder=queueTimeDescending';
+    const orderSearch = '&queryOrder=queueTimeDescending';
     final resultSearch = '&resultFilter=${result.stringValue}';
     final statusSearch = result != PipelineResult.all ? '' : '&statusFilter=${status.stringValue}';
     final triggeredBySearch = triggeredBy == null ? '' : '&requestedFor=$triggeredBy';

@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:purple_theme/purple_theme.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-Future<void> main(List<String> args) async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
@@ -15,7 +15,7 @@ Future<void> main(List<String> args) async {
 
   PurpleThemeHandler().init(defaultTheme: AppTheme.darkTheme, allThemes: AppTheme.allThemes);
 
-  final sentryDns = const String.fromEnvironment('SENTRY_DNS');
+  const sentryDns = String.fromEnvironment('SENTRY_DNS');
 
   if (sentryDns.isEmpty || kDebugMode) {
     runApp(const AzureDevOps());
@@ -37,7 +37,7 @@ Future<void> main(List<String> args) async {
             return 1;
           }
           ..beforeSend = (evt, {hint}) {
-            print('[sentry] ${evt.exceptions?[0].value}');
+            debugPrint('[sentry] ${evt.exceptions?[0].value}');
             if (kDebugMode) return null;
 
             switch (evt.throwable.runtimeType.toString()) {

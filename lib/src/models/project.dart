@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 
 import 'package:http/http.dart';
@@ -15,6 +17,19 @@ class GetProjectsResponse {
 }
 
 class Project {
+  Project({
+    this.id,
+    this.name,
+    this.description,
+    this.url,
+    this.state,
+    this.revision,
+    this.visibility,
+    this.lastUpdateTime,
+    this.defaultTeam,
+    this.defaultTeamImageUrl,
+  });
+
   factory Project.all() => Project(name: 'All');
 
   factory Project.fromJson(Map<String, dynamic> json) => Project(
@@ -31,19 +46,6 @@ class Project {
         defaultTeam:
             json['defaultTeam'] == null ? null : _DefaultTeam.fromJson(json['defaultTeam'] as Map<String, dynamic>),
       );
-
-  Project({
-    this.id,
-    this.name,
-    this.description,
-    this.url,
-    this.state,
-    this.revision,
-    this.visibility,
-    this.lastUpdateTime,
-    this.defaultTeam,
-    this.defaultTeamImageUrl,
-  });
 
   final String? id;
   final String? name;

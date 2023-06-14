@@ -40,7 +40,7 @@ class _ChooseProjectsController {
     final projects = projectsRes.data ?? <Project>[];
 
     final alreadyChosenProjects =
-        storageService.getChosenProjects().where((p) => projects.map((p1) => p1.id!).contains(p.id!));
+        storageService.getChosenProjects().where((p) => projects.map((p1) => p1.id!).contains(p.id));
 
     // sort projects by last change date, already chosen projects go first.
     if (alreadyChosenProjects.isNotEmpty) {
@@ -79,7 +79,7 @@ class _ChooseProjectsController {
       chosenProjects.value!.data!.add(p);
     }
 
-    chosenProjects.value = ApiResponse.ok(chosenProjects.value!.data!);
+    chosenProjects.value = ApiResponse.ok(chosenProjects.value!.data);
   }
 
   Future<void> goToHome() async {

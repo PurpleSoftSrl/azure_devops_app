@@ -8,24 +8,6 @@ import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class AppPage<T extends Object?> extends StatefulWidget {
-  const AppPage.empty({
-    super.key,
-    required this.builder,
-    required this.init,
-    required this.dispose,
-  })  : title = '',
-        actions = null,
-        header = null,
-        notifier = null,
-        onEmpty = null,
-        onLoading = null,
-        padding = null,
-        refreshController = null,
-        safeAreaBottom = true,
-        showScrollbar = false,
-        onResetFilters = null,
-        _isEmpty = true;
-
   const AppPage({
     super.key,
     required this.builder,
@@ -43,6 +25,24 @@ class AppPage<T extends Object?> extends StatefulWidget {
     this.showScrollbar = false,
     this.onResetFilters,
   }) : _isEmpty = false;
+
+  const AppPage.empty({
+    super.key,
+    required this.builder,
+    required this.init,
+    required this.dispose,
+  })  : title = '',
+        actions = null,
+        header = null,
+        notifier = null,
+        onEmpty = null,
+        onLoading = null,
+        padding = null,
+        refreshController = null,
+        safeAreaBottom = true,
+        showScrollbar = false,
+        onResetFilters = null,
+        _isEmpty = true;
 
   final Widget Function(T) builder;
   final String? onEmpty;
@@ -76,7 +76,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> {
 
     widget.init().onError(
       (e, s) {
-        print('Exception on init: $e');
+        debugPrint('Exception on init: $e');
         if (widget.notifier != null) {
           widget.notifier!.value = widget.notifier!.value?.copyWith(isError: true) ?? ApiResponse.error(null);
         }
@@ -91,7 +91,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> {
       try {
         await widget.init();
       } catch (e, s) {
-        print('Exception on refresh: $e');
+        debugPrint('Exception on refresh: $e');
         if (widget.notifier != null) {
           widget.notifier!.value = widget.notifier!.value?.copyWith(isError: true);
         }
@@ -126,7 +126,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> {
     }
 
     final actions = <Widget>[...widget.actions ?? [], if (widget.actions != null) const SizedBox(width: 4)];
-    final paddingTop = 100.0;
+    const paddingTop = 100.0;
     final scrollController = ScrollController();
 
     if (widget.notifier == null) {
@@ -201,13 +201,10 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> {
                       switch (mode) {
                         case LoadStatus.canLoading:
                           loadText = 'Load more';
-                          break;
                         case LoadStatus.idle:
                           loadText = 'Idle';
-                          break;
                         case LoadStatus.loading:
                           loadText = 'Loading';
-                          break;
                         case LoadStatus.noMore:
                         case LoadStatus.failed:
                         default:
