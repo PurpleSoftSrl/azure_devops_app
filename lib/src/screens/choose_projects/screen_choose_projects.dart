@@ -15,7 +15,6 @@ class _ChooseProjectsScreen extends StatelessWidget {
           dispose: ctrl.dispose,
           title: 'Choose projects',
           notifier: ctrl.chosenProjects,
-          onEmpty: 'No projects found',
           safeAreaBottom: false,
           showScrollbar: true,
           builder: (projects) => Column(

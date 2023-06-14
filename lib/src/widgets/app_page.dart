@@ -262,7 +262,10 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> {
                             ),
                           ),
                         )
-                      else if (response != null && (response.data is List) && (response.data as List).isEmpty)
+                      else if (response != null &&
+                          widget.onEmpty != null &&
+                          (response.data is List) &&
+                          (response.data as List).isEmpty)
                         SliverPadding(
                           padding: EdgeInsets.only(top: paddingTop),
                           sliver: SliverToBoxAdapter(
