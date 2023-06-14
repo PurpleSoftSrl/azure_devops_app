@@ -67,8 +67,6 @@ class Record {
     this.issues,
   });
 
-  factory Record.fromRawJson(String str) => Record.fromJson(json.decode(str) as Map<String, dynamic>);
-
   factory Record.fromJson(Map<String, dynamic> json) => Record(
         previousAttempts: List<dynamic>.from((json['previousAttempts'] as List<dynamic>).map((x) => x)),
         id: json['id'] as String,

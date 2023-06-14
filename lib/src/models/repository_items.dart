@@ -34,8 +34,6 @@ class RepoItem {
     required this.url,
   });
 
-  factory RepoItem.fromRawJson(String str) => RepoItem.fromJson(json.decode(str) as Map<String, dynamic>);
-
   factory RepoItem.fromJson(Map<String, dynamic> json) => RepoItem(
         objectId: json['objectId'] as String,
         commitId: json['commitId'] as String,

@@ -32,8 +32,6 @@ class Branch {
     required this.isBaseVersion,
   });
 
-  factory Branch.fromRawJson(String str) => Branch.fromJson(json.decode(str) as Map<String, dynamic>);
-
   factory Branch.fromJson(Map<String, dynamic> json) => Branch(
         commit: _Commit.fromJson(json['commit'] as Map<String, dynamic>),
         name: json['name'] as String,

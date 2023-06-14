@@ -61,7 +61,7 @@ class FilterMenu<T> extends StatelessWidget {
     this.formatLabel,
     required this.isDefaultFilter,
     required this.widgetBuilder,
-  }) : isUser = false;
+  });
 
   final void Function(T)? onSelected;
   final List<T> values;
@@ -70,8 +70,6 @@ class FilterMenu<T> extends StatelessWidget {
   final String Function(T)? formatLabel;
   final Widget Function(T) widgetBuilder;
   final bool isDefaultFilter;
-
-  final bool isUser;
 
   @override
   Widget build(BuildContext context) {

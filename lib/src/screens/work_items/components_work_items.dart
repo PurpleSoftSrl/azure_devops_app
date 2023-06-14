@@ -17,6 +17,9 @@ class _WorkItemListTile extends StatelessWidget {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final wt = apiService.workItemTypes[item.fields.systemTeamProject]
         ?.firstWhereOrNull((t) => t.name == item.fields.systemWorkItemType);
+    final state = apiService.workItemStates[item.fields.systemTeamProject]?[item.fields.systemWorkItemType]
+        ?.firstWhereOrNull((t) => t.name == item.fields.systemState);
+
     return InkWell(
       onTap: onTap,
       key: ValueKey('work_item_${item.id}'),
@@ -41,7 +44,9 @@ class _WorkItemListTile extends StatelessWidget {
                 ),
                 Text(
                   item.fields.systemState,
-                  style: subtitleStyle.copyWith(color: item.stateColor),
+                  style: subtitleStyle.copyWith(
+                    color: state == null ? null : Color(int.parse(state.color, radix: 16)).withOpacity(1),
+                  ),
                 ),
               ],
             ),

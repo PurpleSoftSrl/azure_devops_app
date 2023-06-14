@@ -39,8 +39,6 @@ class Diff {
     this.imageComparison = false,
   });
 
-  factory Diff.fromRawJson(String str) => Diff.fromJson(json.decode(str) as Map<String, dynamic>);
-
   factory Diff.fromJson(Map<String, dynamic> json) => Diff(
         originalFile: json['originalFile'] == null
             ? null
@@ -78,8 +76,6 @@ class Block {
     this.truncatedBefore,
     this.truncatedAfter,
   });
-
-  factory Block.fromRawJson(String str) => Block.fromJson(json.decode(str) as Map<String, dynamic>);
 
   factory Block.fromJson(Map<String, dynamic> json) => Block(
         changeType: json['changeType'] as int,

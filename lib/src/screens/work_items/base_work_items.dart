@@ -2,7 +2,6 @@ library work_items;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
-import 'package:azure_devops/src/extensions/work_item_extension.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/processes.dart';
 import 'package:azure_devops/src/models/project.dart';

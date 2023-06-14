@@ -82,6 +82,9 @@ class _WorkItemDetailScreen extends StatelessWidget {
         final detail = detWithUpdates!.item;
         final wType = ctrl.apiService.workItemTypes[detail.fields.systemTeamProject]
             ?.firstWhereOrNull((t) => t.name == detail.fields.systemWorkItemType);
+        final state = ctrl.apiService.workItemStates[detail.fields.systemTeamProject]?[detail.fields.systemWorkItemType]
+            ?.firstWhereOrNull((t) => t.name == detail.fields.systemState);
+
         return DefaultTextStyle(
           style: context.textTheme.titleSmall!,
           child: Column(
@@ -104,8 +107,9 @@ class _WorkItemDetailScreen extends StatelessWidget {
                   ),
                   Text(
                     detail.fields.systemState,
-                    style: context.textTheme.titleSmall!
-                        .copyWith(color: WorkItemExt.withState(detail.fields.systemState).stateColor),
+                    style: context.textTheme.titleSmall!.copyWith(
+                      color: state == null ? null : Color(int.parse(state.color, radix: 16)).withOpacity(1),
+                    ),
                   ),
                 ],
               ),
