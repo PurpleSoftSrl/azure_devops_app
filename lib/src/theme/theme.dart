@@ -41,12 +41,16 @@ class AppTheme {
 
   static int tabletBeakpoint = 600;
 
-  static bool get isLightTheme => StorageServiceCore().getThemeMode() == 'light';
+  static bool isTablet =
+      (MediaQueryData.fromView(PlatformDispatcher.instance.views.first).size.width) >= tabletBeakpoint;
 
-  static bool get isDarkTheme => StorageServiceCore().getThemeMode() == 'dark';
+  static StorageService get storageService => StorageServiceCore();
 
-  static bool get isSystemTheme =>
-      StorageServiceCore().getThemeMode().isEmpty || StorageServiceCore().getThemeMode() == 'system';
+  static bool get isLightTheme => storageService.getThemeMode() == 'light';
+
+  static bool get isDarkTheme => storageService.getThemeMode() == 'dark';
+
+  static bool get isSystemTheme => storageService.getThemeMode().isEmpty || storageService.getThemeMode() == 'system';
 
   static String get themeMode {
     if (isSystemTheme) return 'System';
@@ -70,135 +74,8 @@ class AppTheme {
 
   static final defaultFont = GoogleFonts.notoSans().fontFamily;
 
-  // ignore: long-method
   static ThemeData _getCustomTheme(ColorScheme colorScheme) {
-    const letterSpacing = .5;
-
-    final isTablet = (MediaQueryData.fromView(PlatformDispatcher.instance.views.first).size.width) >= tabletBeakpoint;
-
-    final fsMultiplier = isTablet ? 1.2 : 1.0;
-
-    final textTheme = GoogleFonts.notoSansTextTheme(
-      TextTheme(
-        displayLarge: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontWeight: FontWeight.w700,
-          fontSize: fsMultiplier * 57,
-          height: 64 / (fsMultiplier * 57),
-          letterSpacing: letterSpacing,
-        ),
-        displayMedium: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontSize: fsMultiplier * 45,
-          fontWeight: FontWeight.w500,
-          height: 52 / (fsMultiplier * 45),
-          letterSpacing: letterSpacing,
-        ),
-        displaySmall: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontSize: fsMultiplier * 36,
-          fontWeight: FontWeight.w700,
-          height: 44 / (fsMultiplier * 36),
-          letterSpacing: letterSpacing,
-        ),
-        headlineLarge: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontSize: fsMultiplier * 32,
-          fontWeight: FontWeight.w600,
-          height: 40 / (fsMultiplier * 32),
-          letterSpacing: letterSpacing,
-        ),
-        headlineMedium: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontSize: fsMultiplier * 28,
-          fontWeight: FontWeight.w600,
-          height: 36 / (fsMultiplier * 28),
-          letterSpacing: letterSpacing,
-        ),
-        headlineSmall: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontSize: fsMultiplier * 24,
-          fontWeight: FontWeight.w600,
-          letterSpacing: letterSpacing,
-        ),
-        titleLarge: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontSize: fsMultiplier * 20,
-          fontWeight: FontWeight.w600,
-          letterSpacing: letterSpacing,
-        ),
-        titleMedium: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontWeight: FontWeight.w600,
-          fontSize: fsMultiplier * 16,
-          letterSpacing: letterSpacing,
-        ),
-        titleSmall: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontSize: fsMultiplier * 14,
-          fontWeight: FontWeight.w500,
-          height: 20 / (fsMultiplier * 14),
-          letterSpacing: letterSpacing,
-        ),
-        bodyLarge: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontSize: fsMultiplier * 16,
-          height: 24 / (fsMultiplier * 16),
-          fontWeight: FontWeight.w500,
-          letterSpacing: letterSpacing,
-        ),
-        bodyMedium: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontSize: fsMultiplier * 14,
-          height: 20 / (fsMultiplier * 14),
-          fontWeight: FontWeight.w700,
-          letterSpacing: letterSpacing,
-        ),
-        bodySmall: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontSize: fsMultiplier * 12,
-          fontWeight: FontWeight.w400,
-          height: 16 / (fsMultiplier * 12),
-          letterSpacing: letterSpacing,
-        ),
-        labelLarge: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontSize: fsMultiplier * 14,
-          fontWeight: FontWeight.w500,
-          height: 20 / (fsMultiplier * 14),
-          letterSpacing: letterSpacing,
-        ),
-        labelMedium: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontSize: fsMultiplier * 12,
-          fontWeight: FontWeight.w600,
-          height: 16 / (fsMultiplier * 12),
-          letterSpacing: letterSpacing,
-        ),
-        labelSmall: TextStyle(
-          fontFamily: defaultFont,
-          color: colorScheme.onBackground,
-          fontSize: fsMultiplier * 11,
-          fontWeight: FontWeight.w500,
-          letterSpacing: letterSpacing,
-          height: 16 / (fsMultiplier * 11),
-        ),
-      ),
-    );
+    final textTheme = _getTextTheme();
 
     return ThemeData(
       fontFamily: defaultFont,
@@ -207,89 +84,164 @@ class AppTheme {
       colorScheme: colorScheme,
       brightness: colorScheme.brightness,
       scaffoldBackgroundColor: colorScheme.background,
-      buttonTheme: ButtonThemeData(
-        hoverColor: Colors.transparent,
-        buttonColor: colorScheme.primary,
-        disabledColor: colorScheme.surface,
-        height: isTablet ? 70.0 : 60.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radius),
-        ),
-      ),
-      textButtonTheme: TextButtonThemeData(
-        style: ButtonStyle(
-          textStyle: MaterialStatePropertyAll(textTheme.labelLarge),
-          foregroundColor: MaterialStatePropertyAll(colorScheme.onBackground),
-          padding: MaterialStatePropertyAll(EdgeInsets.all(10)),
-          shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-        ),
-      ),
-      dividerTheme: DividerThemeData(
-        thickness: 1,
-        color: colorScheme.secondaryContainer,
-      ),
-      iconTheme: IconThemeData(
-        color: colorScheme.onBackground,
-        size: isTablet ? 30 : 20,
-      ),
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: colorScheme.surface,
-        contentTextStyle: textTheme.titleSmall,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        elevation: 0,
-      ),
+      buttonTheme: _getButtonTheme(colorScheme),
+      textButtonTheme: _getTextButtonTheme(textTheme, colorScheme),
+      dividerTheme: _getDividerTheme(colorScheme),
+      iconTheme: _getIconTheme(colorScheme),
+      snackBarTheme: _getSnackbarTheme(colorScheme, textTheme),
       shadowColor: Colors.transparent,
-      appBarTheme: AppBarTheme(
-        elevation: 0,
-        color: colorScheme.background,
-        titleTextStyle: textTheme.titleLarge!.copyWith(color: colorScheme.onBackground),
-        centerTitle: true,
-        shadowColor: colorScheme.primary,
-        iconTheme: IconThemeData(color: colorScheme.onBackground),
-      ),
-      chipTheme: ChipThemeData(
-        labelStyle: textTheme.labelSmall!.copyWith(color: colorScheme.onBackground),
-      ),
-      dialogTheme: DialogTheme(
-        backgroundColor: colorScheme.surface,
-        shape: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
-        shadowColor: Colors.transparent,
-        titleTextStyle: TextStyle(fontSize: isTablet ? 24 : 20),
-        contentTextStyle: TextStyle(
-          fontFamily: defaultFont,
-          fontWeight: FontWeight.bold,
-          fontSize: isTablet ? 22 : 18,
-          color: colorScheme.primary,
-        ),
-      ),
-      bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: colorScheme.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(radius),
-            topRight: Radius.circular(radius),
-          ),
-        ),
-        elevation: 10,
-        modalElevation: 10,
-        modalBackgroundColor: colorScheme.primary,
-      ),
-      checkboxTheme: CheckboxThemeData(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6),
-        ),
-        fillColor: MaterialStateProperty.resolveWith((states) {
-          return states.contains(MaterialState.selected) ? colorScheme.primary : colorScheme.onBackground;
-        }),
-        side: BorderSide(
-          width: .5,
-          color: colorScheme.onBackground,
-        ),
-      ),
+      appBarTheme: _getAppBarTheme(colorScheme, textTheme),
+      chipTheme: _getChipTheme(textTheme, colorScheme),
+      dialogTheme: _getDialogTheme(colorScheme),
+      bottomSheetTheme: _getBottomSheetTheme(colorScheme),
+      checkboxTheme: _getCheckboxTheme(colorScheme),
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       hoverColor: Colors.transparent,
       focusColor: Colors.transparent,
+    );
+  }
+
+  static TextTheme _getTextTheme() {
+    return GoogleFonts.notoSansTextTheme(
+      TextTheme(
+        displayLarge: _getTextStyle(fontWeight: FontWeight.w700, fs: 57, height: 64),
+        displayMedium: _getTextStyle(fs: 45, fontWeight: FontWeight.w500, height: 52),
+        displaySmall: _getTextStyle(fs: 36, fontWeight: FontWeight.w700, height: 44),
+        headlineLarge: _getTextStyle(fs: 32, fontWeight: FontWeight.w600, height: 40),
+        headlineMedium: _getTextStyle(fs: 28, fontWeight: FontWeight.w600, height: 36),
+        headlineSmall: _getTextStyle(fs: 24, fontWeight: FontWeight.w600),
+        titleLarge: _getTextStyle(fs: 20, fontWeight: FontWeight.w600),
+        titleMedium: _getTextStyle(fs: 16, fontWeight: FontWeight.w600),
+        titleSmall: _getTextStyle(fs: 14, fontWeight: FontWeight.w500, height: 20),
+        bodyLarge: _getTextStyle(fs: 16, fontWeight: FontWeight.w500, height: 24),
+        bodyMedium: _getTextStyle(fs: 14, fontWeight: FontWeight.w700, height: 20),
+        bodySmall: _getTextStyle(fs: 12, fontWeight: FontWeight.w400, height: 16),
+        labelLarge: _getTextStyle(fs: 14, fontWeight: FontWeight.w500, height: 20),
+        labelMedium: _getTextStyle(fs: 12, fontWeight: FontWeight.w600, height: 16),
+        labelSmall: _getTextStyle(fs: 11, fontWeight: FontWeight.w500, height: 16),
+      ),
+    );
+  }
+
+  static TextStyle _getTextStyle({required double fs, double? height, required FontWeight fontWeight}) {
+    const letterSpacing = .5;
+    final fsMultiplier = isTablet ? 1.2 : 1.0;
+    return TextStyle(
+      fontFamily: defaultFont,
+      color: isLightTheme ? _lightColorScheme.onBackground : _darkColorScheme.onBackground,
+      fontWeight: fontWeight,
+      fontSize: fsMultiplier * fs,
+      height: height == null ? null : height / (fsMultiplier * fs),
+      letterSpacing: letterSpacing,
+    );
+  }
+
+  static CheckboxThemeData _getCheckboxTheme(ColorScheme colorScheme) {
+    return CheckboxThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(6),
+      ),
+      fillColor: MaterialStateProperty.resolveWith((states) {
+        return states.contains(MaterialState.selected) ? colorScheme.primary : colorScheme.onBackground;
+      }),
+      side: BorderSide(
+        width: .5,
+        color: colorScheme.onBackground,
+      ),
+    );
+  }
+
+  static BottomSheetThemeData _getBottomSheetTheme(ColorScheme colorScheme) {
+    return BottomSheetThemeData(
+      backgroundColor: colorScheme.primary,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(radius),
+          topRight: Radius.circular(radius),
+        ),
+      ),
+      elevation: 10,
+      modalElevation: 10,
+      modalBackgroundColor: colorScheme.primary,
+    );
+  }
+
+  static DialogTheme _getDialogTheme(ColorScheme colorScheme) {
+    return DialogTheme(
+      backgroundColor: colorScheme.surface,
+      shape: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
+      shadowColor: Colors.transparent,
+      titleTextStyle: TextStyle(fontSize: isTablet ? 24 : 20),
+      contentTextStyle: TextStyle(
+        fontFamily: defaultFont,
+        fontWeight: FontWeight.bold,
+        fontSize: isTablet ? 22 : 18,
+        color: colorScheme.primary,
+      ),
+    );
+  }
+
+  static ChipThemeData _getChipTheme(TextTheme textTheme, ColorScheme colorScheme) {
+    return ChipThemeData(
+      labelStyle: textTheme.labelSmall!.copyWith(color: colorScheme.onBackground),
+    );
+  }
+
+  static AppBarTheme _getAppBarTheme(ColorScheme colorScheme, TextTheme textTheme) {
+    return AppBarTheme(
+      elevation: 0,
+      color: colorScheme.background,
+      titleTextStyle: textTheme.titleLarge!.copyWith(color: colorScheme.onBackground),
+      centerTitle: true,
+      shadowColor: colorScheme.primary,
+      iconTheme: IconThemeData(color: colorScheme.onBackground),
+    );
+  }
+
+  static SnackBarThemeData _getSnackbarTheme(ColorScheme colorScheme, TextTheme textTheme) {
+    return SnackBarThemeData(
+      backgroundColor: colorScheme.surface,
+      contentTextStyle: textTheme.titleSmall,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      elevation: 0,
+    );
+  }
+
+  static IconThemeData _getIconTheme(ColorScheme colorScheme) {
+    return IconThemeData(
+      color: colorScheme.onBackground,
+      size: isTablet ? 30 : 20,
+    );
+  }
+
+  static DividerThemeData _getDividerTheme(ColorScheme colorScheme) {
+    return DividerThemeData(
+      thickness: 1,
+      color: colorScheme.secondaryContainer,
+    );
+  }
+
+  static TextButtonThemeData _getTextButtonTheme(TextTheme textTheme, ColorScheme colorScheme) {
+    return TextButtonThemeData(
+      style: ButtonStyle(
+        textStyle: MaterialStatePropertyAll(textTheme.labelLarge),
+        foregroundColor: MaterialStatePropertyAll(colorScheme.onBackground),
+        padding: MaterialStatePropertyAll(EdgeInsets.all(10)),
+        shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+      ),
+    );
+  }
+
+  static ButtonThemeData _getButtonTheme(ColorScheme colorScheme) {
+    return ButtonThemeData(
+      hoverColor: Colors.transparent,
+      buttonColor: colorScheme.primary,
+      disabledColor: colorScheme.surface,
+      height: isTablet ? 70.0 : 60.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(radius),
+      ),
     );
   }
 }

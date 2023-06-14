@@ -203,20 +203,17 @@ class AzureApiServiceImpl implements AzureApiService {
 
   final _client = Client();
 
-  String _accessToken = '';
-
-  String _organization = '';
-
-  UserMe? _user;
-
   @override
   String get organization => _organization;
+  String _organization = '';
 
   @override
   String get accessToken => _accessToken;
+  String _accessToken = '';
 
   @override
   UserMe? get user => _user;
+  UserMe? _user;
 
   @override
   String get basePath => _basePath;
@@ -242,6 +239,8 @@ class AzureApiServiceImpl implements AzureApiService {
 
   List<Project> _projects = [];
   Iterable<Project>? _chosenProjects;
+
+  StorageService get storageService => StorageServiceCore.instance!;
 
   @override
   Map<String, List<WorkItemType>> get workItemTypes => _workItemTypes;
@@ -390,7 +389,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
     var profileEndpoint = '$_usersBasePath/_apis/profile/profiles/me?$_apiVersion-preview';
 
-    _organization = StorageServiceCore().getOrganization();
+    _organization = storageService.getOrganization();
 
     if (_organization.isNotEmpty) {
       profileEndpoint = '$_usersBasePath/$_organization/_apis/profile/profiles/me?$_apiVersion-preview';
@@ -410,12 +409,12 @@ class AzureApiServiceImpl implements AzureApiService {
       return LoginStatus.failed;
     }
 
-    StorageServiceCore.instance!.setToken(accessToken);
+    storageService.setToken(accessToken);
 
     final user = UserMe.fromJson(jsonDecode(accountsRes.body) as Map<String, dynamic>);
     _user = user;
 
-    _organization = StorageServiceCore().getOrganization();
+    _organization = storageService.getOrganization();
 
     if (_organization.isEmpty) {
       return LoginStatus.orgNotSet;
@@ -423,7 +422,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
     unawaited(_getUsers());
 
-    _chosenProjects = StorageServiceCore().getChosenProjects();
+    _chosenProjects = storageService.getChosenProjects();
 
     if (_chosenProjects!.isEmpty) {
       return LoginStatus.projectsNotSet;
@@ -436,7 +435,7 @@ class AzureApiServiceImpl implements AzureApiService {
   Future<void> setOrganization(String org) async {
     _organization = org.endsWith('/') ? org.substring(0, org.length - 1) : org;
 
-    StorageServiceCore.instance!.setOrganization(_organization);
+    storageService.setOrganization(_organization);
 
     if (user != null) unawaited(_getUsers());
   }
@@ -455,12 +454,12 @@ class AzureApiServiceImpl implements AzureApiService {
   void setChosenProjects(List<Project> chosenProjects) {
     _chosenProjects = chosenProjects.toList();
 
-    StorageServiceCore().setChosenProjects(_chosenProjects!);
+    storageService.setChosenProjects(_chosenProjects!);
   }
 
   @override
   Future<ApiResponse<List<Project>>> getProjects() async {
-    _chosenProjects = StorageServiceCore().getChosenProjects();
+    _chosenProjects = storageService.getChosenProjects();
 
     final projectsRes = await _get('$_basePath/_apis/projects?$_apiVersion&getDefaultTeamImageUrl=true');
     if (projectsRes.isError) return ApiResponse.error(projectsRes);
@@ -1133,7 +1132,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
   @override
   Future<void> logout() async {
-    StorageServiceCore().clear();
+    storageService.clear();
     _organization = '';
     _chosenProjects = null;
     _allUsers.clear();

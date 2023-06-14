@@ -32,7 +32,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final ctrl = _HomeController(apiService: apiService);
+    final storageService = StorageServiceInherited.of(context).storageService;
+    final ctrl = _HomeController(apiService: apiService, storageService: storageService);
     return LayoutBuilder(
       builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
           ? _HomeScreen(ctrl, _smartphoneParameters)

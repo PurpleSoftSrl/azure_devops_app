@@ -6,6 +6,7 @@ import 'package:azure_devops/src/mixins/share_mixin.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
+import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +27,7 @@ class PipelineLogsPage extends StatelessWidget {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final ctrl = _PipelineLogsController(apiService: apiService, args: args);
     return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < 600
+      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
           ? _PipelineLogsScreen(ctrl, _smartphoneParameters)
           : _PipelineLogsScreen(ctrl, _tabletParameters),
     );

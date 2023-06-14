@@ -12,10 +12,10 @@ class OverlayService {
 
   static final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
+  static BuildContext get context => AppRouter.rootNavigator!.context;
+
   // ignore: long-method
   static Future<bool> confirm(String title, {String? description}) async {
-    final context = AppRouter.rootNavigator!.context;
-
     var res = false;
 
     await showCupertinoDialog(
@@ -88,8 +88,6 @@ class OverlayService {
   }
 
   static Future<void> error(String title, {String? description}) async {
-    final context = AppRouter.rootNavigator!.context;
-
     await showCupertinoDialog(
       context: context,
       routeSettings: RouteSettings(name: 'alert_${title}_$description'),
@@ -143,8 +141,6 @@ class OverlayService {
     EdgeInsets padding = const EdgeInsets.all(15),
     bool spaceUnderTitle = true,
   }) async {
-    final context = AppRouter.rootNavigator!.context;
-
     await showModalBottomSheet(
       context: context,
       backgroundColor: context.colorScheme.background,
@@ -199,9 +195,7 @@ class OverlayService {
             margin: const EdgeInsets.symmetric(horizontal: 5),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
-              color: isError
-                  ? AppRouter.rootNavigator!.context.colorScheme.error
-                  : AppRouter.rootNavigator!.context.colorScheme.surface,
+              color: isError ? context.colorScheme.error : context.colorScheme.surface,
               borderRadius: BorderRadius.circular(AppTheme.radius),
             ),
             child: Row(

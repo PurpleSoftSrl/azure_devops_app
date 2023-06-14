@@ -1,15 +1,16 @@
 part of home;
 
 class _HomeController {
-  factory _HomeController({required AzureApiService apiService}) {
-    return instance ??= _HomeController._(apiService);
+  factory _HomeController({required AzureApiService apiService, required StorageService storageService}) {
+    return instance ??= _HomeController._(apiService, storageService);
   }
 
-  _HomeController._(this.apiService);
+  _HomeController._(this.apiService, this.storageService);
 
   static _HomeController? instance;
 
   final AzureApiService apiService;
+  final StorageService storageService;
 
   final projects = ValueNotifier<ApiResponse<List<Project>>?>(null);
 
@@ -27,14 +28,14 @@ class _HomeController {
       return;
     }
 
-    final alreadyChosenProjects = StorageServiceCore().getChosenProjects();
+    final alreadyChosenProjects = storageService.getChosenProjects();
 
     final existentProjects = alreadyChosenProjects.where((p) => allProjects.map((e) => e.id!).contains(p.id));
     final sortedProjects = existentProjects.toList()..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!));
 
     projects.value = ApiResponse.ok(sortedProjects);
 
-    StorageServiceCore().setChosenProjects(existentProjects);
+    storageService.setChosenProjects(existentProjects);
 
     _configureSentryScope();
 
@@ -82,7 +83,7 @@ class _HomeController {
 
   /// Shows review dialog only the 5th time the app is opened.
   Future<void> _maybeRequestReview() async {
-    final numberOfSessions = StorageServiceCore().numberOfSessions;
+    final numberOfSessions = storageService.numberOfSessions;
     if (numberOfSessions == 5) {
       final inAppReview = InAppReview.instance;
 
@@ -91,7 +92,7 @@ class _HomeController {
       }
     }
 
-    StorageServiceCore().increaseNumberOfSessions();
+    storageService.increaseNumberOfSessions();
   }
 
   void _logSession() {

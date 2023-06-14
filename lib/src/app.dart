@@ -14,14 +14,15 @@ class AzureDevOps extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PurpleTheme(
-      child: AzureApiServiceInherited(
-        apiService: AzureApiServiceImpl(),
-        child: LifecycleListener(
+    return LifecycleListener(
+      child: PurpleTheme(
+        child: AzureApiServiceInherited(
+          apiService: AzureApiServiceImpl(),
           child: StorageServiceInherited(
             storageService: StorageServiceCore(),
             child: Builder(
-              builder: (subContext) {
+              builder: (_) {
+                // builder is needed to switch theme
                 return GestureDetector(
                   onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
                   child: MaterialApp(
@@ -31,9 +32,7 @@ class AzureDevOps extends StatelessWidget {
                     darkTheme: AppTheme.darkTheme,
                     debugShowCheckedModeBanner: false,
                     scaffoldMessengerKey: OverlayService.scaffoldMessengerKey,
-                    navigatorObservers: [
-                      SentryNavigatorObserver(),
-                    ],
+                    navigatorObservers: [SentryNavigatorObserver()],
                     home: const SplashPage(),
                   ),
                 );

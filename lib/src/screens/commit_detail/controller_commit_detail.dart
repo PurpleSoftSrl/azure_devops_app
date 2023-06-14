@@ -26,7 +26,7 @@ class _CommitDetailController with ShareMixin {
 
   final commitChanges = ValueNotifier<ApiResponse<CommitWithChanges?>?>(null);
 
-  Commit? commitDetail;
+  Commit? get commit => commitChanges.value?.data?.commit;
 
   Iterable<Change?> get changedFiles =>
       commitChanges.value?.data?.changes?.changes?.where((c) => c!.item!.gitObjectType == 'blob') ?? [];
@@ -60,8 +60,6 @@ class _CommitDetailController with ShareMixin {
       commitId: args.commitId,
     );
 
-    commitDetail = detailRes.data?.commit;
-
     final changes = detailRes.data?.changes?.changes ?? <Change>[];
 
     for (final file in changes.where((f) => f?.item?.gitObjectType == 'blob' && f?.item?.path != null)) {
@@ -89,22 +87,22 @@ class _CommitDetailController with ShareMixin {
   }
 
   String get diffUrl =>
-      '${apiService.basePath}/${commitDetail!.projectName}/_git/${commitDetail!.repositoryName}/commit/${commitDetail!.commitId}';
+      '${apiService.basePath}/${commit!.projectName}/_git/${commit!.repositoryName}/commit/${commit!.commitId}';
 
   void goToProject() {
-    AppRouter.goToProjectDetail(commitDetail!.projectName);
+    AppRouter.goToProjectDetail(commit!.projectName);
   }
 
   Future<void> goToRepo() async {
     await AppRouter.goToRepositoryDetail(
-      RepoDetailArgs(projectName: commitDetail!.projectName, repositoryName: commitDetail!.repositoryName),
+      RepoDetailArgs(projectName: commit!.projectName, repositoryName: commit!.repositoryName),
     );
   }
 
   void goToFileDiff({required String filePath, bool isAdded = false, bool isDeleted = false}) {
     AppRouter.goToFileDiff(
       FileDiffArgs(
-        commit: commitDetail!,
+        commit: commit!,
         filePath: filePath,
         isAdded: isAdded,
         isDeleted: isDeleted,
