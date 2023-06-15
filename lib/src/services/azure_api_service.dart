@@ -1123,7 +1123,8 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   Future<ApiResponse<List<GraphUser>>> _getUsers() async {
-    final usersRes = await _get('$_usersBasePath/$_organization/_apis/graph/users?$_apiVersion-preview');
+    final usersRes =
+        await _get('$_usersBasePath/$_organization/_apis/graph/users?subjectTypes=aad&$_apiVersion-preview');
     if (usersRes.isError) return ApiResponse.error(usersRes);
 
     _allUsers = GetUsersResponse.fromResponse(usersRes);
