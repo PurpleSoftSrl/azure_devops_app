@@ -75,7 +75,7 @@ class AppTheme {
   static final defaultFont = GoogleFonts.notoSans().fontFamily;
 
   static ThemeData _getCustomTheme(ColorScheme colorScheme) {
-    final textTheme = _getTextTheme();
+    final textTheme = _getTextTheme(colorScheme.brightness);
 
     return ThemeData(
       fontFamily: defaultFont,
@@ -102,34 +102,39 @@ class AppTheme {
     );
   }
 
-  static TextTheme _getTextTheme() {
+  static TextTheme _getTextTheme(Brightness brightness) {
     return GoogleFonts.notoSansTextTheme(
       TextTheme(
-        displayLarge: _getTextStyle(fontWeight: FontWeight.w700, fs: 57, height: 64),
-        displayMedium: _getTextStyle(fs: 45, fontWeight: FontWeight.w500, height: 52),
-        displaySmall: _getTextStyle(fs: 36, fontWeight: FontWeight.w700, height: 44),
-        headlineLarge: _getTextStyle(fs: 32, fontWeight: FontWeight.w600, height: 40),
-        headlineMedium: _getTextStyle(fs: 28, fontWeight: FontWeight.w600, height: 36),
-        headlineSmall: _getTextStyle(fs: 24, fontWeight: FontWeight.w600),
-        titleLarge: _getTextStyle(fs: 20, fontWeight: FontWeight.w600),
-        titleMedium: _getTextStyle(fs: 16, fontWeight: FontWeight.w600),
-        titleSmall: _getTextStyle(fs: 14, fontWeight: FontWeight.w500, height: 20),
-        bodyLarge: _getTextStyle(fs: 16, fontWeight: FontWeight.w500, height: 24),
-        bodyMedium: _getTextStyle(fs: 14, fontWeight: FontWeight.w700, height: 20),
-        bodySmall: _getTextStyle(fs: 12, fontWeight: FontWeight.w400, height: 16),
-        labelLarge: _getTextStyle(fs: 14, fontWeight: FontWeight.w500, height: 20),
-        labelMedium: _getTextStyle(fs: 12, fontWeight: FontWeight.w600, height: 16),
-        labelSmall: _getTextStyle(fs: 11, fontWeight: FontWeight.w500, height: 16),
+        displayLarge: _getTextStyle(fontWeight: FontWeight.w700, fs: 57, height: 64, brightness: brightness),
+        displayMedium: _getTextStyle(fs: 45, fontWeight: FontWeight.w500, height: 52, brightness: brightness),
+        displaySmall: _getTextStyle(fs: 36, fontWeight: FontWeight.w700, height: 44, brightness: brightness),
+        headlineLarge: _getTextStyle(fs: 32, fontWeight: FontWeight.w600, height: 40, brightness: brightness),
+        headlineMedium: _getTextStyle(fs: 28, fontWeight: FontWeight.w600, height: 36, brightness: brightness),
+        headlineSmall: _getTextStyle(fs: 24, fontWeight: FontWeight.w600, brightness: brightness),
+        titleLarge: _getTextStyle(fs: 20, fontWeight: FontWeight.w600, brightness: brightness),
+        titleMedium: _getTextStyle(fs: 16, fontWeight: FontWeight.w600, brightness: brightness),
+        titleSmall: _getTextStyle(fs: 14, fontWeight: FontWeight.w500, height: 20, brightness: brightness),
+        bodyLarge: _getTextStyle(fs: 16, fontWeight: FontWeight.w500, height: 24, brightness: brightness),
+        bodyMedium: _getTextStyle(fs: 14, fontWeight: FontWeight.w700, height: 20, brightness: brightness),
+        bodySmall: _getTextStyle(fs: 12, fontWeight: FontWeight.w400, height: 16, brightness: brightness),
+        labelLarge: _getTextStyle(fs: 14, fontWeight: FontWeight.w500, height: 20, brightness: brightness),
+        labelMedium: _getTextStyle(fs: 12, fontWeight: FontWeight.w600, height: 16, brightness: brightness),
+        labelSmall: _getTextStyle(fs: 11, fontWeight: FontWeight.w500, height: 16, brightness: brightness),
       ),
     );
   }
 
-  static TextStyle _getTextStyle({required double fs, double? height, required FontWeight fontWeight}) {
+  static TextStyle _getTextStyle({
+    required double fs,
+    double? height,
+    required FontWeight fontWeight,
+    required Brightness brightness,
+  }) {
     const letterSpacing = .5;
     final fsMultiplier = isTablet ? 1.2 : 1.0;
     return TextStyle(
       fontFamily: defaultFont,
-      color: isLightTheme ? _lightColorScheme.onBackground : _darkColorScheme.onBackground,
+      color: brightness == Brightness.light ? _lightColorScheme.onBackground : _darkColorScheme.onBackground,
       fontWeight: fontWeight,
       fontSize: fsMultiplier * fs,
       height: height == null ? null : height / (fsMultiplier * fs),
