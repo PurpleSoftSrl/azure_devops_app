@@ -188,3 +188,16 @@ class UserMe {
         revision.hashCode;
   }
 }
+
+class UserIdentity {
+  UserIdentity({required this.id});
+
+  factory UserIdentity.fromResponse(Response res) {
+    final json = jsonDecode(res.body) as Map<String, dynamic>?;
+    return UserIdentity(
+      id: (json?['value'] as List<dynamic>?)?.firstOrNull?['id']?.toString(),
+    );
+  }
+
+  final String? id;
+}

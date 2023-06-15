@@ -61,6 +61,7 @@ class FilterMenu<T> extends StatelessWidget {
     this.formatLabel,
     required this.isDefaultFilter,
     required this.widgetBuilder,
+    this.child,
   });
 
   final void Function(T)? onSelected;
@@ -70,6 +71,7 @@ class FilterMenu<T> extends StatelessWidget {
   final String Function(T)? formatLabel;
   final Widget Function(T) widgetBuilder;
   final bool isDefaultFilter;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +100,39 @@ class FilterMenu<T> extends StatelessWidget {
       ),
     );
 
+    return _FilterBottomsheet(
+      title: title,
+      values: values,
+      formatLabel: formatLabel,
+      onSelected: onSelected,
+      widgetBuilder: widgetBuilder,
+      currentFilter: currentFilter,
+      child: child ?? chip,
+    );
+  }
+}
+
+class _FilterBottomsheet<T> extends StatelessWidget {
+  const _FilterBottomsheet({
+    required this.title,
+    required this.values,
+    this.formatLabel,
+    this.onSelected,
+    required this.widgetBuilder,
+    required this.currentFilter,
+    required this.child,
+  });
+
+  final String title;
+  final List<T> values;
+  final String Function(T)? formatLabel;
+  final void Function(T)? onSelected;
+  final Widget Function(T) widgetBuilder;
+  final T currentFilter;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
     const imageSize = 35.0;
     return InkWell(
       key: ValueKey(title),
@@ -145,7 +180,7 @@ class FilterMenu<T> extends StatelessWidget {
           ),
         );
       },
-      child: chip,
+      child: child,
     );
   }
 }

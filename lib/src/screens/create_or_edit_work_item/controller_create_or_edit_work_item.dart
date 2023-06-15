@@ -215,4 +215,16 @@ class _CreateOrEditWorkItemController with FilterMixin {
           );
     });
   }
+
+  Future<void> addMention(GraphUser u) async {
+    final res = await apiService.getUserToMention(email: u.mailAddress!);
+    if (res.isError || res.data == null) {
+      return OverlayService.snackbar('Could not find user', isError: true);
+    }
+
+    // remove `(me)` from user name if it's me
+    final name = u.mailAddress == apiService.user!.emailAddress ? apiService.user!.displayName : u.displayName;
+    final mention = '<a href="#" data-vss-mention="version:2.0,${res.data}">@$name</a>';
+    editorController.insertHtml(mention);
+  }
 }

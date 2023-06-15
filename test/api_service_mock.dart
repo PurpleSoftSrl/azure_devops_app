@@ -508,6 +508,11 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Map<String, Map<String, List<WorkItemState>>> get workItemStates => {};
+
+  @override
+  Future<ApiResponse<String>> getUserToMention({required String email}) {
+    throw UnimplementedError();
+  }
 }
 
 class StorageServiceMock implements StorageService {

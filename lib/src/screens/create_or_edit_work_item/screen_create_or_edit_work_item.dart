@@ -161,6 +161,32 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 ParagraphButtons(textDirection: false, lineHeight: false, caseConverter: false),
                 StyleButtons(),
               ],
+              textStyle: context.textTheme.headlineSmall,
+              customToolbarButtons: [
+                ToggleButtons(
+                  isSelected: const [false],
+                  disabledBorderColor: Colors.transparent,
+                  children: [
+                    FilterMenu<GraphUser>(
+                      title: '',
+                      values: ctrl
+                          .getSortedUsers(ctrl.apiService)
+                          .whereNot((u) => u.displayName == ctrl.userAll.displayName)
+                          .toList(),
+                      currentFilter: ctrl.userAll,
+                      onSelected: ctrl.addMention,
+                      formatLabel: (u) => u.displayName!,
+                      isDefaultFilter: true,
+                      widgetBuilder: (u) => UserFilterWidget(user: u),
+                      child: Text(
+                        '@',
+                        style: context.textTheme.headlineSmall,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              customToolbarInsertionIndices: [1],
               toolbarPosition: ToolbarPosition.belowEditor,
             ),
           ),

@@ -183,6 +183,8 @@ abstract class AzureApiService {
 
   Future<ApiResponse<GraphUser>> getUserFromDisplayName({required String name});
 
+  Future<ApiResponse<String>> getUserToMention({required String email});
+
   Future<ApiResponse<List<TeamMember>>> getProjectTeams({required String projectId});
 
   Future<ApiResponse<PullRequest>> getPullRequest({required String projectName, required int id});
@@ -1120,6 +1122,16 @@ class AzureApiServiceImpl implements AzureApiService {
     }
 
     return ApiResponse.ok(user);
+  }
+
+  @override
+  Future<ApiResponse<String>> getUserToMention({required String email}) async {
+    final identity = await _get(
+      '$_usersBasePath/$_organization/_apis/identities?searchFilter=General&filterValue=$email&$_apiVersion',
+    );
+    if (identity.isError) return ApiResponse.error(null);
+
+    return ApiResponse.ok(UserIdentity.fromResponse(identity).id);
   }
 
   Future<ApiResponse<List<GraphUser>>> _getUsers() async {
