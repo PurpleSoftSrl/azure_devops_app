@@ -5,6 +5,7 @@ import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/screens/choose_projects/base_choose_projects.dart';
 import 'package:azure_devops/src/screens/commit_detail/base_commit_detail.dart';
 import 'package:azure_devops/src/screens/commits/base_commits.dart';
+import 'package:azure_devops/src/screens/create_or_edit_work_item/base_create_or_edit_work_item.dart';
 import 'package:azure_devops/src/screens/file_detail/base_file_detail.dart';
 import 'package:azure_devops/src/screens/file_diff/base_file_diff.dart';
 import 'package:azure_devops/src/screens/home/base_home.dart';
@@ -57,6 +58,7 @@ class AppRouter {
   static const _memberDetail = '/member-detail';
   static const _workItemDetail = '/workitem-detail';
   static const _pullRequestDetail = '/pullrequest-detail';
+  static const _createOrEditWorkItem = '/create-or-edit-workitem';
 
   static const _error = '/error';
 
@@ -99,6 +101,7 @@ class AppRouter {
     _memberDetail: (_) => MemberDetailPage(),
     _workItemDetail: (_) => WorkItemDetailPage(),
     _pullRequestDetail: (_) => PullRequestDetailPage(),
+    _createOrEditWorkItem: (_) => CreateOrEditWorkItemPage(),
     _error: (_) => ErrorPage(description: 'Something went wrong', onRetry: goToSplash),
   };
 
@@ -168,6 +171,11 @@ class AppRouter {
       _goTo(_workItemDetail, args: (project: project, id: id));
 
   static ({String project, int id}) getWorkItemDetailArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToCreateOrEditWorkItem({String? project, int? id}) =>
+      _goTo(_createOrEditWorkItem, args: (project: project, id: id));
+
+  static ({String? project, int? id}) getCreateOrEditWorkItemArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToPullRequests({Project? project}) => _goTo(_pullRequests, args: project);
 
