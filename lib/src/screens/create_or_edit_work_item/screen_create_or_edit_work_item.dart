@@ -14,11 +14,10 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: ctrl.args.id == null ? 'Create work item' : 'Edit work item #${ctrl.args.id}',
       notifier: ctrl.hasChanged,
-      showScrollbar: true,
-      builder: (items) => Column(
+      builder: (hasChanged) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!ctrl.isEditing)
+          if (!ctrl.isEditing) ...[
             Row(
               children: [
                 Text(
@@ -39,9 +38,10 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 ),
               ],
             ),
-          const SizedBox(
-            height: 10,
-          ),
+            const SizedBox(
+              height: 10,
+            ),
+          ],
           Row(
             children: [
               Text(
@@ -65,7 +65,7 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          if (ctrl.isEditing)
+          if (ctrl.isEditing) ...[
             Row(
               children: [
                 Text(
@@ -86,9 +86,10 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 ),
               ],
             ),
-          const SizedBox(
-            height: 10,
-          ),
+            const SizedBox(
+              height: 10,
+            ),
+          ],
           Row(
             children: [
               Text(
@@ -138,6 +139,7 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
             callbacks: Callbacks(
               onInit: ctrl.editorController.setFullScreen,
               onFocus: ctrl.ensureEditorIsVisible,
+              onKeyUp: (_) => ctrl._setHasChanged(),
             ),
             htmlEditorOptions: HtmlEditorOptions(
               initialText: ctrl.newWorkItemDescription,
@@ -194,13 +196,11 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
             key: ctrl.editorGlobalKey,
             height: 40,
           ),
-          LoadingButton(
-            onPressed: ctrl.confirm,
-            text: 'Confirm',
-          ),
-          const SizedBox(
-            height: 40,
-          ),
+          if (hasChanged)
+            LoadingButton(
+              onPressed: ctrl.confirm,
+              text: 'Confirm',
+            ),
         ],
       ),
     );

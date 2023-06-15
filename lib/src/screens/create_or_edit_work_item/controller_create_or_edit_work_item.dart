@@ -105,6 +105,8 @@ class _CreateOrEditWorkItemController with FilterMixin {
   }
 
   void setType(WorkItemType type) {
+    if (type == newWorkItemType) return;
+
     newWorkItemType = type;
 
     if (isEditing) {
@@ -115,9 +117,12 @@ class _CreateOrEditWorkItemController with FilterMixin {
         newWorkItemStatus = allWorkItemStates.firstOrNull ?? newWorkItemStatus;
       }
     }
+    _setHasChanged();
   }
 
   void setProject(Project project) {
+    if (project == newWorkItemProject) return;
+
     newWorkItemProject = project;
 
     if (!isEditing && newWorkItemProject != projectAll) {
@@ -128,27 +133,39 @@ class _CreateOrEditWorkItemController with FilterMixin {
         newWorkItemType = projectWorkItemTypes.first;
       }
     }
+
+    _setHasChanged();
   }
 
   void setAssignee(GraphUser assignee) {
+    if (assignee == newWorkItemAssignedTo) return;
+
     newWorkItemAssignedTo = assignee;
+    _setHasChanged();
   }
 
   void setState(WorkItemState state) {
+    if (state == newWorkItemStatus) return;
+
     newWorkItemStatus = state;
+    _setHasChanged();
+  }
+
+  void _setHasChanged() {
+    hasChanged.value = ApiResponse.ok(true);
   }
 
   void _refreshPage() {
-    hasChanged.value = hasChanged.value?.copyWith(data: !hasChanged.value!.data!) ?? ApiResponse.ok(true);
+    hasChanged.value = hasChanged.value?.copyWith() ?? ApiResponse.ok(false);
   }
 
   Future<void> confirm() async {
     if (!titleFieldKey.currentState!.validate()) return;
 
+    newWorkItemDescription = await editorController.getText();
+
     final errorMessage = _checkRequiredFields();
     if (errorMessage != null) return OverlayService.snackbar(errorMessage, isError: true);
-
-    newWorkItemDescription = await editorController.getText();
 
     final res = isEditing ? await _editWorkItem() : await _createWorkItem();
 
