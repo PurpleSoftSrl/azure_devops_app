@@ -151,6 +151,11 @@ class _CreateOrEditWorkItemController with FilterMixin {
     _setHasChanged();
   }
 
+  void onTitleChanged(String value) {
+    newWorkItemTitle = value;
+    _setHasChanged();
+  }
+
   void _setHasChanged() {
     hasChanged.value = ApiResponse.ok(true);
   }
@@ -173,7 +178,8 @@ class _CreateOrEditWorkItemController with FilterMixin {
       return OverlayService.error('Error', description: 'Work item not ${isEditing ? 'edited' : 'created'}');
     }
 
-    AppRouter.pop();
+    OverlayService.snackbar('Changes saved');
+    hasChanged.value = ApiResponse.ok(false);
   }
 
   String? _checkRequiredFields() {

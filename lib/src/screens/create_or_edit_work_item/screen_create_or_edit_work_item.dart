@@ -14,6 +14,21 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: ctrl.args.id == null ? 'Create work item' : 'Edit work item #${ctrl.args.id}',
       notifier: ctrl.hasChanged,
+      fixedAppBar: true,
+      actions: [
+        ValueListenableBuilder(
+          valueListenable: ctrl.hasChanged,
+          builder: (_, hasChanged, __) => hasChanged?.data ?? false
+              ? TextButton(
+                  onPressed: ctrl.confirm,
+                  child: Text(
+                    'Confirm',
+                    style: context.textTheme.bodyMedium!.copyWith(color: context.colorScheme.primary),
+                  ),
+                )
+              : const SizedBox(),
+        ),
+      ],
       builder: (hasChanged) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -118,7 +133,7 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           ),
           DevOpsFormField(
             initialValue: ctrl.newWorkItemTitle,
-            onChanged: (value) => ctrl.newWorkItemTitle = value,
+            onChanged: ctrl.onTitleChanged,
             label: 'Title',
             formFieldKey: ctrl.titleFieldKey,
             textCapitalization: TextCapitalization.sentences,
@@ -142,13 +157,8 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           ),
           SizedBox(
             key: ctrl.editorGlobalKey,
-            height: 40,
+            height: 0,
           ),
-          if (hasChanged)
-            LoadingButton(
-              onPressed: ctrl.confirm,
-              text: 'Confirm',
-            ),
         ],
       ),
     );

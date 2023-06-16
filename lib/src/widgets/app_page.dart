@@ -24,6 +24,7 @@ class AppPage<T extends Object?> extends StatefulWidget {
     this.padding,
     this.showScrollbar = false,
     this.onResetFilters,
+    this.fixedAppBar = false,
   }) : _isEmpty = false;
 
   const AppPage.empty({
@@ -41,6 +42,7 @@ class AppPage<T extends Object?> extends StatefulWidget {
         refreshController = null,
         safeAreaBottom = true,
         showScrollbar = false,
+        fixedAppBar = false,
         onResetFilters = null,
         _isEmpty = true;
 
@@ -58,6 +60,7 @@ class AppPage<T extends Object?> extends StatefulWidget {
   final EdgeInsets? padding;
   final bool showScrollbar;
   final VoidCallback? onResetFilters;
+  final bool fixedAppBar;
 
   final bool _isEmpty;
 
@@ -223,6 +226,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> {
                         title: Text(widget.title),
                         floating: true,
                         snap: true,
+                        pinned: widget.fixedAppBar,
                         actions: actions,
                         expandedHeight: 50,
                         bottom: widget.header == null
