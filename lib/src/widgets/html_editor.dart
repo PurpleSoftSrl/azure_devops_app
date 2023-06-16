@@ -32,20 +32,22 @@ class DevOpsHtmlEditor extends StatefulWidget {
 }
 
 class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
-
-  /// Resets editor's height and scrolls the page to make it fully visible.
+  /// Scrolls the page to make the editor fully visible.
   /// The delay is to wait for the keyboard to show.
-  void ensureEditorIsVisible() {
-    Timer(Duration(milliseconds: 500), () {
-      widget.editorController.resetHeight();
-      final ctx = widget.editorGlobalKey.currentContext;
-      if (ctx == null) return;
+  Future<void> ensureEditorIsVisible() async {
+    await Future<void>.delayed(Duration(milliseconds: 500));
 
-      Scrollable.of(ctx).position.ensureVisible(
-            ctx.findRenderObject()!,
-            duration: Duration(milliseconds: 250),
-          );
-    });
+    final ctx = widget.editorGlobalKey.currentContext;
+    if (ctx == null) return;
+
+    if (!mounted) return;
+
+    await Scrollable.of(ctx).position.ensureVisible(
+          ctx.findRenderObject()!,
+          duration: Duration(milliseconds: 250),
+        );
+
+    widget.editorController.resetHeight();
   }
 
   Future<void> addMention(GraphUser u, AzureApiService apiService) async {
@@ -73,6 +75,7 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
       htmlEditorOptions: HtmlEditorOptions(
         initialText: widget.initialText,
         mobileLongPressDuration: Duration.zero,
+        adjustHeightForKeyboard: false,
       ),
       otherOptions: OtherOptions(
         height: 250,
