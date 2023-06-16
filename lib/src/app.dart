@@ -14,12 +14,13 @@ class AzureDevOps extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LifecycleListener(
-      child: PurpleTheme(
-        child: AzureApiServiceInherited(
-          apiService: AzureApiServiceImpl(),
-          child: StorageServiceInherited(
-            storageService: StorageServiceCore(),
+    return PurpleTheme(
+      child: AzureApiServiceInherited(
+        apiService: AzureApiServiceImpl(),
+        child: StorageServiceInherited(
+          storageService: StorageServiceCore(),
+          // LifecycleListener must be below AzureApiServiceInherited because it depends on it
+          child: LifecycleListener(
             child: Builder(
               builder: (_) {
                 // builder is needed to switch theme
