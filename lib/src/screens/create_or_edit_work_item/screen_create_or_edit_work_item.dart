@@ -134,63 +134,11 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          HtmlEditor(
-            controller: ctrl.editorController,
-            callbacks: Callbacks(
-              onInit: ctrl.editorController.setFullScreen,
-              onFocus: ctrl.ensureEditorIsVisible,
-              onKeyUp: (_) => ctrl._setHasChanged(),
-            ),
-            htmlEditorOptions: HtmlEditorOptions(
-              initialText: ctrl.newWorkItemDescription,
-              mobileLongPressDuration: Duration.zero,
-            ),
-            otherOptions: OtherOptions(
-              height: 250,
-              decoration: BoxDecoration(
-                border: Border.all(color: context.colorScheme.surface),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(AppTheme.radius),
-                  bottomRight: Radius.circular(AppTheme.radius),
-                ),
-              ),
-            ),
-            htmlToolbarOptions: HtmlToolbarOptions(
-              defaultToolbarButtons: [
-                FontButtons(clearAll: false),
-                ColorButtons(),
-                ListButtons(listStyles: false),
-                ParagraphButtons(textDirection: false, lineHeight: false, caseConverter: false),
-                StyleButtons(),
-              ],
-              textStyle: context.textTheme.headlineSmall,
-              customToolbarButtons: [
-                ToggleButtons(
-                  isSelected: const [false],
-                  disabledBorderColor: Colors.transparent,
-                  children: [
-                    FilterMenu<GraphUser>(
-                      title: '',
-                      values: ctrl
-                          .getSortedUsers(ctrl.apiService)
-                          .whereNot((u) => u.displayName == ctrl.userAll.displayName)
-                          .toList(),
-                      currentFilter: ctrl.userAll,
-                      onSelected: ctrl.addMention,
-                      formatLabel: (u) => u.displayName!,
-                      isDefaultFilter: true,
-                      widgetBuilder: (u) => UserFilterWidget(user: u),
-                      child: Text(
-                        '@',
-                        style: context.textTheme.headlineSmall,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-              customToolbarInsertionIndices: [1],
-              toolbarPosition: ToolbarPosition.belowEditor,
-            ),
+          DevOpsHtmlEditor(
+            editorController: ctrl.editorController,
+            editorGlobalKey: ctrl.editorGlobalKey,
+            initialText: ctrl.newWorkItemDescription,
+            onKeyUp: (_) => ctrl._setHasChanged(),
           ),
           SizedBox(
             key: ctrl.editorGlobalKey,
