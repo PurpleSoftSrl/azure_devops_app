@@ -106,6 +106,12 @@ abstract class AzureApiService {
     String? status,
   });
 
+  Future<ApiResponse<bool>> addWorkItemComment({
+    required String projectName,
+    required int id,
+    required String text,
+  });
+
   Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id});
 
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
@@ -739,6 +745,21 @@ class AzureApiServiceImpl implements AzureApiService {
     if (editRes.isError) return ApiResponse.error(editRes);
 
     return ApiResponse.ok(WorkItem.fromResponse(editRes));
+  }
+
+  @override
+  Future<ApiResponse<bool>> addWorkItemComment({
+    required String projectName,
+    required int id,
+    required String text,
+  }) async {
+    final commentRes = await _post(
+      '$_basePath/$projectName/_apis/wit/workItems/$id/comments?format=html&$_apiVersion-preview',
+      body: {'text': text},
+    );
+    if (commentRes.isError) return ApiResponse.error(commentRes);
+
+    return ApiResponse.ok(true);
   }
 
   @override

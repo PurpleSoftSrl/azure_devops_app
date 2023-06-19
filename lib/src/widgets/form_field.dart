@@ -13,6 +13,8 @@ class DevOpsFormField extends StatelessWidget {
     this.textCapitalization,
     this.autofocus = false,
     this.textInputAction,
+    this.enabled = true,
+    this.fillColor,
   });
 
   final VoidCallback? onFieldSubmitted;
@@ -25,6 +27,8 @@ class DevOpsFormField extends StatelessWidget {
   final TextCapitalization? textCapitalization;
   final bool autofocus;
   final TextInputAction? textInputAction;
+  final bool enabled;
+  final Color? fillColor;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +41,7 @@ class DevOpsFormField extends StatelessWidget {
       textCapitalization: textCapitalization ?? TextCapitalization.none,
       textInputAction: textInputAction,
       autofocus: autofocus,
+      enabled: enabled,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -45,7 +50,7 @@ class DevOpsFormField extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         hintText: hint,
         hintStyle: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSurface.withOpacity(.4)),
-        fillColor: context.colorScheme.surface,
+        fillColor: fillColor ?? context.colorScheme.surface,
         filled: true,
       ),
       onFieldSubmitted: onFieldSubmitted == null ? null : (_) => onFieldSubmitted!(),
@@ -54,6 +59,7 @@ class DevOpsFormField extends StatelessWidget {
     if (label != null) {
       child = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             label!,

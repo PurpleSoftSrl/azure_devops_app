@@ -140,6 +140,7 @@ class OverlayService {
     double heightPercentage = .8,
     EdgeInsets padding = const EdgeInsets.all(15),
     bool spaceUnderTitle = true,
+    Widget? topRight,
   }) async {
     await showModalBottomSheet(
       context: context,
@@ -163,7 +164,18 @@ class OverlayService {
               padding: padding,
               child: Column(
                 children: [
-                  if (title != null) Text(title),
+                  if (title != null)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(
+                          Icons.close,
+                          color: Colors.transparent,
+                        ),
+                        Text(title),
+                        topRight ?? Icon(Icons.close),
+                      ],
+                    ),
                   if (spaceUnderTitle)
                     const SizedBox(
                       height: 20,

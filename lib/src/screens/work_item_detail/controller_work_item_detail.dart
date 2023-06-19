@@ -38,7 +38,11 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
   List<WorkItemUpdate> updates = [];
   final showUpdatesReversed = ValueNotifier<bool>(true);
 
+  final historyKey = GlobalKey();
+
   final isDownloadingAttachment = ValueNotifier<Map<int, bool>>({});
+
+  final showCommentField = ValueNotifier<bool>(false);
 
   void dispose() {
     instance = null;
@@ -140,6 +144,73 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
       case ResultType.permissionDenied:
       case ResultType.error:
         await OverlayService.error('Error opening file', description: 'Something went wrong');
+    }
+  }
+
+  Future<void> addComment() async {
+    final editorController = HtmlEditorController();
+    final editorGlobalKey = GlobalKey<State>();
+
+    var confirm = false;
+
+    final hasChanged = ValueNotifier<bool>(false);
+
+    await OverlayService.bottomsheet(
+      heightPercentage: .9,
+      isScrollControlled: true,
+      title: 'Add comment',
+      topRight: ValueListenableBuilder<bool>(
+        valueListenable: hasChanged,
+        builder: (context, changed, __) => changed
+            ? TextButton(
+                onPressed: () {
+                  confirm = true;
+                  AppRouter.popRoute();
+                },
+                child: Text(
+                  'Confirm',
+                  style: context.textTheme.bodyMedium!.copyWith(color: context.colorScheme.primary),
+                ),
+              )
+            : const SizedBox(),
+      ),
+      builder: (context) => ListView(
+        children: [
+          DevOpsHtmlEditor(
+            autofocus: true,
+            editorController: editorController,
+            editorGlobalKey: editorGlobalKey,
+            onKeyUp: (_) {
+              if (!hasChanged.value) hasChanged.value = true;
+            },
+          ),
+          SizedBox(key: editorGlobalKey),
+        ],
+      ),
+    );
+
+    if (!confirm) return;
+
+    final comment = await editorController.getText();
+
+    final res = await apiService.addWorkItemComment(
+      projectName: args.project,
+      id: args.id,
+      text: comment,
+    );
+
+    if (res.isError) {
+      return OverlayService.error('Comment not added');
+    }
+
+    await init();
+  }
+
+  void onHistoryVisibilityChanged(VisibilityInfo info) {
+    if (info.visibleFraction > 0 && !showCommentField.value) {
+      showCommentField.value = true;
+    } else if (instance != null && info.visibleFraction == 0 && showCommentField.value) {
+      showCommentField.value = false;
     }
   }
 }

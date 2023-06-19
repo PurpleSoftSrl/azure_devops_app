@@ -17,15 +17,24 @@ class DevOpsHtmlEditor extends StatefulWidget {
     this.initialText,
     this.onKeyUp,
     required this.editorGlobalKey,
+    this.height = 250.0,
+    this.hint,
+    this.showToolbar = true,
+    this.autofocus = false,
   });
 
   final String? initialText;
   final void Function(int?)? onKeyUp;
   final HtmlEditorController editorController;
+  final String? hint;
+  final bool showToolbar;
+  final bool autofocus;
 
   /// Global key of a widget immediately below the editor.
   /// Used to ensure the editor is fully visible when the keyboard shows.
   final GlobalKey<State> editorGlobalKey;
+
+  final double height;
 
   @override
   State<DevOpsHtmlEditor> createState() => _DevOpsHtmlEditorState();
@@ -36,6 +45,8 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
   /// The delay is to wait for the keyboard to show.
   Future<void> ensureEditorIsVisible() async {
     await Future<void>.delayed(Duration(milliseconds: 500));
+    widget.editorController.resetHeight();
+    await Future<void>.delayed(Duration(milliseconds: 50));
 
     final ctx = widget.editorGlobalKey.currentContext;
     if (ctx == null) return;
@@ -46,8 +57,6 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
           ctx.findRenderObject()!,
           duration: Duration(milliseconds: 250),
         );
-
-    widget.editorController.resetHeight();
   }
 
   Future<void> addMention(GraphUser u, AzureApiService apiService) async {
@@ -68,17 +77,22 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
     return HtmlEditor(
       controller: widget.editorController,
       callbacks: Callbacks(
-        onInit: widget.editorController.setFullScreen,
+        onInit: () {
+          widget.editorController.setFullScreen();
+          if (widget.autofocus) widget.editorController.setFocus();
+        },
         onFocus: ensureEditorIsVisible,
         onKeyUp: widget.onKeyUp,
       ),
       htmlEditorOptions: HtmlEditorOptions(
-        initialText: widget.initialText,
+        initialText: widget.initialText ?? '',
         mobileLongPressDuration: Duration.zero,
         adjustHeightForKeyboard: false,
+        customOptions: 'popover: {link:[]}, ${widget.showToolbar ? '' : 'toolbar:false,'}',
+        hint: widget.hint,
       ),
       otherOptions: OtherOptions(
-        height: 250,
+        height: widget.height,
         decoration: BoxDecoration(
           border: Border.all(color: context.colorScheme.surface),
           borderRadius: BorderRadius.only(
@@ -118,7 +132,7 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
           ),
         ],
         customToolbarInsertionIndices: [1],
-        toolbarPosition: ToolbarPosition.belowEditor,
+        toolbarPosition: widget.showToolbar ? ToolbarPosition.belowEditor : ToolbarPosition.custom,
       ),
     );
   }
