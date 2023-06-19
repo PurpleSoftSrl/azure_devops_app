@@ -311,7 +311,7 @@ class __AddCommentFieldState extends State<_AddCommentField> with SingleTickerPr
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: context.colorScheme.onBackground.withOpacity(.6),
+              color: Colors.black.withOpacity(.2),
               blurRadius: 10,
             ),
           ],

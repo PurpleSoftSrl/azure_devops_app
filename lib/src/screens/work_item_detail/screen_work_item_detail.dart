@@ -227,26 +227,12 @@ class _WorkItemDetailScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SectionHeader.noMargin(text: 'History'),
-                          Row(
-                            children: [
-                              IconButton(
-                                padding: EdgeInsets.zero,
-                                iconSize: 20,
-                                constraints: BoxConstraints(maxWidth: 20),
-                                onPressed: ctrl.toggleShowUpdatesReversed,
-                                icon: Icon(Icons.swap_vert),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              IconButton(
-                                padding: EdgeInsets.zero,
-                                iconSize: 20,
-                                constraints: BoxConstraints(maxWidth: 20),
-                                onPressed: ctrl.addComment,
-                                icon: Icon(DevOpsIcons.plus),
-                              ),
-                            ],
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            iconSize: 20,
+                            constraints: BoxConstraints(maxWidth: 20),
+                            onPressed: ctrl.toggleShowUpdatesReversed,
+                            icon: Icon(Icons.swap_vert),
                           ),
                         ],
                       ),
