@@ -147,6 +147,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
     }
   }
 
+  // ignore: long-method
   Future<void> addComment() async {
     final editorController = HtmlEditorController();
     final editorGlobalKey = GlobalKey<State>();
@@ -161,18 +162,23 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
       title: 'Add comment',
       topRight: ValueListenableBuilder<bool>(
         valueListenable: hasChanged,
-        builder: (context, changed, __) => changed
-            ? TextButton(
-                onPressed: () {
-                  confirm = true;
-                  AppRouter.popRoute();
-                },
-                child: Text(
-                  'Confirm',
-                  style: context.textTheme.bodyMedium!.copyWith(color: context.colorScheme.primary),
+        builder: (context, changed, __) => SizedBox(
+          width: 80,
+          height: 20,
+          child: !changed
+              ? null
+              : TextButton(
+                  onPressed: () {
+                    confirm = true;
+                    AppRouter.popRoute();
+                  },
+                  style: ButtonStyle(padding: MaterialStatePropertyAll(EdgeInsets.zero)),
+                  child: Text(
+                    'Confirm',
+                    style: context.textTheme.bodyMedium!.copyWith(color: context.colorScheme.primary),
+                  ),
                 ),
-              )
-            : const SizedBox(),
+        ),
       ),
       builder: (context) => ListView(
         children: [

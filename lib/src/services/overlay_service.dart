@@ -131,7 +131,7 @@ class OverlayService {
     );
   }
 
-  // ignore: long-parameter-list
+  // ignore: long-parameter-list, long-method
   static Future<void> bottomsheet({
     required WidgetBuilder builder,
     bool isDismissible = true,
@@ -168,12 +168,17 @@ class OverlayService {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(
-                          Icons.close,
-                          color: Colors.transparent,
+                        const SizedBox(
+                          width: 80,
                         ),
                         Text(title),
-                        topRight ?? Icon(Icons.close),
+                        SizedBox(
+                          width: 80,
+                          child: GestureDetector(
+                            onTap: AppRouter.popRoute,
+                            child: topRight ?? Icon(Icons.close),
+                          ),
+                        ),
                       ],
                     ),
                   if (spaceUnderTitle)

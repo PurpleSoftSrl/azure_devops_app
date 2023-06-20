@@ -87,7 +87,6 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
       htmlEditorOptions: HtmlEditorOptions(
         initialText: widget.initialText ?? '',
         mobileLongPressDuration: Duration.zero,
-        adjustHeightForKeyboard: false,
         customOptions: 'popover: {link:[]}, ${widget.showToolbar ? '' : 'toolbar:false,'}',
         hint: widget.hint,
       ),
