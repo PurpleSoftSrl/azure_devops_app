@@ -53,5 +53,7 @@
 		</array>
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Access to photo library is needed to insert images in work items descriptions and comments.</string>
 	</dict>
 </plist>
