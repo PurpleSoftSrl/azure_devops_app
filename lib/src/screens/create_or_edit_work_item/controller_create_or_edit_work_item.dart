@@ -180,6 +180,8 @@ class _CreateOrEditWorkItemController with FilterMixin {
 
     OverlayService.snackbar('Changes saved');
     hasChanged.value = ApiResponse.ok(false);
+
+    if (!isEditing) AppRouter.pop();
   }
 
   String? _checkRequiredFields() {
