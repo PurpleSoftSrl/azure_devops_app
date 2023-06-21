@@ -472,7 +472,7 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id}) {
+  Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id, required String type}) {
     throw UnimplementedError();
   }
 

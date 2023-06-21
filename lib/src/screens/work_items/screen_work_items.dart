@@ -46,7 +46,7 @@ class _WorkItemsScreen extends StatelessWidget {
             isDefaultFilter: ctrl.statusFilter == WorkItemState.all,
             widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
           ),
-          FilterMenu<WorkItemType>(
+          WorkItemTypeFilterMenu(
             title: 'Type',
             values: ctrl.allWorkItemTypes,
             formatLabel: (t) => t.name,

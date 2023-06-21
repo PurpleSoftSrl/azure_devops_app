@@ -309,3 +309,21 @@ class ProjectFilterWidget extends StatelessWidget {
     );
   }
 }
+
+/// Used only to skip test work item types in a single point
+class WorkItemTypeFilterMenu extends FilterMenu<WorkItemType> {
+  WorkItemTypeFilterMenu({
+    required super.title,
+    required List<WorkItemType> values,
+    required super.currentFilter,
+    required super.onSelected,
+    required super.isDefaultFilter,
+    required super.widgetBuilder,
+    super.formatLabel,
+  }) : super(
+          values: values.where((t) => !typesToSkip.contains(t.name)).toList(),
+        );
+
+  // skip test types to align with devops website
+  static const typesToSkip = ['Test Plan', 'Test Suite'];
+}

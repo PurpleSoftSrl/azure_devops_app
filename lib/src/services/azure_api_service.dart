@@ -112,7 +112,7 @@ abstract class AzureApiService {
     required String text,
   });
 
-  Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id});
+  Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id, required String type});
 
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
     required PullRequestState filter,
@@ -352,7 +352,7 @@ class AzureApiServiceImpl implements AzureApiService {
 
   void _addSentryBreadcrumb(String url, String method, Response res, Object? body) {
     if (kDebugMode) {
-      print('$method $url ${res.statusCode} ${res.reasonPhrase}');
+      print('$method $url ${res.statusCode} ${res.reasonPhrase} ${res.isError ? '- res body: ${res.body}' : ''}');
       return;
     }
 
@@ -597,9 +597,7 @@ class AzureApiServiceImpl implements AzureApiService {
             if (res.isError) return;
 
             final types = GetWorkItemTypesResponse.fromResponse(res).where((t) => !t.isDisabled).toList();
-
             final projectsToSearch = proc.projects.where((p) => (_chosenProjects ?? _projects).contains(p));
-
             for (final proj in projectsToSearch) {
               _workItemTypes.putIfAbsent(proj.name!, () => types);
               processWorkItems.putIfAbsent(proc, () => types);
@@ -763,9 +761,15 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id}) async {
-    final deleteRes = await _delete('$_basePath/$projectName/_apis/wit/workitems/$id?$_apiVersion');
-    if (deleteRes.isError) return ApiResponse.error(deleteRes);
+  Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id, required String type}) async {
+    if (type == 'Test Case') {
+      // Test Case work items need special handling
+      final testCaseRes = await _delete('$_basePath/$projectName/_apis/test/testcases/$id?$_apiVersion');
+      if (testCaseRes.isError && testCaseRes.statusCode != HttpStatus.noContent) return ApiResponse.error(testCaseRes);
+    } else {
+      final deleteRes = await _delete('$_basePath/$projectName/_apis/wit/workitems/$id?$_apiVersion');
+      if (deleteRes.isError) return ApiResponse.error(deleteRes);
+    }
 
     return ApiResponse.ok(true);
   }

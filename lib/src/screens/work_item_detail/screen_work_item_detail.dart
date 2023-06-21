@@ -51,22 +51,24 @@ class _WorkItemDetailScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const PopupMenuDivider(),
-                PopupMenuItem<void>(
-                  onTap: ctrl.deleteWorkItem,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  height: 30,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Delete',
-                        style: context.textTheme.titleSmall,
-                      ),
-                      Icon(DevOpsIcons.failed),
-                    ],
+                if (!['Test Suite', 'Test Plan'].contains(ctrl.itemDetail.value?.data?.item.fields.systemWorkItemType)) ...[
+                  const PopupMenuDivider(),
+                  PopupMenuItem<void>(
+                    onTap: ctrl.deleteWorkItem,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    height: 30,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Delete',
+                          style: context.textTheme.titleSmall,
+                        ),
+                        Icon(DevOpsIcons.failed),
+                      ],
+                    ),
                   ),
-                ),
+                ],
               ],
               elevation: 0,
               tooltip: 'Work item actions',

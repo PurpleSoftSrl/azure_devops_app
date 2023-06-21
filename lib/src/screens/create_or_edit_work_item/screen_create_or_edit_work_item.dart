@@ -66,7 +66,7 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
-              FilterMenu<WorkItemType>(
+              WorkItemTypeFilterMenu(
                 title: 'Type',
                 values: ctrl.projectWorkItemTypes,
                 currentFilter: ctrl.newWorkItemType,

@@ -80,7 +80,8 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
     final conf = await OverlayService.confirm('Attention', description: 'Do you really want to delete this work item?');
     if (!conf) return;
 
-    final res = await apiService.deleteWorkItem(projectName: args.project, id: args.id);
+    final type = itemDetail.value!.data!.item.fields.systemWorkItemType;
+    final res = await apiService.deleteWorkItem(projectName: args.project, id: args.id, type: type);
     if (!(res.data ?? false)) {
       return OverlayService.error('Error', description: 'Work item not deleted');
     }
