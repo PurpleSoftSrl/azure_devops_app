@@ -13,16 +13,17 @@ class _SettingsScreen extends StatelessWidget {
       init: ctrl.init,
       dispose: ctrl.dispose,
       title: 'Settings',
+      notifier: ctrl.organizations,
       actions: [
         IconButton(
           onPressed: ctrl.shareApp,
           icon: Icon(DevOpsIcons.share),
         ),
       ],
-      builder: (_) => Column(
+      builder: (orgs) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SectionHeader(
+          SectionHeader.noMargin(
             text: 'Personal info',
           ),
           Form(
@@ -106,6 +107,37 @@ class _SettingsScreen extends StatelessWidget {
               ),
             ),
           ),
+          if (orgs.length > 1) ...[
+            const SizedBox(
+              height: 20,
+            ),
+            InkWell(
+              onTap: ctrl.switchOrganization,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: context.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(AppTheme.radius),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Row(
+                    children: [
+                      Icon(DevOpsIcons.repository),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        'Switch organization',
+                        style: context.textTheme.bodyLarge,
+                      ),
+                      const Spacer(),
+                      Icon(Icons.arrow_forward_ios),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
           SectionHeader(
             text: 'Theme',
           ),
@@ -258,12 +290,9 @@ class _SettingsScreen extends StatelessWidget {
           const SizedBox(
             height: 40,
           ),
-          ValueListenableBuilder<String>(
-            valueListenable: ctrl.appVersion,
-            builder: (_, version, __) => Text(
-              'Version $version',
-              style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-            ),
+          Text(
+            'Version ${ctrl.appVersion}',
+            style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
           ),
         ],
       ),

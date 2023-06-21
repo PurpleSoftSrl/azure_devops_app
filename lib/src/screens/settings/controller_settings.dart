@@ -1,24 +1,29 @@
 part of settings;
 
 class _SettingsController with ShareMixin {
-  factory _SettingsController({required AzureApiService apiService}) {
-    return instance ??= _SettingsController._(apiService);
+  factory _SettingsController({required AzureApiService apiService, required StorageService storageService}) {
+    return instance ??= _SettingsController._(apiService, storageService);
   }
 
-  _SettingsController._(this.apiService);
+  _SettingsController._(this.apiService, this.storageService);
 
   static _SettingsController? instance;
 
   final AzureApiService apiService;
+  final StorageService storageService;
 
   late String gitUsername = apiService.user!.emailAddress!;
   late String pat = apiService.accessToken;
 
-  final appVersion = ValueNotifier<String>('');
+  String appVersion = '';
 
   late final patTextFieldController = TextEditingController(text: pat);
 
   final isEditing = ValueNotifier(false);
+
+  final organizations = ValueNotifier<ApiResponse<List<Organization>>?>(null);
+
+  bool get hasMultiOrgs => (organizations.value?.data?.length ?? 0) > 1;
 
   void dispose() {
     instance = null;
@@ -26,7 +31,10 @@ class _SettingsController with ShareMixin {
 
   Future<void> init() async {
     final info = await PackageInfo.fromPlatform();
-    appVersion.value = info.version;
+    appVersion = info.version;
+
+    final orgs = await apiService.getOrganizations();
+    organizations.value = orgs;
   }
 
   void shareApp() {
@@ -54,11 +62,11 @@ class _SettingsController with ShareMixin {
 
   void changeThemeMode(String mode) {
     PurpleTheme.of(AppRouter.rootNavigator!.context).changeTheme(mode);
-    StorageServiceCore().setThemeMode(mode);
+    storageService.setThemeMode(mode);
   }
 
   void clearLocalStorage() {
-    StorageServiceCore().clearNoToken();
+    storageService.clearNoToken();
 
     OverlayService.snackbar('Cache cleared!');
 
@@ -78,7 +86,7 @@ class _SettingsController with ShareMixin {
       );
     }
 
-    StorageServiceCore().clearNoToken();
+    storageService.clearNoToken();
     unawaited(AppRouter.goToSplash());
   }
 
@@ -98,5 +106,46 @@ class _SettingsController with ShareMixin {
 
   void openAppStore() {
     InAppReview.instance.openStoreListing(appStoreId: '1666994628');
+  }
+
+  Future<void> switchOrganization() async {
+    final selectedOrg = await _selectOrganization(organizations.value!.data!);
+    if (selectedOrg == null) return;
+
+    storageService.setOrganization(selectedOrg.accountName!);
+    apiService.setChosenProjects([]);
+    unawaited(AppRouter.goToSplash());
+  }
+
+  Future<Organization?> _selectOrganization(List<Organization> organizations) async {
+    final currentOrg = storageService.getOrganization();
+
+    Organization? selectedOrg;
+
+    await OverlayService.bottomsheet(
+      title: 'Select your organization',
+      isScrollControlled: true,
+      heightPercentage: .7,
+      builder: (context) => ListView(
+        children: organizations
+            .map(
+              (org) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: LoadingButton(
+                  onPressed: () {
+                    selectedOrg = org;
+                    AppRouter.popRoute();
+                  },
+                  text: org.accountName == currentOrg ? '${org.accountName!} (current)' : org.accountName!,
+                ),
+              ),
+            )
+            .toList(),
+      ),
+    );
+
+    if (selectedOrg?.accountName == currentOrg) return null;
+
+    return selectedOrg;
   }
 }

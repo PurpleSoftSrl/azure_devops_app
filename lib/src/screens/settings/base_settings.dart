@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/share_mixin.dart';
+import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
@@ -12,6 +13,7 @@ import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
+import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:azure_devops/src/widgets/section_header.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -34,8 +36,9 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final storageService = StorageServiceInherited.of(context).storageService;
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final ctrl = _SettingsController(apiService: apiService);
+    final ctrl = _SettingsController(apiService: apiService, storageService: storageService);
     return LayoutBuilder(
       builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
           ? _SettingsScreen(ctrl, _smartphoneParameters)

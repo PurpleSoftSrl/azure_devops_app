@@ -176,7 +176,10 @@ class OverlayService {
                           width: 80,
                           child: GestureDetector(
                             onTap: AppRouter.popRoute,
-                            child: topRight ?? Icon(Icons.close),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: topRight ?? Icon(Icons.close),
+                            ),
                           ),
                         ),
                       ],
