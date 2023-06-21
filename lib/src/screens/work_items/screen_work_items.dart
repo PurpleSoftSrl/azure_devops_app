@@ -49,7 +49,7 @@ class _WorkItemsScreen extends StatelessWidget {
           WorkItemTypeFilterMenu(
             title: 'Type',
             values: ctrl.allWorkItemTypes,
-            formatLabel: (t) => t.name,
+            formatLabel: (t) => [null, 'system'].contains(t.customization) ? t.name : '${t.name} (${t.customization})',
             currentFilter: ctrl.typeFilter,
             onSelected: ctrl.filterByType,
             isDefaultFilter: ctrl.typeFilter.name == 'All',

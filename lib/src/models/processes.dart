@@ -93,6 +93,7 @@ class WorkItemType {
     required this.color,
     required this.icon,
     required this.isDisabled,
+    this.customization,
   });
 
   factory WorkItemType.fromJson(Map<String, dynamic> json) => WorkItemType(
@@ -101,6 +102,7 @@ class WorkItemType {
         color: json['color'] as String,
         icon: json['icon'] as String,
         isDisabled: json['isDisabled'] as bool,
+        customization: json['customization'] as String?,
       );
 
   static WorkItemType get all {
@@ -117,6 +119,7 @@ class WorkItemType {
   final String name;
   final String color;
   final String icon;
+  final String? customization;
   final bool isDisabled;
 
   @override

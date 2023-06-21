@@ -70,7 +70,8 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 title: 'Type',
                 values: ctrl.projectWorkItemTypes,
                 currentFilter: ctrl.newWorkItemType,
-                formatLabel: (t) => t.name,
+                formatLabel: (t) =>
+                    [null, 'system'].contains(t.customization) ? t.name : '${t.name} (${t.customization})',
                 onSelected: ctrl.setType,
                 isDefaultFilter: ctrl.newWorkItemType == WorkItemType.all,
                 widgetBuilder: (t) => WorkItemTypeFilter(type: t),
