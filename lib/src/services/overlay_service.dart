@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
-import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/navigation_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -212,25 +212,20 @@ class OverlayService {
 
     scaffoldMessengerKey.currentState!.showMaterialBanner(
       MaterialBanner(
-        content: InkWell(
+        content: NavigationButton(
           onTap: scaffoldMessengerKey.currentState!.hideCurrentMaterialBanner,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              color: isError ? context.colorScheme.error : context.colorScheme.surface,
-              borderRadius: BorderRadius.circular(AppTheme.radius),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(child: Text(title)),
-                const SizedBox(
-                  width: 10,
-                ),
-                Icon(isError ? DevOpsIcons.failed : DevOpsIcons.success),
-              ],
-            ),
+          margin: const EdgeInsets.symmetric(horizontal: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          backgroundColor: isError ? context.colorScheme.error : context.colorScheme.surface,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: Text(title)),
+              const SizedBox(
+                width: 10,
+              ),
+              Icon(isError ? DevOpsIcons.failed : DevOpsIcons.success),
+            ],
           ),
         ),
         actions: const [Text('')],

@@ -31,13 +31,10 @@ class _RepositoryDetailScreen extends StatelessWidget {
                 .map(
                   (i) => InkWell(
                     onTap: () => ctrl.goToItem(i),
-                    child: Container(
+                    child: NavigationButton(
                       margin: const EdgeInsets.only(top: 8),
                       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: i.isFolder ? context.colorScheme.surface : null,
-                        borderRadius: BorderRadius.circular(AppTheme.radius),
-                      ),
+                      backgroundColor: i.isFolder ? null : Colors.transparent,
                       child: Row(
                         children: [
                           Expanded(

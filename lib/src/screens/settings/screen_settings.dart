@@ -81,210 +81,145 @@ class _SettingsScreen extends StatelessWidget {
           SectionHeader(
             text: 'App management',
           ),
-          InkWell(
+          NavigationButton(
             onTap: ctrl.seeChosenProjects,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: context.colorScheme.surface,
-                borderRadius: BorderRadius.circular(AppTheme.radius),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: Row(
-                  children: [
-                    Icon(DevOpsIcons.list),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      'Manage projects',
-                      style: context.textTheme.bodyLarge,
-                    ),
-                    const Spacer(),
-                    Icon(Icons.arrow_forward_ios),
-                  ],
+            child: Row(
+              children: [
+                Icon(DevOpsIcons.list),
+                const SizedBox(
+                  width: 20,
                 ),
-              ),
+                Text(
+                  'Manage projects',
+                  style: context.textTheme.bodyLarge,
+                ),
+                const Spacer(),
+                Icon(Icons.arrow_forward_ios),
+              ],
             ),
           ),
           if (orgs.length > 1) ...[
             const SizedBox(
               height: 20,
             ),
-            InkWell(
+            NavigationButton(
               onTap: ctrl.switchOrganization,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: context.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(AppTheme.radius),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Row(
-                    children: [
-                      Icon(DevOpsIcons.repository),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        'Switch organization',
-                        style: context.textTheme.bodyLarge,
-                      ),
-                      const Spacer(),
-                      Icon(Icons.arrow_forward_ios),
-                    ],
+              child: Row(
+                children: [
+                  Icon(DevOpsIcons.repository),
+                  const SizedBox(
+                    width: 20,
                   ),
-                ),
+                  Text(
+                    'Switch organization',
+                    style: context.textTheme.bodyLarge,
+                  ),
+                  const Spacer(),
+                  Icon(Icons.arrow_forward_ios),
+                ],
               ),
             ),
           ],
           SectionHeader(
             text: 'Theme',
           ),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: context.colorScheme.surface,
-              borderRadius: BorderRadius.circular(AppTheme.radius),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(15, 20, 15, 10),
-              child: Row(
-                children: [
-                  _ThemeModeRadio(
-                    mode: 'System',
-                    onChanged: ctrl.changeThemeMode,
-                    icon: DevOpsIcons.phone,
-                  ),
-                  _ThemeModeRadio(
-                    mode: 'Dark',
-                    onChanged: ctrl.changeThemeMode,
-                    icon: DevOpsIcons.moon_star,
-                  ),
-                  _ThemeModeRadio(
-                    mode: 'Light',
-                    onChanged: ctrl.changeThemeMode,
-                    icon: DevOpsIcons.sun,
-                  ),
-                ],
-              ),
+          NavigationButton(
+            padding: const EdgeInsets.fromLTRB(15, 20, 15, 10),
+            child: Row(
+              children: [
+                _ThemeModeRadio(
+                  mode: 'System',
+                  onChanged: ctrl.changeThemeMode,
+                  icon: DevOpsIcons.phone,
+                ),
+                _ThemeModeRadio(
+                  mode: 'Dark',
+                  onChanged: ctrl.changeThemeMode,
+                  icon: DevOpsIcons.moon_star,
+                ),
+                _ThemeModeRadio(
+                  mode: 'Light',
+                  onChanged: ctrl.changeThemeMode,
+                  icon: DevOpsIcons.sun,
+                ),
+              ],
             ),
           ),
           SectionHeader(
             text: 'Developer',
           ),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: context.colorScheme.surface,
-              borderRadius: BorderRadius.circular(AppTheme.radius),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(15),
-              child: Link(
-                uri: Uri.parse('https://github.com/PurpleSoftSrl/azure_devops_app'),
-                builder: (_, link) => InkWell(
-                  onTap: link,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text('GitHub repository'),
-                      Icon(DevOpsIcons.github_mark),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: context.colorScheme.surface,
-              borderRadius: BorderRadius.circular(AppTheme.radius),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(15),
-              child: Link(
-                uri: Uri.parse(
-                  'https://www.purplesoft.io?utm_source=azdevops_app&utm_medium=app&utm_campaign=azdevops',
-                ),
-                builder: (_, link) => InkWell(
-                  onTap: () => ctrl.openPurplesoftWebsite(link),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text('Made with \u2764 by Purplesoft Srl'),
-                      Icon(DevOpsIcons.link),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          InkWell(
-            onTap: ctrl.openAppStore,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: context.colorScheme.surface,
-                borderRadius: BorderRadius.circular(AppTheme.radius),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(15),
+          NavigationButton(
+            child: Link(
+              uri: Uri.parse('https://github.com/PurpleSoftSrl/azure_devops_app'),
+              builder: (_, link) => InkWell(
+                onTap: link,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
-                    Text('Leave a review'),
-                    Icon(Icons.rate_review_outlined),
+                    Text('GitHub repository'),
+                    Icon(DevOpsIcons.github_mark),
                   ],
                 ),
               ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          NavigationButton(
+            child: Link(
+              uri: Uri.parse(
+                'https://www.purplesoft.io?utm_source=azdevops_app&utm_medium=app&utm_campaign=azdevops',
+              ),
+              builder: (_, link) => InkWell(
+                onTap: () => ctrl.openPurplesoftWebsite(link),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    Text('Made with \u2764 by Purplesoft Srl'),
+                    Icon(DevOpsIcons.link),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          NavigationButton(
+            onTap: ctrl.openAppStore,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text('Leave a review'),
+                Icon(Icons.rate_review_outlined),
+              ],
             ),
           ),
           SectionHeader(
             text: 'App settings',
           ),
-          InkWell(
+          NavigationButton(
             onTap: ctrl.logout,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: context.colorScheme.surface,
-                borderRadius: BorderRadius.circular(AppTheme.radius),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text('Logout'),
-                    Icon(DevOpsIcons.logout),
-                  ],
-                ),
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text('Logout'),
+                Icon(DevOpsIcons.logout),
+              ],
             ),
           ),
           const SizedBox(
             height: 20,
           ),
-          InkWell(
+          NavigationButton(
             onTap: ctrl.clearLocalStorage,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: context.colorScheme.surface,
-                borderRadius: BorderRadius.circular(AppTheme.radius),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text('Clear cache'),
-                    Icon(Icons.cleaning_services),
-                  ],
-                ),
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text('Clear cache'),
+                Icon(Icons.cleaning_services),
+              ],
             ),
           ),
           const SizedBox(
