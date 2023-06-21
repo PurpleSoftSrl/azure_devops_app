@@ -174,13 +174,16 @@ class OverlayService {
                         Text(title),
                         SizedBox(
                           width: 80,
-                          child: GestureDetector(
-                            onTap: AppRouter.popRoute,
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: topRight ?? Icon(Icons.close),
-                            ),
-                          ),
+                          child: topRight ??
+                              (isDismissible
+                                  ? Align(
+                                      alignment: Alignment.centerRight,
+                                      child: GestureDetector(
+                                        onTap: AppRouter.popRoute,
+                                        child: Icon(Icons.close),
+                                      ),
+                                    )
+                                  : null),
                         ),
                       ],
                     ),
