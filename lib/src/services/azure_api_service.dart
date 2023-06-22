@@ -966,6 +966,19 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   @override
   Future<ApiResponse<List<LanguageBreakdown>>> getProjectLanguages({required String projectName}) async {
     final langsRes = await _get('$_basePath/$projectName/_apis/projectanalysis/languagemetrics');
+
+    // TODO remove try/catch if we see no error logs
+    if (langsRes.statusCode == 206) {
+      // special handling for 206 Partial Content
+      try {
+        final res = ApiResponse.ok(GetProjectLanguagesResponse.fromResponse(langsRes));
+        logInfo('Project languages 206 successful deserialization');
+        return res;
+      } catch (e, s) {
+        logError(e, s);
+      }
+    }
+
     if (langsRes.isError) return ApiResponse.error(langsRes);
 
     return ApiResponse.ok(GetProjectLanguagesResponse.fromResponse(langsRes));
