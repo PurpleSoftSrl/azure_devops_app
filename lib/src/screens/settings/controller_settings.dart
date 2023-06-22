@@ -74,7 +74,7 @@ class _SettingsController with ShareMixin, AppLogger {
   }
 
   Future<void> setNewToken(String token) async {
-    if (token.isEmpty) return;
+    if (token.isEmpty || token.trim() == pat.trim()) return;
 
     final res = await apiService.login(token);
 
@@ -93,9 +93,7 @@ class _SettingsController with ShareMixin, AppLogger {
   void toggleIsEditingToken() {
     isEditing.value = !isEditing.value;
 
-    if (!isEditing.value && patTextFieldController.text != pat) {
-      setNewToken(patTextFieldController.text);
-    }
+    if (!isEditing.value) setNewToken(patTextFieldController.text);
   }
 
   void openPurplesoftWebsite(FollowLink? link) {
