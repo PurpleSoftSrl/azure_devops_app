@@ -1,6 +1,6 @@
 part of settings;
 
-class _SettingsController with ShareMixin {
+class _SettingsController with ShareMixin, AppLogger {
   factory _SettingsController({required AzureApiService apiService, required StorageService storageService}) {
     return instance ??= _SettingsController._(apiService, storageService);
   }
@@ -99,7 +99,7 @@ class _SettingsController with ShareMixin {
   }
 
   void openPurplesoftWebsite(FollowLink? link) {
-    if (kReleaseMode) Sentry.captureMessage('Open Purplesoft website');
+    logInfo('Open Purplesoft website');
 
     link?.call();
   }

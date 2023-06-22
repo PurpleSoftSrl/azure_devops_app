@@ -1,11 +1,11 @@
 import 'dart:async';
 
+import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/widgets/error_page.dart';
 import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 class AppPage<T extends Object?> extends StatefulWidget {
   const AppPage({
@@ -68,7 +68,7 @@ class AppPage<T extends Object?> extends StatefulWidget {
   State<AppPage<T>> createState() => _AppPageStateListenable<T>();
 }
 
-class _AppPageStateListenable<T> extends State<AppPage<T>> {
+class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
   late RefreshController _refreshController;
   late VoidCallback _onRefresh;
   late VoidCallback _onLoading;
@@ -84,8 +84,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> {
           widget.notifier!.value = widget.notifier!.value?.copyWith(isError: true) ?? ApiResponse.error(null);
         }
 
-        final hint = Hint.withMap({'page_status': 'Page ${widget.title} init exception'});
-        Sentry.captureException(e, stackTrace: s, hint: hint);
+        logError(e, s);
       },
     );
 
@@ -99,8 +98,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> {
           widget.notifier!.value = widget.notifier!.value?.copyWith(isError: true);
         }
 
-        final hint = Hint.withMap({'page_status': 'Page ${widget.title} refresh exception'});
-        unawaited(Sentry.captureException(e, stackTrace: s, hint: hint));
+        logError(e, s);
       }
       _refreshController.refreshCompleted();
     };

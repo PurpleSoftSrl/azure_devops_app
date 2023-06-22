@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:azure_devops/src/app.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
@@ -37,8 +39,10 @@ Future<void> main() async {
             return 1;
           }
           ..beforeSend = (evt, {hint}) {
-            debugPrint('[sentry] ${evt.exceptions?[0].value}');
-            if (kDebugMode) return null;
+            if (kDebugMode) {
+              log('[sentry] ${evt.exceptions?[0].value}');
+              return null;
+            }
 
             switch (evt.throwable.runtimeType.toString()) {
               case 'HttpExceptionWithStatus':

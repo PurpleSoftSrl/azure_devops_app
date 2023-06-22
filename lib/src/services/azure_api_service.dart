@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:azure_devops/src/extensions/commit_extension.dart';
 import 'package:azure_devops/src/extensions/reponse_extension.dart';
+import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:azure_devops/src/models/file_diff.dart';
@@ -200,7 +201,7 @@ abstract class AzureApiService {
   bool get isImageUnauthorized;
 }
 
-class AzureApiServiceImpl implements AzureApiService {
+class AzureApiServiceImpl with AppLogger implements AzureApiService {
   factory AzureApiServiceImpl() {
     return instance ??= AzureApiServiceImpl._();
   }
@@ -268,7 +269,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   Future<Response> _get(String url) async {
-    debugPrint('GET $url');
+    logDebug('GET $url');
     final res = await _client.get(
       Uri.parse(url),
       headers: headers,
@@ -280,7 +281,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   Future<Response> _patch(String url, {Map<String, String>? body}) async {
-    debugPrint('PATCH $url');
+    logDebug('PATCH $url');
     final res = await _client.patch(
       Uri.parse(url),
       headers: headers,
@@ -293,7 +294,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   Future<Response> _patchList(String url, {List<Map<String, dynamic>>? body, String? contentType}) async {
-    debugPrint('PATCH $url');
+    logDebug('PATCH $url');
     final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
 
     final res = await _client.patch(
@@ -308,7 +309,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   Future<Response> _post(String url, {Map<String, dynamic>? body}) async {
-    debugPrint('POST $url');
+    logDebug('POST $url');
     final res = await _client.post(
       Uri.parse(url),
       headers: headers,
@@ -321,7 +322,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   Future<Response> _postList(String url, {List<Map<String, dynamic>>? body, String? contentType}) async {
-    debugPrint('POST $url');
+    logDebug('POST $url');
     final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
 
     final res = await _client.post(
@@ -336,7 +337,7 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   Future<Response> _delete(String url) async {
-    debugPrint('DELETE $url');
+    logDebug('DELETE $url');
     final res = await _client.delete(
       Uri.parse(url),
       headers: headers,
@@ -351,10 +352,7 @@ class AzureApiServiceImpl implements AzureApiService {
   static bool _isLoggingError = false;
 
   void _addSentryBreadcrumb(String url, String method, Response res, Object? body) {
-    if (kDebugMode) {
-      print('$method $url ${res.statusCode} ${res.reasonPhrase} ${res.isError ? '- res body: ${res.body}' : ''}');
-      return;
-    }
+    logDebug('$method $url ${res.statusCode} ${res.reasonPhrase} ${res.isError ? '- res body: ${res.body}' : ''}');
 
     final breadcrumb = Breadcrumb.http(
       url: Uri.parse(url),

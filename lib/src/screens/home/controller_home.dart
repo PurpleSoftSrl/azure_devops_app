@@ -1,6 +1,6 @@
 part of home;
 
-class _HomeController {
+class _HomeController with AppLogger {
   factory _HomeController({required AzureApiService apiService, required StorageService storageService}) {
     return instance ??= _HomeController._(apiService, storageService);
   }
@@ -97,9 +97,7 @@ class _HomeController {
 
   void _logSession() {
     Timer(Duration(seconds: 5), () {
-      if (kReleaseMode && apiService.user != null) {
-        Sentry.captureMessage('5 seconds session');
-      }
+      if (apiService.user != null) logInfo('5 seconds session');
     });
   }
 }

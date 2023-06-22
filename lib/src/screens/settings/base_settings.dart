@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
+import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/mixins/share_mixin.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/router/router.dart';
@@ -16,12 +17,10 @@ import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:azure_devops/src/widgets/navigation_button.dart';
 import 'package:azure_devops/src/widgets/section_header.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:purple_theme/purple_theme.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:url_launcher/link.dart';
 
 part 'components_settings.dart';

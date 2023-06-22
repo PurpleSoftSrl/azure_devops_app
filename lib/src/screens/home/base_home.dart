@@ -3,6 +3,7 @@ library home;
 import 'dart:async';
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
+import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
@@ -14,7 +15,6 @@ import 'package:azure_devops/src/widgets/navigation_button.dart';
 import 'package:azure_devops/src/widgets/section_header.dart';
 import 'package:azure_devops/src/widgets/work_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
