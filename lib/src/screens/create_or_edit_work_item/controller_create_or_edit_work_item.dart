@@ -5,7 +5,7 @@ part of create_or_edit_work_item;
 class _CreateOrEditWorkItemController with FilterMixin {
   factory _CreateOrEditWorkItemController({
     required AzureApiService apiService,
-    required ({int? id, String? project}) args,
+    required CreateOrEditWorkItemArgs args,
     required StorageService storageService,
   }) {
     return instance ??= _CreateOrEditWorkItemController._(apiService, args, storageService);
@@ -17,7 +17,7 @@ class _CreateOrEditWorkItemController with FilterMixin {
 
   final AzureApiService apiService;
   final StorageService storageService;
-  final ({int? id, String? project}) args;
+  final CreateOrEditWorkItemArgs args;
 
   final hasChanged = ValueNotifier<ApiResponse<bool>?>(null);
 

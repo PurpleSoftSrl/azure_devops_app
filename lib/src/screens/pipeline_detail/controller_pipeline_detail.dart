@@ -205,7 +205,7 @@ class _PipelineDetailController with ShareMixin {
       return;
     }
 
-    AppRouter.goToPipelineLogs(PipelineLogsArgs(pipeline: pipeline, task: t));
+    AppRouter.goToPipelineLogs((pipeline: pipeline, task: t));
   }
 }
 

@@ -2,7 +2,7 @@ part of work_item_detail;
 
 class _WorkItemDetailController with ShareMixin, FilterMixin {
   factory _WorkItemDetailController({
-    required ({String project, int id}) args,
+    required WorkItemDetailArgs args,
     required AzureApiService apiService,
     required StorageService storageService,
   }) {
@@ -25,7 +25,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
 
   static final Map<int, _WorkItemDetailController> _instances = {};
 
-  final ({String project, int id}) args;
+  final WorkItemDetailArgs args;
   final AzureApiService apiService;
   final StorageService storageService;
 

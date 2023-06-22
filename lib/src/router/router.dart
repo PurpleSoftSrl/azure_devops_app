@@ -27,27 +27,29 @@ import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/widgets/error_page.dart';
 import 'package:flutter/material.dart';
 
+typedef WorkItemDetailArgs = ({String project, int id});
+typedef CreateOrEditWorkItemArgs = ({String? project, int? id});
+typedef PullRequestDetailArgs = ({String project, int id});
+typedef CommitDetailArgs = ({String project, String repository, String commitId});
+typedef FileDiffArgs = ({Commit commit, String filePath, bool isAdded, bool isDeleted});
+typedef PipelineLogsArgs = ({Pipeline pipeline, Record task});
+
 class AppRouter {
   AppRouter._();
 
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>(debugLabel: 'Root navigator key');
 
   static const _splash = '/';
-
   static const _login = '/login';
-
   static const _chooseProjects = '/choose-projects';
-
   static const _tabs = '/tabs';
   static const home = '/home';
   static const profile = '/profile';
   static const settings = '/settings';
-
   static const _pipelines = '/pipelines';
   static const _commits = '/commits';
   static const _workItems = '/workItems';
   static const _pullRequests = '/pullRequests';
-
   static const _pipelineDetail = '/pipeline-detail';
   static const _pipelineLogs = '/pipeline-logs';
   static const _commitDetail = '/commit-detail';
@@ -59,7 +61,6 @@ class AppRouter {
   static const _workItemDetail = '/workitem-detail';
   static const _pullRequestDetail = '/pullrequest-detail';
   static const _createOrEditWorkItem = '/create-or-edit-workitem';
-
   static const _error = '/error';
 
   static int index = 0;
@@ -136,7 +137,8 @@ class AppRouter {
 
   static ({String project, int id}) getPipelineDetailArgs(BuildContext context) => _getArgs(context);
 
-  static Future<void> goToPipelineLogs(PipelineLogsArgs pipeline) => _goTo(_pipelineLogs, args: pipeline);
+  static Future<void> goToPipelineLogs(PipelineLogsArgs pipeline) =>
+      _goTo<PipelineLogsArgs>(_pipelineLogs, args: pipeline);
 
   static PipelineLogsArgs getPipelineLogsArgs(BuildContext context) => _getArgs(context);
 
@@ -148,14 +150,12 @@ class AppRouter {
     required String project,
     required String repository,
     required String commitId,
-  }) async {
-    final args = CommitDetailArgs(project: project, repository: repository, commitId: commitId);
-    await _goTo(_commitDetail, args: args);
-  }
+  }) async =>
+      _goTo<CommitDetailArgs>(_commitDetail, args: (project: project, repository: repository, commitId: commitId));
 
   static CommitDetailArgs getCommitDetailArgs(BuildContext context) => _getArgs(context);
 
-  static Future<void> goToFileDiff(FileDiffArgs args) => _goTo(_fileDiff, args: args);
+  static Future<void> goToFileDiff(FileDiffArgs args) => _goTo<FileDiffArgs>(_fileDiff, args: args);
 
   static FileDiffArgs getCommitDiffArgs(BuildContext context) => _getArgs(context);
 
@@ -168,23 +168,23 @@ class AppRouter {
   static Project? getWorkItemsArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToWorkItemDetail({required String project, required int id}) =>
-      _goTo(_workItemDetail, args: (project: project, id: id));
+      _goTo<WorkItemDetailArgs>(_workItemDetail, args: (project: project, id: id));
 
-  static ({String project, int id}) getWorkItemDetailArgs(BuildContext context) => _getArgs(context);
+  static WorkItemDetailArgs getWorkItemDetailArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToCreateOrEditWorkItem({String? project, int? id}) =>
-      _goTo(_createOrEditWorkItem, args: (project: project, id: id));
+      _goTo<CreateOrEditWorkItemArgs>(_createOrEditWorkItem, args: (project: project, id: id));
 
-  static ({String? project, int? id}) getCreateOrEditWorkItemArgs(BuildContext context) => _getArgs(context);
+  static CreateOrEditWorkItemArgs getCreateOrEditWorkItemArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToPullRequests({Project? project}) => _goTo(_pullRequests, args: project);
 
   static Project? getPullRequestsArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToPullRequestDetail({required String project, required int id}) =>
-      _goTo(_pullRequestDetail, args: (project: project, id: id));
+      _goTo<PullRequestDetailArgs>(_pullRequestDetail, args: (project: project, id: id));
 
-  static ({String project, int id}) getPullRequestDetailArgs(BuildContext context) => _getArgs(context);
+  static PullRequestDetailArgs getPullRequestDetailArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToRepositoryDetail(RepoDetailArgs args) => _goTo(_repoDetail, args: args);
 
@@ -213,7 +213,7 @@ class AppRouter {
     return shouldPop;
   }
 
-  static Future<void> _goTo(String page, {Object? args}) => _currentNavigator!.pushNamed(page, arguments: args);
+  static Future<void> _goTo<T>(String page, {T? args}) => _currentNavigator!.pushNamed(page, arguments: args);
 
   static T _getArgs<T extends Object?>(BuildContext context) => ModalRoute.of(context)!.settings.arguments as T;
 }
@@ -265,49 +265,4 @@ class RepoDetailArgs {
       branch: branch ?? this.branch,
     );
   }
-}
-
-class PipelineLogsArgs {
-  PipelineLogsArgs({
-    required this.pipeline,
-    required this.task,
-  });
-
-  final Pipeline pipeline;
-  final Record task;
-
-  @override
-  String toString() => 'PipelineLogsArgs(pipeline: $pipeline, task: $task)';
-}
-
-class FileDiffArgs {
-  FileDiffArgs({
-    required this.commit,
-    required this.filePath,
-    required this.isAdded,
-    required this.isDeleted,
-  });
-
-  final Commit commit;
-  final String filePath;
-  final bool isAdded;
-  final bool isDeleted;
-
-  @override
-  String toString() => 'FileDiffArgs(commit: $commit, filePath: $filePath, isAdded: $isAdded, isDeleted: $isDeleted)';
-}
-
-class CommitDetailArgs {
-  CommitDetailArgs({
-    required this.project,
-    required this.repository,
-    required this.commitId,
-  });
-
-  final String project;
-  final String repository;
-  final String commitId;
-
-  @override
-  String toString() => 'CommitDetailArgs(project: $project, repository: $repository, commitId: $commitId)';
 }

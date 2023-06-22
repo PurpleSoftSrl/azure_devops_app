@@ -1,4 +1,3 @@
-import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/screens/commit_detail/base_commit_detail.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +16,7 @@ void main() {
           onGenerateRoute: (_) => MaterialPageRoute(
             builder: (_) => CommitDetailPage(),
             settings: RouteSettings(
-              arguments: CommitDetailArgs(commitId: '123456789', project: 'TestProject', repository: 'test_repo'),
+              arguments: (commitId: '123456789', project: 'TestProject', repository: 'test_repo'),
             ),
           ),
         ),
