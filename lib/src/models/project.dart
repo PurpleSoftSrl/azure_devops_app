@@ -16,6 +16,20 @@ class GetProjectsResponse {
   List<Project> projects;
 }
 
+class ProjectDetail {
+  ProjectDetail({
+    required this.project,
+    this.gitmetrics,
+    this.workMetrics,
+    this.pipelinesMetrics,
+  });
+
+  final Project project;
+  final Gitmetrics? gitmetrics;
+  final WorkMetrics? workMetrics;
+  final PipelinesMetrics? pipelinesMetrics;
+}
+
 class Project {
   Project({
     this.id,
@@ -148,4 +162,152 @@ class _DefaultTeam {
 
   @override
   int get hashCode => id.hashCode ^ name.hashCode ^ url.hashCode;
+}
+
+class CommitsAndWorkItems {
+  CommitsAndWorkItems({required this.dataProviders});
+
+  factory CommitsAndWorkItems.fromResponse(Response res) =>
+      CommitsAndWorkItems.fromJson(json.decode(res.body) as Map<String, dynamic>);
+
+  factory CommitsAndWorkItems.fromJson(Map<String, dynamic> json) => CommitsAndWorkItems(
+        dataProviders: DataProviders.fromJson(json['dataProviders'] as Map<String, dynamic>),
+      );
+
+  final DataProviders dataProviders;
+}
+
+class DataProviders {
+  DataProviders({
+    required this.workItemsSummary,
+    required this.commitsSummary,
+  });
+
+  factory DataProviders.fromRawJson(String str) => DataProviders.fromJson(json.decode(str) as Map<String, dynamic>);
+
+  factory DataProviders.fromJson(Map<String, dynamic> json) {
+    final workItems = json['ms.vss-work-web.work-item-metrics-data-provider-verticals'];
+    final commits = json['ms.vss-code-web.code-metrics-data-provider-verticals'];
+    return DataProviders(
+      workItemsSummary: workItems == null ? null : WorkItemsSummary.fromJson(workItems as Map<String, dynamic>),
+      commitsSummary: commits == null ? null : CommitsSummary.fromJson(commits as Map<String, dynamic>),
+    );
+  }
+
+  final WorkItemsSummary? workItemsSummary;
+  final CommitsSummary? commitsSummary;
+}
+
+class CommitsSummary {
+  CommitsSummary({this.gitmetrics});
+
+  factory CommitsSummary.fromRawJson(String str) => CommitsSummary.fromJson(json.decode(str) as Map<String, dynamic>);
+
+  factory CommitsSummary.fromJson(Map<String, dynamic> json) => CommitsSummary(
+        gitmetrics: json['gitmetrics'] == null ? null : Gitmetrics.fromJson(json['gitmetrics'] as Map<String, dynamic>),
+      );
+
+  final Gitmetrics? gitmetrics;
+}
+
+class Gitmetrics {
+  Gitmetrics({
+    required this.commitsPushedCount,
+    required this.pullRequestsCreatedCount,
+    required this.pullRequestsCompletedCount,
+    required this.authorsCount,
+  });
+
+  factory Gitmetrics.fromRawJson(String str) => Gitmetrics.fromJson(json.decode(str) as Map<String, dynamic>);
+
+  factory Gitmetrics.fromJson(Map<String, dynamic> json) => Gitmetrics(
+        commitsPushedCount: json['commitsPushedCount'] as int? ?? 0,
+        pullRequestsCreatedCount: json['pullRequestsCreatedCount'] as int? ?? 0,
+        pullRequestsCompletedCount: json['pullRequestsCompletedCount'] as int? ?? 0,
+        authorsCount: json['authorsCount'] as int? ?? 0,
+      );
+
+  final int commitsPushedCount;
+  final int pullRequestsCreatedCount;
+  final int pullRequestsCompletedCount;
+  final int authorsCount;
+}
+
+class WorkItemsSummary {
+  WorkItemsSummary({this.workMetrics});
+
+  factory WorkItemsSummary.fromRawJson(String str) =>
+      WorkItemsSummary.fromJson(json.decode(str) as Map<String, dynamic>);
+
+  factory WorkItemsSummary.fromJson(Map<String, dynamic> json) => WorkItemsSummary(
+        workMetrics:
+            json['workMetrics'] == null ? null : WorkMetrics.fromJson(json['workMetrics'] as Map<String, dynamic>),
+      );
+
+  final WorkMetrics? workMetrics;
+}
+
+class WorkMetrics {
+  WorkMetrics({
+    required this.workItemsCreated,
+    required this.workItemsCompleted,
+  });
+
+  factory WorkMetrics.fromRawJson(String str) => WorkMetrics.fromJson(json.decode(str) as Map<String, dynamic>);
+
+  factory WorkMetrics.fromJson(Map<String, dynamic> json) => WorkMetrics(
+        workItemsCreated: json['workItemsCreated'] as int? ?? 0,
+        workItemsCompleted: json['workItemsCompleted'] as int? ?? 0,
+      );
+
+  final int workItemsCreated;
+  final int workItemsCompleted;
+}
+
+class PipelinesSummary {
+  PipelinesSummary({required this.metrics});
+
+  factory PipelinesSummary.fromResponse(Response res) =>
+      PipelinesSummary.fromJson(json.decode(res.body) as Map<String, dynamic>);
+
+  factory PipelinesSummary.fromJson(Map<String, dynamic> json) => PipelinesSummary(
+        metrics:
+            List<Metric>.from((json['value'] as List<dynamic>).map((p) => Metric.fromJson(p as Map<String, dynamic>))),
+      );
+
+  final List<Metric> metrics;
+}
+
+class Metric {
+  Metric({
+    required this.name,
+    required this.intValue,
+    this.date,
+  });
+
+  factory Metric.fromRawJson(String str) => Metric.fromJson(json.decode(str) as Map<String, dynamic>);
+
+  factory Metric.fromJson(Map<String, dynamic> json) => Metric(
+        name: json['name'] as String,
+        intValue: json['intValue'] as int? ?? 0,
+        date: json['date'] == null ? null : DateTime.parse(json['date']!.toString()),
+      );
+
+  final String name;
+  final int intValue;
+  final DateTime? date;
+}
+
+class PipelinesMetrics {
+  PipelinesMetrics({
+    required this.total,
+    required this.successful,
+    required this.failed,
+    required this.canceled,
+  });
+
+  final int total;
+  final int successful;
+  final int failed;
+  final int canceled;
 }

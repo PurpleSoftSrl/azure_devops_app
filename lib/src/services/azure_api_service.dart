@@ -64,7 +64,7 @@ abstract class AzureApiService {
 
   Future<ApiResponse<List<Project>>> getProjects();
 
-  Future<ApiResponse<Project>> getProject({required String projectName});
+  Future<ApiResponse<ProjectDetail>> getProject({required String projectName});
 
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
     Project? project,
@@ -487,11 +487,61 @@ class AzureApiServiceImpl implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<Project>> getProject({required String projectName}) async {
+  Future<ApiResponse<ProjectDetail>> getProject({required String projectName}) async {
     final projectRes = await _get('$_basePath/_apis/projects/$projectName?$_apiVersion');
     if (projectRes.isError) return ApiResponse.error(projectRes);
 
-    return ApiResponse.ok(Project.fromResponse(projectRes));
+    final summaryRes = await _post(
+      '$_basePath/_apis/Contribution/HierarchyQuery/project/$projectName?$_apiVersion-preview',
+      body: {
+        'contributionIds': [
+          'ms.vss-work-web.work-item-metrics-data-provider-verticals',
+          'ms.vss-code-web.code-metrics-data-provider-verticals',
+        ],
+        'dataProviderContext': {
+          'properties': {
+            'numOfDays': 7,
+            'sourcePage': {
+              'routeValues': {'project': projectName},
+            },
+          },
+        },
+      },
+    );
+
+    final lastWeek = DateTime.now().subtract(Duration(days: 7));
+    final metricsRes = await _get(
+      '$_basePath/$projectName/_apis/build/Metrics/Daily?minMetricsTime=${lastWeek.toIso8601String()}?$_apiVersion-preview',
+    );
+
+    final project = Project.fromResponse(projectRes);
+
+    Gitmetrics? gitmetrics;
+    WorkMetrics? workMetrics;
+    if (!summaryRes.isError) {
+      final summary = CommitsAndWorkItems.fromResponse(summaryRes);
+      gitmetrics = summary.dataProviders.commitsSummary?.gitmetrics;
+      workMetrics = summary.dataProviders.workItemsSummary?.workMetrics;
+    }
+
+    PipelinesMetrics? pipelinesMetrics;
+    if (!metricsRes.isError) {
+      final metrics = PipelinesSummary.fromResponse(metricsRes).metrics;
+      final total = metrics.where((m) => m.name == 'TotalBuilds').fold(0, (a, b) => a + b.intValue);
+      final successful = metrics.where((m) => m.name == 'SuccessfulBuilds').fold(0, (a, b) => a + b.intValue);
+      final failed = metrics.where((m) => m.name == 'FailedBuilds').fold(0, (a, b) => a + b.intValue);
+      final canceled = metrics.where((m) => m.name == 'CanceledBuilds').fold(0, (a, b) => a + b.intValue);
+      pipelinesMetrics = PipelinesMetrics(total: total, successful: successful, failed: failed, canceled: canceled);
+    }
+
+    return ApiResponse.ok(
+      ProjectDetail(
+        project: project,
+        gitmetrics: gitmetrics,
+        workMetrics: workMetrics,
+        pipelinesMetrics: pipelinesMetrics,
+      ),
+    );
   }
 
   @override

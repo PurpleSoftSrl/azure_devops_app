@@ -24,7 +24,7 @@ class _ProjectDetailController {
 
   final String projectName;
 
-  final project = ValueNotifier<ApiResponse<Project?>?>(null);
+  final project = ValueNotifier<ApiResponse<ProjectDetail?>?>(null);
 
   List<TeamMember> members = <TeamMember>[];
   List<GitRepository> repos = <GitRepository>[];
@@ -87,18 +87,18 @@ class _ProjectDetailController {
   }
 
   void goToCommits() {
-    AppRouter.goToCommits(project: project.value?.data);
+    AppRouter.goToCommits(project: project.value?.data?.project);
   }
 
   void goToPipelines() {
-    AppRouter.goToPipelines(project: project.value?.data);
+    AppRouter.goToPipelines(project: project.value?.data?.project);
   }
 
   void goToWorkItems() {
-    AppRouter.goToWorkItems(project: project.value?.data);
+    AppRouter.goToWorkItems(project: project.value?.data?.project);
   }
 
   void goToPullRequests() {
-    AppRouter.goToPullRequests(project: project.value?.data);
+    AppRouter.goToPullRequests(project: project.value?.data?.project);
   }
 }

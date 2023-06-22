@@ -424,7 +424,7 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<Project>> getProject({required String projectName}) {
+  Future<ApiResponse<ProjectDetail>> getProject({required String projectName}) {
     throw UnimplementedError();
   }
 
