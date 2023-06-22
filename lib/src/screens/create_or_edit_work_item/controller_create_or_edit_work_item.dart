@@ -175,7 +175,15 @@ class _CreateOrEditWorkItemController with FilterMixin {
     final res = isEditing ? await _editWorkItem() : await _createWorkItem();
 
     if (res.isError) {
-      return OverlayService.error('Error', description: 'Work item not ${isEditing ? 'edited' : 'created'}');
+      final isInherited = ![null, 'system'].contains(newWorkItemType.customization);
+      var description = 'Work item not ${isEditing ? 'edited' : 'created'}.';
+      if (isInherited) {
+        description += '\nInherited processes are not fully supported yet.';
+      }
+      return OverlayService.error(
+        'Error',
+        description: description,
+      );
     }
 
     OverlayService.snackbar('Changes saved');
