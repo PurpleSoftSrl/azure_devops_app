@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
+import 'package:azure_devops/src/widgets/empty_page.dart';
 import 'package:azure_devops/src/widgets/error_page.dart';
-import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
@@ -268,7 +268,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
                         SliverPadding(
                           padding: EdgeInsets.only(top: paddingTop),
                           sliver: SliverToBoxAdapter(
-                            child: _EmptyPage(widget: widget, onRefresh: _onRefresh),
+                            child: EmptyPage(widget: widget, onRefresh: _onRefresh),
                           ),
                         )
                       else if (response?.data != null)
@@ -298,44 +298,6 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
   }
 }
 
-class _EmptyPage extends StatelessWidget {
-  const _EmptyPage({
-    required this.widget,
-    required this.onRefresh,
-  });
-
-  final AppPage widget;
-  final VoidCallback onRefresh;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset(
-          'assets/illustrations/empty.png',
-          height: 200,
-        ),
-        const SizedBox(height: 20),
-        if (widget.onEmpty != null) Text(widget.onEmpty!),
-        const SizedBox(
-          height: 20,
-        ),
-        if (widget.onResetFilters != null)
-          LoadingButton(
-            onPressed: widget.onResetFilters!,
-            text: 'Reset filters',
-          )
-        else
-          LoadingButton(
-            onPressed: onRefresh,
-            text: 'Retry',
-          ),
-        const SizedBox(height: 40),
-      ],
-    );
-  }
-}
 
 class _Header extends StatefulWidget implements PreferredSizeWidget {
   const _Header({required this.child});
