@@ -491,20 +491,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final summaryRes = await _post(
       '$_basePath/_apis/Contribution/HierarchyQuery/project/$projectName?$_apiVersion-preview',
-      body: {
-        'contributionIds': [
-          'ms.vss-work-web.work-item-metrics-data-provider-verticals',
-          'ms.vss-code-web.code-metrics-data-provider-verticals',
-        ],
-        'dataProviderContext': {
-          'properties': {
-            'numOfDays': 7,
-            'sourcePage': {
-              'routeValues': {'project': projectName},
-            },
-          },
-        },
-      },
+      body: _getContributionBody(projectName),
     );
 
     final lastWeek = DateTime.now().subtract(Duration(days: 7));
@@ -524,12 +511,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     PipelinesMetrics? pipelinesMetrics;
     if (!metricsRes.isError) {
-      final metrics = PipelinesSummary.fromResponse(metricsRes).metrics;
-      final total = metrics.where((m) => m.name == 'TotalBuilds').fold(0, (a, b) => a + b.intValue);
-      final successful = metrics.where((m) => m.name == 'SuccessfulBuilds').fold(0, (a, b) => a + b.intValue);
-      final failed = metrics.where((m) => m.name == 'FailedBuilds').fold(0, (a, b) => a + b.intValue);
-      final canceled = metrics.where((m) => m.name == 'CanceledBuilds').fold(0, (a, b) => a + b.intValue);
-      pipelinesMetrics = PipelinesMetrics(total: total, successful: successful, failed: failed, canceled: canceled);
+      pipelinesMetrics = _getMetricsFromResponse(metricsRes);
     }
 
     return ApiResponse.ok(
@@ -539,6 +521,41 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
         workMetrics: workMetrics,
         pipelinesMetrics: pipelinesMetrics,
       ),
+    );
+  }
+
+  Map<String, dynamic> _getContributionBody(String projectName) {
+    return {
+      'contributionIds': [
+        'ms.vss-work-web.work-item-metrics-data-provider-verticals',
+        'ms.vss-code-web.code-metrics-data-provider-verticals',
+      ],
+      'dataProviderContext': {
+        'properties': {
+          'numOfDays': 7,
+          'sourcePage': {
+            'routeValues': {'project': projectName},
+          },
+        },
+      },
+    };
+  }
+
+  PipelinesMetrics? _getMetricsFromResponse(Response res) {
+    final metrics = PipelinesSummary.fromResponse(res).metrics;
+    final total = metrics.where((m) => m.name == 'TotalBuilds').fold(0, (a, b) => a + b.intValue);
+    final successful = metrics.where((m) => m.name == 'SuccessfulBuilds').fold(0, (a, b) => a + b.intValue);
+    final partiallySuccessful =
+        metrics.where((m) => m.name == 'PartiallySuccessfulBuilds').fold(0, (a, b) => a + b.intValue);
+    final failed = metrics.where((m) => m.name == 'FailedBuilds').fold(0, (a, b) => a + b.intValue);
+    final canceled = metrics.where((m) => m.name == 'CanceledBuilds').fold(0, (a, b) => a + b.intValue);
+
+    return PipelinesMetrics(
+      total: total,
+      successful: successful,
+      partiallySuccessful: partiallySuccessful,
+      failed: failed,
+      canceled: canceled,
     );
   }
 

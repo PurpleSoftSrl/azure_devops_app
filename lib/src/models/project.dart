@@ -302,12 +302,14 @@ class PipelinesMetrics {
   PipelinesMetrics({
     required this.total,
     required this.successful,
+    required this.partiallySuccessful,
     required this.failed,
     required this.canceled,
   });
 
   final int total;
   final int successful;
+  final int partiallySuccessful;
   final int failed;
   final int canceled;
 }

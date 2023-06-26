@@ -231,6 +231,11 @@ class _ProjectDetailScreen extends StatelessWidget {
                               name: 'Successful',
                               value: '${pipelinesMetrics.successful}',
                             ),
+                          if (pipelinesMetrics.partiallySuccessful > 0)
+                            _StatsChip(
+                              name: 'Partially successful',
+                              value: '${pipelinesMetrics.partiallySuccessful}',
+                            ),
                           if (pipelinesMetrics.failed > 0)
                             _StatsChip(
                               name: 'Failed',
