@@ -176,7 +176,7 @@ class _SettingsScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
-                    Text('Made with \u2764 by Purplesoft Srl'),
+                    Text('Made with \u2764 by PurpleSoft Srl'),
                     Icon(DevOpsIcons.link),
                   ],
                 ),

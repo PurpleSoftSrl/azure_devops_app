@@ -1,6 +1,6 @@
 part of login;
 
-class _LoginController {
+class _LoginController with AppLogger {
   factory _LoginController({required AzureApiService apiService}) {
     return instance ??= _LoginController._(apiService);
   }
@@ -106,5 +106,11 @@ class _LoginController {
     await apiService.setOrganization(manualOrg!);
 
     return true;
+  }
+
+  void openPurplesoftWebsite(FollowLink? link) {
+    logInfo('Open Purplesoft website');
+
+    link?.call();
   }
 }

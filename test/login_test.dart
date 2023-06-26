@@ -20,7 +20,7 @@ void main() {
     await t.pumpWidget(app);
 
     final pageTitle = find.textContaining('Az DevOps');
-    expect(pageTitle, findsOneWidget);
+    expect(pageTitle, findsWidgets);
 
     final formField = find.byType(TextFormField);
     expect(formField, findsOneWidget);
@@ -49,7 +49,7 @@ void main() {
     await t.pumpWidget(app);
 
     final pageTitle = find.textContaining('Az DevOps');
-    expect(pageTitle, findsOneWidget);
+    expect(pageTitle, findsWidgets);
 
     final formField = find.byType(TextFormField);
     expect(formField, findsOneWidget);
@@ -82,7 +82,7 @@ void main() {
     await t.pumpWidget(app);
 
     final pageTitle = find.textContaining('Az DevOps');
-    expect(pageTitle, findsOneWidget);
+    expect(pageTitle, findsWidgets);
 
     final formField = find.byType(TextFormField);
     expect(formField, findsOneWidget);

@@ -16,6 +16,13 @@ class _LoginScreen extends StatelessWidget {
         title: 'Az DevOps',
         builder: (_) => Column(
           children: [
+            Text(
+              'Manage your Azure DevOps tasks on the go',
+              style: context.textTheme.bodyMedium!.copyWith(
+                fontWeight: FontWeight.w500,
+                fontFamily: AppTheme.defaultFont,
+              ),
+            ),
             const SizedBox(
               height: 80,
             ),
@@ -23,7 +30,7 @@ class _LoginScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    "Insert your Personal Access Token to manage your organization's projects",
+                    'Login with your Personal Access Token',
                     style: context.textTheme.titleMedium,
                   ),
                 ),
@@ -34,7 +41,7 @@ class _LoginScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(
-              height: 30,
+              height: 10,
             ),
             Form(
               child: Column(
@@ -73,6 +80,60 @@ class _LoginScreen extends StatelessWidget {
                     text: 'Submit',
                   ),
                 ],
+              ),
+            ),
+            const SizedBox(
+              height: 100,
+            ),
+            Link(
+              uri: Uri.parse('https://github.com/PurpleSoftSrl/azure_devops_app'),
+              builder: (_, link) => InkWell(
+                onTap: link,
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Check out Az DevOps ',
+                        style: context.textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.w500,
+                          fontFamily: AppTheme.defaultFont,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'GitHub repository',
+                        style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Link(
+              uri: Uri.parse(
+                'https://www.purplesoft.io?utm_source=azdevops_app&utm_medium=app&utm_campaign=azdevops',
+              ),
+              builder: (_, link) => InkWell(
+                onTap: () => ctrl.openPurplesoftWebsite(link),
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Made with \u2764 by ',
+                        style: context.textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.w500,
+                          fontFamily: AppTheme.defaultFont,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'PurpleSoft Srl',
+                        style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
