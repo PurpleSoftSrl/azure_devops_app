@@ -112,7 +112,7 @@ class _PipelineDetailScreen extends StatelessWidget {
               ),
               RepositoryChip(
                 onTap: ctrl.goToRepo,
-                repositoryName: pipeline.repository?.name ?? '-',
+                repositoryName: pipeline.repository?.name,
               ),
               const SizedBox(
                 height: 20,
@@ -133,10 +133,11 @@ class _PipelineDetailScreen extends StatelessWidget {
                   style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                 ),
                 InkWell(
-                  onTap: ctrl.goToCommitDetail,
+                  onTap: pipeline.repository?.name == null ? null : ctrl.goToCommitDetail,
                   child: Text(
                     pipeline.triggerInfo!.ciSourceSha!,
-                    style: context.textTheme.titleSmall!.copyWith(decoration: TextDecoration.underline),
+                    style: context.textTheme.titleSmall!
+                        .copyWith(decoration: pipeline.repository?.name == null ? null : TextDecoration.underline),
                   ),
                 ),
                 const SizedBox(

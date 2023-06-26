@@ -192,6 +192,8 @@ class _PipelineDetailController with ShareMixin {
   }
 
   void goToCommitDetail() {
+    if (pipeline.repository?.name == null) return;
+    
     AppRouter.goToCommitDetail(
       project: pipeline.project!.name!,
       repository: pipeline.repository!.name!,

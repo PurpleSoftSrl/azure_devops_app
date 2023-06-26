@@ -27,7 +27,7 @@ class RepositoryChip extends StatelessWidget {
   });
 
   final VoidCallback onTap;
-  final String repositoryName;
+  final String? repositoryName;
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +47,8 @@ class _InternalChip extends StatelessWidget {
   });
 
   final VoidCallback onTap;
-  final String text;
   final String title;
+  final String? text;
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +68,9 @@ class _InternalChip extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: Text(
-                text,
-                style: context.textTheme.titleSmall!.copyWith(decoration: TextDecoration.underline),
+                text ?? '-',
+                style:
+                    context.textTheme.titleSmall!.copyWith(decoration: text == null ? null : TextDecoration.underline),
               ),
             ),
           ),
