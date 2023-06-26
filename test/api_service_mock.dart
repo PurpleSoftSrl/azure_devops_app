@@ -305,6 +305,11 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
+  void switchOrganization(String org) {
+    throw UnimplementedError();
+  }
+
+  @override
   UserMe? get user => throw UnimplementedError();
 
   @override

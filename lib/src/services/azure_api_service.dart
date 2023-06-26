@@ -59,6 +59,8 @@ abstract class AzureApiService {
 
   Future<void> setOrganization(String org);
 
+  void switchOrganization(String org);
+
   Future<ApiResponse<List<Organization>>> getOrganizations();
 
   void setChosenProjects(List<Project> chosenProjects);
@@ -440,10 +442,17 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   @override
   Future<void> setOrganization(String org) async {
     _organization = org.endsWith('/') ? org.substring(0, org.length - 1) : org;
-
     storageService.setOrganization(_organization);
 
     if (user != null) unawaited(_getUsers());
+  }
+
+  @override
+  void switchOrganization(String org) {
+    storageService.setOrganization(org);
+    setChosenProjects([]);
+    _workItemTypes.clear();
+    _workItemStates.clear();
   }
 
   @override
@@ -646,6 +655,11 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (_workItemTypes.isNotEmpty && !force) {
       // return cached types to avoid too many api calls
       return ApiResponse.ok(_workItemTypes);
+    }
+
+    if (force) {
+      _workItemTypes.clear();
+      _workItemStates.clear();
     }
 
     final processesRes = await _get('$_basePath/_apis/work/processes?\$expand=projects&$_apiVersion');
@@ -1239,7 +1253,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   Future<ApiResponse<List<GraphUser>>> _getUsers() async {
     final usersRes =
-        await _get('$_usersBasePath/$_organization/_apis/graph/users?subjectTypes=aad&$_apiVersion-preview');
+        await _get('$_usersBasePath/$_organization/_apis/graph/users?subjectTypes=aad,msa&$_apiVersion-preview');
     if (usersRes.isError) return ApiResponse.error(usersRes);
 
     _allUsers = GetUsersResponse.fromResponse(usersRes);

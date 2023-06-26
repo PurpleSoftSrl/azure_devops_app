@@ -59,7 +59,7 @@ class _SettingsScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  height: 20,
+                  height: 24,
                   child: ValueListenableBuilder<bool>(
                     valueListenable: ctrl.isEditing,
                     builder: (_, isEditing, __) => TextFormField(

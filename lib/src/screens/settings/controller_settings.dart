@@ -110,8 +110,7 @@ class _SettingsController with ShareMixin, AppLogger {
     final selectedOrg = await _selectOrganization(organizations.value!.data!);
     if (selectedOrg == null) return;
 
-    storageService.setOrganization(selectedOrg.accountName!);
-    apiService.setChosenProjects([]);
+    apiService.switchOrganization(selectedOrg.accountName!);
     unawaited(AppRouter.goToSplash());
   }
 
