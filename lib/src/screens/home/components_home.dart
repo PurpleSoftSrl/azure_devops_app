@@ -42,8 +42,7 @@ class _ProjectCard extends StatelessWidget {
             const SizedBox(
               width: 15,
             ),
-            Text(project.name!),
-            const Spacer(),
+            Expanded(child: Text(project.name!)),
             Icon(Icons.arrow_forward_ios),
           ],
         ),
