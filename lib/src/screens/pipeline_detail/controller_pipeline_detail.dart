@@ -46,9 +46,9 @@ class _PipelineDetailController with ShareMixin {
     if (buildDetail.value != null) {
       final pipeStatus = pipeline.status;
 
-      // auto refresh page every 10 seconds until pipeline is completed
+      // auto refresh page every 5 seconds until pipeline is completed
       if (pipeStatus == PipelineStatus.notStarted || pipeStatus == PipelineStatus.inProgress) {
-        _timer = Timer.periodic(Duration(seconds: 10), (timer) async {
+        _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
           await _init();
           if (pipeline.status == PipelineStatus.completed) {
             timer.cancel();

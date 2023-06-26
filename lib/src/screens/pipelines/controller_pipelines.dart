@@ -55,9 +55,9 @@ class _PipelinesController with FilterMixin {
     if (pipelines.value != null) {
       final shouldRefresh = inProgressPipelines > 0 || queuedPipelines > 0 || cancellingPipelines > 0;
 
-      // auto refresh page every 10 seconds until all pipelines are completed
+      // auto refresh page every 5 seconds until all pipelines are completed
       if (shouldRefresh && !(_timer?.isActive ?? false)) {
-        _timer = Timer.periodic(Duration(seconds: 10), (timer) async {
+        _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
           await _getData();
           final shouldRefresh = inProgressPipelines > 0 || queuedPipelines > 0 || cancellingPipelines > 0;
           if (!shouldRefresh) {
