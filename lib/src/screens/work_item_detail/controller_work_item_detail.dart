@@ -1,6 +1,6 @@
 part of work_item_detail;
 
-class _WorkItemDetailController with ShareMixin, FilterMixin {
+class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
   factory _WorkItemDetailController({
     required WorkItemDetailArgs args,
     required AzureApiService apiService,
@@ -205,6 +205,12 @@ class _WorkItemDetailController with ShareMixin, FilterMixin {
       id: args.id,
       text: comment,
     );
+
+    logAnalytics('add_work_item_comment', {
+      'work_item_type': itemDetail.value?.data?.item.fields.systemWorkItemType ?? 'unknown type',
+      'comment_length': comment.length,
+      'is_error': res.isError.toString(),
+    });
 
     if (res.isError) {
       return OverlayService.error('Comment not added');

@@ -9,16 +9,7 @@ class _TabsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        final canPop = ctrl.navPages[ctrl.page].key.currentState!.canPop();
-        if (canPop) {
-          final maybePop = await ctrl.navPages[ctrl.page].key.currentState!.maybePop();
-          return !maybePop;
-        }
-
-        final shouldPop = await AppRouter.askBeforeClosingApp();
-        return shouldPop;
-      },
+      onWillPop: ctrl.askBeforeClosing,
       child: ScrollConfiguration(
         behavior: ScrollBehavior(),
         child: AppPage.empty(
@@ -56,14 +47,14 @@ class _TabsScreen extends StatelessWidget {
                 key: ctrl.navPages[i].key,
                 observers: [
                   SentryNavigatorObserver(
-                    routeNameExtractor: (settings) => settings?.name == null || settings?.name == '/'
-                        ? RouteSettings(
-                            name: settings?.name == null
-                                ? ctrl.navPages[ctrl.previousIndex].pageName
-                                : ctrl.navPages[i].pageName,
-                          )
-                        : null,
+                    routeNameExtractor: (settings) => ctrl.getRouteSettingsName(settings, i),
                   ),
+                  if (useFirebase)
+                    FirebaseAnalyticsObserver(
+                      analytics: FirebaseAnalytics.instance,
+                      nameExtractor: (settings) => ctrl.getRouteName(settings, i),
+                      routeFilter: (route) => route?.settings.name != null && route!.settings.name != '/',
+                    ),
                 ],
                 onGenerateRoute: (route) => MaterialPageRoute(
                   builder: (_) => route.name == '/'

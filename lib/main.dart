@@ -1,16 +1,22 @@
 import 'dart:developer';
 
+import 'package:azure_devops/firebase_options.dart';
 import 'package:azure_devops/src/app.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:purple_theme/purple_theme.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+const useFirebase = bool.fromEnvironment('FIREBASE');
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (useFirebase) await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await StorageServiceCore().init();
@@ -40,7 +46,7 @@ Future<void> main() async {
           }
           ..beforeSend = (evt, {hint}) {
             if (kDebugMode) {
-              log('[sentry] ${evt.exceptions?[0].value}');
+              log('[sentry] ${evt.exceptions?.firstOrNull?.value}');
               return null;
             }
 

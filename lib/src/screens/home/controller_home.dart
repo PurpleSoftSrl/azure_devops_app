@@ -37,7 +37,7 @@ class _HomeController with AppLogger {
 
     storageService.setChosenProjects(existentProjects);
 
-    _configureSentryScope();
+    _configureSentryAndFirebase();
 
     await _maybeRequestReview();
 
@@ -68,17 +68,21 @@ class _HomeController with AppLogger {
     AppRouter.goToProjectDetail(p.name!);
   }
 
-  void _configureSentryScope() {
+  void _configureSentryAndFirebase() {
+    final userId = apiService.user?.id ?? 'uknown-id';
+    final email = apiService.user?.emailAddress ?? 'unknown-user';
+    final org = apiService.organization;
+
     Sentry.configureScope((sc) async {
-      final user = apiService.user;
-      await sc.setUser(
-        SentryUser(
-          id: user?.id ?? 'user-not-logged-id',
-          email: user?.emailAddress ?? 'user-not-logged-email',
-        ),
-      );
-      await sc.setTag('org', apiService.organization);
+      await sc.setUser(SentryUser(id: userId, email: email));
+      await sc.setTag('org', org);
     });
+
+    if (useFirebase) {
+      FirebaseAnalytics.instance.setUserId(id: email);
+      FirebaseAnalytics.instance.setUserProperty(name: 'email', value: email);
+      FirebaseAnalytics.instance.setUserProperty(name: 'org', value: org);
+    }
   }
 
   /// Shows review dialog only the 5th time the app is opened.

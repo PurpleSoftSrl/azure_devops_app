@@ -2,7 +2,7 @@
 
 part of create_or_edit_work_item;
 
-class _CreateOrEditWorkItemController with FilterMixin {
+class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   factory _CreateOrEditWorkItemController({
     required AzureApiService apiService,
     required CreateOrEditWorkItemArgs args,
@@ -173,6 +173,12 @@ class _CreateOrEditWorkItemController with FilterMixin {
     if (errorMessage != null) return OverlayService.snackbar(errorMessage, isError: true);
 
     final res = isEditing ? await _editWorkItem() : await _createWorkItem();
+
+    logAnalytics('${isEditing ? 'edited' : 'created'}_work_item', {
+      'work_item_type': newWorkItemType.name,
+      'is_error': res.isError.toString(),
+      'customization': newWorkItemType.customization,
+    });
 
     if (res.isError) {
       final isInherited = ![null, 'system'].contains(newWorkItemType.customization);

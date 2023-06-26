@@ -77,6 +77,30 @@ class _TabsController {
       ),
     ];
   }
+
+  String? getRouteName(RouteSettings settings, int i) {
+    if (settings.name == null) return navPages[previousIndex].pageName;
+    if (settings.name == '/') return navPages[i].pageName;
+    return settings.name;
+  }
+
+  RouteSettings? getRouteSettingsName(RouteSettings? settings, int i) {
+    if (settings?.name == null) return null;
+    final routeName = getRouteName(settings!, i);
+    if (routeName == null) return null;
+    return RouteSettings(name: routeName);
+  }
+
+  Future<bool> askBeforeClosing() async {
+    final canPop = navPages[page].key.currentState!.canPop();
+    if (canPop) {
+      final maybePop = await navPages[page].key.currentState!.maybePop();
+      return !maybePop;
+    }
+
+    final shouldPop = await AppRouter.askBeforeClosingApp();
+    return shouldPop;
+  }
 }
 
 class _TabPage {
