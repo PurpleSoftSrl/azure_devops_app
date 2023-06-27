@@ -9,11 +9,13 @@ class WorkItemTypeIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return type == null || type == WorkItemType.all
-        ? const SizedBox()
-        : SvgPicture.network(
-            'https://tfsprodweu2.visualstudio.com/_apis/wit/workItemIcons/${type!.icon}?color=${type!.color}&v=2',
-            width: 20,
-          );
+    if (type == null || type == WorkItemType.all) return const SizedBox();
+
+    final colorQuery = type!.color != null ? 'color=${type!.color}&' : '';
+    final url = 'https://tfsprodweu2.visualstudio.com/_apis/wit/workItemIcons/${type!.icon}?${colorQuery}v=2';
+    return SvgPicture.network(
+      url,
+      width: 20,
+    );
   }
 }

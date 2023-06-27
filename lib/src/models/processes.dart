@@ -90,7 +90,7 @@ class WorkItemType {
   WorkItemType({
     required this.referenceName,
     required this.name,
-    required this.color,
+    this.color,
     required this.icon,
     required this.isDisabled,
     this.customization,
@@ -99,7 +99,7 @@ class WorkItemType {
   factory WorkItemType.fromJson(Map<String, dynamic> json) => WorkItemType(
         referenceName: json['referenceName'] as String,
         name: json['name'] as String,
-        color: json['color'] as String,
+        color: json['color'] as String?,
         icon: json['icon'] as String,
         isDisabled: json['isDisabled'] as bool,
         customization: json['customization'] as String?,
@@ -109,7 +109,6 @@ class WorkItemType {
     return WorkItemType(
       name: 'All',
       referenceName: 'All',
-      color: '',
       isDisabled: false,
       icon: '',
     );
@@ -117,7 +116,7 @@ class WorkItemType {
 
   final String referenceName;
   final String name;
-  final String color;
+  final String? color;
   final String icon;
   final String? customization;
   final bool isDisabled;
