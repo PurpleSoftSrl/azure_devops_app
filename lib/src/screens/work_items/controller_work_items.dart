@@ -99,7 +99,7 @@ class _WorkItemsController with FilterMixin {
   }
 
   void filterByUser(GraphUser user) {
-    if (user.mailAddress == userFilter.mailAddress) return;
+    if (user == userFilter) return;
 
     workItems.value = null;
     userFilter = user;
@@ -107,11 +107,16 @@ class _WorkItemsController with FilterMixin {
   }
 
   Future<void> _getData() async {
+    var assignedTo = userFilter == userAll ? null : userFilter;
+    if (userFilter.displayName == 'Unassigned') {
+      assignedTo = GraphUser(mailAddress: '');
+    }
+
     final res = await apiService.getWorkItems(
       project: projectFilter == projectAll ? null : projectFilter,
       type: typeFilter == WorkItemType.all ? null : typeFilter,
       status: statusFilter == WorkItemState.all ? null : statusFilter,
-      assignedTo: userFilter == userAll ? null : userFilter,
+      assignedTo: assignedTo,
     );
     workItems.value = res;
   }
@@ -129,5 +134,11 @@ class _WorkItemsController with FilterMixin {
   Future<void> createWorkItem() async {
     await AppRouter.goToCreateOrEditWorkItem();
     await init();
+  }
+
+  List<GraphUser> getAssignees() {
+    final users = getSortedUsers(apiService);
+    final unassigned = GraphUser(displayName: 'Unassigned');
+    return users..insert(1, unassigned);
   }
 }

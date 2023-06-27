@@ -57,7 +57,7 @@ class _WorkItemsScreen extends StatelessWidget {
           ),
           FilterMenu<GraphUser>(
             title: 'Assigned to',
-            values: ctrl.getSortedUsers(ctrl.apiService),
+            values: ctrl.getAssignees(),
             onSelected: ctrl.filterByUser,
             formatLabel: (u) => u.displayName ?? '',
             isDefaultFilter: ctrl.userFilter == ctrl.userAll,
