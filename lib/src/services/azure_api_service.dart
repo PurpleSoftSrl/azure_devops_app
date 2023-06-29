@@ -671,7 +671,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     await Future.wait([
       for (final proc in processes)
-        _get('$_basePath/_apis/work/processes/${proc.typeId}/workItemTypes?$_apiVersion').then(
+        _get('$_basePath/_apis/work/processes/${proc.typeId}/workItemTypes?\$expand=states&$_apiVersion').then(
           (res) {
             if (res.isError) return;
 
@@ -680,27 +680,15 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
             for (final proj in projectsToSearch) {
               _workItemTypes.putIfAbsent(proj.name!, () => types);
               processWorkItems.putIfAbsent(proc, () => types);
-            }
-          },
-        ),
-    ]);
 
-    await Future.wait([
-      for (final procEntry in processWorkItems.entries)
-        for (final wt in procEntry.value)
-          _get('$_basePath/_apis/work/processes/${procEntry.key.typeId}/workItemTypes/${wt.referenceName}/states?$_apiVersion')
-              .then(
-            (res) {
-              if (res.isError) return;
-
-              final states = GetWorkItemStatesResponse.fromResponse(res);
-              final projectsToSearch = procEntry.key.projects.where((p) => (_chosenProjects ?? _projects).contains(p));
-              for (final proj in projectsToSearch) {
+              for (final wt in types) {
+                final states = wt.states;
                 _workItemStates.putIfAbsent(proj.name!, () => {wt.name: states});
                 _workItemStates[proj.name]!.putIfAbsent(wt.name, () => states);
               }
-            },
-          ),
+            }
+          },
+        ),
     ]);
 
     return ApiResponse.ok(_workItemTypes);

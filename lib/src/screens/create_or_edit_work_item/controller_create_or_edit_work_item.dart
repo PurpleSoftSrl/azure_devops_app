@@ -102,6 +102,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
           referenceName: fields.systemWorkItemType,
           isDisabled: false,
           icon: '',
+          states: [],
         );
     newWorkItemStatus = apiService.workItemStates[fields.systemTeamProject]?[fields.systemWorkItemType]
         ?.firstWhereOrNull((s) => s.name == fields.systemState);

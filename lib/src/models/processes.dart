@@ -94,6 +94,7 @@ class WorkItemType {
     required this.icon,
     required this.isDisabled,
     this.customization,
+    required this.states,
   });
 
   factory WorkItemType.fromJson(Map<String, dynamic> json) => WorkItemType(
@@ -103,6 +104,9 @@ class WorkItemType {
         icon: json['icon'] as String,
         isDisabled: json['isDisabled'] as bool,
         customization: json['customization'] as String?,
+        states: (json['states'] as List<dynamic>? ?? [])
+            .map((s) => WorkItemState.fromJson(s as Map<String, dynamic>))
+            .toList(),
       );
 
   static WorkItemType get all {
@@ -111,6 +115,7 @@ class WorkItemType {
       referenceName: 'All',
       isDisabled: false,
       icon: '',
+      states: [],
     );
   }
 
@@ -120,6 +125,7 @@ class WorkItemType {
   final String icon;
   final String? customization;
   final bool isDisabled;
+  final List<WorkItemState> states;
 
   @override
   bool operator ==(Object other) {
