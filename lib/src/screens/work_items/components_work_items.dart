@@ -42,6 +42,7 @@ class _WorkItemListTile extends StatelessWidget {
                     style: context.textTheme.labelLarge,
                   ),
                 ),
+                const SizedBox(width: 8),
                 Text(
                   item.fields.systemState,
                   style: subtitleStyle.copyWith(

@@ -167,7 +167,13 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
           width: 80,
           height: 20,
           child: !changed
-              ? null
+              ? Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: AppRouter.popRoute,
+                    child: Icon(Icons.close),
+                  ),
+                )
               : TextButton(
                   onPressed: () {
                     confirm = true;
@@ -200,6 +206,11 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
 
     final comment = await editorController.getText();
 
+    if (comment.trim().isEmpty) return;
+
+    final trimmed = comment.trim().replaceAll(' ', '');
+    if (trimmed == '<br>' || trimmed == '<div><br></div>') return;
+
     final res = await apiService.addWorkItemComment(
       projectName: args.project,
       id: args.id,
@@ -213,7 +224,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
     });
 
     if (res.isError) {
-      return OverlayService.error('Comment not added');
+      return OverlayService.error('Error', description: 'Comment not added');
     }
 
     await init();
