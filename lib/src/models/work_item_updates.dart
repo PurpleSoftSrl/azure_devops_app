@@ -39,7 +39,7 @@ class WorkItemUpdate {
         id: json['id'] as int,
         workItemId: json['workItemId'] as int,
         rev: json['rev'] as int,
-        revisedBy: _RevisedBy.fromJson(json['revisedBy'] as Map<String, dynamic>),
+        revisedBy: RevisedBy.fromJson(json['revisedBy'] as Map<String, dynamic>),
         revisedDate: DateTime.parse(json['revisedDate']!.toString()).toLocal(),
         fields: json['fields'] == null ? null : _Fields.fromJson(json['fields'] as Map<String, dynamic>),
         relations:
@@ -49,7 +49,7 @@ class WorkItemUpdate {
   final int id;
   final int workItemId;
   final int rev;
-  final _RevisedBy revisedBy;
+  final RevisedBy revisedBy;
   final DateTime revisedDate;
   final _Fields? fields;
   final WorkItemRelations? relations;
@@ -94,105 +94,102 @@ class _Fields {
         systemId: json['System.Id'] == null
             ? null
             : _MicrosoftVstsCommonPriority.fromJson(json['System.Id'] as Map<String, dynamic>),
-        systemAuthorizedDate: _StringUpdateValue.fromJson(json['System.AuthorizedDate'] as Map<String, dynamic>),
-        systemRevisedDate: _StringUpdateValue.fromJson(json['System.RevisedDate'] as Map<String, dynamic>),
+        systemAuthorizedDate: ChangedField.fromJson(json['System.AuthorizedDate'] as Map<String, dynamic>),
+        systemRevisedDate: ChangedField.fromJson(json['System.RevisedDate'] as Map<String, dynamic>),
         systemWorkItemType: json['System.WorkItemType'] == null
             ? null
-            : _StringUpdateValue.fromJson(json['System.WorkItemType'] as Map<String, dynamic>),
-        systemState: json['System.State'] == null
-            ? null
-            : _StringUpdateValue.fromJson(json['System.State'] as Map<String, dynamic>),
-        systemReason: json['System.Reason'] == null
-            ? null
-            : _StringUpdateValue.fromJson(json['System.Reason'] as Map<String, dynamic>),
+            : ChangedField.fromJson(json['System.WorkItemType'] as Map<String, dynamic>),
+        systemState:
+            json['System.State'] == null ? null : ChangedField.fromJson(json['System.State'] as Map<String, dynamic>),
+        systemReason:
+            json['System.Reason'] == null ? null : ChangedField.fromJson(json['System.Reason'] as Map<String, dynamic>),
         systemAssignedTo: json['System.AssignedTo'] == null
             ? null
-            : _RevisedByUpdateValue.fromJson(json['System.AssignedTo'] as Map<String, dynamic>),
+            : RevisedByUpdateValue.fromJson(json['System.AssignedTo'] as Map<String, dynamic>),
         systemCreatedDate: json['System.CreatedDate'] == null
             ? null
-            : _StringUpdateValue.fromJson(json['System.CreatedDate'] as Map<String, dynamic>),
+            : ChangedField.fromJson(json['System.CreatedDate'] as Map<String, dynamic>),
         systemCreatedBy: json['System.CreatedBy'] == null
             ? null
-            : _RevisedByUpdateValue.fromJson(json['System.CreatedBy'] as Map<String, dynamic>),
+            : RevisedByUpdateValue.fromJson(json['System.CreatedBy'] as Map<String, dynamic>),
         systemChangedDate: json['System.ChangedDate'] == null
             ? null
-            : _StringUpdateValue.fromJson(json['System.ChangedDate'] as Map<String, dynamic>),
+            : ChangedField.fromJson(json['System.ChangedDate'] as Map<String, dynamic>),
         systemChangedBy: json['System.ChangedBy'] == null
             ? null
-            : _RevisedByUpdateValue.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
+            : RevisedByUpdateValue.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
         systemAuthorizedAs: json['System.AuthorizedAs'] == null
             ? null
-            : _RevisedByUpdateValue.fromJson(json['System.AuthorizedAs'] as Map<String, dynamic>),
+            : RevisedByUpdateValue.fromJson(json['System.AuthorizedAs'] as Map<String, dynamic>),
         systemPersonId: json['System.PersonId'] == null
             ? null
-            : _SystemRevClass.fromJson(json['System.PersonId'] as Map<String, dynamic>),
+            : ChangedField.fromJson(json['System.PersonId'] as Map<String, dynamic>),
         systemCommentCount: json['System.CommentCount'] == null
             ? null
-            : _SystemRevClass.fromJson(json['System.CommentCount'] as Map<String, dynamic>),
+            : ChangedField.fromJson(json['System.CommentCount'] as Map<String, dynamic>),
         systemTeamProject: json['System.TeamProject'] == null
             ? null
-            : _StringUpdateValue.fromJson(json['System.TeamProject'] as Map<String, dynamic>),
-        systemTitle: json['System.Title'] == null
-            ? null
-            : _StringUpdateValue.fromJson(json['System.Title'] as Map<String, dynamic>),
+            : ChangedField.fromJson(json['System.TeamProject'] as Map<String, dynamic>),
+        systemTitle:
+            json['System.Title'] == null ? null : ChangedField.fromJson(json['System.Title'] as Map<String, dynamic>),
         microsoftVstsCommonPriority: json['Microsoft.VSTS.Common.Priority'] == null
             ? null
             : _MicrosoftVstsCommonPriority.fromJson(json['Microsoft.VSTS.Common.Priority'] as Map<String, dynamic>),
         microsoftVstsCommonValueArea: json['Microsoft.VSTS.Common.ValueArea'] == null
             ? null
-            : _StringUpdateValue.fromJson(json['Microsoft.VSTS.Common.ValueArea'] as Map<String, dynamic>),
+            : ChangedField.fromJson(json['Microsoft.VSTS.Common.ValueArea'] as Map<String, dynamic>),
         microsoftVstsCommonStateChangeDate: json['Microsoft.VSTS.Common.StateChangeDate'] == null
             ? null
-            : _StringUpdateValue.fromJson(json['Microsoft.VSTS.Common.StateChangeDate'] as Map<String, dynamic>),
+            : ChangedField.fromJson(json['Microsoft.VSTS.Common.StateChangeDate'] as Map<String, dynamic>),
         systemHistory: json['System.History'] == null
             ? null
-            : _StringUpdateValue.fromJson(json['System.History'] as Map<String, dynamic>),
+            : ChangedField.fromJson(json['System.History'] as Map<String, dynamic>),
         microsoftVstsCommonActivatedBy: json['Microsoft.VSTS.Common.ActivatedBy'] == null
             ? null
-            : _RevisedByUpdateValue.fromJson(
+            : RevisedByUpdateValue.fromJson(
                 json['Microsoft.VSTS.Common.ActivatedBy'] as Map<String, dynamic>,
               ),
         microsoftVstsCommonActivatedDate: json['Microsoft.VSTS.Common.ActivatedDate'] == null
             ? null
-            : _StringUpdateValue.fromJson(json['Microsoft.VSTS.Common.ActivatedDate'] as Map<String, dynamic>),
+            : ChangedField.fromJson(json['Microsoft.VSTS.Common.ActivatedDate'] as Map<String, dynamic>),
         microsoftVstsCommonResolvedDate: json['Microsoft.VSTS.Common.ResolvedDate'] == null
             ? null
-            : _StringUpdateValue.fromJson(json['Microsoft.VSTS.Common.ResolvedDate'] as Map<String, dynamic>),
+            : ChangedField.fromJson(json['Microsoft.VSTS.Common.ResolvedDate'] as Map<String, dynamic>),
         microsoftVstsCommonResolvedBy: json['Microsoft.VSTS.Common.ResolvedBy'] == null
             ? null
-            : _RevisedByUpdateValue.fromJson(
+            : RevisedByUpdateValue.fromJson(
                 json['Microsoft.VSTS.Common.ResolvedBy'] as Map<String, dynamic>,
               ),
         microsoftVstsSchedulingEffort: json['Microsoft.VSTS.Scheduling.Effort'] == null
             ? null
-            : _MicrosoftVstsCommonPriority.fromJson(json['Microsoft.VSTS.Scheduling.Effort'] as Map<String, dynamic>),
+            : ChangedField.fromJson(json['Microsoft.VSTS.Scheduling.Effort'] as Map<String, dynamic>),
       );
 
   final _MicrosoftVstsCommonPriority? systemId;
-  final _StringUpdateValue systemAuthorizedDate;
-  final _StringUpdateValue systemRevisedDate;
-  final _StringUpdateValue? systemWorkItemType;
-  final _StringUpdateValue? systemState;
-  final _StringUpdateValue? systemReason;
-  final _RevisedByUpdateValue? systemAssignedTo;
-  final _StringUpdateValue? systemCreatedDate;
-  final _RevisedByUpdateValue? systemCreatedBy;
-  final _StringUpdateValue? systemChangedDate;
-  final _RevisedByUpdateValue? systemChangedBy;
-  final _RevisedByUpdateValue? systemAuthorizedAs;
-  final _SystemRevClass? systemPersonId;
-  final _SystemRevClass? systemCommentCount;
-  final _StringUpdateValue? systemTeamProject;
-  final _StringUpdateValue? systemTitle;
+  final ChangedField<String> systemAuthorizedDate;
+  final ChangedField<String> systemRevisedDate;
+  final ChangedField<String>? systemWorkItemType;
+  final ChangedField<String>? systemState;
+  final ChangedField<String>? systemReason;
+  final RevisedByUpdateValue? systemAssignedTo;
+  final ChangedField<String>? systemCreatedDate;
+  final RevisedByUpdateValue? systemCreatedBy;
+  final ChangedField<String>? systemChangedDate;
+  final RevisedByUpdateValue? systemChangedBy;
+  final RevisedByUpdateValue? systemAuthorizedAs;
+  final ChangedField<int>? systemPersonId;
+  final ChangedField<int>? systemCommentCount;
+  final ChangedField<String>? systemTeamProject;
+  final ChangedField<String>? systemTitle;
   final _MicrosoftVstsCommonPriority? microsoftVstsCommonPriority;
-  final _StringUpdateValue? microsoftVstsCommonValueArea;
-  final _StringUpdateValue? microsoftVstsCommonStateChangeDate;
-  final _StringUpdateValue? systemHistory;
-  final _RevisedByUpdateValue? microsoftVstsCommonActivatedBy;
-  final _StringUpdateValue? microsoftVstsCommonActivatedDate;
-  final _StringUpdateValue? microsoftVstsCommonResolvedDate;
-  final _RevisedByUpdateValue? microsoftVstsCommonResolvedBy;
-  final _MicrosoftVstsCommonPriority? microsoftVstsSchedulingEffort;
+  final ChangedField<String>? microsoftVstsCommonValueArea;
+  final ChangedField<String>? microsoftVstsCommonStateChangeDate;
+  final ChangedField<String>? systemHistory;
+  final RevisedByUpdateValue? microsoftVstsCommonActivatedBy;
+  final ChangedField<String>? microsoftVstsCommonActivatedDate;
+  final ChangedField<String>? microsoftVstsCommonResolvedDate;
+  final RevisedByUpdateValue? microsoftVstsCommonResolvedBy;
+  final ChangedField<double>? microsoftVstsSchedulingEffort;
 
   @override
   String toString() {
@@ -200,23 +197,23 @@ class _Fields {
   }
 }
 
-class _RevisedByUpdateValue {
-  _RevisedByUpdateValue({
+class RevisedByUpdateValue {
+  RevisedByUpdateValue({
     this.newValue,
     this.oldValue,
   });
 
-  factory _RevisedByUpdateValue.fromJson(Map<String, dynamic> json) => _RevisedByUpdateValue(
-        newValue: json['newValue'] == null ? null : _RevisedBy.fromJson(json['newValue'] as Map<String, dynamic>),
-        oldValue: json['oldValue'] == null ? null : _RevisedBy.fromJson(json['oldValue'] as Map<String, dynamic>),
+  factory RevisedByUpdateValue.fromJson(Map<String, dynamic> json) => RevisedByUpdateValue(
+        newValue: json['newValue'] == null ? null : RevisedBy.fromJson(json['newValue'] as Map<String, dynamic>),
+        oldValue: json['oldValue'] == null ? null : RevisedBy.fromJson(json['oldValue'] as Map<String, dynamic>),
       );
 
-  final _RevisedBy? newValue;
-  final _RevisedBy? oldValue;
+  final RevisedBy? newValue;
+  final RevisedBy? oldValue;
 }
 
-class _RevisedBy {
-  _RevisedBy({
+class RevisedBy {
+  RevisedBy({
     this.displayName,
     this.id,
     this.uniqueName,
@@ -225,7 +222,7 @@ class _RevisedBy {
     this.name,
   });
 
-  factory _RevisedBy.fromJson(Map<String, dynamic> json) => _RevisedBy(
+  factory RevisedBy.fromJson(Map<String, dynamic> json) => RevisedBy(
         displayName: json['displayName'] as String?,
         id: json['id'] as String?,
         uniqueName: json['uniqueName'] as String?,
@@ -255,36 +252,6 @@ class _MicrosoftVstsCommonPriority {
 
   final double? oldValue;
   final double? newValue;
-}
-
-class _StringUpdateValue {
-  _StringUpdateValue({
-    required this.oldValue,
-    required this.newValue,
-  });
-
-  factory _StringUpdateValue.fromJson(Map<String, dynamic> json) => _StringUpdateValue(
-        oldValue: json['oldValue'] as String?,
-        newValue: json['newValue'] as String?,
-      );
-
-  final String? oldValue;
-  final String? newValue;
-}
-
-class _SystemRevClass {
-  _SystemRevClass({
-    required this.newValue,
-    this.oldValue,
-  });
-
-  factory _SystemRevClass.fromJson(Map<String, dynamic> json) => _SystemRevClass(
-        newValue: json['newValue'] as int?,
-        oldValue: json['oldValue'] as int?,
-      );
-
-  final int? newValue;
-  final int? oldValue;
 }
 
 class WorkItemRelations {
@@ -349,4 +316,68 @@ class _Attributes {
   String toString() {
     return '_Attributes(id: $id, resourceSize: $resourceSize, name: $name)';
   }
+}
+
+sealed class ItemUpdate {
+  ItemUpdate({required this.updateDate, required this.updatedBy});
+
+  final DateTime updateDate;
+  final UpdateUser updatedBy;
+}
+
+class SimpleItemUpdate extends ItemUpdate {
+  SimpleItemUpdate({
+    required super.updateDate,
+    required super.updatedBy,
+    required this.isFirst,
+    this.type,
+    this.state,
+    this.assignedTo,
+    this.effort,
+    this.title,
+    this.relations,
+  });
+
+  final bool isFirst;
+  ChangedField<String>? type;
+  ChangedField<String>? state;
+  RevisedByUpdateValue? assignedTo;
+  ChangedField<double>? effort;
+  ChangedField<String>? title;
+  WorkItemRelations? relations;
+}
+
+class CommentItemUpdate extends ItemUpdate {
+  CommentItemUpdate({
+    required super.updateDate,
+    required super.updatedBy,
+    required this.workItemId,
+    required this.id,
+    required this.text,
+    this.isEdited = false,
+  });
+
+  final int workItemId;
+  final int id;
+  final String text;
+  final bool isEdited;
+}
+
+final class UpdateUser {
+  UpdateUser({required this.descriptor, required this.displayName});
+
+  final String descriptor;
+  final String displayName;
+}
+
+final class ChangedField<T> {
+  ChangedField({required this.oldValue, required this.newValue});
+
+  factory ChangedField.fromJson(Map<String, dynamic> json) => ChangedField(
+        oldValue: json['oldValue'] as T?,
+        newValue: json['newValue'] as T?,
+      );
+
+  final T? oldValue;
+  final T? newValue;
 }

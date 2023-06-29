@@ -113,107 +113,191 @@ class _HtmlWidget extends StatelessWidget {
 class _History extends StatelessWidget {
   const _History({required this.updates, required this.ctrl});
 
-  final List<WorkItemUpdate> updates;
+  final List<ItemUpdate> updates;
   final _WorkItemDetailController ctrl;
 
   @override
   Widget build(BuildContext context) {
-    final updatesToShow = updates.where((u) => u.hasSUpportedChanges);
     return Column(
-      children: updatesToShow.map(
+      children: updates.map(
         (update) {
-          final isFirst = update.rev == 1;
-          final fields = update.fields;
-          if (fields == null) return const SizedBox();
-
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  if (update.revisedBy.descriptor != null)
-                    MemberAvatar(userDescriptor: update.revisedBy.descriptor!, radius: 15),
+                  MemberAvatar(userDescriptor: update.updatedBy.descriptor, radius: 15),
                   const SizedBox(width: 10),
-                  if (update.revisedBy.displayName != null) Text(update.revisedBy.displayName!),
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(text: update.updatedBy.displayName),
+                        if (update is CommentItemUpdate)
+                          TextSpan(
+                            text: '  commented ${update.isEdited ? '(edited)' : ''}',
+                            style: context.textTheme.labelSmall,
+                          ),
+                      ],
+                    ),
+                  ),
                   const Spacer(),
-                  if (fields.systemChangedDate?.newValue != null)
-                    Text(DateTime.parse(fields.systemChangedDate!.newValue!).minutesAgo),
+                  Text(update.updateDate.minutesAgo),
                 ],
               ),
               const SizedBox(
                 height: 5,
               ),
-              DefaultTextStyle(
-                style: context.textTheme.labelSmall!.copyWith(
-                  fontFamily: AppTheme.defaultFont,
-                  fontWeight: FontWeight.w200,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (isFirst)
-                      Text(
-                        'Created work item',
-                      ),
-                    if (fields.systemWorkItemType?.newValue != null)
-                      Text(
-                        fields.systemWorkItemType?.oldValue == null
-                            ? 'Set type to ${fields.systemWorkItemType?.newValue}'
-                            : 'Changed type to ${fields.systemWorkItemType?.newValue}',
-                      ),
-                    if (!isFirst && fields.systemState?.newValue != null)
-                      Text(
-                        fields.systemState?.oldValue == null
-                            ? 'Set state to ${fields.systemState?.newValue}'
-                            : 'Changed state to ${fields.systemState?.newValue}',
-                      ),
-                    if (fields.systemAssignedTo?.newValue?.displayName != null)
-                      Text(
-                        fields.systemAssignedTo?.oldValue?.displayName == null
-                            ? 'Set assignee to ${fields.systemAssignedTo?.newValue?.displayName}'
-                            : 'Changed assignee: ${fields.systemAssignedTo?.newValue?.displayName}',
-                      ),
-                    if (fields.microsoftVstsSchedulingEffort != null)
-                      Text(
-                        fields.microsoftVstsSchedulingEffort?.oldValue == null
-                            ? 'Set effort to ${fields.microsoftVstsSchedulingEffort?.newValue}'
-                            : 'Changed effort from ${fields.microsoftVstsSchedulingEffort?.oldValue} to ${fields.microsoftVstsSchedulingEffort?.newValue}',
-                      ),
-                    if (fields.systemTitle != null)
-                      Text(
-                        fields.systemTitle?.oldValue == null
-                            ? "Set title to '${fields.systemTitle?.newValue}'"
-                            : "Changed title from '${fields.systemTitle?.oldValue}' to '${fields.systemTitle?.newValue}'",
-                      ),
-                    if (update.relations?.added != null)
-                      for (final att in update.relations!.added!) _AttachmentRow(ctrl: ctrl, att: att),
-                    if (fields.systemHistory != null)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(AppTheme.radius),
-                              child: ColoredBox(
-                                color: context.colorScheme.surface,
-                                child: _HtmlWidget(
-                                  data: fields.systemHistory!.newValue!,
-                                  padding: const EdgeInsets.all(3),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                  ],
-                ),
-              ),
-              if (update != updatesToShow.last) const Divider(height: 30),
+              switch (update) {
+                SimpleItemUpdate() => _SimpleUpdateWidget(ctrl: ctrl, update: update),
+                CommentItemUpdate() => _CommentWidget(ctrl: ctrl, update: update),
+              },
+              if (update != updates.last) const Divider(height: 30),
             ],
           );
         },
       ).toList(),
+    );
+  }
+}
+
+class _SimpleUpdateWidget extends StatelessWidget {
+  const _SimpleUpdateWidget({
+    required this.ctrl,
+    required this.update,
+  });
+
+  final _WorkItemDetailController ctrl;
+  final SimpleItemUpdate update;
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTextStyle(
+      style: context.textTheme.labelSmall!.copyWith(
+        fontFamily: AppTheme.defaultFont,
+        fontWeight: FontWeight.w200,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (update.isFirst)
+            Text(
+              'Created work item',
+            ),
+          if (update.type != null)
+            Text(
+              update.type!.oldValue == null
+                  ? 'Set type to ${update.type!.newValue}'
+                  : 'Changed type from ${update.type!.oldValue} to ${update.type!.newValue}',
+            ),
+          if (!update.isFirst && update.state != null)
+            Text(
+              update.state!.oldValue == null
+                  ? 'Set state to ${update.state!.newValue}'
+                  : 'Changed state to ${update.state!.newValue}',
+            ),
+          if (update.assignedTo?.oldValue != null || update.assignedTo?.newValue != null)
+            Text(
+              update.assignedTo!.oldValue == null
+                  ? 'Assigned to ${update.assignedTo!.newValue?.displayName}'
+                  : update.assignedTo!.newValue == null
+                      ? 'Unassigned ${update.assignedTo!.oldValue?.displayName}'
+                      : 'Changed assignee: ${update.assignedTo!.newValue?.displayName}',
+            ),
+          if (update.effort != null)
+            Text(
+              update.effort!.oldValue == null
+                  ? 'Set effort to ${update.effort!.newValue}'
+                  : 'Changed effort from ${update.effort!.oldValue} to ${update.effort!.newValue}',
+            ),
+          if (update.title != null)
+            Text(
+              update.title!.oldValue == null
+                  ? "Set title to '${update.title!.newValue}'"
+                  : "Changed title from '${update.title!.oldValue}' to '${update.title!.newValue}'",
+            ),
+          if (update.relations?.added != null)
+            for (final att in update.relations!.added!) _AttachmentRow(ctrl: ctrl, att: att),
+        ],
+      ),
+    );
+  }
+}
+
+class _CommentWidget extends StatelessWidget {
+  const _CommentWidget({
+    required this.ctrl,
+    required this.update,
+  });
+
+  final _WorkItemDetailController ctrl;
+  final CommentItemUpdate update;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Align(
+          alignment: Alignment.centerRight,
+          child: PopupMenuButton<void>(
+            key: ValueKey('Popup menu work item comment'),
+            itemBuilder: (_) => [
+              PopupMenuItem<void>(
+                onTap: () => ctrl.deleteWorkItemComment(update),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                height: 30,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Delete',
+                      style: context.textTheme.titleSmall,
+                    ),
+                    Icon(Icons.delete),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem<void>(
+                onTap: () => ctrl.editWorkItemComment(update),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                height: 30,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Edit',
+                      style: context.textTheme.titleSmall,
+                    ),
+                    Icon(DevOpsIcons.edit),
+                  ],
+                ),
+              ),
+            ],
+            elevation: 0,
+            tooltip: 'Work item comment actions',
+            offset: const Offset(0, 40),
+            shape: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            child: Icon(DevOpsIcons.dots_horizontal),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 5),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(AppTheme.radius),
+            child: ColoredBox(
+              color: context.colorScheme.surface,
+              child: _HtmlWidget(
+                data: update.text,
+                padding: const EdgeInsets.all(3),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -56,7 +56,7 @@ class WorkItemWithUpdates {
   });
 
   final WorkItem item;
-  final List<WorkItemUpdate> updates;
+  final List<ItemUpdate> updates;
 
   @override
   String toString() => 'WorkItemWithUpdates(item: $item, updates: $updates)';

@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:azure_devops/src/extensions/commit_extension.dart';
 import 'package:azure_devops/src/extensions/reponse_extension.dart';
+import 'package:azure_devops/src/extensions/work_item_update_extension.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
@@ -24,6 +25,7 @@ import 'package:azure_devops/src/models/team_member.dart';
 import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/user_entitlements.dart';
+import 'package:azure_devops/src/models/work_item_comments.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
@@ -113,6 +115,17 @@ abstract class AzureApiService {
     required String projectName,
     required int id,
     required String text,
+  });
+
+  Future<ApiResponse<bool>> editWorkItemComment({
+    required String projectName,
+    required CommentItemUpdate update,
+    required String text,
+  });
+
+  Future<ApiResponse<bool>> deleteWorkItemComment({
+    required String projectName,
+    required CommentItemUpdate update,
   });
 
   Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id, required String type});
@@ -699,16 +712,53 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     required String projectName,
     required int workItemId,
   }) async {
-    final workItemRes = await _get('$_basePath/$projectName/_apis/wit/workitems/$workItemId?$_apiVersion');
+    final workItemPath = '$_basePath/$projectName/_apis/wit/workitems/$workItemId';
+    final workItemRes = await _get('$workItemPath?$_apiVersion');
     if (workItemRes.isError) return ApiResponse.error(workItemRes);
 
-    final workItemUpdatesRes =
-        await _get('$_basePath/$projectName/_apis/wit/workitems/$workItemId/updates?$_apiVersion');
-    if (workItemUpdatesRes.isError) return ApiResponse.error(workItemUpdatesRes);
+    final updatesRes = await _get('$workItemPath/updates?$_apiVersion');
+    if (updatesRes.isError) return ApiResponse.error(updatesRes);
+
+    final commentsRes = await _get('$workItemPath/comments?$_apiVersion-preview');
+    if (commentsRes.isError) return ApiResponse.error(commentsRes);
 
     final item = WorkItem.fromResponse(workItemRes);
-    final updates = WorkItemUpdatesResponse.fromResponse(workItemUpdatesRes);
-    return ApiResponse.ok(WorkItemWithUpdates(item: item, updates: updates));
+    final updates = WorkItemUpdatesResponse.fromResponse(updatesRes);
+    final comments = WorkItemCommentRes.fromResponse(commentsRes).comments;
+
+    final itemUpdates = [
+      ...comments.map(
+        (c) => CommentItemUpdate(
+          updateDate: c.createdDate,
+          updatedBy: UpdateUser(descriptor: c.createdBy.descriptor, displayName: c.createdBy.displayName),
+          id: c.id,
+          workItemId: c.workItemId,
+          text: c.text,
+          isEdited: c.createdDate.isBefore(c.modifiedDate),
+        ),
+      ),
+      ...updates.where((u) => u.hasSupportedChanges).map(
+            (u) => SimpleItemUpdate(
+              updateDate: u.fields!.systemChangedDate!.newValue == null
+                  ? u.revisedDate
+                  : DateTime.parse(u.fields!.systemChangedDate!.newValue!),
+              updatedBy: UpdateUser(descriptor: u.revisedBy.descriptor!, displayName: u.revisedBy.displayName!),
+              isFirst: u.rev == 1,
+              type: u.fields?.systemWorkItemType,
+              state: u.fields?.systemState,
+              assignedTo: u.fields?.systemAssignedTo,
+              effort: u.fields?.microsoftVstsSchedulingEffort,
+              title: u.fields?.systemTitle,
+              relations: u.relations,
+            ),
+          ),
+    ]..sort((a, b) {
+        final dateCompare = a.updateDate.compareTo(b.updateDate);
+        if (dateCompare == 0) return a is SimpleItemUpdate ? -1 : 1;
+        return dateCompare;
+      });
+
+    return ApiResponse.ok(WorkItemWithUpdates(item: item, updates: itemUpdates));
   }
 
   @override
@@ -823,6 +873,34 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       body: {'text': text},
     );
     if (commentRes.isError) return ApiResponse.error(commentRes);
+
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> editWorkItemComment({
+    required String projectName,
+    required CommentItemUpdate update,
+    required String text,
+  }) async {
+    final editRes = await _patch(
+      '$_basePath/$projectName/_apis/wit/workItems/${update.workItemId}/comments/${update.id}?$_apiVersion-preview',
+      body: {'text': text},
+    );
+    if (editRes.isError && editRes.statusCode != HttpStatus.noContent) return ApiResponse.error(editRes);
+
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> deleteWorkItemComment({
+    required String projectName,
+    required CommentItemUpdate update,
+  }) async {
+    final deleteRes = await _delete(
+      '$_basePath/$projectName/_apis/wit/workItems/${update.workItemId}/comments/${update.id}?$_apiVersion-preview',
+    );
+    if (deleteRes.isError && deleteRes.statusCode != HttpStatus.noContent) return ApiResponse.error(deleteRes);
 
     return ApiResponse.ok(true);
   }

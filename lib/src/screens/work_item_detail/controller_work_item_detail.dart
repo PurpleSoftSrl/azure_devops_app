@@ -35,7 +35,8 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
 
   List<WorkItemState> statuses = [];
 
-  List<WorkItemUpdate> updates = [];
+  List<ItemUpdate> updates = [];
+
   final showUpdatesReversed = ValueNotifier<bool>(true);
 
   final historyKey = GlobalKey();
@@ -148,11 +149,89 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
     }
   }
 
-  // ignore: long-method
   Future<void> addComment() async {
     final editorController = HtmlEditorController();
     final editorGlobalKey = GlobalKey<State>();
 
+    final hasConfirmed = await _showEditor(editorController, editorGlobalKey, title: 'Add comment');
+    if (!hasConfirmed) return;
+
+    final comment = await _getTextFromEditor(editorController);
+    if (comment == null) return;
+
+    final res = await apiService.addWorkItemComment(
+      projectName: args.project,
+      id: args.id,
+      text: comment,
+    );
+
+    logAnalytics('add_work_item_comment', {
+      'work_item_type': itemDetail.value?.data?.item.fields.systemWorkItemType ?? 'unknown type',
+      'comment_length': comment.length,
+      'is_error': res.isError.toString(),
+    });
+
+    if (res.isError) {
+      return OverlayService.error('Error', description: 'Comment not added');
+    }
+
+    await init();
+  }
+
+  void onHistoryVisibilityChanged(VisibilityInfo info) {
+    if (info.visibleFraction > 0 && !showCommentField.value) {
+      showCommentField.value = true;
+    } else if (instance != null && info.visibleFraction == 0 && showCommentField.value) {
+      showCommentField.value = false;
+    }
+  }
+
+  Future<void> deleteWorkItemComment(CommentItemUpdate update) async {
+    final confirm = await OverlayService.confirm(
+      'Attention',
+      description: 'Do you really want to delete this comment?',
+    );
+    if (!confirm) return;
+
+    final res = await apiService.deleteWorkItemComment(projectName: args.project, update: update);
+
+    if (res.isError) {
+      return OverlayService.error('Error', description: 'Comment not deleted');
+    }
+
+    await init();
+  }
+
+  Future<void> editWorkItemComment(CommentItemUpdate update) async {
+    final editorController = HtmlEditorController();
+    final editorGlobalKey = GlobalKey<State>();
+
+    final hasConfirmed = await _showEditor(
+      editorController,
+      editorGlobalKey,
+      initialText: update.text,
+      title: 'Edit comment',
+    );
+    if (!hasConfirmed) return;
+
+    final comment = await _getTextFromEditor(editorController);
+    if (comment == null) return;
+
+    final res = await apiService.editWorkItemComment(projectName: args.project, update: update, text: comment);
+
+    if (res.isError) {
+      return OverlayService.error('Error', description: 'Comment not edited');
+    }
+
+    await init();
+  }
+
+  Future<bool> _showEditor(
+    HtmlEditorController controller,
+    GlobalKey<State<StatefulWidget>> globalKey, {
+    String? initialText,
+    required String title,
+  }) async {
     var confirm = false;
 
     final hasChanged = ValueNotifier<bool>(false);
@@ -160,7 +239,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
     await OverlayService.bottomsheet(
       heightPercentage: .9,
       isScrollControlled: true,
-      title: 'Add comment',
+      title: title,
       topRight: ValueListenableBuilder<bool>(
         valueListenable: hasChanged,
         builder: (context, changed, __) => SizedBox(
@@ -191,50 +270,29 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
         children: [
           DevOpsHtmlEditor(
             autofocus: true,
-            editorController: editorController,
-            editorGlobalKey: editorGlobalKey,
+            editorController: controller,
+            editorGlobalKey: globalKey,
             onKeyUp: (_) {
               if (!hasChanged.value) hasChanged.value = true;
             },
+            initialText: initialText,
           ),
-          SizedBox(key: editorGlobalKey),
+          SizedBox(key: globalKey),
         ],
       ),
     );
 
-    if (!confirm) return;
-
-    final comment = await editorController.getText();
-
-    if (comment.trim().isEmpty) return;
-
-    final trimmed = comment.trim().replaceAll(' ', '');
-    if (trimmed == '<br>' || trimmed == '<div><br></div>') return;
-
-    final res = await apiService.addWorkItemComment(
-      projectName: args.project,
-      id: args.id,
-      text: comment,
-    );
-
-    logAnalytics('add_work_item_comment', {
-      'work_item_type': itemDetail.value?.data?.item.fields.systemWorkItemType ?? 'unknown type',
-      'comment_length': comment.length,
-      'is_error': res.isError.toString(),
-    });
-
-    if (res.isError) {
-      return OverlayService.error('Error', description: 'Comment not added');
-    }
-
-    await init();
+    return confirm;
   }
 
-  void onHistoryVisibilityChanged(VisibilityInfo info) {
-    if (info.visibleFraction > 0 && !showCommentField.value) {
-      showCommentField.value = true;
-    } else if (instance != null && info.visibleFraction == 0 && showCommentField.value) {
-      showCommentField.value = false;
-    }
+  Future<String?> _getTextFromEditor(HtmlEditorController editorController) async {
+    final comment = await editorController.getText();
+
+    if (comment.trim().isEmpty) return null;
+
+    final trimmed = comment.trim().replaceAll(' ', '');
+    if (trimmed == '<br>' || trimmed == '<div><br></div>') return null;
+
+    return comment;
   }
 }

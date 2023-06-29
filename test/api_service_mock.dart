@@ -16,6 +16,7 @@ import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/team_member.dart';
 import 'package:azure_devops/src/models/user.dart';
+import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
@@ -473,6 +474,23 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<bool>> addWorkItemComment({required String projectName, required int id, required String text}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<bool>> editWorkItemComment({
+    required String projectName,
+    required CommentItemUpdate update,
+    required String text,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<bool>> deleteWorkItemComment({
+    required String projectName,
+    required CommentItemUpdate update,
+  }) {
     throw UnimplementedError();
   }
 

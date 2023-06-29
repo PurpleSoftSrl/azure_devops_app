@@ -6,7 +6,6 @@ import 'dart:io';
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
-import 'package:azure_devops/src/extensions/work_item_update_extension.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/mixins/share_mixin.dart';
