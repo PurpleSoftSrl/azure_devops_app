@@ -36,7 +36,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   String newWorkItemTitle = '';
   String newWorkItemDescription = '';
-  late GraphUser newWorkItemAssignedTo = userAll;
+
+  final unassigned = GraphUser(displayName: 'Unassigned');
+  late GraphUser newWorkItemAssignedTo = unassigned;
   late WorkItemType newWorkItemType = allWorkItemTypes.first;
   late Project newWorkItemProject = getProjects(storageService).firstWhereOrNull((p) => p.id != '-1') ?? projectAll;
 
@@ -89,14 +91,15 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     newWorkItemTitle = fields.systemTitle;
     newWorkItemDescription = fields.systemDescription ?? '';
-    newWorkItemAssignedTo =
-        getSortedUsers(apiService).firstWhereOrNull((u) => u.mailAddress == fields.systemAssignedTo?.uniqueName) ??
-            userAll;
+    if (fields.systemAssignedTo != null) {
+      newWorkItemAssignedTo =
+          getSortedUsers(apiService).firstWhereOrNull((u) => u.mailAddress == fields.systemAssignedTo?.uniqueName) ??
+              unassigned;
+    }
     newWorkItemType = projectWorkItemTypes.firstWhereOrNull((t) => t.name == fields.systemWorkItemType) ??
         WorkItemType(
           name: fields.systemWorkItemType,
           referenceName: fields.systemWorkItemType,
-          color: '',
           isDisabled: false,
           icon: '',
         );
@@ -172,7 +175,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     final errorMessage = _checkRequiredFields();
     if (errorMessage != null) return OverlayService.snackbar(errorMessage, isError: true);
 
-    final res = isEditing ? await _editWorkItem() : await _createWorkItem();
+    final assignedTo = newWorkItemAssignedTo == unassigned ? GraphUser(mailAddress: '') : newWorkItemAssignedTo;
+
+    final res = isEditing ? await _editWorkItem(assignedTo) : await _createWorkItem(assignedTo);
 
     logAnalytics('${isEditing ? 'edited' : 'created'}_work_item', {
       'work_item_type': newWorkItemType.name,
@@ -216,25 +221,25 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     return errorMessage;
   }
 
-  Future<ApiResponse<WorkItem>> _editWorkItem() async {
+  Future<ApiResponse<WorkItem>> _editWorkItem(GraphUser? assignedTo) async {
     final res = await apiService.editWorkItem(
       projectName: args.project!,
       id: args.id!,
       type: newWorkItemType,
       title: newWorkItemTitle,
-      assignedTo: newWorkItemAssignedTo.displayName == userAll.displayName ? null : newWorkItemAssignedTo,
+      assignedTo: assignedTo,
       description: newWorkItemDescription,
       status: newWorkItemStatus?.name,
     );
     return res;
   }
 
-  Future<ApiResponse<WorkItem>> _createWorkItem() async {
+  Future<ApiResponse<WorkItem>> _createWorkItem(GraphUser? assignedTo) async {
     final res = await apiService.createWorkItem(
       projectName: newWorkItemProject.name!,
       type: newWorkItemType,
       title: newWorkItemTitle,
-      assignedTo: newWorkItemAssignedTo.displayName == userAll.displayName ? null : newWorkItemAssignedTo,
+      assignedTo: assignedTo,
       description: newWorkItemDescription,
     );
     return res;
@@ -265,5 +270,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     final name = u.mailAddress == apiService.user!.emailAddress ? apiService.user!.displayName : u.displayName;
     final mention = '<a href="#" data-vss-mention="version:2.0,${res.data}">@$name</a>';
     editorController.insertHtml(mention);
+  }
+
+  List<GraphUser> getAssignees() {
+    final users = getSortedUsers(apiService).whereNot((u) => u == userAll).toList()..insert(0, unassigned);
+    return users;
   }
 }

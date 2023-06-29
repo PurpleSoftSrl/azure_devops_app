@@ -117,14 +117,11 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
               ),
               FilterMenu<GraphUser>(
                 title: 'Assigned to',
-                values: ctrl
-                    .getSortedUsers(ctrl.apiService)
-                    .whereNot((u) => u.displayName == ctrl.userAll.displayName)
-                    .toList(),
+                values: ctrl.getAssignees(),
                 currentFilter: ctrl.newWorkItemAssignedTo,
                 onSelected: ctrl.setAssignee,
                 formatLabel: (u) => u.displayName!,
-                isDefaultFilter: ctrl.newWorkItemAssignedTo.displayName == ctrl.userAll.displayName,
+                isDefaultFilter: ctrl.newWorkItemAssignedTo.displayName == 'Unassigned',
                 widgetBuilder: (u) => UserFilterWidget(user: u),
               ),
             ],
