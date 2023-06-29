@@ -51,6 +51,22 @@ class _WorkItemDetailScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                const PopupMenuDivider(),
+                PopupMenuItem<void>(
+                  onTap: ctrl.addAttachment,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  height: 30,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Add attachment',
+                        style: context.textTheme.titleSmall,
+                      ),
+                      Icon(DevOpsIcons.link),
+                    ],
+                  ),
+                ),
                 if (!['Test Suite', 'Test Plan'].contains(ctrl.itemDetail.value?.data?.item.fields.systemWorkItemType)) ...[
                   const PopupMenuDivider(),
                   PopupMenuItem<void>(

@@ -28,6 +28,7 @@ import 'package:azure_devops/src/widgets/text_title_description.dart';
 import 'package:azure_devops/src/widgets/work_item_type_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html_editor_enhanced/html_editor.dart';

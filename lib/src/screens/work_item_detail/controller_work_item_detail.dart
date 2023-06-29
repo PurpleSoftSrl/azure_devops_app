@@ -295,4 +295,24 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
 
     return comment;
   }
+
+  Future<void> addAttachment() async {
+    final result = await FilePicker.platform.pickFiles();
+    if ((result?.files ?? []).isEmpty) return;
+
+    final file = File(result!.files.single.path!);
+
+    final res = await apiService.addWorkItemAttachment(
+      projectName: args.project,
+      fileName: file.path.split('/').last,
+      filePath: file.path,
+      workItemId: args.id,
+    );
+    if (res.isError) {
+      return OverlayService.error('Error', description: 'Attachment not added');
+    }
+
+    OverlayService.snackbar('Attachment successfully added');
+    await init();
+  }
 }

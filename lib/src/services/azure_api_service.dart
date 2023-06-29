@@ -128,6 +128,13 @@ abstract class AzureApiService {
     required CommentItemUpdate update,
   });
 
+  Future<ApiResponse<bool>> addWorkItemAttachment({
+    required String projectName,
+    required String fileName,
+    required String filePath,
+    required int workItemId,
+  });
+
   Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id, required String type});
 
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
@@ -295,11 +302,13 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     return res;
   }
 
-  Future<Response> _patch(String url, {Map<String, String>? body}) async {
+  Future<Response> _patch(String url, {Map<String, Object>? body, String? contentType}) async {
     logDebug('PATCH $url');
+    final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
+
     final res = await _client.patch(
       Uri.parse(url),
-      headers: headers,
+      headers: realHeaders,
       body: jsonEncode(body),
     );
 
@@ -323,12 +332,14 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     return res;
   }
 
-  Future<Response> _post(String url, {Map<String, dynamic>? body}) async {
+  Future<Response> _post(String url, {Map<String, dynamic>? body, Object? bodyObject, String? contentType}) async {
     logDebug('POST $url');
+    final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
+
     final res = await _client.post(
       Uri.parse(url),
-      headers: headers,
-      body: jsonEncode(body),
+      headers: realHeaders,
+      body: bodyObject ?? jsonEncode(body),
     );
 
     _addSentryBreadcrumb(url, 'POST', res, body);
@@ -901,6 +912,41 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       '$_basePath/$projectName/_apis/wit/workItems/${update.workItemId}/comments/${update.id}?$_apiVersion-preview',
     );
     if (deleteRes.isError && deleteRes.statusCode != HttpStatus.noContent) return ApiResponse.error(deleteRes);
+
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> addWorkItemAttachment({
+    required String projectName,
+    required String fileName,
+    required String filePath,
+    required int workItemId,
+  }) async {
+    final response = await _post(
+      '$_basePath/$projectName/_apis/wit/attachments?fileName=$fileName&uploadType=simple&$_apiVersion',
+      bodyObject: await File(filePath).readAsBytes(),
+      contentType: 'application/octet-stream',
+    );
+    if (response.isError && response.statusCode != 201) return ApiResponse.error(null);
+
+    final decodedResponse = jsonDecode(response.body) as Map<String, dynamic>;
+
+    final commentRes = await _patchList(
+      '$_basePath/$projectName/_apis/wit/workitems/$workItemId?$_apiVersion',
+      contentType: 'application/json-patch+json',
+      body: [
+        {
+          'op': 'add',
+          'path': '/relations/-',
+          'value': {
+            'rel': 'AttachedFile',
+            'url': decodedResponse['url'],
+          },
+        },
+      ],
+    );
+    if (commentRes.isError) return ApiResponse.error(commentRes);
 
     return ApiResponse.ok(true);
   }

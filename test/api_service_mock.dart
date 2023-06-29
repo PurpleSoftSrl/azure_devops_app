@@ -495,6 +495,16 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
+  Future<ApiResponse<bool>> addWorkItemAttachment({
+    required String projectName,
+    required String fileName,
+    required String filePath,
+    required int workItemId,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id, required String type}) {
     throw UnimplementedError();
   }
