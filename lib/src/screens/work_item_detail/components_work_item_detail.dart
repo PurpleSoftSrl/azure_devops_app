@@ -243,49 +243,21 @@ class _CommentWidget extends StatelessWidget {
       children: [
         Align(
           alignment: Alignment.centerRight,
-          child: PopupMenuButton<void>(
-            key: ValueKey('Popup menu work item comment'),
-            itemBuilder: (_) => [
-              PopupMenuItem<void>(
+          child: DevOpsPopupMenu(
+            tooltip: 'work item comment',
+            offset: const Offset(0, 20),
+            items: () => [
+              PopupItem(
                 onTap: () => ctrl.deleteWorkItemComment(update),
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                height: 30,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Delete',
-                      style: context.textTheme.titleSmall,
-                    ),
-                    Icon(Icons.delete),
-                  ],
-                ),
+                text: 'Delete',
+                icon: DevOpsIcons.failed,
               ),
-              const PopupMenuDivider(),
-              PopupMenuItem<void>(
+              PopupItem(
                 onTap: () => ctrl.editWorkItemComment(update),
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                height: 30,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Edit',
-                      style: context.textTheme.titleSmall,
-                    ),
-                    Icon(DevOpsIcons.edit),
-                  ],
-                ),
+                text: 'Edit',
+                icon: DevOpsIcons.edit,
               ),
             ],
-            elevation: 0,
-            tooltip: 'Work item comment actions',
-            offset: const Offset(0, 40),
-            shape: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            child: Icon(DevOpsIcons.dots_horizontal),
           ),
         ),
         Padding(
@@ -341,7 +313,13 @@ class _AttachmentRow extends StatelessWidget {
                 builder: (ctx) => Text.rich(
                   TextSpan(
                     children: [
-                      TextSpan(text: isRemoved ? 'Removed ' : isEdited ? 'Edited ' : 'Added '),
+                      TextSpan(
+                        text: isRemoved
+                            ? 'Removed '
+                            : isEdited
+                                ? 'Edited '
+                                : 'Added ',
+                      ),
                       TextSpan(
                         text: att.attributes?.name ?? '-',
                         style: DefaultTextStyle.of(ctx)

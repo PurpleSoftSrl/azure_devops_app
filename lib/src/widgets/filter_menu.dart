@@ -7,6 +7,7 @@ import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
+import 'package:azure_devops/src/widgets/popup_menu.dart';
 import 'package:azure_devops/src/widgets/work_item_type_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -193,34 +194,16 @@ class _ResetFiltersMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton(
-      key: ValueKey('popup_menu_reset_filters'),
-      onSelected: (_) => resetFilters(),
-      itemBuilder: (_) => [
-        PopupMenuItem<void>(
-          key: ValueKey('reset_filters'),
-          value: false,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          height: 30,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Reset filters',
-                style: context.textTheme.titleSmall,
-              ),
-              Icon(DevOpsIcons.failed),
-            ],
-          ),
+    return DevOpsPopupMenu(
+      tooltip: 'Reset filters',
+      offset: const Offset(0, 20),
+      items: () => [
+        PopupItem(
+          onTap: resetFilters,
+          text: 'Reset filters',
+          icon: DevOpsIcons.failed,
         ),
       ],
-      elevation: 0,
-      tooltip: 'Reset filters',
-      offset: const Offset(0, 40),
-      shape: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
-      ),
       child: Chip(
         label: Row(
           children: [

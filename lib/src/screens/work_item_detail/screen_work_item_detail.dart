@@ -17,83 +17,31 @@ class _WorkItemDetailScreen extends StatelessWidget {
           title: 'Work Item #${ctrl.args.id}',
           notifier: ctrl.itemDetail,
           actions: [
-            PopupMenuButton<void>(
-              key: ValueKey('Popup menu work item detail'),
-              itemBuilder: (_) => [
-                PopupMenuItem<void>(
+            DevOpsPopupMenu(
+              tooltip: 'work item actions',
+              items: () => [
+                PopupItem(
                   onTap: ctrl.shareWorkItem,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  height: 30,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Share',
-                        style: context.textTheme.titleSmall,
-                      ),
-                      Icon(DevOpsIcons.share),
-                    ],
-                  ),
+                  text: 'Share',
+                  icon: DevOpsIcons.share,
                 ),
-                const PopupMenuDivider(),
-                PopupMenuItem<void>(
+                PopupItem(
                   onTap: ctrl.editWorkItem,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  height: 30,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Edit',
-                        style: context.textTheme.titleSmall,
-                      ),
-                      Icon(DevOpsIcons.edit),
-                    ],
-                  ),
+                  text: 'Edit',
+                  icon: DevOpsIcons.edit,
                 ),
-                const PopupMenuDivider(),
-                PopupMenuItem<void>(
+                PopupItem(
                   onTap: ctrl.addAttachment,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  height: 30,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Add attachment',
-                        style: context.textTheme.titleSmall,
-                      ),
-                      Icon(DevOpsIcons.link),
-                    ],
-                  ),
+                  text: 'Add attachment',
+                  icon: DevOpsIcons.link,
                 ),
-                if (!['Test Suite', 'Test Plan'].contains(ctrl.itemDetail.value?.data?.item.fields.systemWorkItemType)) ...[
-                  const PopupMenuDivider(),
-                  PopupMenuItem<void>(
+                if (!['Test Suite', 'Test Plan'].contains(ctrl.itemDetail.value?.data?.item.fields.systemWorkItemType))
+                  PopupItem(
                     onTap: ctrl.deleteWorkItem,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    height: 30,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Delete',
-                          style: context.textTheme.titleSmall,
-                        ),
-                        Icon(DevOpsIcons.failed),
-                      ],
-                    ),
+                    text: 'Delete',
+                    icon: DevOpsIcons.failed,
                   ),
-                ],
               ],
-              elevation: 0,
-              tooltip: 'Work item actions',
-              offset: const Offset(0, 40),
-              shape: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-              child: Icon(DevOpsIcons.dots_horizontal),
             ),
             const SizedBox(
               width: 8,

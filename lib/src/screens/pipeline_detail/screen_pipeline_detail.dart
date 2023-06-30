@@ -14,49 +14,20 @@ class _PipelineDetailScreen extends StatelessWidget {
       title: 'Pipeline detail',
       notifier: ctrl.buildDetail,
       actions: [
-        PopupMenuButton<void>(
-          key: ValueKey('Popup menu pipeline detail'),
-          itemBuilder: (_) => [
-            PopupMenuItem<void>(
+        DevOpsPopupMenu(
+          tooltip: 'Pipeline actions',
+          items: () => [
+            PopupItem(
               onTap: ctrl.shareBuild,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              height: 30,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Share',
-                    style: context.textTheme.titleSmall,
-                  ),
-                  Icon(DevOpsIcons.share),
-                ],
-              ),
+              text: 'Share',
+              icon: DevOpsIcons.share,
             ),
-            const PopupMenuDivider(),
-            PopupMenuItem<void>(
+            PopupItem(
               onTap: ctrl.getActionFromStatus,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              height: 30,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    ctrl.getActionTextFromStatus(),
-                    style: context.textTheme.titleSmall,
-                  ),
-                  Icon(ctrl.getActionIconFromStatus()),
-                ],
-              ),
+              text: ctrl.getActionTextFromStatus(),
+              icon: ctrl.getActionIconFromStatus(),
             ),
           ],
-          elevation: 0,
-          tooltip: 'Pipeline actions',
-          offset: const Offset(0, 40),
-          shape: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          child: Icon(DevOpsIcons.dots_horizontal),
         ),
         const SizedBox(
           width: 8,
