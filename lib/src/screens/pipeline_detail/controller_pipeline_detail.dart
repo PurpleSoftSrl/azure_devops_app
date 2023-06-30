@@ -193,7 +193,7 @@ class _PipelineDetailController with ShareMixin {
 
   void goToCommitDetail() {
     if (pipeline.repository?.name == null) return;
-    
+
     AppRouter.goToCommitDetail(
       project: pipeline.project!.name!,
       repository: pipeline.repository!.name!,
@@ -207,7 +207,15 @@ class _PipelineDetailController with ShareMixin {
       return;
     }
 
-    AppRouter.goToPipelineLogs((pipeline: pipeline, task: t));
+    AppRouter.goToPipelineLogs(
+      (
+        project: pipeline.project!.name!,
+        pipelineId: pipeline.id!,
+        taskId: t.id,
+        parentTaskId: t.parentId!,
+        logId: t.log!.id
+      ),
+    );
   }
 }
 

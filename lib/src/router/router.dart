@@ -1,7 +1,5 @@
 import 'package:azure_devops/src/models/commit.dart';
-import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/project.dart';
-import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/screens/choose_projects/base_choose_projects.dart';
 import 'package:azure_devops/src/screens/commit_detail/base_commit_detail.dart';
 import 'package:azure_devops/src/screens/commits/base_commits.dart';
@@ -32,7 +30,7 @@ typedef CreateOrEditWorkItemArgs = ({String? project, int? id});
 typedef PullRequestDetailArgs = ({String project, int id});
 typedef CommitDetailArgs = ({String project, String repository, String commitId});
 typedef FileDiffArgs = ({Commit commit, String filePath, bool isAdded, bool isDeleted});
-typedef PipelineLogsArgs = ({Pipeline pipeline, Record task});
+typedef PipelineLogsArgs = ({String project, int pipelineId, String taskId, String parentTaskId, int logId});
 
 class AppRouter {
   AppRouter._();

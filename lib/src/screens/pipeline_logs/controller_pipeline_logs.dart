@@ -20,9 +20,9 @@ class _PipelineLogsController with ShareMixin {
 
   Future<void> init() async {
     final res = await apiService.getPipelineTaskLogs(
-      projectName: args.pipeline.project!.name!,
-      pipelineId: args.pipeline.id!,
-      logId: args.task.log!.id,
+      projectName: args.project,
+      pipelineId: args.pipelineId,
+      logId: args.logId,
     );
 
     logs.value = res;
@@ -47,7 +47,7 @@ class _PipelineLogsController with ShareMixin {
   }
 
   String _getBuildWebUrl() {
-    return '${apiService.basePath}/${args.pipeline.project!.name}/_build/results?buildId=${args.pipeline.id}&view=logs&j=${args.task.parentId}&t=${args.task.id}';
+    return '${apiService.basePath}/${args.project}/_build/results?buildId=${args.pipelineId}&view=logs&j=${args.parentTaskId}&t=${args.taskId}';
   }
 
   void shareLogs() {
