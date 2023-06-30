@@ -41,7 +41,7 @@ class _LifecycleListenerState extends State<LifecycleListener> with WidgetsBindi
       if (AzureApiServiceInherited.of(context).apiService.user != null && !_hasAlreadyLogged) {
         logInfo('Session finished');
         _hasAlreadyLogged = true;
-        _inactiveTimer = Timer(Duration(seconds: 30), () => _hasAlreadyLogged = false);
+        _inactiveTimer = Timer(Duration(seconds: 300), () => _hasAlreadyLogged = false);
       }
     }
 
