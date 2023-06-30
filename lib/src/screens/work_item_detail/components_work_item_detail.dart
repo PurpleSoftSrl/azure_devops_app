@@ -217,6 +217,10 @@ class _SimpleUpdateWidget extends StatelessWidget {
             ),
           if (update.relations?.added != null)
             for (final att in update.relations!.added!) _AttachmentRow(ctrl: ctrl, att: att),
+          if (update.relations?.updated != null)
+            for (final att in update.relations!.updated!) _AttachmentRow(ctrl: ctrl, att: att, isEdited: true),
+          if (update.relations?.removed != null)
+            for (final att in update.relations!.removed!) _AttachmentRow(ctrl: ctrl, att: att, isRemoved: true),
         ],
       ),
     );
@@ -303,10 +307,12 @@ class _CommentWidget extends StatelessWidget {
 }
 
 class _AttachmentRow extends StatelessWidget {
-  const _AttachmentRow({required this.ctrl, required this.att});
+  const _AttachmentRow({required this.ctrl, required this.att, this.isRemoved = false, this.isEdited = false});
 
   final _WorkItemDetailController ctrl;
   final Relation att;
+  final bool isRemoved;
+  final bool isEdited;
 
   @override
   Widget build(BuildContext context) {
@@ -332,9 +338,18 @@ class _AttachmentRow extends StatelessWidget {
             const SizedBox(width: 10),
             Flexible(
               child: Builder(
-                builder: (ctx) => Text(
-                  att.attributes?.name ?? '-',
-                  style: DefaultTextStyle.of(ctx).style.copyWith(decoration: TextDecoration.underline),
+                builder: (ctx) => Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(text: isRemoved ? 'Removed ' : isEdited ? 'Edited ' : 'Added '),
+                      TextSpan(
+                        text: att.attributes?.name ?? '-',
+                        style: DefaultTextStyle.of(ctx)
+                            .style
+                            .copyWith(decoration: isRemoved ? null : TextDecoration.underline),
+                      ),
+                    ],
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

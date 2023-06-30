@@ -12,7 +12,9 @@ extension WorkItemUpdateExt on WorkItemUpdate {
         fields.systemAssignedTo?.newValue?.displayName != null ||
         fields.microsoftVstsSchedulingEffort != null ||
         fields.systemTitle != null ||
-        // show only added attachments
-        (relations != null && relations!.added != null && relations!.added!.any((r) => r.rel == 'AttachedFile'));
+        // show only attachments (not links)
+        (relations != null && relations!.added != null && relations!.added!.any((r) => r.rel == 'AttachedFile')) ||
+        (relations != null && relations!.removed != null && relations!.removed!.any((r) => r.rel == 'AttachedFile')) ||
+        (relations != null && relations!.updated != null && relations!.updated!.any((r) => r.rel == 'AttachedFile'));
   }
 }
