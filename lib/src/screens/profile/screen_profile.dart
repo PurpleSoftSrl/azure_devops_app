@@ -13,7 +13,6 @@ class _ProfileScreen extends StatelessWidget {
       dispose: ctrl.dispose,
       title: 'Profile',
       notifier: ctrl.recentCommits,
-      onEmpty: 'No commits found',
       showScrollbar: true,
       builder: (commits) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,14 +103,20 @@ class _ProfileScreen extends StatelessWidget {
             text: 'Recent commits',
             icon: DevOpsIcons.commit,
           ),
-          ...commits!.map(
-            (c) => CommitListTile(
-              commit: c,
-              showAuthor: false,
-              onTap: () => ctrl.goToCommitDetail(c),
-              isLast: c == commits.last,
+          if (commits!.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 40),
+              child: Center(child: Text('No commits found')),
+            )
+          else
+            ...commits.map(
+              (c) => CommitListTile(
+                commit: c,
+                showAuthor: false,
+                onTap: () => ctrl.goToCommitDetail(c),
+                isLast: c == commits.last,
+              ),
             ),
-          ),
         ],
       ),
     );
