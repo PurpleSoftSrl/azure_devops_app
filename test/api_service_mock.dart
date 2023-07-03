@@ -423,8 +423,6 @@ class AzureApiServiceMock implements AzureApiService {
         isDraft: false,
         mergeId: '',
         reviewers: [],
-        url: '',
-        supportsIterations: false,
       ),
     );
   }
@@ -663,8 +661,6 @@ extension on PullRequest {
       isDraft: false,
       mergeId: '',
       reviewers: [],
-      url: '',
-      supportsIterations: false,
       repository: repository ?? this.repository,
       pullRequestId: pullRequestId ?? this.pullRequestId,
       status: status ?? this.status,

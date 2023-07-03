@@ -47,8 +47,6 @@ class PullRequest {
     required this.mergeId,
     required this.reviewers,
     this.labels,
-    required this.url,
-    required this.supportsIterations,
   });
 
   factory PullRequest.fromJson(Map<String, dynamic> json) => PullRequest(
@@ -69,8 +67,6 @@ class PullRequest {
           (json['reviewers'] as List<dynamic>).map((e) => Reviewer.fromJson(e as Map<String, dynamic>)),
         ),
         labels: (json['labels'] as List<dynamic>?)?.map((e) => _Label.fromJson(e as Map<String, dynamic>)).toList(),
-        url: json['url'] as String,
-        supportsIterations: json['supportsIterations'] as bool,
       );
 
   static PullRequest fromResponse(Response res) => PullRequest.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
@@ -90,8 +86,6 @@ class PullRequest {
   final String mergeId;
   final List<Reviewer> reviewers;
   final List<_Label>? labels;
-  final String url;
-  final bool supportsIterations;
 
   @visibleForTesting
   static PullRequest empty() => PullRequest(
@@ -132,13 +126,11 @@ class PullRequest {
         isDraft: false,
         mergeId: '',
         reviewers: [],
-        url: '',
-        supportsIterations: false,
       );
 
   @override
   String toString() {
-    return 'PullRequest(repository: $repository, pullRequestId: $pullRequestId, codeReviewId: $codeReviewId, status: $status, createdBy: $createdBy, creationDate: $creationDate, title: $title, description: $description, sourceRefName: $sourceRefName, targetRefName: $targetRefName, mergeStatus: $mergeStatus, isDraft: $isDraft, mergeId: $mergeId, reviewers: $reviewers, labels: $labels, url: $url, supportsIterations: $supportsIterations)';
+    return 'PullRequest(repository: $repository, pullRequestId: $pullRequestId, codeReviewId: $codeReviewId, status: $status, createdBy: $createdBy, creationDate: $creationDate, title: $title, description: $description, sourceRefName: $sourceRefName, targetRefName: $targetRefName, mergeStatus: $mergeStatus, isDraft: $isDraft, mergeId: $mergeId, reviewers: $reviewers, labels: $labels)';
   }
 
   @override
@@ -160,9 +152,7 @@ class PullRequest {
         other.isDraft == isDraft &&
         other.mergeId == mergeId &&
         listEquals(other.reviewers, reviewers) &&
-        listEquals(other.labels, labels) &&
-        other.url == url &&
-        other.supportsIterations == supportsIterations;
+        listEquals(other.labels, labels);
   }
 
   @override
@@ -181,9 +171,7 @@ class PullRequest {
         isDraft.hashCode ^
         mergeId.hashCode ^
         reviewers.hashCode ^
-        labels.hashCode ^
-        url.hashCode ^
-        supportsIterations.hashCode;
+        labels.hashCode;
   }
 }
 
