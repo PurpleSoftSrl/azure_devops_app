@@ -44,7 +44,11 @@ class _PullRequestsController with FilterMixin {
   }
 
   void goToPullRequestDetail(PullRequest pr) {
-    AppRouter.goToPullRequestDetail(project: pr.repository.project.name, id: pr.pullRequestId);
+    AppRouter.goToPullRequestDetail(
+      project: pr.repository.project.name,
+      repository: pr.repository.id,
+      id: pr.pullRequestId,
+    );
   }
 
   void filterByStatus(PullRequestState state) {

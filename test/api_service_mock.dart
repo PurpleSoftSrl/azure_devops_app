@@ -11,6 +11,7 @@ import 'package:azure_devops/src/models/processes.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
+import 'package:azure_devops/src/models/pull_request_with_details.dart' as pr;
 import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
@@ -390,39 +391,47 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<PullRequest>> getPullRequest({required String projectName, required int id}) async {
+  Future<ApiResponse<pr.PullRequestWithDetails>> getPullRequest({
+    required String projectName,
+    required String repositoryId,
+    required int id,
+  }) async {
     return ApiResponse.ok(
-      PullRequest(
-        pullRequestId: 1234,
-        status: PullRequestState.active,
-        creationDate: DateTime.now(),
-        title: 'Test pull request title',
-        sourceRefName: 'dev',
-        targetRefName: 'main',
-        repository: Repository(
-          id: '1',
-          name: 'test_repo',
-          url: '',
-          project: RepositoryProject(
+      pr.PullRequestWithDetails(
+        pr: PullRequest(
+          pullRequestId: 1234,
+          status: PullRequestState.active,
+          creationDate: DateTime.now(),
+          title: 'Test pull request title',
+          sourceRefName: 'dev',
+          targetRefName: 'main',
+          repository: Repository(
             id: '1',
-            name: 'TestProject',
-            state: '',
-            visibility: '',
-            lastUpdateTime: DateTime.now(),
+            name: 'test_repo',
+            url: '',
+            project: RepositoryProject(
+              id: '1',
+              name: 'TestProject',
+              state: '',
+              visibility: '',
+              lastUpdateTime: DateTime.now(),
+            ),
           ),
+          codeReviewId: 1,
+          createdBy: CreatedBy(
+            displayName: 'Test User Creator',
+            url: '',
+            id: '1',
+            uniqueName: 'Test User Creator',
+            imageUrl: '',
+            descriptor: '',
+          ),
+          isDraft: false,
+          mergeId: '',
+          reviewers: [],
         ),
-        codeReviewId: 1,
-        createdBy: CreatedBy(
-          displayName: 'Test User Creator',
-          url: '',
-          id: '1',
-          uniqueName: 'Test User Creator',
-          imageUrl: '',
-          descriptor: '',
-        ),
-        isDraft: false,
-        mergeId: '',
-        reviewers: [],
+        changes: [],
+        threads: [],
       ),
     );
   }

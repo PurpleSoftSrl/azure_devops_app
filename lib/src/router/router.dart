@@ -27,7 +27,7 @@ import 'package:flutter/material.dart';
 
 typedef WorkItemDetailArgs = ({String project, int id});
 typedef CreateOrEditWorkItemArgs = ({String? project, int? id});
-typedef PullRequestDetailArgs = ({String project, int id});
+typedef PullRequestDetailArgs = ({String project, String repository, int id});
 typedef CommitDetailArgs = ({String project, String repository, String commitId});
 typedef FileDiffArgs = ({Commit commit, String filePath, bool isAdded, bool isDeleted});
 typedef PipelineLogsArgs = ({String project, int pipelineId, String taskId, String parentTaskId, int logId});
@@ -179,8 +179,8 @@ class AppRouter {
 
   static Project? getPullRequestsArgs(BuildContext context) => _getArgs(context);
 
-  static Future<void> goToPullRequestDetail({required String project, required int id}) =>
-      _goTo<PullRequestDetailArgs>(_pullRequestDetail, args: (project: project, id: id));
+  static Future<void> goToPullRequestDetail({required String project, required String repository, required int id}) =>
+      _goTo<PullRequestDetailArgs>(_pullRequestDetail, args: (project: project, repository: repository, id: id));
 
   static PullRequestDetailArgs getPullRequestDetailArgs(BuildContext context) => _getArgs(context);
 

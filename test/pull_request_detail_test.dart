@@ -19,7 +19,7 @@ void main() {
             onGenerateRoute: (_) => MaterialPageRoute(
               builder: (_) => PullRequestDetailPage(),
               settings: RouteSettings(
-                arguments: (id: 1234, project: 'TestProject'),
+                arguments: (id: 1234, project: 'TestProject', repository: 'TestRepo'),
               ),
             ),
           ),

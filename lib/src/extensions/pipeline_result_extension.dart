@@ -31,7 +31,7 @@ extension PipelineStatusExt on PipelineStatus? {
         );
       case PipelineStatus.postponed:
         icon = Icon(
-          Icons.watch_later,
+          DevOpsIcons.queuedsolid,
           color: Colors.blue,
         );
       default:

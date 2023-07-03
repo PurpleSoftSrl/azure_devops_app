@@ -17,6 +17,7 @@ import 'package:azure_devops/src/models/processes.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
+import 'package:azure_devops/src/models/pull_request_with_details.dart';
 import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
@@ -216,7 +217,11 @@ abstract class AzureApiService {
 
   Future<ApiResponse<List<TeamMember>>> getProjectTeams({required String projectId});
 
-  Future<ApiResponse<PullRequest>> getPullRequest({required String projectName, required int id});
+  Future<ApiResponse<PullRequestWithDetails>> getPullRequest({
+    required String projectName,
+    required String repositoryId,
+    required int id,
+  });
 
   Future<void> logout();
 
@@ -1033,11 +1038,41 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<PullRequest>> getPullRequest({required String projectName, required int id}) async {
-    final prRes = await _get('$_basePath/$projectName/_apis/git/pullrequests/$id?$_apiVersion');
+  Future<ApiResponse<PullRequestWithDetails>> getPullRequest({
+    required String projectName,
+    required String repositoryId,
+    required int id,
+  }) async {
+    final prPath = '$_basePath/$projectName/_apis/git/repositories/$repositoryId/pullrequests/$id';
+
+    final prRes = await _get('$prPath?includeCommits=true&$_apiVersion');
     if (prRes.isError) return ApiResponse.error(prRes);
 
-    return ApiResponse.ok(PullRequest.fromResponse(prRes));
+    final pr = PullRequest.fromResponse(prRes);
+
+    final allChanges = <CommitWithChangeEntry>[];
+    final iterationsRes = await _get('$prPath/iterations?$_apiVersion');
+
+    if (!iterationsRes.isError) {
+      final iterations = IterationsRes.fromResponse(iterationsRes).iterations;
+      await Future.wait([
+        for (final iteration in iterations)
+          _get('$prPath/iterations/${iteration.id}/changes?$_apiVersion').then((changesRes) {
+            if (changesRes.isError) return;
+
+            final changes = ChangesRes.fromResponse(changesRes).changes;
+            allChanges.add(CommitWithChangeEntry(changes: changes, iteration: iteration));
+          }),
+      ]);
+    }
+
+    var threads = <Thread>[];
+    final threadsRes = await _get('$prPath/threads?$_apiVersion');
+    if (!threadsRes.isError) {
+      threads = ThreadsRes.fromResponse(threadsRes).threads.where((t) => !t.isDeleted).toList();
+    }
+
+    return ApiResponse.ok(PullRequestWithDetails(pr: pr, changes: allChanges, threads: threads));
   }
 
   @override
