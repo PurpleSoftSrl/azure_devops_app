@@ -89,8 +89,10 @@ class _HtmlWidget extends StatelessWidget {
         (ctx) => ctx.tree.element?.localName == 'br': CustomRender.widget(
           widget: (ctx, child) => const Text(''),
         ),
-        (ctx) => ctx.tree.element?.localName == 'a' && ctx.tree.attributes['data-vss-mention'] != null:
-            CustomRender.widget(
+        (ctx) =>
+            ctx.tree.element?.localName == 'a' &&
+            ctx.tree.attributes['data-vss-mention'] != null &&
+            ctx.tree.element!.innerHtml.startsWith('@'): CustomRender.widget(
           widget: (ctx, child) => GestureDetector(
             onTap: () async {
               final name = ctx.tree.element!.innerHtml.substring(1);
@@ -98,6 +100,32 @@ class _HtmlWidget extends StatelessWidget {
               if (user.isError) return;
 
               unawaited(AppRouter.goToMemberDetail(user.data!.descriptor!));
+            },
+            child: Text(
+              ctx.tree.element!.innerHtml,
+              style: effectiveStyle.copyWith(color: Colors.blue, decoration: TextDecoration.underline),
+            ),
+          ),
+        ),
+        (ctx) =>
+            ctx.tree.element?.localName == 'a' &&
+            ctx.tree.attributes['data-vss-mention'] != null &&
+            ctx.tree.element!.innerHtml.startsWith('#'): CustomRender.widget(
+          widget: (ctx, child) => GestureDetector(
+            onTap: () async {
+              final url = ctx.tree.attributes['href'];
+              if (url == null) return;
+
+              final project = url.substring(0, url.indexOf('/_workitems')).split('/').lastOrNull;
+              if (project == null) return;
+
+              final id = url.split('/').lastOrNull;
+              if (id == null) return;
+
+              final parsedId = int.tryParse(id);
+              if (parsedId == null) return;
+
+              unawaited(AppRouter.goToWorkItemDetail(project: project, id: parsedId));
             },
             child: Text(
               ctx.tree.element!.innerHtml,
