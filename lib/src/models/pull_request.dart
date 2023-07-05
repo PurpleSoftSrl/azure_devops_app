@@ -177,6 +177,35 @@ class PullRequest {
         reviewers.hashCode ^
         labels.hashCode;
   }
+
+  PullRequest copyWith({
+    Repository? repository,
+    int? pullRequestId,
+    PullRequestState? status,
+    CreatedBy? createdBy,
+    DateTime? creationDate,
+    String? title,
+    String? description,
+  }) {
+    return PullRequest(
+      codeReviewId: -1,
+      sourceRefName: '',
+      targetRefName: '',
+      isDraft: false,
+      mergeId: '',
+      reviewers: [],
+      repository: repository ?? this.repository,
+      pullRequestId: pullRequestId ?? this.pullRequestId,
+      status: status ?? this.status,
+      createdBy: createdBy ?? this.createdBy,
+      creationDate: creationDate ?? this.creationDate,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      commits: commits,
+      labels: labels,
+      mergeStatus: mergeStatus,
+    );
+  }
 }
 
 class CreatedBy {

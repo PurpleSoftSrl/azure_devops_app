@@ -95,9 +95,7 @@ class _PullRequestDetailScreen extends StatelessWidget {
                 MarkdownBody(
                   data: '${pr.description}',
                   styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
-                  onTapLink: (text, href, title) async {
-                    if (await canLaunchUrlString(href!)) await launchUrlString(href);
-                  },
+                  onTapLink: ctrl.onTapMarkdownLink,
                 ),
                 const SizedBox(
                   height: 20,
@@ -178,7 +176,7 @@ class _PullRequestDetailScreen extends StatelessWidget {
                                               ],
                                             ),
                                           'RefUpdate' => _RefUpdateWidget(ctrl: ctrl, thread: t),
-                                          _ when c.commentType == 'text' => _CommentWidget(commit: c),
+                                          _ when c.commentType == 'text' => _CommentWidget(ctrl: ctrl, commit: c),
                                           _ => Row(
                                               children: [
                                                 _UserAvatar(commit: c, thread: t),

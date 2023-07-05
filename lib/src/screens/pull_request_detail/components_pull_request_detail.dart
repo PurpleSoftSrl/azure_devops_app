@@ -27,8 +27,9 @@ class _UserAvatar extends StatelessWidget {
 }
 
 class _CommentWidget extends StatelessWidget {
-  const _CommentWidget({required this.commit});
+  const _CommentWidget({required this.ctrl, required this.commit});
 
+  final _PullRequestDetailController ctrl;
   final Comment commit;
 
   @override
@@ -68,6 +69,7 @@ class _CommentWidget extends StatelessWidget {
           MarkdownBody(
             data: commit.content,
             styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
+            onTapLink: ctrl.onTapMarkdownLink,
           ),
         ],
       ),
@@ -76,10 +78,7 @@ class _CommentWidget extends StatelessWidget {
 }
 
 class _RefUpdateWidget extends StatelessWidget {
-  const _RefUpdateWidget({
-    required this.ctrl,
-    required this.thread,
-  });
+  const _RefUpdateWidget({required this.ctrl, required this.thread});
 
   final _PullRequestDetailController ctrl;
   final Thread thread;

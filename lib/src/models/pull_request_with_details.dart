@@ -13,6 +13,18 @@ class PullRequestWithDetails {
   final PullRequest pr;
   final List<CommitWithChangeEntry> changes;
   final List<Thread> threads;
+
+  PullRequestWithDetails copyWith({
+    PullRequest? pr,
+    List<CommitWithChangeEntry>? changes,
+    List<Thread>? threads,
+  }) {
+    return PullRequestWithDetails(
+      pr: pr ?? this.pr,
+      changes: changes ?? this.changes,
+      threads: threads ?? this.threads,
+    );
+  }
 }
 
 class IterationsRes {
@@ -197,6 +209,18 @@ class Thread {
   final bool isDeleted;
   final Properties? properties;
   final Map<String, dynamic>? identities;
+
+  Thread copyWith({List<Comment>? comments}) {
+    return Thread(
+      id: id,
+      publishedDate: publishedDate,
+      lastUpdatedDate: lastUpdatedDate,
+      comments: comments ?? this.comments,
+      isDeleted: isDeleted,
+      identities: identities,
+      properties: properties,
+    );
+  }
 }
 
 class Properties {
@@ -264,4 +288,16 @@ class Comment {
   final DateTime publishedDate;
   final DateTime lastUpdatedDate;
   final String commentType;
+
+  Comment copyWith({String? content}) {
+    return Comment(
+      id: id,
+      parentCommentId: parentCommentId,
+      author: author,
+      content: content ?? this.content,
+      publishedDate: publishedDate,
+      lastUpdatedDate: lastUpdatedDate,
+      commentType: commentType,
+    );
+  }
 }

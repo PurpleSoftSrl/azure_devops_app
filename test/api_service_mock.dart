@@ -657,32 +657,6 @@ extension on ItemFields {
   }
 }
 
-extension on PullRequest {
-  PullRequest copyWith({
-    Repository? repository,
-    int? pullRequestId,
-    PullRequestState? status,
-    CreatedBy? createdBy,
-    DateTime? creationDate,
-    String? title,
-  }) {
-    return PullRequest(
-      codeReviewId: -1,
-      sourceRefName: '',
-      targetRefName: '',
-      isDraft: false,
-      mergeId: '',
-      reviewers: [],
-      repository: repository ?? this.repository,
-      pullRequestId: pullRequestId ?? this.pullRequestId,
-      status: status ?? this.status,
-      createdBy: createdBy ?? this.createdBy,
-      creationDate: creationDate ?? this.creationDate,
-      title: title ?? this.title,
-    );
-  }
-}
-
 extension on CreatedBy {
   CreatedBy copyWith({String? displayName}) {
     return CreatedBy(

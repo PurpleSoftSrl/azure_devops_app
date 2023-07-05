@@ -56,7 +56,49 @@ class _PullRequestDetailController with ShareMixin {
       if (descriptor != null) reviewers.add(_RevWithDescriptor(r, descriptor));
     }
 
-    prDetail.value = res;
+    final prAndThreads = _getReplacedPrAndThreads(data: res.data);
+
+    prDetail.value = res.copyWith(data: res.data?.copyWith(pr: prAndThreads.pr, threads: prAndThreads.threads));
+  }
+
+  /// Replaces work items links with valid markdown links in description and comments
+  ({PullRequest? pr, List<Thread> threads}) _getReplacedPrAndThreads({PullRequestWithDetails? data}) {
+    PullRequest? pr;
+
+    final prDescription = data?.pr.description ?? '';
+
+    if (prDescription.isNotEmpty) {
+      final mapped = _replaceWorkItemLinks(prDescription);
+      pr = data!.pr.copyWith(description: mapped);
+    }
+
+    final threads = <Thread>[];
+
+    for (final thread in data?.threads ?? <Thread>[]) {
+      final comments = <Comment>[];
+      for (final comment in thread.comments) {
+        final mappedComment = _replaceWorkItemLinks(comment.content);
+        comments.add(comment.copyWith(content: mappedComment));
+      }
+
+      threads.add(thread.copyWith(comments: comments));
+    }
+
+    return (pr: pr, threads: threads);
+  }
+
+  String _replaceWorkItemLinks(String prDescription) {
+    final mapped = prDescription.splitMapJoin(
+      RegExp('#[0-9]+'),
+      onMatch: (p0) {
+        final item = p0.group(0);
+        if (item == null) return p0.input;
+
+        final itemId = item.substring(1);
+        return '[$item](workitems/$itemId)';
+      },
+    );
+    return mapped;
   }
 
   void sharePr() {
@@ -128,6 +170,20 @@ class _PullRequestDetailController with ShareMixin {
 
   void goToCommitDetail(String commitId) {
     AppRouter.goToCommitDetail(project: args.project, repository: args.repository, commitId: commitId);
+  }
+
+  Future<void> onTapMarkdownLink(String text, String? href, String? _) async {
+    final isWorkItemLink = text.startsWith(RegExp('#[0-9]+'));
+    if (isWorkItemLink) {
+      final id = href!.split('/').last;
+      final parsedId = int.tryParse(id);
+      if (parsedId == null) return;
+
+      unawaited(AppRouter.goToWorkItemDetail(project: args.project, id: parsedId));
+      return;
+    }
+
+    if (await canLaunchUrlString(href!)) await launchUrlString(href);
   }
 }
 
