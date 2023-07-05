@@ -21,38 +21,35 @@ class _FileDetailScreen extends StatelessWidget {
           icon: Icon(DevOpsIcons.share),
         ),
       ],
-      builder: (res) => ctrl.args.filePath!.isImage
-          ? Image.memory(
-              Uint8List.fromList(res!.content.codeUnits),
-            )
-          : ctrl.args.filePath!.isMd
-              ? Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: MarkdownBody(
-                    data: res!.content,
-                    styleSheet:
-                        MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
-                  ),
-                )
-              : res!.isBinary
-                  ? Center(
-                      child: const Text('Cannot display binary data'),
-                    )
-                  : SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(minHeight: context.height),
-                        child: HighlightView(
-                          res.content,
-                          language: ctrl.args.filePath!.split('.').last,
-                          theme: _customTheme(context),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          textStyle: context.textTheme.bodySmall!.copyWith(
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                    ),
+      builder: (res) => switch (ctrl.args.filePath!) {
+        final path when path.isImage => Image.memory(Uint8List.fromList(res!.content.codeUnits)),
+        final path when path.isMd => Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: MarkdownBody(
+              data: res!.content,
+              styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
+            ),
+          ),
+        _ when res!.isBinary => Padding(
+            padding: const EdgeInsets.only(top: 200),
+            child: const Text('Cannot display binary data', textAlign: TextAlign.center),
+          ),
+        _ => SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: context.height),
+              child: HighlightView(
+                res.content,
+                language: ctrl.args.filePath!.split('.').last,
+                theme: _customTheme(context),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                textStyle: context.textTheme.bodySmall!.copyWith(
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+          ),
+      },
     );
   }
 }
