@@ -29,6 +29,7 @@ import 'package:azure_devops/src/models/user_entitlements.dart';
 import 'package:azure_devops/src/models/work_item_comments.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
+import 'package:azure_devops/src/services/msal_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -55,6 +56,10 @@ abstract class AzureApiService {
 
   /// Work item states for each work item type for each project
   Map<String, Map<String, List<WorkItemState>>> get workItemStates;
+
+  bool get isImageUnauthorized;
+
+  bool get isLoggedInWithMicrosoft;
 
   String getUserAvatarUrl(String userDescriptor);
 
@@ -224,8 +229,6 @@ abstract class AzureApiService {
   });
 
   Future<void> logout();
-
-  bool get isImageUnauthorized;
 }
 
 class AzureApiServiceImpl with AppLogger implements AzureApiService {
@@ -268,9 +271,13 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   bool _isImageUnauthorized = false;
 
   @override
+  bool get isLoggedInWithMicrosoft => _isJwt;
+  bool _isJwt = false;
+
+  @override
   Map<String, String>? get headers => {
         'Content-Type': 'application/json',
-        'Authorization': 'Basic ${base64.encode(utf8.encode(':$_accessToken'))}',
+        'Authorization': _isJwt ? 'Bearer $_accessToken' : 'Basic ${base64.encode(utf8.encode(':$_accessToken'))}',
       };
 
   List<Project> _projects = [];
@@ -420,9 +427,15 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   Future<LoginStatus> login(String accessToken) async {
     if (accessToken.isEmpty) return LoginStatus.unauthorized;
 
+    _isJwt = accessToken.startsWith('ey') && accessToken.split('.').length == 3;
+
     final oldToken = _accessToken;
 
     _accessToken = accessToken;
+
+    if (_isJwt) {
+      _accessToken = (await MsalService().loginSilently()) ?? '';
+    }
 
     var profileEndpoint = '$_usersBasePath/_apis/profile/profiles/me?$_apiVersion-preview';
 
@@ -434,7 +447,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final accountsRes = await _get(profileEndpoint);
 
-    if (accountsRes.statusCode == HttpStatus.unauthorized) {
+    if ([HttpStatus.unauthorized, HttpStatus.nonAuthoritativeInformation].contains(accountsRes.statusCode)) {
       _accessToken = oldToken;
       await setOrganization('');
       return LoginStatus.unauthorized;

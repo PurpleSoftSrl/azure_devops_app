@@ -576,6 +576,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  msal_flutter:
+    dependency: "direct main"
+    description:
+      name: msal_flutter
+      sha256: "5123bda74d513f44dd6489fe30835a138c40299bdf1e33a00df7007607c09258"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   numberpicker:
     dependency: transitive
     description:

@@ -41,40 +41,42 @@ class _SettingsScreen extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                Row(
-                  children: [
-                    Text(
-                      'Personal Access Token',
-                      style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                    ),
-                    ValueListenableBuilder<bool>(
+                if (!ctrl.apiService.isLoggedInWithMicrosoft) ...[
+                  Row(
+                    children: [
+                      Text(
+                        'Personal Access Token',
+                        style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                      ),
+                      ValueListenableBuilder<bool>(
+                        valueListenable: ctrl.isEditing,
+                        builder: (_, isEditing, __) => IconButton(
+                          onPressed: ctrl.toggleIsEditingToken,
+                          iconSize: 15,
+                          padding: EdgeInsets.zero,
+                          icon: Icon(isEditing ? Icons.check_circle_outline : Icons.edit),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 24,
+                    child: ValueListenableBuilder<bool>(
                       valueListenable: ctrl.isEditing,
-                      builder: (_, isEditing, __) => IconButton(
-                        onPressed: ctrl.toggleIsEditingToken,
-                        iconSize: 15,
-                        padding: EdgeInsets.zero,
-                        icon: Icon(isEditing ? Icons.check_circle_outline : Icons.edit),
+                      builder: (_, isEditing, __) => TextFormField(
+                        decoration: InputDecoration(
+                          border: transparentBorder,
+                          enabledBorder: transparentBorder,
+                          focusedBorder: transparentBorder,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        controller: ctrl.patTextFieldController,
+                        onFieldSubmitted: ctrl.setNewToken,
+                        readOnly: !isEditing,
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 24,
-                  child: ValueListenableBuilder<bool>(
-                    valueListenable: ctrl.isEditing,
-                    builder: (_, isEditing, __) => TextFormField(
-                      decoration: InputDecoration(
-                        border: transparentBorder,
-                        enabledBorder: transparentBorder,
-                        focusedBorder: transparentBorder,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      controller: ctrl.patTextFieldController,
-                      onFieldSubmitted: ctrl.setNewToken,
-                      readOnly: !isEditing,
                     ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

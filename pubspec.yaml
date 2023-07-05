@@ -1,5 +1,5 @@
 name: 'azure_devops'
-version: 1.11.0+41
+version: 1.12.0+43
 description: 'Azure DevOps unofficial mobile app'
 homepage: 'homepage'
 publish_to: 'none'
@@ -34,6 +34,7 @@ dependencies:
   firebase_core: ^2.14.0
   firebase_analytics: ^10.4.3
   file_picker: ^5.3.2
+  msal_flutter: ^2.0.1
   purple_theme:
    git:
     url: https://github.com/PurpleSoftSrl/flutter_theme_manager

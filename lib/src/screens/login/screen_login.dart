@@ -24,13 +24,13 @@ class _LoginScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              height: 80,
+              height: 40,
             ),
             Row(
               children: [
                 Expanded(
                   child: Text(
-                    'Login with your Personal Access Token',
+                    'Sign in with your Personal Access Token',
                     style: context.textTheme.titleMedium,
                   ),
                 ),
@@ -64,7 +64,7 @@ class _LoginScreen extends StatelessWidget {
                         child: Row(
                           children: [
                             Text(
-                              'PAT documentation link',
+                              'How to create a PAT?',
                               style: context.textTheme.titleSmall!.copyWith(decoration: TextDecoration.underline),
                             ),
                           ],
@@ -73,7 +73,7 @@ class _LoginScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 100,
+                    height: 30,
                   ),
                   LoadingButton(
                     onPressed: ctrl.login,
@@ -81,6 +81,29 @@ class _LoginScreen extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            Row(
+              children: [
+                Expanded(child: const Divider()),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    'Or',
+                    style: context.textTheme.titleMedium,
+                  ),
+                ),
+                Expanded(child: const Divider()),
+              ],
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            LoadingButton(
+              onPressed: ctrl.loginWithMicrosoft,
+              text: 'Sign in with Microsoft',
             ),
             const SizedBox(
               height: 100,

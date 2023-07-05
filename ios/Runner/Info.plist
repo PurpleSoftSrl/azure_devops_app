@@ -13,7 +13,7 @@
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundleName</key>
-		<string>azure_devops</string>
+		<string>Az DevOps</string>
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
@@ -55,5 +55,19 @@
 		<false/>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>Access to photo library is needed to insert images in work items descriptions and comments.</string>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>msauth.io.purplesoft.azuredevops</string>
+				</array>
+			</dict>
+		</array>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>msauthv2</string>
+			<string>msauthv3</string>
+		</array>
 	</dict>
 </plist>

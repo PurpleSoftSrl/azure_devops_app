@@ -47,12 +47,14 @@ class _SettingsController with ShareMixin, AppLogger {
 
   Future<void> logout() async {
     final confirm = await OverlayService.confirm(
-      'Do you really want to logout?',
-      description: 'You will have to insert your PAT again',
+      'Attention',
+      description: 'Do you really want to logout?',
     );
     if (!confirm) return;
 
     await apiService.logout();
+    await MsalService().logout();
+
     unawaited(AppRouter.goToLogin());
   }
 

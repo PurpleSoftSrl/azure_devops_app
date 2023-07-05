@@ -28,3 +28,5 @@ doc/
 deploy.dart
 android/app/google-services-private.json
 lib/firebase_options_private.dart
+dart-define-debug.json
+dart-define-production.json

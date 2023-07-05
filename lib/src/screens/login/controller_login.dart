@@ -24,11 +24,27 @@ class _LoginController with AppLogger {
     pat = value;
   }
 
+  Future<void> loginWithMicrosoft() async {
+    final token = await MsalService().login();
+    if (token == null) return;
+
+    await _loginAndNavigate(token, isPat: false);
+  }
+
   Future<void> login() async {
     final isValid = formFieldKey.currentState!.validate();
     if (!isValid) return;
 
-    final isLogged = await apiService.login(pat);
+    await _loginAndNavigate(pat, isPat: true);
+  }
+
+  Future<void> _loginAndNavigate(String token, {required bool isPat}) async {
+    final isLogged = await apiService.login(token);
+
+    final isFailed = [LoginStatus.failed, LoginStatus.unauthorized].contains(isLogged);
+
+    logAnalytics('signin_with_${isPat ? 'pat' : 'microsoft'}_${isFailed ? 'failed' : 'success'}', {});
+
     if (isLogged == LoginStatus.failed) {
       _showLoginErrorAlert();
       return;

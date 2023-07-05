@@ -39,6 +39,9 @@ class AzureApiServiceMock implements AzureApiService {
   bool get isImageUnauthorized => false;
 
   @override
+  bool get isLoggedInWithMicrosoft => false;
+
+  @override
   Future<ApiResponse<Pipeline>> cancelPipeline({required int buildId, required String projectId}) {
     throw UnimplementedError();
   }
@@ -272,7 +275,7 @@ class AzureApiServiceMock implements AzureApiService {
   Map<String, String>? get headers => {};
 
   @override
-  Future<LoginStatus> login(String accessToken) async {
+  Future<LoginStatus> login(String accessToken, {bool isJwt = false}) async {
     if (accessToken == 'validToken') return LoginStatus.ok;
     if (accessToken == 'singleOrgToken') return LoginStatus.unauthorized;
 
