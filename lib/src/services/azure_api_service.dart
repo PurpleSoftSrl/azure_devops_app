@@ -1098,12 +1098,13 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     var branchQuery = '';
 
     if (branch != null) {
-      final escapedBranch = Uri.encodeQueryComponent(branch);
-      branchQuery = 'versionDescriptor.version=$escapedBranch&versionDescriptor.versionType=branch&';
+      final encodedBranch = Uri.encodeQueryComponent(branch);
+      branchQuery = 'versionDescriptor.version=$encodedBranch&versionDescriptor.versionType=branch&';
     }
 
+    final encodedPath = Uri.encodeQueryComponent(path);
     final itemsRes = await _get(
-      '$_basePath/$projectName/_apis/git/repositories/$repoName/items?scopePath=$path&recursionLevel=oneLevel&includeContentMetadata=true&includeContent=true&$branchQuery$_apiVersion',
+      '$_basePath/$projectName/_apis/git/repositories/$repoName/items?scopePath=$encodedPath&recursionLevel=oneLevel&includeContentMetadata=true&includeContent=true&$branchQuery$_apiVersion',
     );
     if (itemsRes.isError) return ApiResponse.error(itemsRes);
 
@@ -1136,16 +1137,17 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (commitId != null) {
       versionQuery = 'versionDescriptor.version=$commitId&versionDescriptor.versionType=commit&';
     } else if (branch != null) {
-      final escapedBranch = Uri.encodeQueryComponent(branch);
-      versionQuery = 'versionDescriptor.version=$escapedBranch&versionDescriptor.versionType=branch&';
+      final encodedBranch = Uri.encodeQueryComponent(branch);
+      versionQuery = 'versionDescriptor.version=$encodedBranch&versionDescriptor.versionType=branch&';
     }
 
     if (previousChange) {
       versionQuery += 'versionDescriptor.versionOptions=previousChange&';
     }
 
+    final encodedPath = Uri.encodeQueryComponent(path);
     final res = await _get(
-      '$_basePath/$projectName/_apis/git/repositories/$repoName/items?path=$path&includeContentMetadata=true&includeContent=true&$versionQuery$_apiVersion',
+      '$_basePath/$projectName/_apis/git/repositories/$repoName/items?path=$encodedPath&includeContentMetadata=true&includeContent=true&$versionQuery$_apiVersion',
     );
     if (res.isError) return ApiResponse.error(res);
 
