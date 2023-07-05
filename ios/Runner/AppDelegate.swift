@@ -12,10 +12,11 @@ import MSAL
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
-    override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {    
-        guard let sourceApplication = options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String else {
+    override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        if (!url.absoluteString.hasPrefix("msauth.io.purplesoft.azuredevops")) {
             return false
         }
-        return MSALPublicClientApplication.handleMSALResponse(url, sourceApplication: sourceApplication)
+        
+        return MSALPublicClientApplication.handleMSALResponse(url, sourceApplication: nil)
     }
 }
