@@ -141,6 +141,7 @@ class OverlayService {
     EdgeInsets padding = const EdgeInsets.all(15),
     bool spaceUnderTitle = true,
     Widget? topRight,
+    String? name,
   }) async {
     await showModalBottomSheet(
       context: context,
@@ -148,7 +149,7 @@ class OverlayService {
       useRootNavigator: true,
       isDismissible: isDismissible,
       isScrollControlled: isScrollControlled,
-      routeSettings: RouteSettings(name: 'bs_$title'),
+      routeSettings: RouteSettings(name: 'bs_${name ?? title}'),
       builder: (ctx) => ClipRRect(
         borderRadius: BorderRadius.only(
           topLeft: const Radius.circular(12),

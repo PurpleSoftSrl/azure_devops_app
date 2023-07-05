@@ -87,12 +87,13 @@ class _HomeController with AppLogger {
 
   /// Shows review dialog only the 5th time the app is opened.
   Future<void> _maybeRequestReview() async {
-    final numberOfSessions = storageService.numberOfSessions;
-    if (numberOfSessions == 5) {
+    final sessionCount = storageService.numberOfSessions;
+    if (sessionCount == 5) {
       final inAppReview = InAppReview.instance;
 
       if (await inAppReview.isAvailable()) {
         await inAppReview.requestReview();
+        logAnalytics('app_review_popup', {});
       }
     }
 

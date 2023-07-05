@@ -141,6 +141,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
         OverlayService.bottomsheet(
           isScrollControlled: true,
           spaceUnderTitle: false,
+          name: 'filter_$title',
           builder: (context) => ListView(
             children: values
                 .map(
