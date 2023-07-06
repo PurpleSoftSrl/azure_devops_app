@@ -33,7 +33,7 @@ class _PullRequestDetailController with ShareMixin {
   String get prWebUrl =>
       '${apiService.basePath}/${prDetail.value!.data!.pr.repository.project.name}/_git/${prDetail.value!.data!.pr.repository.name}/pullrequest/${prDetail.value!.data!.pr.pullRequestId}';
 
-  final reviewers = <_RevWithDescriptor>[];
+  List<_RevWithDescriptor> reviewers = <_RevWithDescriptor>[];
 
   final groupedEditedFiles = <String, Set<_ChangedFileDiff>>{};
   final groupedAddedFiles = <String, Set<_ChangedFileDiff>>{};
@@ -58,8 +58,6 @@ class _PullRequestDetailController with ShareMixin {
   }
 
   Future<void> init() async {
-    reviewers.clear();
-
     final res = await apiService.getPullRequest(
       projectName: args.project,
       repositoryId: args.repository,
@@ -68,10 +66,13 @@ class _PullRequestDetailController with ShareMixin {
 
     res.data?.pr.reviewers.sort((a, b) => a.isRequired ? -1 : 1);
 
+    final revs = <_RevWithDescriptor>[];
     for (final r in res.data?.pr.reviewers ?? <Reviewer>[]) {
       final descriptor = await _getReviewerDescriptor(r);
-      if (descriptor != null) reviewers.add(_RevWithDescriptor(r, descriptor));
+      if (descriptor != null) revs.add(_RevWithDescriptor(r, descriptor));
     }
+
+    reviewers = [...revs];
 
     _getChangedFiles(res);
 
