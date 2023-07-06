@@ -112,7 +112,7 @@ class _HtmlWidget extends StatelessWidget {
             ctx.tree.attributes['data-vss-mention'] != null &&
             ctx.tree.element!.innerHtml.startsWith('#'): CustomRender.widget(
           widget: (ctx, child) => GestureDetector(
-            onTap: () async {
+            onTap: () {
               final url = ctx.tree.attributes['href'];
               if (url == null) return;
 
@@ -125,7 +125,61 @@ class _HtmlWidget extends StatelessWidget {
               final parsedId = int.tryParse(id);
               if (parsedId == null) return;
 
-              unawaited(AppRouter.goToWorkItemDetail(project: project, id: parsedId));
+              AppRouter.goToWorkItemDetail(project: project, id: parsedId);
+            },
+            child: Text(
+              ctx.tree.element!.innerHtml,
+              style: effectiveStyle.copyWith(color: Colors.blue, decoration: TextDecoration.underline),
+            ),
+          ),
+        ),
+        (ctx) => // pr link
+            ctx.tree.element?.localName == 'a' &&
+            ctx.tree.attributes['data-vss-mention'] != null &&
+            ctx.tree.attributes['href'] != null &&
+            ctx.tree.attributes['href']!.startsWith(apiService.basePath) &&
+            ctx.tree.attributes['href']!.contains('/pullrequest/'): CustomRender.widget(
+          widget: (ctx, child) => GestureDetector(
+            onTap: () {
+              final url = ctx.tree.attributes['href'];
+              if (url == null) return;
+
+              final project = url.substring(0, url.indexOf('/_git')).split('/').lastOrNull;
+              if (project == null) return;
+
+              final repository = url.substring(0, url.indexOf('/pullrequest')).split('/').lastOrNull;
+              if (repository == null) return;
+
+              final id = url.split('/').lastOrNull;
+              if (id == null) return;
+
+              final parsedId = int.tryParse(id.substring(0, id.indexOf('?')));
+              if (parsedId == null) return;
+
+              AppRouter.goToPullRequestDetail(project: project, repository: repository, id: parsedId);
+            },
+            child: Text(
+              ctx.tree.element!.innerHtml,
+              style: effectiveStyle.copyWith(color: Colors.blue, decoration: TextDecoration.underline),
+            ),
+          ),
+        ),
+        (ctx) => // pr mention
+            ctx.tree.element?.localName == 'a' &&
+            ctx.tree.attributes['data-vss-mention'] != null &&
+            ctx.tree.element!.innerHtml.startsWith('Pull Request '): CustomRender.widget(
+          widget: (ctx, child) => GestureDetector(
+            onTap: () {
+              final url = ctx.tree.attributes['data-vss-mention']!;
+
+              final parts = url.split(':');
+
+              final project = parts[4];
+              final repository = parts[5];
+              final id = int.tryParse(parts[6]);
+              if (id == null) return;
+
+              AppRouter.goToPullRequestDetail(project: project, repository: repository, id: id);
             },
             child: Text(
               ctx.tree.element!.innerHtml,
@@ -147,43 +201,43 @@ class _History extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: updates.map(
-        (update) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  MemberAvatar(userDescriptor: update.updatedBy.descriptor, radius: 15),
-                  const SizedBox(width: 10),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(text: update.updatedBy.displayName),
-                        if (update is CommentItemUpdate)
-                          TextSpan(
-                            text: '  commented ${update.isEdited ? '(edited)' : ''}',
-                            style: context.textTheme.labelSmall,
-                          ),
-                      ],
+      children: updates
+          .map(
+            (update) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    MemberAvatar(userDescriptor: update.updatedBy.descriptor, radius: 15),
+                    const SizedBox(width: 10),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(text: update.updatedBy.displayName),
+                          if (update is CommentItemUpdate)
+                            TextSpan(
+                              text: '  commented ${update.isEdited ? '(edited)' : ''}',
+                              style: context.textTheme.labelSmall,
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const Spacer(),
-                  Text(update.updateDate.minutesAgo),
-                ],
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              switch (update) {
-                SimpleItemUpdate() => _SimpleUpdateWidget(ctrl: ctrl, update: update),
-                CommentItemUpdate() => _CommentWidget(ctrl: ctrl, update: update),
-              },
-              if (update != updates.last) const Divider(height: 30),
-            ],
-          );
-        },
-      ).toList(),
+                    const Spacer(),
+                    Text(update.updateDate.minutesAgo),
+                  ],
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                switch (update) {
+                  SimpleItemUpdate() => _SimpleUpdateWidget(ctrl: ctrl, update: update),
+                  CommentItemUpdate() => _CommentWidget(ctrl: ctrl, update: update),
+                },
+                if (update != updates.last) const Divider(height: 30),
+              ],
+            ),
+          )
+          .toList(),
     );
   }
 }
