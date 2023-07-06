@@ -52,8 +52,6 @@ class Iteration {
     required this.sourceRefCommit,
   });
 
-  factory Iteration.fromRawJson(String str) => Iteration.fromJson(json.decode(str) as Map<String, dynamic>);
-
   factory Iteration.fromJson(Map<String, dynamic> json) => Iteration(
         id: json['id'] as int,
         description: json['description'] as String,
@@ -79,8 +77,6 @@ class Author {
     required this.descriptor,
   });
 
-  factory Author.fromRawJson(String str) => Author.fromJson(json.decode(str) as Map<String, dynamic>);
-
   factory Author.fromJson(Map<String, dynamic> json) => Author(
         displayName: json['displayName'] as String,
         id: json['id'] as String,
@@ -96,8 +92,6 @@ class Author {
 
 class RefCommit {
   RefCommit({required this.commitId});
-
-  factory RefCommit.fromRawJson(String str) => RefCommit.fromJson(json.decode(str) as Map<String, dynamic>);
 
   factory RefCommit.fromJson(Map<String, dynamic> json) => RefCommit(commitId: json['commitId'] as String);
 
@@ -133,8 +127,6 @@ class ChangeEntry {
     required this.changeType,
   });
 
-  factory ChangeEntry.fromRawJson(String str) => ChangeEntry.fromJson(json.decode(str) as Map<String, dynamic>);
-
   factory ChangeEntry.fromJson(Map<String, dynamic> json) => ChangeEntry(
         changeTrackingId: json['changeTrackingId'] as int,
         changeId: json['changeId'] as int,
@@ -150,8 +142,6 @@ class ChangeEntry {
 
 class Item {
   Item({this.objectId, this.originalObjectId, this.path});
-
-  factory Item.fromRawJson(String str) => Item.fromJson(json.decode(str) as Map<String, dynamic>);
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
         objectId: json['objectId'] as String?,
@@ -187,8 +177,6 @@ class Thread {
     this.properties,
     this.identities,
   });
-
-  factory Thread.fromRawJson(String str) => Thread.fromJson(json.decode(str) as Map<String, dynamic>);
 
   factory Thread.fromJson(Map<String, dynamic> json) => Thread(
         id: json['id'] as int,
@@ -226,8 +214,6 @@ class Thread {
 class Properties {
   Properties({this.type, this.newCommits, this.newCommitsCount});
 
-  factory Properties.fromRawJson(String str) => Properties.fromJson(json.decode(str) as Map<String, dynamic>);
-
   factory Properties.fromJson(Map<String, dynamic> json) => Properties(
         type: json['CodeReviewThreadType'] == null
             ? null
@@ -248,8 +234,6 @@ class Properties {
 class Property<T> {
   Property({required this.type, required this.value});
 
-  factory Property.fromRawJson(String str) => Property.fromJson(json.decode(str) as Map<String, dynamic>);
-
   factory Property.fromJson(Map<String, dynamic> json) => Property(
         type: json['\u0024type'] as String,
         value: json['\u0024value'] as T,
@@ -268,8 +252,6 @@ class Comment {
     required this.lastUpdatedDate,
     required this.commentType,
   });
-
-  factory Comment.fromRawJson(String str) => Comment.fromJson(json.decode(str) as Map<String, dynamic>);
 
   factory Comment.fromJson(Map<String, dynamic> json) => Comment(
         id: json['id'] as int,

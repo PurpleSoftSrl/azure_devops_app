@@ -275,7 +275,7 @@ class AzureApiServiceMock implements AzureApiService {
   Map<String, String>? get headers => {};
 
   @override
-  Future<LoginStatus> login(String accessToken, {bool isJwt = false}) async {
+  Future<LoginStatus> login(String accessToken) async {
     if (accessToken == 'validToken') return LoginStatus.ok;
     if (accessToken == 'singleOrgToken') return LoginStatus.unauthorized;
 

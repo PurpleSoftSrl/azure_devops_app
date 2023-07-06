@@ -63,13 +63,13 @@ class _PullRequestDetailController with ShareMixin {
 
   /// Replaces work items links with valid markdown links in description and comments
   ({PullRequest? pr, List<Thread> threads}) _getReplacedPrAndThreads({PullRequestWithDetails? data}) {
+    final description = data?.pr.description ?? '';
+
     PullRequest? pr;
 
-    final prDescription = data?.pr.description ?? '';
-
-    if (prDescription.isNotEmpty) {
-      final mapped = _replaceWorkItemLinks(prDescription);
-      pr = data!.pr.copyWith(description: mapped);
+    if (description.isNotEmpty) {
+      final replacedDescription = _replaceWorkItemLinks(description);
+      pr = data!.pr.copyWith(description: replacedDescription);
     }
 
     final threads = <Thread>[];
@@ -77,8 +77,8 @@ class _PullRequestDetailController with ShareMixin {
     for (final thread in data?.threads ?? <Thread>[]) {
       final comments = <Comment>[];
       for (final comment in thread.comments) {
-        final mappedComment = _replaceWorkItemLinks(comment.content);
-        comments.add(comment.copyWith(content: mappedComment));
+        final replacedComment = _replaceWorkItemLinks(comment.content);
+        comments.add(comment.copyWith(content: replacedComment));
       }
 
       threads.add(thread.copyWith(comments: comments));
@@ -87,8 +87,8 @@ class _PullRequestDetailController with ShareMixin {
     return (pr: pr, threads: threads);
   }
 
-  String _replaceWorkItemLinks(String prDescription) {
-    final mapped = prDescription.splitMapJoin(
+  String _replaceWorkItemLinks(String text) {
+    return text.splitMapJoin(
       RegExp('#[0-9]+'),
       onMatch: (p0) {
         final item = p0.group(0);
@@ -98,7 +98,6 @@ class _PullRequestDetailController with ShareMixin {
         return '[$item](workitems/$itemId)';
       },
     );
-    return mapped;
   }
 
   void sharePr() {

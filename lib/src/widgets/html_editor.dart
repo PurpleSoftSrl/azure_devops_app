@@ -43,7 +43,7 @@ class DevOpsHtmlEditor extends StatefulWidget {
 class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
   /// Scrolls the page to make the editor fully visible.
   /// The delay is to wait for the keyboard to show.
-  Future<void> ensureEditorIsVisible() async {
+  Future<void> _ensureEditorIsVisible() async {
     await Future<void>.delayed(Duration(milliseconds: 500));
     widget.editorController.resetHeight();
     await Future<void>.delayed(Duration(milliseconds: 50));
@@ -59,7 +59,7 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
         );
   }
 
-  Future<void> addMention(GraphUser u, AzureApiService apiService) async {
+  Future<void> _addMention(GraphUser u, AzureApiService apiService) async {
     final res = await apiService.getUserToMention(email: u.mailAddress!);
     if (res.isError || res.data == null) {
       return OverlayService.snackbar('Could not find user', isError: true);
@@ -81,7 +81,7 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
           widget.editorController.setFullScreen();
           if (widget.autofocus) widget.editorController.setFocus();
         },
-        onFocus: ensureEditorIsVisible,
+        onFocus: _ensureEditorIsVisible,
         onKeyUp: widget.onKeyUp,
       ),
       htmlEditorOptions: HtmlEditorOptions(
@@ -118,7 +118,7 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
                 title: '',
                 values: getSortedUsers(apiService).whereNot((u) => u.displayName == userAll.displayName).toList(),
                 currentFilter: userAll,
-                onSelected: (u) => addMention(u, apiService),
+                onSelected: (u) => _addMention(u, apiService),
                 formatLabel: (u) => u.displayName!,
                 isDefaultFilter: true,
                 widgetBuilder: (u) => UserFilterWidget(user: u),

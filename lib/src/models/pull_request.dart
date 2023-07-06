@@ -188,12 +188,12 @@ class PullRequest {
     String? description,
   }) {
     return PullRequest(
-      codeReviewId: -1,
-      sourceRefName: '',
-      targetRefName: '',
-      isDraft: false,
-      mergeId: '',
-      reviewers: [],
+      codeReviewId: codeReviewId,
+      sourceRefName: sourceRefName,
+      targetRefName: targetRefName,
+      isDraft: isDraft,
+      mergeId: mergeId,
+      reviewers: reviewers,
       repository: repository ?? this.repository,
       pullRequestId: pullRequestId ?? this.pullRequestId,
       status: status ?? this.status,

@@ -39,8 +39,6 @@ class Comment {
     required this.modifiedDate,
   });
 
-  factory Comment.fromRawJson(String str) => Comment.fromJson(json.decode(str) as Map<String, dynamic>);
-
   factory Comment.fromJson(Map<String, dynamic> json) => Comment(
         workItemId: json['workItemId'] as int,
         id: json['id'] as int,
@@ -63,15 +61,12 @@ class Comment {
 }
 
 class EdBy {
-
   EdBy({
     required this.id,
     required this.uniqueName,
     required this.descriptor,
     required this.displayName,
   });
-
-  factory EdBy.fromRawJson(String str) => EdBy.fromJson(json.decode(str) as Map<String, dynamic>);
 
   factory EdBy.fromJson(Map<String, dynamic> json) => EdBy(
         id: json['id'] as String,

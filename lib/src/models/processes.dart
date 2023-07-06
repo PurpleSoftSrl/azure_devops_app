@@ -150,9 +150,6 @@ class GetWorkItemStatesResponse {
         ),
       );
 
-  static List<WorkItemState> fromResponse(Response res) =>
-      GetWorkItemStatesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).states;
-
   final int count;
   final List<WorkItemState> states;
 }
