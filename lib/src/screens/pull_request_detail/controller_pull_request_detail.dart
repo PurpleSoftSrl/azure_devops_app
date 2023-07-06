@@ -35,6 +35,23 @@ class _PullRequestDetailController with ShareMixin {
 
   final reviewers = <_RevWithDescriptor>[];
 
+  final groupedEditedFiles = <String, Set<_ChangedFileDiff>>{};
+  final groupedAddedFiles = <String, Set<_ChangedFileDiff>>{};
+  final groupedDeletedFiles = <String, Set<_ChangedFileDiff>>{};
+
+  Iterable<ChangeEntry?> get changedFiles => prDetail.value?.data?.changes.expand((c) => c.changes) ?? [];
+
+  Iterable<ChangeEntry?> get addedFiles => changedFiles.where((f) => f!.changeType == 'add');
+  int get addedFilesCount => addedFiles.length;
+
+  Iterable<ChangeEntry?> get editedFiles => changedFiles.where((f) => f!.changeType == 'edit');
+  int get editedFilesCount => editedFiles.length;
+
+  Iterable<ChangeEntry?> get deletedFiles => changedFiles.where((f) => f!.changeType == 'delete');
+  int get deletedFilesCount => deletedFiles.length;
+
+  final visiblePage = ValueNotifier<int>(0);
+
   void dispose() {
     instance = null;
     _instances.remove(args.hashCode);
@@ -56,9 +73,57 @@ class _PullRequestDetailController with ShareMixin {
       if (descriptor != null) reviewers.add(_RevWithDescriptor(r, descriptor));
     }
 
+    _getChangedFiles(res);
+
     final prAndThreads = _getReplacedPrAndThreads(data: res.data);
 
     prDetail.value = res.copyWith(data: res.data?.copyWith(pr: prAndThreads.pr, threads: prAndThreads.threads));
+  }
+
+  void _getChangedFiles(ApiResponse<PullRequestWithDetails> res) {
+    final commitsWithChanges = res.data?.changes ?? <CommitWithChangeEntry>[];
+
+    for (final commitWithChange in commitsWithChanges) {
+      for (final file in commitWithChange.changes) {
+        final path = file.item.path ?? file.originalPath;
+        if (path == null) continue;
+
+        final directory = dirname(path);
+        final fileName = basename(path);
+
+        final newestCommitId = commitsWithChanges
+            .where((commit) => commit.changes.any((c) => c.item.path == path || c.originalPath == path))
+            .reduce((a, b) => a.iteration.id >= b.iteration.id ? a : b)
+            .iteration
+            .sourceRefCommit
+            .commitId;
+
+        final oldestCommitId = commitsWithChanges
+            .where((commit) => commit.changes.any((c) => c.item.path == path || c.originalPath == path))
+            .reduce((a, b) => a.iteration.id <= b.iteration.id ? a : b)
+            .iteration
+            .commonRefCommit
+            .commitId;
+
+        final diff = _ChangedFileDiff(
+          commitId: newestCommitId,
+          parentCommitId: oldestCommitId,
+          directory: directory,
+          fileName: fileName,
+          path: path,
+        );
+        if (file.changeType == 'add') {
+          groupedAddedFiles.putIfAbsent(directory, () => {diff});
+          groupedAddedFiles[directory]!.add(diff);
+        } else if (file.changeType == 'edit') {
+          groupedEditedFiles.putIfAbsent(directory, () => {diff});
+          groupedEditedFiles[directory]!.add(diff);
+        } else if (file.changeType == 'delete') {
+          groupedDeletedFiles.putIfAbsent(directory, () => {diff});
+          groupedDeletedFiles[directory]!.add(diff);
+        }
+      }
+    }
   }
 
   /// Replaces work items links with valid markdown links in description and comments
@@ -98,6 +163,14 @@ class _PullRequestDetailController with ShareMixin {
         return '[$item](workitems/$itemId)';
       },
     );
+  }
+
+  // ignore: use_setters_to_change_properties
+  void selectPage(int i, TabController tabController) {
+    visiblePage.value = i;
+    tabController
+      ..animateTo(i)
+      ..index = i;
   }
 
   void sharePr() {
@@ -184,6 +257,22 @@ class _PullRequestDetailController with ShareMixin {
 
     if (await canLaunchUrlString(href!)) await launchUrlString(href);
   }
+
+  Future<void> goToFileDiff({
+    required _ChangedFileDiff diff,
+    bool isAdded = false,
+    bool isDeleted = false,
+  }) async {
+    final commit = Commit(
+      commitId: diff.commitId,
+      parents: [diff.parentCommitId],
+      url: '${apiService.basePath}/${args.project}/_apis/git/repositories/${args.repository}/commits/${diff.commitId}',
+    );
+
+    await AppRouter.goToFileDiff(
+      (commit: commit, filePath: diff.path, isAdded: isAdded, isDeleted: isDeleted),
+    );
+  }
 }
 
 class _RevWithDescriptor {
@@ -207,4 +296,32 @@ class _RevWithDescriptor {
 
   @override
   int get hashCode => reviewer.hashCode ^ descriptor.hashCode;
+}
+
+class _ChangedFileDiff {
+  _ChangedFileDiff({
+    required this.commitId,
+    required this.parentCommitId,
+    required this.path,
+    required this.directory,
+    required this.fileName,
+  });
+
+  final String commitId;
+  final String parentCommitId;
+  final String path;
+  final String directory;
+  final String fileName;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is _ChangedFileDiff && other.path == path;
+  }
+
+  @override
+  int get hashCode {
+    return path.hashCode;
+  }
 }

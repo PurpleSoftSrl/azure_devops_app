@@ -1291,6 +1291,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     required String repositoryId,
     required String commitId,
   }) async {
+    if (commitId.isEmpty) return ApiResponse.error(null);
+
     final detailRes =
         await _get('$_basePath/$projectId/_apis/git/repositories/$repositoryId/commits/$commitId?$_apiVersion');
     if (detailRes.isError) return ApiResponse.error(detailRes);

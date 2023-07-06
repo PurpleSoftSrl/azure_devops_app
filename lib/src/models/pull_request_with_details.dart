@@ -50,6 +50,7 @@ class Iteration {
     required this.createdDate,
     required this.updatedDate,
     required this.sourceRefCommit,
+    required this.commonRefCommit,
   });
 
   factory Iteration.fromJson(Map<String, dynamic> json) => Iteration(
@@ -59,6 +60,7 @@ class Iteration {
         createdDate: DateTime.parse(json['createdDate']!.toString()).toLocal(),
         updatedDate: DateTime.parse(json['updatedDate']!.toString()).toLocal(),
         sourceRefCommit: RefCommit.fromJson(json['sourceRefCommit'] as Map<String, dynamic>),
+        commonRefCommit: RefCommit.fromJson(json['commonRefCommit'] as Map<String, dynamic>),
       );
 
   final int id;
@@ -67,6 +69,7 @@ class Iteration {
   final DateTime createdDate;
   final DateTime updatedDate;
   final RefCommit sourceRefCommit;
+  final RefCommit commonRefCommit;
 }
 
 class Author {
@@ -125,6 +128,7 @@ class ChangeEntry {
     required this.changeId,
     required this.item,
     required this.changeType,
+    this.originalPath,
   });
 
   factory ChangeEntry.fromJson(Map<String, dynamic> json) => ChangeEntry(
@@ -132,12 +136,14 @@ class ChangeEntry {
         changeId: json['changeId'] as int,
         item: Item.fromJson(json['item'] as Map<String, dynamic>),
         changeType: json['changeType'] as String,
+        originalPath: json['originalPath'] as String?,
       );
 
   final int changeTrackingId;
   final int changeId;
   final Item item;
   final String changeType;
+  final String? originalPath;
 }
 
 class Item {
