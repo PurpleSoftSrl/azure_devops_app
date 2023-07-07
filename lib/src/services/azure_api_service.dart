@@ -453,7 +453,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       return LoginStatus.unauthorized;
     }
 
-    if (accountsRes.statusCode != HttpStatus.ok) {
+    if (accountsRes.isError) {
       _accessToken = oldToken;
       await setOrganization('');
       return LoginStatus.failed;
@@ -916,7 +916,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       '$_basePath/$projectName/_apis/wit/workItems/${update.workItemId}/comments/${update.id}?$_apiVersion-preview',
       body: {'text': text},
     );
-    if (editRes.isError && editRes.statusCode != HttpStatus.noContent) return ApiResponse.error(editRes);
+    if (editRes.isError) return ApiResponse.error(editRes);
 
     return ApiResponse.ok(true);
   }
@@ -929,7 +929,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final deleteRes = await _delete(
       '$_basePath/$projectName/_apis/wit/workItems/${update.workItemId}/comments/${update.id}?$_apiVersion-preview',
     );
-    if (deleteRes.isError && deleteRes.statusCode != HttpStatus.noContent) return ApiResponse.error(deleteRes);
+    if (deleteRes.isError) return ApiResponse.error(deleteRes);
 
     return ApiResponse.ok(true);
   }
@@ -946,7 +946,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       bodyObject: await File(filePath).readAsBytes(),
       contentType: 'application/octet-stream',
     );
-    if (response.isError && response.statusCode != 201) return ApiResponse.error(null);
+    if (response.isError) return ApiResponse.error(null);
 
     final decodedResponse = jsonDecode(response.body) as Map<String, dynamic>;
 
@@ -974,7 +974,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (type == 'Test Case') {
       // Test Case work items need special handling
       final testCaseRes = await _delete('$_basePath/$projectName/_apis/test/testcases/$id?$_apiVersion');
-      if (testCaseRes.isError && testCaseRes.statusCode != HttpStatus.noContent) return ApiResponse.error(testCaseRes);
+      if (testCaseRes.isError) return ApiResponse.error(testCaseRes);
     } else {
       final deleteRes = await _delete('$_basePath/$projectName/_apis/wit/workitems/$id?$_apiVersion');
       if (deleteRes.isError) return ApiResponse.error(deleteRes);
