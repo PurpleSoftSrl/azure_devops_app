@@ -65,11 +65,6 @@ class AzureApiServiceMock implements AzureApiService {
           remoteUrl: 'https://dev.azure.com/xamapps/TestProject/_git/test_repo/commit/123456789',
         ),
         changes: CommitChanges(
-          changeCounts: ChangeCounts(
-            edit: 1,
-            add: 3,
-            delete: 5,
-          ),
           changes: [
             for (var i = 0; i < 3; i++)
               Change(

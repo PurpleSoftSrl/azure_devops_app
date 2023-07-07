@@ -31,11 +31,6 @@ void main() {
       expect(find.text('Test commit message'), findsOneWidget);
       expect(find.text('123456789'), findsOneWidget);
 
-      // edited lines details
-      expect(find.text('1 line edited'), findsOneWidget);
-      expect(find.text('3 lines added'), findsOneWidget);
-      expect(find.text('5 lines deleted'), findsOneWidget);
-
       // edited files details
       expect(find.text('5 edited files'), findsOneWidget);
       expect(find.text('3 added files'), findsOneWidget);

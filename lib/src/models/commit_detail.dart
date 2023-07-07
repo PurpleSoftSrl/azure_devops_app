@@ -3,16 +3,12 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 class CommitChanges {
-  CommitChanges({
-    required this.changeCounts,
-    required this.changes,
-  });
+  CommitChanges({required this.changes});
 
   factory CommitChanges.fromResponse(Response res) =>
       CommitChanges.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
   factory CommitChanges.fromJson(Map<String, dynamic> json) => CommitChanges(
-        changeCounts: ChangeCounts.fromJson(json['changeCounts'] as Map<String, dynamic>),
         changes: json['changes'] == null
             ? []
             : List<Change?>.from(
@@ -20,32 +16,10 @@ class CommitChanges {
               ),
       );
 
-  final ChangeCounts? changeCounts;
   final List<Change?>? changes;
 
   @override
-  String toString() => 'CommitDetail(changeCounts: $changeCounts, changes: $changes)';
-}
-
-class ChangeCounts {
-  ChangeCounts({
-    required this.edit,
-    required this.add,
-    required this.delete,
-  });
-
-  factory ChangeCounts.fromJson(Map<String, dynamic> json) => ChangeCounts(
-        edit: json['Edit'] as int?,
-        add: json['Add'] as int?,
-        delete: json['Delete'] as int?,
-      );
-
-  final int? edit;
-  final int? add;
-  final int? delete;
-
-  @override
-  String toString() => 'ChangeCounts(edit: $edit: add: $add, delete: $delete)';
+  String toString() => 'CommitDetail(changes: $changes)';
 }
 
 class Change {

@@ -35,9 +35,9 @@ class _PullRequestDetailController with ShareMixin {
 
   List<_RevWithDescriptor> reviewers = <_RevWithDescriptor>[];
 
-  final groupedEditedFiles = <String, Set<_ChangedFileDiff>>{};
-  final groupedAddedFiles = <String, Set<_ChangedFileDiff>>{};
-  final groupedDeletedFiles = <String, Set<_ChangedFileDiff>>{};
+  final groupedEditedFiles = <String, Set<ChangedFileDiff>>{};
+  final groupedAddedFiles = <String, Set<ChangedFileDiff>>{};
+  final groupedDeletedFiles = <String, Set<ChangedFileDiff>>{};
 
   Iterable<ChangeEntry?> get changedFiles => prDetail.value?.data?.changes.expand((c) => c.changes) ?? [];
 
@@ -106,12 +106,13 @@ class _PullRequestDetailController with ShareMixin {
             .commonRefCommit
             .commitId;
 
-        final diff = _ChangedFileDiff(
+        final diff = ChangedFileDiff(
           commitId: newestCommitId,
           parentCommitId: oldestCommitId,
           directory: directory,
           fileName: fileName,
           path: path,
+          changeType: switch (file.changeType) { 'add' => 'added', 'edit' => 'edited', 'delete' => 'deleted', _ => '' },
         );
         if (file.changeType == 'add') {
           groupedAddedFiles.putIfAbsent(directory, () => {diff});
@@ -210,11 +211,7 @@ class _PullRequestDetailController with ShareMixin {
     if (await canLaunchUrlString(href!)) await launchUrlString(href);
   }
 
-  Future<void> goToFileDiff({
-    required _ChangedFileDiff diff,
-    bool isAdded = false,
-    bool isDeleted = false,
-  }) async {
+  Future<void> goToFileDiff({required ChangedFileDiff diff, bool isAdded = false, bool isDeleted = false}) async {
     final commit = c.Commit(
       commitId: diff.commitId,
       parents: [diff.parentCommitId],
@@ -248,32 +245,4 @@ class _RevWithDescriptor {
 
   @override
   int get hashCode => reviewer.hashCode ^ descriptor.hashCode;
-}
-
-class _ChangedFileDiff {
-  _ChangedFileDiff({
-    required this.commitId,
-    required this.parentCommitId,
-    required this.path,
-    required this.directory,
-    required this.fileName,
-  });
-
-  final String commitId;
-  final String parentCommitId;
-  final String path;
-  final String directory;
-  final String fileName;
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is _ChangedFileDiff && other.path == path;
-  }
-
-  @override
-  int get hashCode {
-    return path.hashCode;
-  }
 }

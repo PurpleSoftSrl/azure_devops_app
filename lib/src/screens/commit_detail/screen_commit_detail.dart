@@ -107,70 +107,33 @@ class _CommitDetailScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const Divider(
-                      height: 40,
-                    ),
                   ],
                 ),
               ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (detail.changes?.changeCounts != null)
-                        Text(
-                          'Details',
-                          style: context.textTheme.titleLarge,
-                        ),
-                      if (ctrl.editedLines > 0)
-                        Text('${ctrl.editedLines} line${ctrl.editedLines == 1 ? '' : 's'} edited'),
-                      if (ctrl.addedLines > 0) Text('${ctrl.addedLines} line${ctrl.addedLines == 1 ? '' : 's'} added'),
-                      if (ctrl.deletedLines > 0)
-                        Text('${ctrl.deletedLines} line${ctrl.deletedLines == 1 ? '' : 's'} deleted'),
-                      const SizedBox(
-                        height: 20,
+              Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 60,
+                    ),
+                    if (ctrl.addedFilesCount > 0)
+                      GroupedFiles(
+                        groupedFiles: ctrl.groupedAddedFiles,
+                        onTap: (path) => ctrl.goToFileDiff(diff: path, isAdded: true),
                       ),
-                      if (ctrl.addedFilesCount > 0) ...[
-                        Text(
-                          '${ctrl.addedFilesCount} added file${ctrl.addedFilesCount == 1 ? '' : 's'}',
-                          style: context.textTheme.titleLarge,
-                        ),
-                        _GroupedFiles(
-                          groupedFiles: ctrl.groupedAddedFiles,
-                          onTap: (path) => ctrl.goToFileDiff(filePath: path, isAdded: true),
-                        ),
-                      ],
-                      if (ctrl.editedFilesCount > 0) ...[
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          '${ctrl.editedFilesCount} edited file${ctrl.editedFilesCount == 1 ? '' : 's'}',
-                          style: context.textTheme.titleLarge,
-                        ),
-                        _GroupedFiles(
-                          groupedFiles: ctrl.groupedEditedFiles,
-                          onTap: (path) => ctrl.goToFileDiff(filePath: path),
-                        ),
-                      ],
-                      if (ctrl.deletedFilesCount > 0) ...[
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          '${ctrl.deletedFilesCount} deleted file${ctrl.deletedFilesCount == 1 ? '' : 's'}',
-                          style: context.textTheme.titleLarge,
-                        ),
-                        _GroupedFiles(
-                          groupedFiles: ctrl.groupedDeletedFiles,
-                          onTap: (path) => ctrl.goToFileDiff(filePath: path, isDeleted: true),
-                        ),
-                      ],
-                    ],
-                  ),
+                    if (ctrl.editedFilesCount > 0)
+                      GroupedFiles(
+                        groupedFiles: ctrl.groupedEditedFiles,
+                        onTap: (path) => ctrl.goToFileDiff(diff: path),
+                      ),
+                    if (ctrl.deletedFilesCount > 0)
+                      GroupedFiles(
+                        groupedFiles: ctrl.groupedDeletedFiles,
+                        onTap: (path) => ctrl.goToFileDiff(diff: path, isDeleted: true),
+                      ),
+                  ],
                 ),
               ),
             ],

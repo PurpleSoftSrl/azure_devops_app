@@ -40,13 +40,9 @@ class _CommitDetailController with ShareMixin {
   Iterable<Change?> get deletedFiles => changedFiles.where((f) => f!.changeType == 'delete');
   int get deletedFilesCount => deletedFiles.length;
 
-  int get addedLines => commitChanges.value?.data?.changes?.changeCounts?.add ?? 0;
-  int get editedLines => commitChanges.value?.data?.changes?.changeCounts?.edit ?? 0;
-  int get deletedLines => commitChanges.value?.data?.changes?.changeCounts?.delete ?? 0;
-
-  final groupedEditedFiles = <String, Set<String>>{};
-  final groupedAddedFiles = <String, Set<String>>{};
-  final groupedDeletedFiles = <String, Set<String>>{};
+  final groupedEditedFiles = <String, Set<ChangedFileDiff>>{};
+  final groupedAddedFiles = <String, Set<ChangedFileDiff>>{};
+  final groupedDeletedFiles = <String, Set<ChangedFileDiff>>{};
 
   void dispose() {
     instance = null;
@@ -61,25 +57,38 @@ class _CommitDetailController with ShareMixin {
     );
 
     final changes = detailRes.data?.changes?.changes ?? <Change>[];
+    _getChangedFiles(changes);
 
+    commitChanges.value = detailRes;
+  }
+
+  void _getChangedFiles(List<Change?> changes) {
     for (final file in changes.where((f) => f?.item?.gitObjectType == 'blob' && f?.item?.path != null)) {
-      final path = file!.item!.path!;
+      final path = file!.item!.path;
+      if (path == null) continue;
+
       final directory = dirname(path);
       final fileName = basename(path);
 
+      final diff = ChangedFileDiff(
+        commitId: file.item!.commitId!,
+        parentCommitId: '',
+        directory: directory,
+        fileName: fileName,
+        path: path,
+        changeType: switch (file.changeType) { 'add' => 'added', 'edit' => 'edited', 'delete' => 'deleted', _ => '' },
+      );
       if (file.changeType == 'add') {
-        groupedAddedFiles.putIfAbsent(directory, () => {fileName});
-        groupedAddedFiles[directory]!.add(fileName);
+        groupedAddedFiles.putIfAbsent(directory, () => {diff});
+        groupedAddedFiles[directory]!.add(diff);
       } else if (file.changeType == 'edit') {
-        groupedEditedFiles.putIfAbsent(directory, () => {fileName});
-        groupedEditedFiles[directory]!.add(fileName);
+        groupedEditedFiles.putIfAbsent(directory, () => {diff});
+        groupedEditedFiles[directory]!.add(diff);
       } else if (file.changeType == 'delete') {
-        groupedDeletedFiles.putIfAbsent(directory, () => {fileName});
-        groupedDeletedFiles[directory]!.add(fileName);
+        groupedDeletedFiles.putIfAbsent(directory, () => {diff});
+        groupedDeletedFiles[directory]!.add(diff);
       }
     }
-
-    commitChanges.value = detailRes;
   }
 
   void shareDiff() {
@@ -99,11 +108,11 @@ class _CommitDetailController with ShareMixin {
     );
   }
 
-  void goToFileDiff({required String filePath, bool isAdded = false, bool isDeleted = false}) {
+  void goToFileDiff({required ChangedFileDiff diff, bool isAdded = false, bool isDeleted = false}) {
     AppRouter.goToFileDiff(
       (
         commit: commit!,
-        filePath: filePath,
+        filePath: diff.path,
         isAdded: isAdded,
         isDeleted: isDeleted,
       ),

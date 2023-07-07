@@ -233,42 +233,21 @@ class _PullRequestChangedFiles extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (ctrl.addedFilesCount > 0) ...[
-            Text(
-              '${ctrl.addedFilesCount} added file${ctrl.addedFilesCount == 1 ? '' : 's'}',
-              style: context.textTheme.titleLarge,
-            ),
-            _GroupedFiles(
+          if (ctrl.addedFilesCount > 0)
+            GroupedFiles(
               groupedFiles: ctrl.groupedAddedFiles,
               onTap: (diff) => ctrl.goToFileDiff(diff: diff, isAdded: true),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-          ],
-          if (ctrl.editedFilesCount > 0) ...[
-            Text(
-              '${ctrl.editedFilesCount} edited file${ctrl.editedFilesCount == 1 ? '' : 's'}',
-              style: context.textTheme.titleLarge,
-            ),
-            _GroupedFiles(
+          if (ctrl.editedFilesCount > 0)
+            GroupedFiles(
               groupedFiles: ctrl.groupedEditedFiles,
               onTap: (diff) => ctrl.goToFileDiff(diff: diff),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-          ],
-          if (ctrl.deletedFilesCount > 0) ...[
-            Text(
-              '${ctrl.deletedFilesCount} deleted file${ctrl.deletedFilesCount == 1 ? '' : 's'}',
-              style: context.textTheme.titleLarge,
-            ),
-            _GroupedFiles(
+          if (ctrl.deletedFilesCount > 0)
+            GroupedFiles(
               groupedFiles: ctrl.groupedDeletedFiles,
               onTap: (diff) => ctrl.goToFileDiff(diff: diff, isDeleted: true),
             ),
-          ],
         ],
       ),
     );
@@ -432,46 +411,6 @@ class _RefUpdateWidget extends StatelessWidget {
                     ),
                     if (commits.isNotEmpty && c != commits.last) const Divider(endIndent: 40, thickness: .5),
                   ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _GroupedFiles extends StatelessWidget {
-  const _GroupedFiles({required this.groupedFiles, required this.onTap});
-
-  final Map<String, Set<_ChangedFileDiff>> groupedFiles;
-  final dynamic Function(_ChangedFileDiff) onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ...groupedFiles.entries.map(
-          (entry) => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 5),
-              if (entry.key != '/') Text(entry.key.startsWith('/') ? entry.key.substring(1) : entry.key),
-              ...entry.value.map(
-                (fileName) => InkWell(
-                  onTap: () => onTap(fileName),
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 5, left: 5),
-                    child: Text(
-                      fileName.fileName,
-                      style: context.textTheme.titleSmall!.copyWith(
-                        color: context.colorScheme.onSecondary,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
                 ),
               ),
             ],
