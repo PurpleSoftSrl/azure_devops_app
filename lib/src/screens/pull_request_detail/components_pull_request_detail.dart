@@ -18,6 +18,7 @@ class _PageTabs extends StatelessWidget {
       children: [
         _PullRequestOverview(ctrl: ctrl, visiblePage: visiblePage, prWithDetails: prWithDetails),
         _PullRequestChangedFiles(ctrl: ctrl, visiblePage: visiblePage),
+        _PullRequestCommits(ctrl: ctrl, visiblePage: visiblePage, prWithDetails: prWithDetails),
       ],
     );
   }
@@ -248,6 +249,41 @@ class _PullRequestChangedFiles extends StatelessWidget {
               groupedFiles: ctrl.groupedDeletedFiles,
               onTap: (diff) => ctrl.goToFileDiff(diff: diff, isDeleted: true),
             ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PullRequestCommits extends StatelessWidget {
+  const _PullRequestCommits({
+    required this.visiblePage,
+    required this.ctrl,
+    required this.prWithDetails,
+  });
+
+  final int visiblePage;
+  final _PullRequestDetailController ctrl;
+  final PullRequestWithDetails prWithDetails;
+
+  @override
+  Widget build(BuildContext context) {
+    final commits = prWithDetails.updates.whereType<IterationUpdate>().expand((u) => u.commits);
+    return Visibility(
+      visible: visiblePage == 2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ...commits.map(
+            (commit) => CommitListTile(
+              onTap: () => ctrl.goToCommitDetail(commit.commitId!),
+              commit: commit.copyWith(
+                remoteUrl:
+                    '${ctrl.apiService.basePath}/${prWithDetails.pr.repository.project.name}/_git/${prWithDetails.pr.repository.name}/commit/${commit.commitId}',
+              ),
+              isLast: commit == commits.last,
+            ),
+          ),
         ],
       ),
     );

@@ -9,7 +9,7 @@ class _PullRequestDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Builder(
         builder: (ctx) => AppPage<PullRequestWithDetails?>(
           init: ctrl.init,
@@ -19,9 +19,11 @@ class _PullRequestDetailScreen extends StatelessWidget {
           header: () => TabBar(
             onTap: (i) => ctrl.selectPage(i, DefaultTabController.of(ctx)),
             indicatorPadding: const EdgeInsets.symmetric(horizontal: 24),
+            labelPadding: EdgeInsets.zero,
             tabs: const [
               Tab(text: 'Overview'),
-              Tab(text: 'Changed files'),
+              Tab(text: 'Files'),
+              Tab(text: 'Commits'),
             ],
           ),
           actions: [

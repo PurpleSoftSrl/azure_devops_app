@@ -194,7 +194,9 @@ class _PullRequestDetailController with ShareMixin {
   }
 
   void goToCommitDetail(String commitId) {
-    AppRouter.goToCommitDetail(project: args.project, repository: args.repository, commitId: commitId);
+    final projectName = prDetail.value!.data!.pr.repository.project.name;
+    final repositoryName = prDetail.value!.data!.pr.repository.name;
+    AppRouter.goToCommitDetail(project: projectName, repository: repositoryName, commitId: commitId);
   }
 
   Future<void> onTapMarkdownLink(String text, String? href, String? _) async {
