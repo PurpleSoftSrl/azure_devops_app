@@ -23,6 +23,8 @@ class _FileDiffController with ShareMixin {
   String? imageDiffContent;
   String? previousImageDiffContent;
 
+  bool get isImageDiff => imageDiffContent != null || previousImageDiffContent != null;
+
   void dispose() {
     instance = null;
   }

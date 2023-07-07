@@ -21,12 +21,11 @@ class _FileDiffScreen extends StatelessWidget {
       notifier: ctrl.diff,
       padding: EdgeInsets.zero,
       showScrollbar: true,
-      builder: (diff) =>
-          diff!.imageComparison && (ctrl.imageDiffContent != null || ctrl.previousImageDiffContent != null)
-              ? _ImageDiff(ctrl: ctrl)
-              : diff.binaryContent
-                  ? const Center(child: Text('Cannot show binary file diff'))
-                  : _FileDiff(ctrl: ctrl, diff: diff),
+      builder: (diff) => switch (diff) {
+        final Diff d when d.imageComparison && ctrl.isImageDiff => _ImageDiff(ctrl: ctrl),
+        final Diff d when d.binaryContent => const Center(child: Text('Cannot show binary file diff')),
+        _ => _FileDiff(ctrl: ctrl, diff: diff!),
+      },
     );
   }
 }
