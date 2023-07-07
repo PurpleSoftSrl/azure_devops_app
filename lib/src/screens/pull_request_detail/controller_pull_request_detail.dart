@@ -78,7 +78,7 @@ class _PullRequestDetailController with ShareMixin {
 
     final prAndThreads = _getReplacedPrAndThreads(data: res.data);
 
-    prDetail.value = res.copyWith(data: res.data?.copyWith(pr: prAndThreads.pr, threads: prAndThreads.threads));
+    prDetail.value = res.copyWith(data: res.data?.copyWith(pr: prAndThreads.pr, updates: prAndThreads.updates));
   }
 
   void _getChangedFiles(ApiResponse<PullRequestWithDetails> res) {
@@ -128,7 +128,7 @@ class _PullRequestDetailController with ShareMixin {
   }
 
   /// Replaces work items links with valid markdown links in description and comments
-  ({PullRequest? pr, List<Thread> threads}) _getReplacedPrAndThreads({PullRequestWithDetails? data}) {
+  ({PullRequest? pr, List<PullRequestUpdate> updates}) _getReplacedPrAndThreads({PullRequestWithDetails? data}) {
     final description = data?.pr.description ?? '';
 
     PullRequest? pr;
@@ -138,19 +138,18 @@ class _PullRequestDetailController with ShareMixin {
       pr = data!.pr.copyWith(description: replacedDescription);
     }
 
-    final threads = <Thread>[];
+    final updates = <PullRequestUpdate>[];
 
-    for (final thread in data?.threads ?? <Thread>[]) {
-      final comments = <Comment>[];
-      for (final comment in thread.comments) {
-        final replacedComment = _replaceWorkItemLinks(comment.content);
-        comments.add(comment.copyWith(content: replacedComment));
+    for (final update in data?.updates ?? <PullRequestUpdate>[]) {
+      if (update is CommentUpdate) {
+        final replacedComment = _replaceWorkItemLinks(update.content);
+        updates.add(update.copyWith(content: replacedComment));
+      } else {
+        updates.add(update);
       }
-
-      threads.add(thread.copyWith(comments: comments));
     }
 
-    return (pr: pr, threads: threads);
+    return (pr: pr, updates: updates);
   }
 
   String _replaceWorkItemLinks(String text) {
@@ -193,54 +192,6 @@ class _PullRequestDetailController with ShareMixin {
     return res.data?.descriptor ?? '';
   }
 
-  String? _getCommitAuthor(Thread t) {
-    final commits = getCommits(t);
-    return commits?.toList().firstOrNull?.author?.name;
-  }
-
-  int? getCommitIteration(Thread t) {
-    final changes = prDetail.value?.data?.changes ?? [];
-    if (changes.isEmpty) return null;
-
-    final commitsString = t.properties?.newCommits?.value ?? '';
-    if (commitsString.isEmpty) return null;
-
-    final commitIds = t.properties!.newCommits!.value.split(';');
-
-    return changes.firstWhereOrNull((c) => commitIds.contains(c.iteration.sourceRefCommit.commitId))?.iteration.id;
-  }
-
-  Iterable<Commit>? getCommits(Thread t) {
-    final commits = prDetail.value?.data?.pr.commits ?? [];
-    if (commits.isEmpty) return null;
-
-    final commitsString = t.properties?.newCommits?.value ?? '';
-    if (commitsString.isEmpty) return null;
-
-    final commitIds = t.properties!.newCommits!.value.toLowerCase().split(';');
-
-    return commits.where((c) => commitIds.contains(c.commitId?.toLowerCase()));
-  }
-
-  String? getCommitterDescriptor(Thread t) {
-    final commits = getCommits(t);
-    final email = commits?.toList().firstOrNull?.author?.email ?? '';
-    if (email.isEmpty) return null;
-
-    return apiService.allUsers.firstWhereOrNull((u) => u.mailAddress == email)?.descriptor;
-  }
-
-  String? getCommitterDescriptorFromEmail(String? email) {
-    if (email == null) return null;
-    return apiService.allUsers.firstWhereOrNull((u) => u.mailAddress == email)?.descriptor;
-  }
-
-  String getRefUpdateTitle(Thread t) {
-    final commitsCount = t.properties?.newCommitsCount?.value ?? 1;
-    final commits = commitsCount > 1 ? 'commits' : 'commit';
-    return '${_getCommitAuthor(t) ?? '-'} pushed $commitsCount $commits';
-  }
-
   void goToCommitDetail(String commitId) {
     AppRouter.goToCommitDetail(project: args.project, repository: args.repository, commitId: commitId);
   }
@@ -264,7 +215,7 @@ class _PullRequestDetailController with ShareMixin {
     bool isAdded = false,
     bool isDeleted = false,
   }) async {
-    final commit = Commit(
+    final commit = c.Commit(
       commitId: diff.commitId,
       parents: [diff.parentCommitId],
       url: '${apiService.basePath}/${args.project}/_apis/git/repositories/${args.repository}/commits/${diff.commitId}',

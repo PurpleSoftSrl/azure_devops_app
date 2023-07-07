@@ -1051,6 +1051,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 
   @override
+  // ignore: long-method
   Future<ApiResponse<PullRequestWithDetails>> getPullRequest({
     required String projectName,
     required String repositoryId,
@@ -1058,16 +1059,17 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }) async {
     final prPath = '$_basePath/$projectName/_apis/git/repositories/$repositoryId/pullrequests/$id';
 
-    final prRes = await _get('$prPath?includeCommits=true&$_apiVersion');
+    final prRes = await _get('$prPath?$_apiVersion');
     if (prRes.isError) return ApiResponse.error(prRes);
 
     final pr = PullRequest.fromResponse(prRes);
 
     final allChanges = <CommitWithChangeEntry>[];
-    final iterationsRes = await _get('$prPath/iterations?$_apiVersion');
+    final iterationsRes = await _get('$prPath/iterations?includeCommits=true&$_apiVersion');
 
+    final iterations = <Iteration>[];
     if (!iterationsRes.isError) {
-      final iterations = IterationsRes.fromResponse(iterationsRes).iterations;
+      iterations.addAll(IterationsRes.fromResponse(iterationsRes).iterations);
       await Future.wait([
         for (final iteration in iterations)
           _get('$prPath/iterations/${iteration.id}/changes?$_apiVersion').then((changesRes) {
@@ -1085,7 +1087,60 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       threads = ThreadsRes.fromResponse(threadsRes).threads.where((t) => !t.isDeleted).toList();
     }
 
-    return ApiResponse.ok(PullRequestWithDetails(pr: pr, changes: allChanges, threads: threads));
+    final voteUpdates = threads.where((t) => t.properties?.type?.value == 'VoteUpdate');
+    final statusUpdates = threads.where((t) => t.properties?.type?.value == 'StatusUpdate');
+    final otherUpdates =
+        threads.where((t) => !['VoteUpdate', 'StatusUpdate', 'RefUpdate'].contains(t.properties?.type?.value));
+
+    final updates = [
+      for (final t in threads)
+        for (final c in t.comments.where((c) => c.commentType == 'text'))
+          CommentUpdate(
+            date: c.publishedDate,
+            content: c.content,
+            updatedDate: c.lastUpdatedDate,
+            author: c.author,
+            identity: t.identities?.entries.firstOrNull?.value,
+            parentCommentId: c.parentCommentId,
+          ),
+      ...iterations.map(
+        (u) => IterationUpdate(
+          date: u.createdDate,
+          id: u.id,
+          commits: u.commits ?? [],
+          author: u.author,
+          content: u.description,
+        ),
+      ),
+      ...voteUpdates.map(
+        (u) => VoteUpdate(
+          date: u.publishedDate,
+          content: u.comments.first.content,
+          author: u.comments.first.author,
+          identity: u.identities?.entries.firstOrNull?.value,
+        ),
+      ),
+      ...statusUpdates.map(
+        (u) => StatusUpdate(
+          date: u.publishedDate,
+          author: u.comments.first.author,
+          identity: u.identities?.entries.firstOrNull?.value,
+          content: u.comments.first.content,
+        ),
+      ),
+      for (final t in otherUpdates)
+        for (final c in t.comments.where((c) => c.commentType == 'system'))
+          SystemUpdate(
+            date: c.publishedDate,
+            content: c.content,
+            author: c.author,
+            identity: t.identities?.entries.firstOrNull?.value,
+          ),
+    ]..sort((a, b) => b.date.compareTo(a.date));
+
+    return ApiResponse.ok(
+      PullRequestWithDetails(pr: pr, changes: allChanges, updates: updates),
+    );
   }
 
   @override

@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 
-import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/shared.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +47,6 @@ class PullRequest {
     required this.mergeId,
     required this.reviewers,
     this.labels,
-    this.commits,
   });
 
   factory PullRequest.fromJson(Map<String, dynamic> json) => PullRequest(
@@ -69,7 +67,6 @@ class PullRequest {
           (json['reviewers'] as List<dynamic>).map((e) => Reviewer.fromJson(e as Map<String, dynamic>)),
         ),
         labels: (json['labels'] as List<dynamic>?)?.map((e) => _Label.fromJson(e as Map<String, dynamic>)).toList(),
-        commits: (json['commits'] as List<dynamic>?)?.map((e) => Commit.fromJson(e as Map<String, dynamic>)).toList(),
       );
 
   static PullRequest fromResponse(Response res) => PullRequest.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
@@ -89,7 +86,6 @@ class PullRequest {
   final String mergeId;
   final List<Reviewer> reviewers;
   final List<_Label>? labels;
-  final List<Commit>? commits;
 
   @visibleForTesting
   static PullRequest empty() => PullRequest(
@@ -201,7 +197,6 @@ class PullRequest {
       creationDate: creationDate ?? this.creationDate,
       title: title ?? this.title,
       description: description ?? this.description,
-      commits: commits,
       labels: labels,
       mergeStatus: mergeStatus,
     );

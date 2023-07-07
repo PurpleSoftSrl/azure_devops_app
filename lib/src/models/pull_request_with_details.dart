@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
 import 'package:http/http.dart';
 
@@ -7,22 +8,22 @@ class PullRequestWithDetails {
   PullRequestWithDetails({
     required this.pr,
     required this.changes,
-    required this.threads,
+    required this.updates,
   });
 
   final PullRequest pr;
   final List<CommitWithChangeEntry> changes;
-  final List<Thread> threads;
+  final List<PullRequestUpdate> updates;
 
   PullRequestWithDetails copyWith({
     PullRequest? pr,
     List<CommitWithChangeEntry>? changes,
-    List<Thread>? threads,
+    List<PullRequestUpdate>? updates,
   }) {
     return PullRequestWithDetails(
       pr: pr ?? this.pr,
       changes: changes ?? this.changes,
-      threads: threads ?? this.threads,
+      updates: updates ?? this.updates,
     );
   }
 }
@@ -51,6 +52,7 @@ class Iteration {
     required this.updatedDate,
     required this.sourceRefCommit,
     required this.commonRefCommit,
+    this.commits,
   });
 
   factory Iteration.fromJson(Map<String, dynamic> json) => Iteration(
@@ -61,6 +63,7 @@ class Iteration {
         updatedDate: DateTime.parse(json['updatedDate']!.toString()).toLocal(),
         sourceRefCommit: RefCommit.fromJson(json['sourceRefCommit'] as Map<String, dynamic>),
         commonRefCommit: RefCommit.fromJson(json['commonRefCommit'] as Map<String, dynamic>),
+        commits: (json['commits'] as List<dynamic>?)?.map((e) => Commit.fromJson(e as Map<String, dynamic>)).toList(),
       );
 
   final int id;
@@ -70,6 +73,7 @@ class Iteration {
   final DateTime updatedDate;
   final RefCommit sourceRefCommit;
   final RefCommit commonRefCommit;
+  final List<Commit>? commits;
 }
 
 class Author {
@@ -288,4 +292,62 @@ class Comment {
       commentType: commentType,
     );
   }
+}
+
+sealed class PullRequestUpdate {
+  PullRequestUpdate({required this.date, required this.author, required this.identity, required this.content});
+
+  final DateTime date;
+  final Author author;
+  final dynamic identity;
+  final String content;
+}
+
+final class CommentUpdate extends PullRequestUpdate {
+  CommentUpdate({
+    required super.date,
+    required super.author,
+    required super.identity,
+    required super.content,
+    required this.updatedDate,
+    required this.parentCommentId,
+  });
+
+  final DateTime updatedDate;
+  final int parentCommentId;
+
+  CommentUpdate copyWith({String? content}) => CommentUpdate(
+        content: content ?? this.content,
+        author: author,
+        date: date,
+        identity: identity,
+        parentCommentId: parentCommentId,
+        updatedDate: updatedDate,
+      );
+}
+
+final class IterationUpdate extends PullRequestUpdate {
+  IterationUpdate({
+    required super.date,
+    required super.author,
+    super.identity,
+    required super.content,
+    required this.id,
+    required this.commits,
+  });
+
+  final int id;
+  final List<Commit> commits;
+}
+
+final class VoteUpdate extends PullRequestUpdate {
+  VoteUpdate({required super.date, required super.author, required super.identity, required super.content});
+}
+
+final class StatusUpdate extends PullRequestUpdate {
+  StatusUpdate({required super.date, required super.author, required super.identity, required super.content});
+}
+
+final class SystemUpdate extends PullRequestUpdate {
+  SystemUpdate({required super.date, required super.author, required super.identity, required super.content});
 }

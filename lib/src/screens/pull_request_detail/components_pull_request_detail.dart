@@ -37,7 +37,6 @@ class _PullRequestOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pr = prWithDetails.pr;
-    final threads = prWithDetails.threads;
     return Visibility(
       visible: visiblePage == 0,
       child: DefaultTextStyle(
@@ -158,62 +157,50 @@ class _PullRequestOverview extends StatelessWidget {
                 ),
               ),
             ],
-            if (threads.isNotEmpty) ...[
+            if (prWithDetails.updates.isNotEmpty) ...[
               SectionHeader(text: 'History'),
-              ...threads.sortedBy((t) => t.publishedDate).reversed.map(
-                    (t) => Column(
+              ...prWithDetails.updates.map(
+                (u) => Column(
+                  children: [
+                    Row(
                       children: [
-                        ...t.comments.sortedBy((c) => c.publishedDate).map(
-                              (c) => Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: switch (t.properties?.type?.value) {
-                                        'VoteUpdate' => Row(
-                                            children: [
-                                              if (c.content.voteIcon != null) ...[
-                                                c.content.voteIcon!,
-                                                const SizedBox(width: 10),
-                                              ],
-                                              _UserAvatar(commit: c, thread: t),
-                                              Expanded(
-                                                child: Text(
-                                                  '${c.author.displayName} ${c.content.voteDescription}',
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        'StatusUpdate' when pr.status == PullRequestState.completed => Row(
-                                            children: [
-                                              _UserAvatar(commit: c, thread: t),
-                                              Expanded(
-                                                child: Text(
-                                                  '${t.identities?.entries.firstOrNull?.value['displayName'] ?? c.author.displayName} completed the pull request',
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        'RefUpdate' => _RefUpdateWidget(ctrl: ctrl, thread: t),
-                                        _ when c.commentType == 'text' => _CommentWidget(ctrl: ctrl, commit: c),
-                                        _ => Row(
-                                            children: [
-                                              _UserAvatar(commit: c, thread: t),
-                                              Expanded(child: Text(c.content)),
-                                            ],
-                                          ),
-                                      },
-                                    ),
+                        Expanded(
+                          child: switch (u) {
+                            VoteUpdate() => Row(
+                                children: [
+                                  if (u.content.voteIcon != null) ...[
+                                    u.content.voteIcon!,
                                     const SizedBox(width: 10),
-                                    Text(c.publishedDate.minutesAgo),
                                   ],
-                                ),
+                                  _UserAvatar(update: u),
+                                  Expanded(child: Text('${u.author.displayName} ${u.content.voteDescription}')),
+                                ],
                               ),
-                            ),
-                        const Divider(height: 30),
+                            StatusUpdate() when pr.status == PullRequestState.completed => Row(
+                                children: [
+                                  _UserAvatar(update: u),
+                                  Expanded(
+                                    child: Text(
+                                      '${u.identity['displayName'] ?? u.author.displayName} completed the pull request',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            IterationUpdate() => _RefUpdateWidget(ctrl: ctrl, iteration: u),
+                            CommentUpdate() => _CommentWidget(ctrl: ctrl, comment: u),
+                            SystemUpdate() ||
+                            _ =>
+                              Row(children: [_UserAvatar(update: u), Expanded(child: Text(u.content))])
+                          },
+                        ),
+                        const SizedBox(width: 10),
+                        Text(u.date.minutesAgo),
                       ],
                     ),
-                  ),
+                    const Divider(height: 30),
+                  ],
+                ),
+              ),
               Row(
                 children: [
                   MemberAvatar(userDescriptor: pr.createdBy.descriptor, radius: 20),
@@ -289,24 +276,23 @@ class _PullRequestChangedFiles extends StatelessWidget {
 }
 
 class _UserAvatar extends StatelessWidget {
-  const _UserAvatar({required this.commit, required this.thread});
+  const _UserAvatar({required this.update});
 
-  final Comment commit;
-  final Thread thread;
+  final PullRequestUpdate update;
 
   @override
   Widget build(BuildContext context) {
-    if ((commit.author.uniqueName.isEmpty) && (thread.identities ?? {}).isEmpty) {
+    if ((update.author.uniqueName.isEmpty) && (update.identity == null)) {
       return const SizedBox();
     }
 
     return Row(
       children: [
-        if (commit.author.uniqueName.isNotEmpty) ...[
-          MemberAvatar(userDescriptor: commit.author.descriptor, radius: 20),
+        if (update.author.uniqueName.isNotEmpty) ...[
+          MemberAvatar(userDescriptor: update.author.descriptor, radius: 20),
           const SizedBox(width: 10),
-        ] else if ((thread.identities ?? {}).isNotEmpty) ...[
-          MemberAvatar(userDescriptor: thread.identities!.values.first['descriptor']?.toString() ?? '', radius: 20),
+        ] else if (update.identity != null) ...[
+          MemberAvatar(userDescriptor: update.identity['descriptor']?.toString() ?? '', radius: 20),
           const SizedBox(width: 10),
         ],
       ],
@@ -315,15 +301,15 @@ class _UserAvatar extends StatelessWidget {
 }
 
 class _CommentWidget extends StatelessWidget {
-  const _CommentWidget({required this.ctrl, required this.commit});
+  const _CommentWidget({required this.ctrl, required this.comment});
 
   final _PullRequestDetailController ctrl;
-  final Comment commit;
+  final CommentUpdate comment;
 
   @override
   Widget build(BuildContext context) {
-    final isEdited = commit.publishedDate.isBefore(commit.lastUpdatedDate);
-    final isReply = commit.parentCommentId > 0;
+    final isEdited = comment.date.isBefore(comment.updatedDate);
+    final isReply = comment.parentCommentId > 0;
     return Container(
       width: double.maxFinite,
       padding: const EdgeInsets.all(8),
@@ -336,13 +322,13 @@ class _CommentWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              MemberAvatar(userDescriptor: commit.author.descriptor, radius: 20),
+              MemberAvatar(userDescriptor: comment.author.descriptor, radius: 20),
               const SizedBox(width: 10),
               Expanded(
                 child: Text.rich(
                   TextSpan(
                     children: [
-                      TextSpan(text: commit.author.displayName),
+                      TextSpan(text: comment.author.displayName),
                       TextSpan(
                         text: '  ${isReply ? 'replied' : 'commented'} ${isEdited ? '(edited)' : ''}',
                         style: context.textTheme.labelSmall,
@@ -355,7 +341,7 @@ class _CommentWidget extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           MarkdownBody(
-            data: commit.content,
+            data: comment.content,
             styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
             onTapLink: ctrl.onTapMarkdownLink,
           ),
@@ -366,15 +352,15 @@ class _CommentWidget extends StatelessWidget {
 }
 
 class _RefUpdateWidget extends StatelessWidget {
-  const _RefUpdateWidget({required this.ctrl, required this.thread});
+  const _RefUpdateWidget({required this.ctrl, required this.iteration});
 
   final _PullRequestDetailController ctrl;
-  final Thread thread;
+  final IterationUpdate iteration;
 
   @override
   Widget build(BuildContext context) {
-    final commits = ctrl.getCommits(thread) ?? [];
-    final committerDescriptor = ctrl.getCommitterDescriptor(thread);
+    final commits = iteration.commits;
+    final committerDescriptor = iteration.author.descriptor;
     return Row(
       children: [
         Container(
@@ -385,7 +371,7 @@ class _RefUpdateWidget extends StatelessWidget {
           ),
           child: Center(
             child: Text(
-              ctrl.getCommitIteration(thread)?.toString() ?? '-',
+              iteration.id.toString(),
               style: context.textTheme.bodyMedium,
             ),
           ),
@@ -397,16 +383,14 @@ class _RefUpdateWidget extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  if (committerDescriptor != null) ...[
-                    MemberAvatar(
-                      userDescriptor: committerDescriptor,
-                      radius: 15,
-                    ),
-                    const SizedBox(width: 10),
-                  ],
+                  MemberAvatar(
+                    userDescriptor: committerDescriptor,
+                    radius: 15,
+                  ),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      ctrl.getRefUpdateTitle(thread),
+                      '${iteration.author.displayName} pushed ${commits.length} commit${commits.length == 1 ? '' : 's'}',
                     ),
                   ),
                 ],
@@ -435,12 +419,10 @@ class _RefUpdateWidget extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 10),
-                          if (ctrl.getCommitterDescriptorFromEmail(c.author?.email) != null) ...[
-                            MemberAvatar(
-                              userDescriptor: ctrl.getCommitterDescriptorFromEmail(c.author?.email)!,
-                              radius: 15,
-                            ),
-                          ],
+                          MemberAvatar(
+                            userDescriptor: committerDescriptor,
+                            radius: 15,
+                          ),
                           const SizedBox(width: 10),
                           Text(c.author?.name ?? ''),
                           const SizedBox(width: 10),
