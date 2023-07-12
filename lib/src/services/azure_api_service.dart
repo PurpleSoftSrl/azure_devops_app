@@ -1274,7 +1274,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final timelineRes = await _get('$_basePath/$projectName/_apis/build/builds/$id/timeline?$_apiVersion');
 
     final pipeline = Pipeline.fromResponse(pipelineRes);
-    final timeline = timelineRes.isError ? <Record>[] : GetTimelineResponse.fromResponse(timelineRes);
+    final timeline = timelineRes.isError || timelineRes.statusCode == 204 ? <Record>[] : GetTimelineResponse.fromResponse(timelineRes);
     return ApiResponse.ok(PipelineWithTimeline(pipeline: pipeline, timeline: timeline));
   }
 
