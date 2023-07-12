@@ -1064,6 +1064,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final pr = PullRequest.fromResponse(prRes);
 
+    final conflicts = <Conflict>[];
+    if (pr.mergeStatus == 'conflicts') {
+      final conflictsRes = await _get('$prPath/conflicts?excludeResolved=true&$_apiVersion');
+      if (!conflictsRes.isError) conflicts.addAll(ConflictsResponse.fromResponse(conflictsRes).conflicts);
+    }
+
     final allChanges = <CommitWithChangeEntry>[];
     final iterationsRes = await _get('$prPath/iterations?includeCommits=true&$_apiVersion');
 
@@ -1139,7 +1145,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     ]..sort((a, b) => b.date.compareTo(a.date));
 
     return ApiResponse.ok(
-      PullRequestWithDetails(pr: pr, changes: allChanges, updates: updates),
+      PullRequestWithDetails(pr: pr, changes: allChanges, updates: updates, conflicts: conflicts),
     );
   }
 

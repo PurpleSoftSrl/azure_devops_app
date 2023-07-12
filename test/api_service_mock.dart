@@ -430,6 +430,7 @@ class AzureApiServiceMock implements AzureApiService {
         ),
         changes: [],
         updates: [],
+        conflicts: [],
       ),
     );
   }

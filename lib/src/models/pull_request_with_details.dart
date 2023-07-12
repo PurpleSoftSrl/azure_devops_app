@@ -9,21 +9,25 @@ class PullRequestWithDetails {
     required this.pr,
     required this.changes,
     required this.updates,
+    required this.conflicts,
   });
 
   final PullRequest pr;
   final List<CommitWithChangeEntry> changes;
   final List<PullRequestUpdate> updates;
+  final List<Conflict> conflicts;
 
   PullRequestWithDetails copyWith({
     PullRequest? pr,
     List<CommitWithChangeEntry>? changes,
     List<PullRequestUpdate>? updates,
+    List<Conflict>? conflicts,
   }) {
     return PullRequestWithDetails(
       pr: pr ?? this.pr,
       changes: changes ?? this.changes,
       updates: updates ?? this.updates,
+      conflicts: conflicts ?? this.conflicts,
     );
   }
 }
@@ -292,6 +296,39 @@ class Comment {
       commentType: commentType,
     );
   }
+}
+
+class ConflictsResponse {
+  ConflictsResponse({required this.conflicts});
+
+  factory ConflictsResponse.fromResponse(Response res) =>
+      ConflictsResponse.fromJson(json.decode(res.body) as Map<String, dynamic>);
+
+  factory ConflictsResponse.fromJson(Map<String, dynamic> json) => ConflictsResponse(
+        conflicts: List<Conflict>.from(
+          (json['value'] as List<dynamic>).map((c) => Conflict.fromJson(c as Map<String, dynamic>)),
+        ),
+      );
+
+  final List<Conflict> conflicts;
+}
+
+class Conflict {
+  Conflict({
+    required this.conflictId,
+    required this.conflictType,
+    required this.conflictPath,
+  });
+
+  factory Conflict.fromJson(Map<String, dynamic> json) => Conflict(
+        conflictId: json['conflictId'] as int,
+        conflictType: json['conflictType'] as String,
+        conflictPath: json['conflictPath'] as String,
+      );
+
+  final int conflictId;
+  final String conflictType;
+  final String conflictPath;
 }
 
 sealed class PullRequestUpdate {

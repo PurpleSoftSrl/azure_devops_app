@@ -98,6 +98,20 @@ class _PullRequestOverview extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
+            if (prWithDetails.conflicts.isNotEmpty) ...[
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(AppTheme.radius),
+                  border: Border.all(color: context.colorScheme.error, width: 2),
+                ),
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.symmetric(vertical: 12),
+                child: GroupedFiles(
+                  bottomSpace: false,
+                  groupedFiles: ctrl.groupedConflictingFiles,
+                ),
+              ),
+            ],
             Text(
               'Title: ',
               style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),

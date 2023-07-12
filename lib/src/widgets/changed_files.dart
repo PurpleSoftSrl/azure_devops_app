@@ -3,10 +3,11 @@ import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:flutter/material.dart';
 
 class GroupedFiles extends StatelessWidget {
-  const GroupedFiles({required this.groupedFiles, required this.onTap});
+  const GroupedFiles({required this.groupedFiles, this.onTap, this.bottomSpace = true});
 
   final Map<String, Set<ChangedFileDiff>> groupedFiles;
-  final dynamic Function(ChangedFileDiff) onTap;
+  final dynamic Function(ChangedFileDiff)? onTap;
+  final bool bottomSpace;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +52,7 @@ class GroupedFiles extends StatelessWidget {
                 ),
               ...entry.value.map(
                 (fileName) => InkWell(
-                  onTap: () => onTap(fileName),
+                  onTap: () => onTap?.call(fileName),
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 5),
                     child: Row(
@@ -65,7 +66,7 @@ class GroupedFiles extends StatelessWidget {
                             fileName.fileName,
                             style: context.textTheme.titleSmall!.copyWith(
                               color: context.colorScheme.onSecondary,
-                              decoration: TextDecoration.underline,
+                              decoration: onTap == null ? null : TextDecoration.underline,
                             ),
                           ),
                         ),
@@ -77,9 +78,10 @@ class GroupedFiles extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(
-          height: 40,
-        ),
+        if (bottomSpace)
+          const SizedBox(
+            height: 40,
+          ),
       ],
     );
   }

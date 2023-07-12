@@ -52,6 +52,8 @@ class _PullRequestDetailController with ShareMixin {
 
   final visiblePage = ValueNotifier<int>(0);
 
+  final groupedConflictingFiles = <String, Set<ChangedFileDiff>>{};
+
   void dispose() {
     instance = null;
     _instances.remove(args.hashCode);
@@ -74,32 +76,34 @@ class _PullRequestDetailController with ShareMixin {
 
     reviewers = [...revs];
 
-    _getChangedFiles(res);
+    final changes = res.data?.changes ?? <CommitWithChangeEntry>[];
+    if (changes.isNotEmpty) _getChangedFiles(changes);
+
+    final conflicts = res.data?.conflicts ?? <Conflict>[];
+    if (conflicts.isNotEmpty) _getConflictingFiles(conflicts);
 
     final prAndThreads = _getReplacedPrAndThreads(data: res.data);
 
     prDetail.value = res.copyWith(data: res.data?.copyWith(pr: prAndThreads.pr, updates: prAndThreads.updates));
   }
 
-  void _getChangedFiles(ApiResponse<PullRequestWithDetails> res) {
-    final commitsWithChanges = res.data?.changes ?? <CommitWithChangeEntry>[];
-
-    for (final commitWithChange in commitsWithChanges) {
-      for (final file in commitWithChange.changes) {
+  void _getChangedFiles(List<CommitWithChangeEntry> changes) {
+    for (final change in changes) {
+      for (final file in change.changes) {
         final path = file.item.path ?? file.originalPath;
         if (path == null) continue;
 
         final directory = dirname(path);
         final fileName = basename(path);
 
-        final newestCommitId = commitsWithChanges
+        final newestCommitId = changes
             .where((commit) => commit.changes.any((c) => c.item.path == path || c.originalPath == path))
             .reduce((a, b) => a.iteration.id >= b.iteration.id ? a : b)
             .iteration
             .sourceRefCommit
             .commitId;
 
-        final oldestCommitId = commitsWithChanges
+        final oldestCommitId = changes
             .where((commit) => commit.changes.any((c) => c.item.path == path || c.originalPath == path))
             .reduce((a, b) => a.iteration.id <= b.iteration.id ? a : b)
             .iteration
@@ -125,6 +129,25 @@ class _PullRequestDetailController with ShareMixin {
           groupedDeletedFiles[directory]!.add(diff);
         }
       }
+    }
+  }
+
+  void _getConflictingFiles(List<Conflict> conflicts) {
+    for (final conflict in conflicts) {
+      final directory = dirname(conflict.conflictPath);
+      final fileName = basename(conflict.conflictPath);
+
+      final diff = ChangedFileDiff(
+        commitId: '',
+        parentCommitId: '',
+        path: conflict.conflictPath,
+        directory: directory,
+        fileName: fileName,
+        changeType: 'conflicting',
+      );
+
+      groupedConflictingFiles.putIfAbsent(directory, () => {diff});
+      groupedConflictingFiles[directory]!.add(diff);
     }
   }
 
