@@ -54,6 +54,7 @@ class _SplashController {
       // token is expired
       await OverlayService.error('Error', description: 'Token expired');
       await apiService.logout();
+      await MsalService().logout();
       unawaited(AppRouter.goToLogin());
       return;
     }

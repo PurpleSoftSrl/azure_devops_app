@@ -304,10 +304,10 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   Future<Response> _get(String url) async {
     logDebug('GET $url');
-    final res = await _client.get(
-      Uri.parse(url),
-      headers: headers,
-    );
+
+    Future<Response> req() => _client.get(Uri.parse(url), headers: headers);
+    var res = await req();
+    res = await _checkExpiredToken(res, req);
 
     _addSentryBreadcrumb(url, 'GET', res, '');
 
@@ -316,13 +316,11 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   Future<Response> _patch(String url, {Map<String, Object>? body, String? contentType}) async {
     logDebug('PATCH $url');
-    final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
 
-    final res = await _client.patch(
-      Uri.parse(url),
-      headers: realHeaders,
-      body: jsonEncode(body),
-    );
+    final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
+    Future<Response> req() => _client.patch(Uri.parse(url), headers: realHeaders, body: jsonEncode(body));
+    var res = await req();
+    res = await _checkExpiredToken(res, req);
 
     _addSentryBreadcrumb(url, 'PATCH', res, body);
 
@@ -331,13 +329,11 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   Future<Response> _patchList(String url, {List<Map<String, dynamic>>? body, String? contentType}) async {
     logDebug('PATCH $url');
-    final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
 
-    final res = await _client.patch(
-      Uri.parse(url),
-      headers: realHeaders,
-      body: jsonEncode(body),
-    );
+    final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
+    Future<Response> req() => _client.patch(Uri.parse(url), headers: realHeaders, body: jsonEncode(body));
+    var res = await req();
+    res = await _checkExpiredToken(res, req);
 
     _addSentryBreadcrumb(url, 'PATCH', res, body);
 
@@ -346,13 +342,11 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   Future<Response> _post(String url, {Map<String, dynamic>? body, Object? bodyObject, String? contentType}) async {
     logDebug('POST $url');
-    final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
 
-    final res = await _client.post(
-      Uri.parse(url),
-      headers: realHeaders,
-      body: bodyObject ?? jsonEncode(body),
-    );
+    final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
+    Future<Response> req() => _client.post(Uri.parse(url), headers: realHeaders, body: bodyObject ?? jsonEncode(body));
+    var res = await req();
+    res = await _checkExpiredToken(res, req);
 
     _addSentryBreadcrumb(url, 'POST', res, body);
 
@@ -361,13 +355,11 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   Future<Response> _postList(String url, {List<Map<String, dynamic>>? body, String? contentType}) async {
     logDebug('POST $url');
-    final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
 
-    final res = await _client.post(
-      Uri.parse(url),
-      headers: realHeaders,
-      body: jsonEncode(body),
-    );
+    final realHeaders = contentType != null ? ({...headers!, 'Content-Type': contentType}) : headers!;
+    Future<Response> req() => _client.post(Uri.parse(url), headers: realHeaders, body: jsonEncode(body));
+    var res = await req();
+    res = await _checkExpiredToken(res, req);
 
     _addSentryBreadcrumb(url, 'POST', res, body);
 
@@ -376,10 +368,10 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   Future<Response> _delete(String url) async {
     logDebug('DELETE $url');
-    final res = await _client.delete(
-      Uri.parse(url),
-      headers: headers,
-    );
+
+    Future<Response> req() => _client.delete(Uri.parse(url), headers: headers);
+    var res = await req();
+    res = await _checkExpiredToken(res, req);
 
     _addSentryBreadcrumb(url, 'DELETE', res, '');
 
@@ -423,6 +415,18 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     }
   }
 
+  Future<Response> _checkExpiredToken(Response res, Future<Response> Function() req) async {
+    if (_isJwt && [203, 302].contains(res.statusCode)) {
+      // refresh expired token
+      final newToken = await MsalService().loginSilently();
+      _accessToken = newToken ?? _accessToken;
+      final retry = await req();
+      logDebug('@@ retry: ${retry.statusCode}');
+      return retry;
+    }
+    return res;
+  }
+
   @override
   Future<LoginStatus> login(String accessToken) async {
     if (accessToken.isEmpty) return LoginStatus.unauthorized;
@@ -434,7 +438,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     _accessToken = accessToken;
 
     if (_isJwt) {
-      _accessToken = (await MsalService().loginSilently()) ?? '';
+      final newToken = await MsalService().loginSilently();
+      if (newToken != null) _accessToken = newToken;
     }
 
     var profileEndpoint = '$_usersBasePath/_apis/profile/profiles/me?$_apiVersion-preview';
