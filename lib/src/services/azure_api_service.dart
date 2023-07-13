@@ -240,7 +240,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   static AzureApiServiceImpl? instance;
 
-  final _client = Client();
+  final _client = SentryHttpClient();
 
   @override
   String get organization => _organization;
@@ -309,7 +309,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     var res = await req();
     res = await _checkExpiredToken(res, req);
 
-    _addSentryBreadcrumb(url, 'GET', res, '');
+    _logApiCall(url, 'GET', res, '');
 
     return res;
   }
@@ -322,7 +322,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     var res = await req();
     res = await _checkExpiredToken(res, req);
 
-    _addSentryBreadcrumb(url, 'PATCH', res, body);
+    _logApiCall(url, 'PATCH', res, body);
 
     return res;
   }
@@ -335,7 +335,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     var res = await req();
     res = await _checkExpiredToken(res, req);
 
-    _addSentryBreadcrumb(url, 'PATCH', res, body);
+    _logApiCall(url, 'PATCH', res, body);
 
     return res;
   }
@@ -348,7 +348,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     var res = await req();
     res = await _checkExpiredToken(res, req);
 
-    _addSentryBreadcrumb(url, 'POST', res, body);
+    _logApiCall(url, 'POST', res, body);
 
     return res;
   }
@@ -361,7 +361,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     var res = await req();
     res = await _checkExpiredToken(res, req);
 
-    _addSentryBreadcrumb(url, 'POST', res, body);
+    _logApiCall(url, 'POST', res, body);
 
     return res;
   }
@@ -373,7 +373,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     var res = await req();
     res = await _checkExpiredToken(res, req);
 
-    _addSentryBreadcrumb(url, 'DELETE', res, '');
+    _logApiCall(url, 'DELETE', res, '');
 
     return res;
   }
@@ -381,17 +381,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   // error debouncer
   static bool _isLoggingError = false;
 
-  void _addSentryBreadcrumb(String url, String method, Response res, Object? body) {
+  void _logApiCall(String url, String method, Response res, Object? body) {
     logDebug('$method $url ${res.statusCode} ${res.reasonPhrase} ${res.isError ? '- res body: ${res.body}' : ''}');
-
-    final breadcrumb = Breadcrumb.http(
-      url: Uri.parse(url),
-      method: method,
-      reason: res.reasonPhrase,
-      statusCode: res.statusCode,
-    );
-
-    Sentry.addBreadcrumb(breadcrumb);
 
     if (res.isError && _user != null && ![401, 403].contains(res.statusCode)) {
       if (_isLoggingError) return;
@@ -404,7 +395,6 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       Sentry.captureEvent(
         SentryEvent(
           level: SentryLevel.warning,
-          breadcrumbs: [breadcrumb],
           message: SentryMessage(
             title,
             template: 'Response body: %s, \n Request body: %s',
