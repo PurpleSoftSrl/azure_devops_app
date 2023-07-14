@@ -191,12 +191,12 @@ class _PullRequestOverview extends StatelessWidget {
                                   Expanded(child: Text('${u.author.displayName} ${u.content.voteDescription}')),
                                 ],
                               ),
-                            StatusUpdate() when pr.status == PullRequestState.completed => Row(
+                            StatusUpdate() => Row(
                                 children: [
                                   _UserAvatar(update: u),
                                   Expanded(
                                     child: Text(
-                                      '${u.identity['displayName'] ?? u.author.displayName} completed the pull request',
+                                      '${u.identity['displayName'] ?? u.author.displayName} ${u.content.statusUpdateDescription} the pull request',
                                     ),
                                   ),
                                 ],

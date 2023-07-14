@@ -26,6 +26,8 @@ extension PullRequestStringExt on String {
         return 'rejected the pull request';
       case -5:
         return 'is waiting for the author';
+      case 0:
+        return 'reset their vote';
       default:
         return this;
     }
@@ -59,6 +61,25 @@ extension PullRequestStringExt on String {
         );
       default:
         return null;
+    }
+  }
+
+  String get statusUpdateDescription {
+    final status = split(' ').lastOrNull;
+    if (status == null) return this;
+
+    final parsedStatus = PullRequestState.fromString(status.toLowerCase());
+
+    switch (parsedStatus) {
+      case PullRequestState.abandoned:
+        return 'abandoned';
+      case PullRequestState.active:
+        return 'reactivated';
+      case PullRequestState.completed:
+        return 'completed';
+      case PullRequestState.notSet:
+      case PullRequestState.all:
+        return '';
     }
   }
 }
