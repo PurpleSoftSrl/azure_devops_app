@@ -175,33 +175,36 @@ class AzureApiServiceMock implements AzureApiService {
     GraphUser? creator,
     Project? project,
   }) async {
-    final emptyWorkItem = PullRequest.empty();
-    final firstItem = emptyWorkItem.copyWith(
+    final emptyPullRequest = PullRequest.empty();
+    final firstItem = emptyPullRequest.copyWith(
+      pullRequestId: 1,
       title: 'Pull request title 1',
-      createdBy: emptyWorkItem.createdBy.copyWith(
+      createdBy: emptyPullRequest.createdBy.copyWith(
         displayName: 'Test User 1',
       ),
-      repository: emptyWorkItem.repository.copyWith(
+      repository: emptyPullRequest.repository.copyWith(
         name: 'Repository name 1',
       ),
       creationDate: DateTime(2000, 1, 5),
     );
-    final secondItem = emptyWorkItem.copyWith(
+    final secondItem = emptyPullRequest.copyWith(
+      pullRequestId: 2,
       title: 'Pull request title 2',
-      createdBy: emptyWorkItem.createdBy.copyWith(
+      createdBy: emptyPullRequest.createdBy.copyWith(
         displayName: 'Test User 2',
       ),
-      repository: emptyWorkItem.repository.copyWith(
+      repository: emptyPullRequest.repository.copyWith(
         name: 'Repository name 2',
       ),
       creationDate: DateTime(2000, 1, 7),
     );
-    final thirdItem = emptyWorkItem.copyWith(
+    final thirdItem = emptyPullRequest.copyWith(
+      pullRequestId: 3,
       title: 'Pull request title 3',
-      createdBy: emptyWorkItem.createdBy.copyWith(
+      createdBy: emptyPullRequest.createdBy.copyWith(
         displayName: 'Test User 3',
       ),
-      repository: emptyWorkItem.repository.copyWith(
+      repository: emptyPullRequest.repository.copyWith(
         name: 'Repository name 3',
       ),
       creationDate: DateTime(2000, 1, 9),

@@ -43,12 +43,13 @@ class _PullRequestsController with FilterMixin {
     await _getData();
   }
 
-  void goToPullRequestDetail(PullRequest pr) {
-    AppRouter.goToPullRequestDetail(
+  Future<void> goToPullRequestDetail(PullRequest pr) async {
+    await AppRouter.goToPullRequestDetail(
       project: pr.repository.project.name,
       repository: pr.repository.id,
       id: pr.pullRequestId,
     );
+    await init();
   }
 
   void filterByStatus(PullRequestState state) {

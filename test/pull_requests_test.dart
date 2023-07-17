@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'api_service_mock.dart';
 
+/// Mock pull requests are taken from [AzureApiServiceMock.getPullRequests]
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -34,17 +35,17 @@ void main() {
 
       // most recently created pull request
       expect((t.widget(titles.at(0)) as Text).data, 'Pull request title 3');
-      expect((t.widget(creators.at(0)) as Text).data, 'Test User 3');
+      expect((t.widget(creators.at(0)) as Text).data, '!3 Test User 3');
       expect((t.widget(repos.at(0)) as Text).data, 'Repository name 3');
 
       // second most recently created pull request
       expect((t.widget(titles.at(1)) as Text).data, 'Pull request title 2');
-      expect((t.widget(creators.at(1)) as Text).data, 'Test User 2');
+      expect((t.widget(creators.at(1)) as Text).data, '!2 Test User 2');
       expect((t.widget(repos.at(1)) as Text).data, 'Repository name 2');
 
       // least recently created pull request
       expect((t.widget(titles.at(2)) as Text).data, 'Pull request title 1');
-      expect((t.widget(creators.at(2)) as Text).data, 'Test User 1');
+      expect((t.widget(creators.at(2)) as Text).data, '!1 Test User 1');
       expect((t.widget(repos.at(2)) as Text).data, 'Repository name 1');
     },
   );

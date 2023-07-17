@@ -40,7 +40,7 @@ class PullRequestListTile extends StatelessWidget {
                   width: 10,
                 ),
                 Text(
-                  pr.status.toString(),
+                  pr.isDraft ? 'Draft' : pr.status.toString(),
                   style: subtitleStyle.copyWith(color: pr.status.color),
                 ),
               ],
@@ -54,7 +54,7 @@ class PullRequestListTile extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      pr.createdBy.displayName,
+                      '!${pr.pullRequestId} ${pr.createdBy.displayName}',
                       style: subtitleStyle,
                     ),
                     Text(
