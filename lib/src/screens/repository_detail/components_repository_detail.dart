@@ -9,15 +9,16 @@ class _BranchRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        FilterMenu(
-          title: 'Branch',
-          values: ctrl.branches,
-          currentFilter: ctrl.currentBranch,
-          onSelected: ctrl.changeBranch,
-          formatLabel: (b) => b == null ? '-' : '${b.name} ${b.isBaseVersion ? '(default)' : ''}',
-          isDefaultFilter: false,
-          widgetBuilder: (_) => const Icon(DevOpsIcons.merge),
-        ),
+        if (ctrl.currentBranch != null)
+          FilterMenu(
+            title: 'Branch',
+            values: ctrl.branches,
+            currentFilter: ctrl.currentBranch,
+            onSelected: ctrl.changeBranch,
+            formatLabel: (b) => b == null ? '-' : '${b.name} ${b.isBaseVersion ? '(default)' : ''}',
+            isDefaultFilter: false,
+            widgetBuilder: (_) => const Icon(DevOpsIcons.merge),
+          ),
         const Spacer(),
         if (ctrl.currentBranch != null && ctrl.currentBranch!.behindCount > 0) ...[
           Icon(
