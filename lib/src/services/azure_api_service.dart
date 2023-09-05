@@ -1437,7 +1437,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     if (isAllCommitsError) return ApiResponse.error(allProjectCommits.firstOrNull);
 
-    final res = allProjectCommits.map(GetCommitsResponse.fromResponse).expand((c) => c).toList();
+    final res =
+        allProjectCommits.where((r) => !r.isError).map(GetCommitsResponse.fromResponse).expand((c) => c).toList();
 
     return ApiResponse.ok(res);
   }
