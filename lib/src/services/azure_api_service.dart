@@ -797,7 +797,10 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
               updateDate: u.fields!.systemChangedDate!.newValue == null
                   ? u.revisedDate
                   : DateTime.parse(u.fields!.systemChangedDate!.newValue!),
-              updatedBy: UpdateUser(descriptor: u.revisedBy.descriptor!, displayName: u.revisedBy.displayName!),
+              updatedBy: UpdateUser(
+                descriptor: u.revisedBy.descriptor ?? '',
+                displayName: u.revisedBy.displayName ?? '',
+              ),
               isFirst: u.rev == 1,
               type: u.fields?.systemWorkItemType,
               state: u.fields?.systemState,

@@ -23,6 +23,8 @@ class MemberAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (imageUrl == null && userDescriptor.isEmpty) return const SizedBox();
+
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final url = imageUrl ?? apiService.getUserAvatarUrl(userDescriptor);
     return InkWell(
