@@ -45,7 +45,9 @@ class _RepositoryDetailController {
     branches = branchesRes.data ?? [];
 
     if (branches.isNotEmpty) {
-      currentBranch ??= branches.firstWhereOrNull((b) => b.isBaseVersion);
+      currentBranch = args.branch != null
+          ? branches.firstWhereOrNull((b) => b.name == args.branch)
+          : branches.firstWhereOrNull((b) => b.isBaseVersion);
       branches = [currentBranch!, ...branches.where((b) => b != currentBranch)];
     }
 
