@@ -15,6 +15,7 @@ class DevOpsFormField extends StatelessWidget {
     this.textInputAction,
     this.enabled = true,
     this.fillColor,
+    this.controller,
   });
 
   final VoidCallback? onFieldSubmitted;
@@ -29,10 +30,12 @@ class DevOpsFormField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final bool enabled;
   final Color? fillColor;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
     Widget child = TextFormField(
+      controller: controller,
       key: formFieldKey,
       onChanged: onChanged,
       validator: (s) => s!.isEmpty ? 'Fill this field' : null,

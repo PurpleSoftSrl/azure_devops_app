@@ -159,7 +159,7 @@ class _SettingsScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
                     Text('GitHub repository'),
-                    Icon(DevOpsIcons.github_mark),
+                    Icon(DevOpsIcons.github),
                   ],
                 ),
               ),

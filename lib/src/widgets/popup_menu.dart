@@ -60,11 +60,11 @@ class DevOpsPopupMenu extends StatelessWidget {
 class PopupItem {
   PopupItem({
     required this.text,
-    required this.icon,
+    this.icon,
     required this.onTap,
   });
 
   final String text;
-  final IconData icon;
+  final IconData? icon;
   final VoidCallback onTap;
 }

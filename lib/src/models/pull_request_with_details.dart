@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
+import 'package:azure_devops/src/models/pull_request_policies.dart';
 import 'package:http/http.dart';
 
 class PullRequestWithDetails {
@@ -10,24 +11,28 @@ class PullRequestWithDetails {
     required this.changes,
     required this.updates,
     required this.conflicts,
+    required this.policies,
   });
 
   final PullRequest pr;
   final List<CommitWithChangeEntry> changes;
   final List<PullRequestUpdate> updates;
   final List<Conflict> conflicts;
+  final List<Policy> policies;
 
   PullRequestWithDetails copyWith({
     PullRequest? pr,
     List<CommitWithChangeEntry>? changes,
     List<PullRequestUpdate>? updates,
     List<Conflict>? conflicts,
+    List<Policy>? policies,
   }) {
     return PullRequestWithDetails(
       pr: pr ?? this.pr,
       changes: changes ?? this.changes,
       updates: updates ?? this.updates,
       conflicts: conflicts ?? this.conflicts,
+      policies: policies ?? this.policies,
     );
   }
 }

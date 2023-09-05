@@ -83,3 +83,19 @@ extension PullRequestStringExt on String {
     }
   }
 }
+
+extension PullRequestStateExt on PullRequestState {
+  String toVerb() {
+    switch (this) {
+      case PullRequestState.abandoned:
+        return 'abandon';
+      case PullRequestState.active:
+        return 'reactivate';
+      case PullRequestState.completed:
+        return 'complete';
+      case PullRequestState.notSet:
+      case PullRequestState.all:
+        return '';
+    }
+  }
+}

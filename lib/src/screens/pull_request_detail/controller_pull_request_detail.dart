@@ -54,6 +54,15 @@ class _PullRequestDetailController with ShareMixin {
 
   final groupedConflictingFiles = <String, Set<ChangedFileDiff>>{};
 
+  bool get mustSatisfyPolicies =>
+      prDetail.value?.data?.policies.where((p) => p.status != 'approved').isNotEmpty ?? false;
+
+  bool get mustBeApproved => reviewers.where((p) => p.reviewer.isRequired && p.reviewer.vote < 5).isNotEmpty;
+
+  bool get hasAutoCompleteOn => prDetail.value?.data?.pr.autoCompleteSetBy != null;
+
+  bool canBeReactivated = true;
+
   void dispose() {
     instance = null;
     _instances.remove(args.hashCode);
@@ -66,10 +75,11 @@ class _PullRequestDetailController with ShareMixin {
       id: args.id,
     );
 
-    res.data?.pr.reviewers.sort((a, b) => a.isRequired ? -1 : 1);
+    final pr = res.data?.pr;
+    pr?.reviewers.sort((a, b) => a.isRequired ? -1 : 1);
 
     final revs = <_RevWithDescriptor>[];
-    for (final r in res.data?.pr.reviewers ?? <Reviewer>[]) {
+    for (final r in pr?.reviewers ?? <Reviewer>[]) {
       final descriptor = await _getReviewerDescriptor(r);
       if (descriptor != null) revs.add(_RevWithDescriptor(r, descriptor));
     }
@@ -83,6 +93,10 @@ class _PullRequestDetailController with ShareMixin {
     if (conflicts.isNotEmpty) _getConflictingFiles(conflicts);
 
     final prAndThreads = _getReplacedPrAndThreads(data: res.data);
+
+    if (pr?.status == PullRequestState.abandoned) {
+      canBeReactivated = await _checkIfCanBeReactivated(pr!);
+    }
 
     prDetail.value = res.copyWith(data: res.data?.copyWith(pr: prAndThreads.pr, updates: prAndThreads.updates));
   }
@@ -189,6 +203,25 @@ class _PullRequestDetailController with ShareMixin {
     );
   }
 
+  /// An abandoned PR can be reactivated only if sourceBranch has not been deleted
+  Future<bool> _checkIfCanBeReactivated(PullRequest pr) async {
+    final sourceBranch = pr.sourceBranch;
+    final res = await apiService.getRepositoryBranches(
+      projectName: pr.repository.project.id,
+      repoName: pr.repository.name,
+    );
+    if (res.isError) return false;
+
+    final branches = res.data ?? [];
+    for (final branch in branches) {
+      if (branch.name == sourceBranch) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   // ignore: use_setters_to_change_properties
   void selectPage(int i, TabController tabController) {
     visiblePage.value = i;
@@ -245,6 +278,237 @@ class _PullRequestDetailController with ShareMixin {
 
     await AppRouter.goToFileDiff(
       (commit: commit, filePath: diff.path, isAdded: isAdded, isDeleted: isDeleted),
+    );
+  }
+
+  Future<void> approve() async {
+    return _votePr(vote: 10);
+  }
+
+  Future<void> approveWithSugestions() async {
+    return _votePr(vote: 5);
+  }
+
+  Future<void> waitForAuthor() async {
+    return _votePr(vote: -5);
+  }
+
+  Future<void> reject() async {
+    return _votePr(vote: -10);
+  }
+
+  Future<void> markAsDraft() async {
+    return _editPr(isDraft: true);
+  }
+
+  Future<void> publish() async {
+    return _editPr(isDraft: false);
+  }
+
+  Future<void> setAutocomplete({required bool autocomplete}) async {
+    return _editPr(autocomplete: autocomplete);
+  }
+
+  Future<void> complete() async {
+    return _editPr(status: PullRequestState.completed);
+  }
+
+  Future<void> abandon() async {
+    return _editPr(status: PullRequestState.abandoned);
+  }
+
+  Future<void> reactivate() async {
+    return _editPr(status: PullRequestState.active);
+  }
+
+  Future<void> _votePr({required int vote}) async {
+    final user = apiService.user!;
+    final reviewer = prDetail.value!.data!.pr.reviewers.firstWhereOrNull((r) => r.uniqueName == user.emailAddress) ??
+        Reviewer(
+          vote: vote,
+          hasDeclined: false,
+          isFlagged: false,
+          isRequired: false,
+          displayName: user.displayName!,
+          id: '',
+          uniqueName: user.emailAddress!,
+        );
+
+    final res = await apiService.votePullRequest(
+      projectName: args.project,
+      repositoryId: args.repository,
+      id: args.id,
+      reviewer: reviewer.copyWith(vote: vote),
+    );
+
+    if (res.isError) {
+      await OverlayService.error('Error', description: 'Pull request not edited');
+      return;
+    }
+
+    await init();
+  }
+
+  Future<void> _editPr({PullRequestState? status, bool? isDraft, bool? autocomplete}) async {
+    var confirmMessage = '';
+    if (status != null) {
+      confirmMessage = '${status.toVerb()} the pull request';
+    } else if (isDraft != null) {
+      confirmMessage = isDraft ? 'mark the pull request as draft' : 'publish the pull request';
+    } else if (autocomplete != null) {
+      confirmMessage = autocomplete ? 'set auto-complete' : 'cancel auto-complete';
+    }
+
+    final conf = await OverlayService.confirm('Attention', description: 'Do you really want to $confirmMessage?');
+    if (!conf) return;
+
+    PullRequestCompletionOptions? completionOptions;
+
+    if (status == PullRequestState.completed || (autocomplete ?? false)) {
+      completionOptions = await _getCompletionOptions();
+      if (completionOptions == null) return;
+    }
+
+    final res = await apiService.editPullRequest(
+      projectName: args.project,
+      repositoryId: args.repository,
+      id: args.id,
+      status: status,
+      isDraft: isDraft ?? prDetail.value!.data!.pr.isDraft,
+      commitId: prDetail.value!.data!.changes.first.iteration.sourceRefCommit.commitId,
+      autocomplete: autocomplete,
+      completionOptions: completionOptions,
+    );
+
+    if (res.isError) {
+      await OverlayService.error('Error', description: 'Pull request not edited');
+      return;
+    }
+
+    await init();
+  }
+
+  // ignore: long-method
+  Future<PullRequestCompletionOptions?> _getCompletionOptions() async {
+    const mergeTypes = {
+      1: 'Merge (no fast forward)',
+      2: 'Squash commit',
+      3: 'Rebase and fast-forward',
+      4: 'Semi-linear merge',
+    };
+
+    var mergeType = 1;
+    var completeWorkItems = false;
+    var deleteSourceBranch = false;
+    var customizeCommitMessage = false;
+    String? commitMessage;
+
+    final branchesRes = await apiService.getRepositoryBranches(projectName: args.project, repoName: args.repository);
+    final branch = (branchesRes.data ?? []).firstWhereOrNull((b) => b.name == prDetail.value!.data!.pr.sourceBranch);
+    final canDeleteBranch = !(branch?.isBaseVersion ?? false);
+
+    final mergeTypeFieldController = TextEditingController(text: mergeTypes.entries.first.value);
+
+    var hasConfirmed = false;
+
+    await OverlayService.bottomsheet(
+      isScrollControlled: true,
+      title: 'Completion options',
+      builder: (context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: DevOpsFormField(
+                  onChanged: (_) => true,
+                  enabled: false,
+                  controller: mergeTypeFieldController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              DevOpsPopupMenu(
+                tooltip: 'Merge type',
+                items: () => mergeTypes.entries
+                    .map(
+                      (entry) => PopupItem(
+                        text: entry.value,
+                        onTap: () {
+                          mergeTypeFieldController.text = entry.value;
+                          mergeType = entry.key;
+                        },
+                      ),
+                    )
+                    .toList(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 40),
+          Text(
+            'Post-completion options',
+            style: context.textTheme.labelMedium,
+          ),
+          const SizedBox(height: 10),
+          StatefulBuilder(
+            builder: (context, setState) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CheckboxListTile(
+                  title: Text(
+                    'Complete associated work items after merging',
+                    style: context.textTheme.bodySmall,
+                  ),
+                  value: completeWorkItems,
+                  onChanged: (_) => setState(() => completeWorkItems = !completeWorkItems),
+                  contentPadding: EdgeInsets.zero,
+                ),
+                if (canDeleteBranch)
+                  CheckboxListTile(
+                    title: Text(
+                      'Delete ${prDetail.value!.data!.pr.sourceBranch} after merging',
+                      style: context.textTheme.bodySmall,
+                    ),
+                    value: deleteSourceBranch,
+                    onChanged: (_) => setState(() => deleteSourceBranch = !deleteSourceBranch),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                CheckboxListTile(
+                  title: Text(
+                    'Customize merge commit message',
+                    style: context.textTheme.bodySmall,
+                  ),
+                  value: customizeCommitMessage,
+                  onChanged: (_) => setState(() => customizeCommitMessage = !customizeCommitMessage),
+                  contentPadding: EdgeInsets.zero,
+                ),
+                if (customizeCommitMessage)
+                  DevOpsFormField(
+                    initialValue:
+                        'Merged PR ${prDetail.value!.data!.pr.pullRequestId}: ${prDetail.value!.data!.pr.title}',
+                    onChanged: (s) => commitMessage = s,
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 150),
+          LoadingButton(
+            onPressed: () {
+              hasConfirmed = true;
+              AppRouter.popRoute();
+            },
+            text: 'Confirm',
+          ),
+        ],
+      ),
+    );
+
+    if (!hasConfirmed) return null;
+
+    return (
+      mergeType: mergeType,
+      completeWorkItems: completeWorkItems,
+      deleteSourceBranch: deleteSourceBranch,
+      commitMessage: commitMessage
     );
   }
 }

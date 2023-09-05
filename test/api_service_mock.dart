@@ -434,8 +434,33 @@ class AzureApiServiceMock implements AzureApiService {
         changes: [],
         updates: [],
         conflicts: [],
+        policies: [],
       ),
     );
+  }
+
+  @override
+  Future<ApiResponse<bool>> votePullRequest({
+    required String projectName,
+    required String repositoryId,
+    required int id,
+    required Reviewer reviewer,
+  }) async {
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> editPullRequest({
+    required String projectName,
+    required String repositoryId,
+    required int id,
+    PullRequestState? status,
+    bool? isDraft,
+    String? commitId,
+    bool? autocomplete,
+    PullRequestCompletionOptions? completionOptions,
+  }) async {
+    return ApiResponse.ok(true);
   }
 
   @override

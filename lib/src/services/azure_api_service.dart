@@ -17,6 +17,7 @@ import 'package:azure_devops/src/models/processes.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
+import 'package:azure_devops/src/models/pull_request_policies.dart';
 import 'package:azure_devops/src/models/pull_request_with_details.dart';
 import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/repository_branches.dart';
@@ -228,6 +229,24 @@ abstract class AzureApiService {
     required int id,
   });
 
+  Future<ApiResponse<bool>> votePullRequest({
+    required String projectName,
+    required String repositoryId,
+    required int id,
+    required Reviewer reviewer,
+  });
+
+  Future<ApiResponse<bool>> editPullRequest({
+    required String projectName,
+    required String repositoryId,
+    required int id,
+    PullRequestState? status,
+    bool? isDraft,
+    String? commitId,
+    bool? autocomplete,
+    PullRequestCompletionOptions? completionOptions,
+  });
+
   Future<void> logout();
 }
 
@@ -362,6 +381,18 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     res = await _checkExpiredToken(res, req);
 
     _logApiCall(url, 'POST', res, body);
+
+    return res;
+  }
+
+  Future<Response> _put(String url, {Map<String, dynamic>? body}) async {
+    logDebug('PUT $url');
+
+    Future<Response> req() => _client.put(Uri.parse(url), headers: headers, body: jsonEncode(body));
+    var res = await req();
+    res = await _checkExpiredToken(res, req);
+
+    _logApiCall(url, 'PUT', res, body);
 
     return res;
   }
@@ -1059,6 +1090,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final pr = PullRequest.fromResponse(prRes);
 
+    final artifactId = 'vstfs:///CodeReview/CodeReviewId/${pr.repository.project.id}/${pr.pullRequestId}';
+    final policiesRes = await _get(
+      '$_basePath/$projectName/_apis/policy/evaluations?artifactId=$artifactId&$_apiVersion-preview',
+    );
+    final policies = PoliciesResponse.fromResponse(policiesRes).policies;
+
     final conflicts = <Conflict>[];
     if (pr.mergeStatus == 'conflicts') {
       final conflictsRes = await _get('$prPath/conflicts?excludeResolved=true&$_apiVersion');
@@ -1140,8 +1177,80 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     ]..sort((a, b) => b.date.compareTo(a.date));
 
     return ApiResponse.ok(
-      PullRequestWithDetails(pr: pr, changes: allChanges, updates: updates, conflicts: conflicts),
+      PullRequestWithDetails(pr: pr, changes: allChanges, updates: updates, conflicts: conflicts, policies: policies),
     );
+  }
+
+  @override
+  Future<ApiResponse<bool>> votePullRequest({
+    required String projectName,
+    required String repositoryId,
+    required int id,
+    required Reviewer reviewer,
+  }) async {
+    final identity = await _get(
+      '$_usersBasePath/$_organization/_apis/identities?searchFilter=General&filterValue=${user!.emailAddress}&$_apiVersion',
+    );
+    if (identity.isError) return ApiResponse.error(null);
+
+    final reviewerId = UserIdentity.fromResponse(identity).id!;
+
+    final reviewerPath =
+        '$_basePath/$projectName/_apis/git/repositories/$repositoryId/pullrequests/$id/reviewers/$reviewerId?$_apiVersion';
+
+    final voteRes = await _put(reviewerPath, body: reviewer.copyWith(id: reviewerId).toMap());
+    if (voteRes.isError) return ApiResponse.error(voteRes);
+
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> editPullRequest({
+    required String projectName,
+    required String repositoryId,
+    required int id,
+    PullRequestState? status,
+    bool? isDraft,
+    String? commitId,
+    bool? autocomplete,
+    PullRequestCompletionOptions? completionOptions,
+  }) async {
+    String? reviewerId;
+
+    final isSettingAutocomplete = autocomplete != null && autocomplete;
+
+    if (isSettingAutocomplete) {
+      final identity = await _get(
+        '$_usersBasePath/$_organization/_apis/identities?searchFilter=General&filterValue=${user!.emailAddress}&$_apiVersion',
+      );
+      if (identity.isError) return ApiResponse.error(null);
+
+      reviewerId = UserIdentity.fromResponse(identity).id;
+    }
+    final prPath = '$_basePath/$projectName/_apis/git/repositories/$repositoryId/pullrequests/$id?$_apiVersion';
+
+    final editRes = await _patch(
+      prPath,
+      body: {
+        if (isDraft != null) 'isDraft': isDraft,
+        if (status != null) 'status': status.name,
+        if (status == PullRequestState.completed) 'lastMergeSourceCommit': {'commitId': commitId},
+        if (autocomplete != null)
+          'autoCompleteSetBy': {
+            'id': autocomplete ? reviewerId : '00000000-0000-0000-0000-000000000000',
+          },
+        if (status == PullRequestState.completed || isSettingAutocomplete)
+          'completionOptions': {
+            'deleteSourceBranch': completionOptions!.deleteSourceBranch,
+            'mergeCommitMessage': completionOptions.commitMessage,
+            'mergeStrategy': completionOptions.mergeType,
+            'transitionWorkItems': completionOptions.completeWorkItems,
+          },
+      },
+    );
+    if (editRes.isError) return ApiResponse.error(editRes);
+
+    return ApiResponse.ok(true);
   }
 
   @override

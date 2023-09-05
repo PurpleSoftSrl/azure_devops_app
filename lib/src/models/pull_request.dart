@@ -7,27 +7,25 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
+typedef PullRequestCompletionOptions = ({
+  String? commitMessage,
+  bool completeWorkItems,
+  bool deleteSourceBranch,
+  int mergeType
+});
+
 class GetPullRequestsResponse {
-  GetPullRequestsResponse({
-    required this.pullRequests,
-    required this.count,
-  });
+  GetPullRequestsResponse({required this.pullRequests});
 
   factory GetPullRequestsResponse.fromJson(Map<String, dynamic> json) => GetPullRequestsResponse(
-        pullRequests: List<PullRequest>.from(
-          (json['value'] as List<dynamic>).map((e) => PullRequest.fromJson(e as Map<String, dynamic>)),
-        ),
-        count: json['count'] as int,
+        pullRequests:
+            (json['value'] as List<dynamic>).map((e) => PullRequest.fromJson(e as Map<String, dynamic>)).toList(),
       );
 
   static List<PullRequest> fromResponse(Response res) =>
       GetPullRequestsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).pullRequests;
 
   final List<PullRequest> pullRequests;
-  final int count;
-
-  @override
-  String toString() => 'GetPullRequestsResponse(pullRequests: $pullRequests, count: $count)';
 }
 
 class PullRequest {
@@ -47,6 +45,7 @@ class PullRequest {
     required this.mergeId,
     required this.reviewers,
     this.labels,
+    this.autoCompleteSetBy,
   });
 
   factory PullRequest.fromJson(Map<String, dynamic> json) => PullRequest(
@@ -67,6 +66,9 @@ class PullRequest {
           (json['reviewers'] as List<dynamic>).map((e) => Reviewer.fromJson(e as Map<String, dynamic>)),
         ),
         labels: (json['labels'] as List<dynamic>?)?.map((e) => _Label.fromJson(e as Map<String, dynamic>)).toList(),
+        autoCompleteSetBy: json['autoCompleteSetBy'] == null
+            ? null
+            : AutoCompleteSetBy.fromJson(json['autoCompleteSetBy'] as Map<String, dynamic>),
       );
 
   static PullRequest fromResponse(Response res) => PullRequest.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
@@ -86,6 +88,7 @@ class PullRequest {
   final String mergeId;
   final List<Reviewer> reviewers;
   final List<_Label>? labels;
+  final AutoCompleteSetBy? autoCompleteSetBy;
 
   @visibleForTesting
   static PullRequest empty() => PullRequest(
@@ -199,8 +202,30 @@ class PullRequest {
       description: description ?? this.description,
       labels: labels,
       mergeStatus: mergeStatus,
+      autoCompleteSetBy: autoCompleteSetBy,
     );
   }
+}
+
+class AutoCompleteSetBy {
+  AutoCompleteSetBy({
+    required this.displayName,
+    required this.id,
+    required this.uniqueName,
+    required this.descriptor,
+  });
+
+  factory AutoCompleteSetBy.fromJson(Map<String, dynamic> json) => AutoCompleteSetBy(
+        descriptor: json['descriptor'] as String,
+        displayName: json['displayName'] as String,
+        id: json['id'] as String,
+        uniqueName: json['uniqueName'] as String,
+      );
+
+  final String displayName;
+  final String id;
+  final String uniqueName;
+  final String descriptor;
 }
 
 class CreatedBy {
@@ -387,47 +412,66 @@ enum PullRequestState {
 
 class Reviewer {
   Reviewer({
-    required this.reviewerUrl,
     required this.vote,
     required this.hasDeclined,
     required this.isFlagged,
     required this.isRequired,
     required this.displayName,
-    required this.url,
-    required this.links,
     required this.id,
     required this.uniqueName,
-    required this.imageUrl,
   });
 
   factory Reviewer.fromJson(Map<String, dynamic> json) => Reviewer(
-        reviewerUrl: json['reviewerUrl'] as String,
         vote: json['vote'] as int,
         hasDeclined: json['hasDeclined'] as bool,
         isFlagged: json['isFlagged'] as bool,
         isRequired: json['isRequired'] as bool? ?? false,
         displayName: json['displayName'] as String,
-        url: json['url'] as String,
-        links: json['Links'] == null ? null : Links.fromJson(json['Links'] as Map<String, dynamic>),
         id: json['id'] as String,
         uniqueName: json['uniqueName'] as String,
-        imageUrl: json['imageUrl'] as String,
       );
 
-  final String reviewerUrl;
   final int vote;
   final bool hasDeclined;
   final bool isFlagged;
   final bool isRequired;
   final String displayName;
-  final String url;
-  final Links? links;
   final String id;
   final String uniqueName;
-  final String imageUrl;
 
   @override
   String toString() {
-    return '_Reviewer(reviewerUrl: $reviewerUrl, vote: $vote, hasDeclined: $hasDeclined, isFlagged: $isFlagged, isRequired: $isRequired, displayName: $displayName, url: $url, links: $links, id: $id, uniqueName: $uniqueName, imageUrl: $imageUrl)';
+    return '_Reviewer(vote: $vote, hasDeclined: $hasDeclined, isFlagged: $isFlagged, isRequired: $isRequired, displayName: $displayName, id: $id, uniqueName: $uniqueName)';
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'vote': vote,
+      'hasDeclined': hasDeclined,
+      'isFlagged': isFlagged,
+      'isRequired': isRequired,
+      'id': id,
+      'uniqueName': uniqueName,
+    };
+  }
+
+  Reviewer copyWith({
+    int? vote,
+    bool? hasDeclined,
+    bool? isFlagged,
+    bool? isRequired,
+    String? displayName,
+    String? id,
+    String? uniqueName,
+  }) {
+    return Reviewer(
+      vote: vote ?? this.vote,
+      hasDeclined: hasDeclined ?? this.hasDeclined,
+      isFlagged: isFlagged ?? this.isFlagged,
+      isRequired: isRequired ?? this.isRequired,
+      displayName: displayName ?? this.displayName,
+      id: id ?? this.id,
+      uniqueName: uniqueName ?? this.uniqueName,
+    );
   }
 }

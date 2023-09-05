@@ -1,5 +1,90 @@
 part of pull_request_detail;
 
+class _PullRequestActions extends StatelessWidget {
+  const _PullRequestActions({required this.ctrl});
+
+  final _PullRequestDetailController ctrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return DevOpsPopupMenu(
+      tooltip: 'pull request actions',
+      items: () => [
+        PopupItem(
+          onTap: ctrl.sharePr,
+          text: 'Share',
+          icon: DevOpsIcons.share,
+        ),
+        if (ctrl.prDetail.value!.data!.pr.status != PullRequestState.completed) ...[
+          PopupItem(
+            onTap: ctrl.approve,
+            text: 'Approve',
+            icon: DevOpsIcons.success,
+          ),
+          PopupItem(
+            onTap: ctrl.approveWithSugestions,
+            text: 'Approve with suggestions',
+            icon: DevOpsIcons.success,
+          ),
+          PopupItem(
+            onTap: ctrl.waitForAuthor,
+            text: 'Wait for the author',
+            icon: DevOpsIcons.queuedsolid,
+          ),
+          PopupItem(
+            onTap: ctrl.reject,
+            text: 'Reject',
+            icon: DevOpsIcons.failed,
+          ),
+        ],
+        if (ctrl.prDetail.value!.data!.pr.isDraft)
+          PopupItem(
+            onTap: ctrl.publish,
+            text: 'Publish',
+            icon: DevOpsIcons.send,
+          )
+        else if (ctrl.prDetail.value!.data!.pr.status != PullRequestState.completed)
+          PopupItem(
+            onTap: ctrl.markAsDraft,
+            text: 'Mark as draft',
+            icon: DevOpsIcons.draft,
+          ),
+        if (ctrl.prDetail.value!.data!.pr.status == PullRequestState.active) ...[
+          if (ctrl.hasAutoCompleteOn)
+            PopupItem(
+              onTap: () => ctrl.setAutocomplete(autocomplete: false),
+              text: 'Cancel auto-complete',
+              icon: DevOpsIcons.autocomplete,
+            )
+          else if (ctrl.mustSatisfyPolicies || ctrl.mustBeApproved)
+            PopupItem(
+              onTap: () => ctrl.setAutocomplete(autocomplete: true),
+              text: 'Set auto-complete',
+              icon: DevOpsIcons.autocomplete,
+            )
+          else
+            PopupItem(
+              onTap: ctrl.complete,
+              text: 'Complete',
+              icon: DevOpsIcons.merge,
+            ),
+          PopupItem(
+            onTap: ctrl.abandon,
+            text: 'Abandon',
+            icon: DevOpsIcons.trash,
+          ),
+        ],
+        if (ctrl.prDetail.value!.data!.pr.status == PullRequestState.abandoned && ctrl.canBeReactivated)
+          PopupItem(
+            onTap: ctrl.reactivate,
+            text: 'Reactivate',
+            icon: DevOpsIcons.send,
+          ),
+      ],
+    );
+  }
+}
+
 class _PageTabs extends StatelessWidget {
   const _PageTabs({
     required this.ctrl,
@@ -45,6 +130,12 @@ class _PullRequestOverview extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (ctrl.hasAutoCompleteOn) ...[
+              Text(
+                'Auto-complete: ${prWithDetails.pr.autoCompleteSetBy!.displayName} set this pull request to automatically complete when all requirements are met.',
+              ),
+              const SizedBox(height: 10),
+            ],
             TextTitleDescription(title: 'Id: ', description: pr.pullRequestId.toString()),
             Row(
               children: [

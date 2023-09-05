@@ -27,9 +27,9 @@ class _PullRequestDetailScreen extends StatelessWidget {
             ],
           ),
           actions: [
-            IconButton(
-              onPressed: ctrl.sharePr,
-              icon: Icon(DevOpsIcons.share),
+            _PullRequestActions(ctrl: ctrl),
+            const SizedBox(
+              width: 8,
             ),
           ],
           builder: (prWithDetails) => ValueListenableBuilder(
