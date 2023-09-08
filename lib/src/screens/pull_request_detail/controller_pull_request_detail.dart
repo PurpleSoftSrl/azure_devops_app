@@ -30,9 +30,6 @@ class _PullRequestDetailController with ShareMixin {
 
   final prDetail = ValueNotifier<ApiResponse<PullRequestWithDetails?>?>(null);
 
-  String get prWebUrl =>
-      '${apiService.basePath}/${prDetail.value!.data!.pr.repository.project.name}/_git/${prDetail.value!.data!.pr.repository.name}/pullrequest/${prDetail.value!.data!.pr.pullRequestId}';
-
   List<_RevWithDescriptor> reviewers = <_RevWithDescriptor>[];
 
   final groupedEditedFiles = <String, Set<ChangedFileDiff>>{};
@@ -231,6 +228,12 @@ class _PullRequestDetailController with ShareMixin {
   }
 
   void sharePr() {
+    final pr = prDetail.value!.data!.pr;
+    final project = pr.repository.project.name;
+    final repository = pr.repository.name;
+    final id = pr.pullRequestId;
+    final prWebUrl = '${apiService.basePath}/$project/_git/$repository/pullrequest/$id';
+
     shareUrl(prWebUrl);
   }
 

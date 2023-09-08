@@ -1,4 +1,5 @@
 import 'package:azure_devops/src/extensions/context_extension.dart';
+import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:flutter/material.dart';
 
 class LoadingButton extends StatefulWidget {
@@ -15,7 +16,7 @@ class LoadingButton extends StatefulWidget {
   State<LoadingButton> createState() => _LoadingButtonState();
 }
 
-class _LoadingButtonState extends State<LoadingButton> {
+class _LoadingButtonState extends State<LoadingButton> with AppLogger {
   bool _isLoading = false;
 
   @override
@@ -34,7 +35,7 @@ class _LoadingButtonState extends State<LoadingButton> {
           try {
             await widget.onPressed();
           } catch (e) {
-            debugPrint(e.toString());
+            logDebug(e.toString());
           }
 
           if (mounted) setState(() => _isLoading = false);

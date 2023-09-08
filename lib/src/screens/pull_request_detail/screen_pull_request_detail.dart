@@ -27,7 +27,10 @@ class _PullRequestDetailScreen extends StatelessWidget {
             ],
           ),
           actions: [
-            _PullRequestActions(ctrl: ctrl),
+            ValueListenableBuilder(
+              valueListenable: ctrl.prDetail,
+              builder: (_, pr, __) => pr == null || pr.isError ? const SizedBox() : _PullRequestActions(ctrl: ctrl),
+            ),
             const SizedBox(
               width: 8,
             ),

@@ -279,7 +279,7 @@ class Comment {
         content: json['content'] as String? ?? '',
         publishedDate: DateTime.parse(json['publishedDate']!.toString()).toLocal(),
         lastUpdatedDate: DateTime.parse(json['lastUpdatedDate']!.toString()).toLocal(),
-        commentType: json['commentType'] as String,
+        commentType: json['commentType'] as String?,
       );
 
   final int id;
@@ -288,7 +288,7 @@ class Comment {
   final String content;
   final DateTime publishedDate;
   final DateTime lastUpdatedDate;
-  final String commentType;
+  final String? commentType;
 
   Comment copyWith({String? content}) {
     return Comment(

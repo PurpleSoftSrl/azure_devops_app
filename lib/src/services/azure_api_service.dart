@@ -1196,7 +1196,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     );
     if (identity.isError) return ApiResponse.error(null);
 
-    final reviewerId = UserIdentity.fromResponse(identity).id!;
+    final reviewerId = UserIdentity.fromResponse(identity).id;
+    if (reviewerId == null) return ApiResponse.error(null);
 
     final reviewerPath =
         '$_basePath/$projectName/_apis/git/repositories/$repositoryId/pullrequests/$id/reviewers/$reviewerId?$_apiVersion';

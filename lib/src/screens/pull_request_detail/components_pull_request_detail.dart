@@ -7,6 +7,7 @@ class _PullRequestActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final prStatus = ctrl.prDetail.value!.data!.pr.status;
     return DevOpsPopupMenu(
       tooltip: 'pull request actions',
       items: () => [
@@ -15,7 +16,7 @@ class _PullRequestActions extends StatelessWidget {
           text: 'Share',
           icon: DevOpsIcons.share,
         ),
-        if (ctrl.prDetail.value!.data!.pr.status != PullRequestState.completed) ...[
+        if (prStatus != PullRequestState.completed) ...[
           PopupItem(
             onTap: ctrl.approve,
             text: 'Approve',
@@ -43,13 +44,13 @@ class _PullRequestActions extends StatelessWidget {
             text: 'Publish',
             icon: DevOpsIcons.send,
           )
-        else if (ctrl.prDetail.value!.data!.pr.status != PullRequestState.completed)
+        else if (prStatus != PullRequestState.completed)
           PopupItem(
             onTap: ctrl.markAsDraft,
             text: 'Mark as draft',
             icon: DevOpsIcons.draft,
           ),
-        if (ctrl.prDetail.value!.data!.pr.status == PullRequestState.active) ...[
+        if (prStatus == PullRequestState.active) ...[
           if (ctrl.hasAutoCompleteOn)
             PopupItem(
               onTap: () => ctrl.setAutocomplete(autocomplete: false),
@@ -74,7 +75,7 @@ class _PullRequestActions extends StatelessWidget {
             icon: DevOpsIcons.trash,
           ),
         ],
-        if (ctrl.prDetail.value!.data!.pr.status == PullRequestState.abandoned && ctrl.canBeReactivated)
+        if (prStatus == PullRequestState.abandoned && ctrl.canBeReactivated)
           PopupItem(
             onTap: ctrl.reactivate,
             text: 'Reactivate',

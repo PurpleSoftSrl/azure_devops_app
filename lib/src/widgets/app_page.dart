@@ -79,7 +79,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
 
     widget.init().onError(
       (e, s) {
-        debugPrint('Exception on init: $e');
+        logDebug('Exception on init: $e');
         if (widget.notifier != null) {
           widget.notifier!.value = widget.notifier!.value?.copyWith(isError: true) ?? ApiResponse.error(null);
         }
@@ -93,7 +93,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
       try {
         await widget.init();
       } catch (e, s) {
-        debugPrint('Exception on refresh: $e');
+        logDebug('Exception on refresh: $e');
         if (widget.notifier != null) {
           widget.notifier!.value = widget.notifier!.value?.copyWith(isError: true);
         }
