@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/extensions/pull_request_extension.dart';
+import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/mixins/share_mixin.dart';
 import 'package:azure_devops/src/models/commit.dart' as c;
 import 'package:azure_devops/src/models/pull_request.dart';

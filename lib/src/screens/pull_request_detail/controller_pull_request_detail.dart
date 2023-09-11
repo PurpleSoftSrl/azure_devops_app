@@ -1,6 +1,6 @@
 part of pull_request_detail;
 
-class _PullRequestDetailController with ShareMixin {
+class _PullRequestDetailController with ShareMixin, AppLogger {
   factory _PullRequestDetailController({
     required PullRequestDetailArgs args,
     required AzureApiService apiService,
@@ -345,6 +345,11 @@ class _PullRequestDetailController with ShareMixin {
       reviewer: reviewer.copyWith(vote: vote),
     );
 
+    logAnalytics('pr_vote', {
+      'vote': vote,
+      'is_error': res.isError,
+    });
+
     if (res.isError) {
       await OverlayService.error('Error', description: 'Pull request not edited');
       return;
@@ -383,6 +388,13 @@ class _PullRequestDetailController with ShareMixin {
       autocomplete: autocomplete,
       completionOptions: completionOptions,
     );
+
+    logAnalytics('pr_edit', {
+      if (status != null) 'status': status.name,
+      if (isDraft != null) 'isDraft': isDraft,
+      if (autocomplete != null) 'autocomplete': autocomplete,
+      'is_error': res.isError,
+    });
 
     if (res.isError) {
       await OverlayService.error('Error', description: 'Pull request not edited');
