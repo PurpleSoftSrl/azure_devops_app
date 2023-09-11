@@ -70,8 +70,10 @@ class _WorkItemListTile extends StatelessWidget {
                       child: Text(
                         item.fields.systemTeamProject,
                         style: subtitleStyle,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
+                    const SizedBox(width: 10),
                     Text(
                       item.fields.systemChangedDate.minutesAgo,
                       style: subtitleStyle,

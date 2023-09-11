@@ -1651,6 +1651,9 @@ class ApiResponse<T extends Object?> {
       errorResponse: errorResponse ?? this.errorResponse,
     );
   }
+
+  @override
+  String toString() => 'ApiResponse(isError: $isError, data: $data, errorResponse: $errorResponse)';
 }
 
 class FileDetailResponse {

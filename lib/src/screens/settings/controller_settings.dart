@@ -34,7 +34,8 @@ class _SettingsController with ShareMixin, AppLogger {
     appVersion = info.version;
 
     final orgs = await apiService.getOrganizations();
-    organizations.value = orgs;
+    // copyWith is needed to make page visible even if getOrganizations returns 401
+    organizations.value = orgs.copyWith(isError: false, data: []);
   }
 
   void shareApp() {
