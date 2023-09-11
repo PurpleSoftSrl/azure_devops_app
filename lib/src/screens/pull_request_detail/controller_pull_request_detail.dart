@@ -276,6 +276,7 @@ class _PullRequestDetailController with ShareMixin {
     final commit = c.Commit(
       commitId: diff.commitId,
       parents: [diff.parentCommitId],
+      remoteUrl: '${apiService.basePath}/${args.project}/_git/${args.repository}/commit/${diff.commitId}',
       url: '${apiService.basePath}/${args.project}/_apis/git/repositories/${args.repository}/commits/${diff.commitId}',
     );
 
