@@ -145,7 +145,7 @@ class _PullRequestOverview extends StatelessWidget {
                   style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                 ),
                 Text(
-                  pr.isDraft ? 'Draft' : pr.status.toString(),
+                  pr.isDraft && pr.status != PullRequestState.abandoned ? 'Draft' : pr.status.toString(),
                   style: context.textTheme.titleSmall!.copyWith(color: pr.status.color),
                 ),
               ],

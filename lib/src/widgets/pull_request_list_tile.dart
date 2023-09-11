@@ -40,7 +40,7 @@ class PullRequestListTile extends StatelessWidget {
                   width: 10,
                 ),
                 Text(
-                  pr.isDraft ? 'Draft' : pr.status.toString(),
+                  pr.isDraft && pr.status != PullRequestState.abandoned ? 'Draft' : pr.status.toString(),
                   style: subtitleStyle.copyWith(color: pr.status.color),
                 ),
               ],
@@ -61,11 +61,14 @@ class PullRequestListTile extends StatelessWidget {
                       ' in ',
                       style: subtitleStyle.copyWith(color: context.colorScheme.onSecondary),
                     ),
-                    Text(
-                      pr.repository.name,
-                      style: subtitleStyle,
+                    Expanded(
+                      child: Text(
+                        pr.repository.name,
+                        style: subtitleStyle,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 10),
                     Text(
                       pr.creationDate.minutesAgo,
                       style: subtitleStyle,
