@@ -500,6 +500,8 @@ class AzureApiServiceMock implements AzureApiService {
     required GraphUser? assignedTo,
     required String title,
     required String description,
+    AreaOrIteration? area,
+    AreaOrIteration? iteration,
   }) {
     throw UnimplementedError();
   }
@@ -513,6 +515,8 @@ class AzureApiServiceMock implements AzureApiService {
     String? title,
     String? description,
     String? status,
+    AreaOrIteration? area,
+    AreaOrIteration? iteration,
   }) {
     throw UnimplementedError();
   }

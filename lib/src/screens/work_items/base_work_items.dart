@@ -1,5 +1,6 @@
 library work_items;
 
+import 'package:azure_devops/src/extensions/area_or_iteration_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';

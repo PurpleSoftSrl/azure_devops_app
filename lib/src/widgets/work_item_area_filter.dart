@@ -1,3 +1,4 @@
+import 'package:azure_devops/src/extensions/area_or_iteration_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/models/areas_and_iterations.dart';
 import 'package:azure_devops/src/router/router.dart';
@@ -71,7 +72,7 @@ class ProjectAreas extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(area.name),
-              if (currentFilter != null && currentFilter == area) ...[
+              if (currentFilter != null && (currentFilter!.escapedAreaPath == area.escapedAreaPath)) ...[
                 const Spacer(),
                 Icon(DevOpsIcons.success),
               ],

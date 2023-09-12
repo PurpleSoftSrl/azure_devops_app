@@ -167,6 +167,7 @@ class _WorkItemsController with FilterMixin {
     projectFilter = projectAll;
     userFilter = userAll;
     areaFilter = null;
+    iterationFilter = null;
 
     init();
   }

@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:azure_devops/src/extensions/area_or_iteration_extension.dart';
 import 'package:azure_devops/src/extensions/commit_extension.dart';
 import 'package:azure_devops/src/extensions/reponse_extension.dart';
 import 'package:azure_devops/src/extensions/work_item_update_extension.dart';
@@ -115,6 +116,8 @@ abstract class AzureApiService {
     required GraphUser? assignedTo,
     required String title,
     required String description,
+    AreaOrIteration? area,
+    AreaOrIteration? iteration,
   });
 
   Future<ApiResponse<WorkItem>> editWorkItem({
@@ -125,6 +128,8 @@ abstract class AzureApiService {
     String? title,
     String? description,
     String? status,
+    AreaOrIteration? area,
+    AreaOrIteration? iteration,
   });
 
   Future<ApiResponse<bool>> addWorkItemComment({
@@ -698,15 +703,11 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (assignedTo != null) query.add(" [System.AssignedTo] = '${assignedTo.mailAddress}' ");
 
     if (area != null) {
-      query.add(
-        " [System.AreaPath] = '${area.path.substring(1).replaceFirst(r'\Area', r'\')}' ",
-      );
+      query.add(" [System.AreaPath] = '${area.escapedAreaPath}' ");
     }
 
     if (iteration != null) {
-      query.add(
-        " [System.IterationPath] = '${iteration.path.substring(1).replaceFirst(r'\Iteration', r'\')}' ",
-      );
+      query.add(" [System.IterationPath] = '${iteration.escapedIterationPath}' ");
     }
 
     var queryStr = '';
@@ -892,6 +893,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     required GraphUser? assignedTo,
     required String title,
     required String description,
+    AreaOrIteration? area,
+    AreaOrIteration? iteration,
   }) async {
     final createRes = await _postList(
       '$_basePath/$projectName/_apis/wit/workitems/\$${type.name}?$_apiVersion-preview',
@@ -912,6 +915,18 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
             'value': assignedTo.mailAddress,
             'path': '/fields/System.AssignedTo',
           },
+        if (area != null)
+          {
+            'op': 'add',
+            'path': '/fields/System.AreaPath',
+            'value': area.escapedAreaPath,
+          },
+        if (iteration != null)
+          {
+            'op': 'add',
+            'path': '/fields/System.IterationPath',
+            'value': iteration.escapedIterationPath,
+          },
       ],
       contentType: 'application/json-patch+json',
     );
@@ -930,6 +945,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     String? title,
     String? description,
     String? status,
+    AreaOrIteration? area,
+    AreaOrIteration? iteration,
   }) async {
     final editRes = await _patchList(
       '$_basePath/$projectName/_apis/wit/workitems/$id?$_apiVersion-preview',
@@ -963,6 +980,18 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
             'op': 'replace',
             'value': status,
             'path': '/fields/System.State',
+          },
+        if (area != null)
+          {
+            'op': 'replace',
+            'path': '/fields/System.AreaPath',
+            'value': area.escapedAreaPath,
+          },
+        if (iteration != null)
+          {
+            'op': 'replace',
+            'path': '/fields/System.IterationPath',
+            'value': iteration.escapedIterationPath,
           },
       ],
       contentType: 'application/json-patch+json',

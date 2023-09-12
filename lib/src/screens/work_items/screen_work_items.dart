@@ -83,7 +83,7 @@ class _WorkItemsScreen extends StatelessWidget {
             if (areasToShow.isNotEmpty)
               FilterMenu<AreaOrIteration?>.custom(
                 title: 'Area',
-                formatLabel: (u) => u?.path.substring(1).replaceAll(r'\Area\', r'\') ?? '-',
+                formatLabel: (u) => u?.escapedAreaPath ?? '-',
                 isDefaultFilter: ctrl.areaFilter == null,
                 currentFilter: ctrl.areaFilter,
                 body: AreaFilterBody(
@@ -95,7 +95,7 @@ class _WorkItemsScreen extends StatelessWidget {
             if (iterationsToShow.isNotEmpty)
               FilterMenu<AreaOrIteration?>.custom(
                 title: 'Iteration',
-                formatLabel: (u) => u?.path.substring(1).replaceAll(r'\Iteration\', r'\') ?? '-',
+                formatLabel: (u) => u?.escapedIterationPath ?? '-',
                 isDefaultFilter: ctrl.iterationFilter == null,
                 currentFilter: ctrl.iterationFilter,
                 body: AreaFilterBody(

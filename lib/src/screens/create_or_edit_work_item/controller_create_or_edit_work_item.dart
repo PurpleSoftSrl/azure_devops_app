@@ -45,6 +45,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   // used only in edit mode
   WorkItemState? newWorkItemStatus;
 
+  AreaOrIteration? newWorkItemArea;
+  AreaOrIteration? newWorkItemIteration;
+
   bool get isEditing => args.id != null;
   WorkItem? editingWorkItem;
 
@@ -106,6 +109,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
         );
     newWorkItemStatus = apiService.workItemStates[fields.systemTeamProject]?[fields.systemWorkItemType]
         ?.firstWhereOrNull((s) => s.name == fields.systemState);
+
+    newWorkItemArea = AreaOrIteration.onlyPath(path: fields.systemAreaPath);
+    newWorkItemIteration = AreaOrIteration.onlyPath(path: fields.systemIterationPath);
   }
 
   void setType(WorkItemType type) {
@@ -145,6 +151,20 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     if (assignee == newWorkItemAssignedTo) return;
 
     newWorkItemAssignedTo = assignee;
+    _setHasChanged();
+  }
+
+  void setArea(AreaOrIteration? area) {
+    if (area == newWorkItemArea) return;
+
+    newWorkItemArea = area;
+    _setHasChanged();
+  }
+ 
+  void setIteration(AreaOrIteration? iteration) {
+    if (iteration == newWorkItemIteration) return;
+
+    newWorkItemIteration = iteration;
     _setHasChanged();
   }
 
@@ -231,6 +251,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       assignedTo: assignedTo,
       description: newWorkItemDescription,
       status: newWorkItemStatus?.name,
+      area: newWorkItemArea,
+      iteration: newWorkItemIteration,
     );
     return res;
   }
@@ -242,6 +264,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       title: newWorkItemTitle,
       assignedTo: assignedTo,
       description: newWorkItemDescription,
+      area: newWorkItemArea,
+      iteration: newWorkItemIteration,
     );
     return res;
   }
@@ -276,5 +300,15 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   List<GraphUser> getAssignees() {
     final users = getSortedUsers(apiService).whereNot((u) => u == userAll).toList()..insert(0, unassigned);
     return users;
+  }
+
+  List<AreaOrIteration> getAreasToShow() {
+    final areas = apiService.workItemAreas;
+    return areas[isEditing ? editingWorkItem!.fields.systemTeamProject : newWorkItemProject.name!]!;
+  }
+  
+  List<AreaOrIteration> getIterationsToShow() {
+    final areas = apiService.workItemIterations;
+    return areas[isEditing ? editingWorkItem!.fields.systemTeamProject : newWorkItemProject.name!]!;
   }
 }

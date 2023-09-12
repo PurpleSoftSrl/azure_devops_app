@@ -127,6 +127,58 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(
+            height: 10,
+          ),
+          if (ctrl.newWorkItemProject != ctrl.projectAll || ctrl.isEditing)
+            Row(
+              children: [
+                Text(
+                  'Area:',
+                  style: style,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                FilterMenu<AreaOrIteration?>.custom(
+                  title: 'Area',
+                  formatLabel: (u) => u?.escapedAreaPath ?? '-',
+                  isDefaultFilter: ctrl.newWorkItemArea == null,
+                  currentFilter: ctrl.newWorkItemArea,
+                  body: AreaFilterBody(
+                    currentFilter: ctrl.newWorkItemArea,
+                    areasToShow: ctrl.getAreasToShow(),
+                    onTap: ctrl.setArea,
+                  ),
+                ),
+              ],
+            ),
+          const SizedBox(
+            height: 10,
+          ),
+          if (ctrl.newWorkItemProject != ctrl.projectAll || ctrl.isEditing)
+            Row(
+              children: [
+                Text(
+                  'Iteration:',
+                  style: style,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                FilterMenu<AreaOrIteration?>.custom(
+                  title: 'Iteration',
+                  formatLabel: (u) => u?.escapedIterationPath ?? '-',
+                  isDefaultFilter: ctrl.newWorkItemIteration == null,
+                  currentFilter: ctrl.newWorkItemIteration,
+                  body: AreaFilterBody(
+                    currentFilter: ctrl.newWorkItemIteration,
+                    areasToShow: ctrl.getIterationsToShow(),
+                    onTap: ctrl.setIteration,
+                  ),
+                ),
+              ],
+            ),
+          const SizedBox(
             height: 20,
           ),
           DevOpsFormField(

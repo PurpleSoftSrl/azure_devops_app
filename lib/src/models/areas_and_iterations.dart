@@ -51,6 +51,15 @@ class AreaOrIteration {
         path: 'All',
       );
 
+  /// Used to create/edit work item
+  factory AreaOrIteration.onlyPath({required String path}) => AreaOrIteration(
+        id: -1,
+        name: path,
+        structureType: '',
+        hasChildren: false,
+        path: path,
+      );
+
   final int id;
   final String name;
   final String structureType;
