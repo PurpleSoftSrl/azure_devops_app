@@ -148,7 +148,7 @@ class AppTheme {
         borderRadius: BorderRadius.circular(6),
       ),
       fillColor: MaterialStateProperty.resolveWith((states) {
-        return states.contains(MaterialState.selected) ? colorScheme.primary : colorScheme.onBackground;
+        return states.contains(MaterialState.selected) ? colorScheme.primary : colorScheme.background;
       }),
       side: BorderSide(
         width: .5,
