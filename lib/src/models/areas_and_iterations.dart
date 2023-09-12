@@ -48,7 +48,7 @@ class AreaOrIteration {
         name: 'All',
         structureType: '',
         hasChildren: false,
-        path: '',
+        path: 'All',
       );
 
   final int id;

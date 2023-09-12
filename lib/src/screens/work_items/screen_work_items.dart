@@ -35,6 +35,11 @@ class _WorkItemsScreen extends StatelessWidget {
             .where((p) => p.length > 1 || (p.first.children?.isNotEmpty ?? false))
             .expand((a) => a);
 
+        final iterations = ctrl.apiService.workItemIterations;
+        final iterationsToShow = (hasProjectFilter ? [iterations[ctrl.projectFilter.name!]!] : iterations.values)
+            .where((p) => p.length > 1 || (p.first.children?.isNotEmpty ?? false))
+            .expand((a) => a);
+
         return FiltersRow(
           resetFilters: ctrl.resetFilters,
           filters: [
@@ -85,6 +90,18 @@ class _WorkItemsScreen extends StatelessWidget {
                   currentFilter: ctrl.areaFilter,
                   areasToShow: areasToShow,
                   onTap: ctrl.filterByArea,
+                ),
+              ),
+            if (iterationsToShow.isNotEmpty)
+              FilterMenu<AreaOrIteration?>.custom(
+                title: 'Iteration',
+                formatLabel: (u) => u?.path.substring(1).replaceAll(r'\Iteration\', r'\') ?? '-',
+                isDefaultFilter: ctrl.iterationFilter == null,
+                currentFilter: ctrl.iterationFilter,
+                body: AreaFilterBody(
+                  currentFilter: ctrl.iterationFilter,
+                  areasToShow: iterationsToShow,
+                  onTap: ctrl.filterByIteration,
                 ),
               ),
           ],

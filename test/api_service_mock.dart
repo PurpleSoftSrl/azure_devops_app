@@ -241,6 +241,7 @@ class AzureApiServiceMock implements AzureApiService {
     WorkItemState? status,
     GraphUser? assignedTo,
     AreaOrIteration? area,
+    AreaOrIteration? iteration,
   }) async {
     final emptyWorkItem = WorkItem.empty();
     final firstItem = emptyWorkItem.copyWith(

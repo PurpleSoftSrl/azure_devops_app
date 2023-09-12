@@ -35,6 +35,7 @@ class _WorkItemsController with FilterMixin {
   late WorkItemState statusFilter = WorkItemState.all;
   WorkItemType typeFilter = WorkItemType.all;
   AreaOrIteration? areaFilter;
+  AreaOrIteration? iterationFilter;
 
   late List<WorkItemType> allWorkItemTypes = [typeFilter];
   late List<WorkItemState> allWorkItemStates = [statusFilter];
@@ -127,10 +128,18 @@ class _WorkItemsController with FilterMixin {
   }
 
   void filterByArea(AreaOrIteration? area) {
-    if (areaFilter != null && area?.name == areaFilter!.name) return;
+    if (areaFilter != null && area?.id == areaFilter!.id) return;
 
     workItems.value = null;
     areaFilter = area;
+    _getData();
+  }
+
+  void filterByIteration(AreaOrIteration? iteration) {
+    if (iterationFilter != null && iteration?.id == iterationFilter!.id) return;
+
+    workItems.value = null;
+    iterationFilter = iteration;
     _getData();
   }
 
@@ -146,6 +155,7 @@ class _WorkItemsController with FilterMixin {
       status: statusFilter == WorkItemState.all ? null : statusFilter,
       assignedTo: assignedTo,
       area: areaFilter,
+      iteration: iterationFilter,
     );
     workItems.value = res;
   }

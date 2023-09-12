@@ -91,6 +91,7 @@ abstract class AzureApiService {
     WorkItemState? status,
     GraphUser? assignedTo,
     AreaOrIteration? area,
+    AreaOrIteration? iteration,
   });
 
   Future<ApiResponse<List<WorkItem>>> getMyRecentWorkItems();
@@ -663,6 +664,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     WorkItemState? status,
     GraphUser? assignedTo,
     AreaOrIteration? area,
+    AreaOrIteration? iteration,
   }) async {
     final query = <String>[];
     if (project != null) {
@@ -695,7 +697,17 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     if (assignedTo != null) query.add(" [System.AssignedTo] = '${assignedTo.mailAddress}' ");
 
-    if (area != null) query.add(" [System.AreaPath] = '${area.path.substring(1).replaceAll(r'\\', r'\').replaceFirst(r'\Area', r'\')}' ");
+    if (area != null) {
+      query.add(
+        " [System.AreaPath] = '${area.path.substring(1).replaceFirst(r'\Area', r'\')}' ",
+      );
+    }
+
+    if (iteration != null) {
+      query.add(
+        " [System.IterationPath] = '${iteration.path.substring(1).replaceFirst(r'\Iteration', r'\')}' ",
+      );
+    }
 
     var queryStr = '';
     if (query.isNotEmpty) {
