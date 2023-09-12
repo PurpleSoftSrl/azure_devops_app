@@ -80,9 +80,13 @@ class _WorkItemsController with FilterMixin {
     projectFilter = proj.name == projectAll.name ? projectAll : proj;
 
     final projectAreas = apiService.workItemAreas[projectFilter.name!];
-
     if (projectAreas != null && projectAreas.isNotEmpty) {
       _resetAreaFilterIfNecessary(projectAreas);
+    }
+
+    final projectIterations = apiService.workItemIterations[projectFilter.name!];
+    if (projectIterations != null && projectIterations.isNotEmpty) {
+      _resetIterationFilterIfNecessary(projectIterations);
     }
 
     _getData();
@@ -90,17 +94,32 @@ class _WorkItemsController with FilterMixin {
 
   /// Resets [areaFilter] if selected [projectFilter] doesn't contain this area
   void _resetAreaFilterIfNecessary(List<AreaOrIteration> projectAreas) {
-    var area = projectAreas.first;
-    final flattenedAreas = <AreaOrIteration>[];
-
-    while (area.hasChildren) {
-      flattenedAreas.addAll([area, ...area.children!]);
-      area = area.children!.first;
-    }
+    final flattenedAreas = _flattenList(projectAreas);
 
     if (areaFilter != null && !flattenedAreas.contains(areaFilter)) {
       areaFilter = null;
     }
+  }
+
+  /// Resets [iterationFilter] if selected [projectFilter] doesn't contain this iteration
+  void _resetIterationFilterIfNecessary(List<AreaOrIteration> projectIterations) {
+    final flattenedIterations = _flattenList(projectIterations);
+
+    if (iterationFilter != null && !flattenedIterations.contains(iterationFilter)) {
+      iterationFilter = null;
+    }
+  }
+
+  List<AreaOrIteration> _flattenList(List<AreaOrIteration> areasOrIterations) {
+    var area = areasOrIterations.first;
+    final flattened = <AreaOrIteration>[];
+
+    while (area.hasChildren) {
+      flattened.addAll([area, ...area.children!]);
+      area = area.children!.first;
+    }
+
+    return flattened;
   }
 
   void filterByStatus(WorkItemState state) {
