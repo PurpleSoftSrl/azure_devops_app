@@ -201,4 +201,35 @@ class _WorkItemsController with FilterMixin {
     final unassigned = GraphUser(displayName: 'Unassigned');
     return users..insert(1, unassigned);
   }
+
+  /// If user has selected a project show only areas of the selected project,
+  /// and don't show areas that are identical to the project (projects with default area only)
+  Iterable<AreaOrIteration> getAreasToShow() {
+    final hasProjectFilter = projectFilter != projectAll;
+    final areas = apiService.workItemAreas;
+
+    final areasToShow = (hasProjectFilter ? [areas[projectFilter.name!]!] : areas.values)
+        .where((p) => p.length > 1 || (p.first.children?.isNotEmpty ?? false))
+        .expand((a) => a);
+
+    return areasToShow;
+  }
+
+  // If user has selected a project show only iterations of the selected project,
+  // otherwise if user has selected an area show only iterations of the project which the area belongs to,
+  // otherwise show all iterations
+  Iterable<AreaOrIteration> getIterationsToShow() {
+    final hasProjectFilter = projectFilter != projectAll;
+    final hasAreaFilter = areaFilter != null;
+    final iterations = apiService.workItemIterations;
+
+    final iterationsToShow = (hasProjectFilter
+            ? [iterations[projectFilter.name!]!]
+            : hasAreaFilter
+                ? [iterations[areaFilter?.projectName]!]
+                : iterations.values)
+        .expand((a) => a);
+
+    return iterationsToShow;
+  }
 }

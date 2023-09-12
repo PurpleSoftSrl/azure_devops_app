@@ -10,4 +10,10 @@ extension AreaOrIterationExt on AreaOrIteration {
     final res = startsWithBackslash ? path.substring(1) : path;
     return res.endsWith('\\$str') ? res.replaceFirst('\\$str', '') : res.replaceAll('\\$str\\', r'\');
   }
+
+  String get projectName {
+    final startsWithBackslash = path.startsWith(r'\');
+    final res = startsWithBackslash ? path.substring(1) : path;
+    return res.split(r'\').first;
+  }
 }

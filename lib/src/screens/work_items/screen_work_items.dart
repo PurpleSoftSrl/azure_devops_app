@@ -26,19 +26,8 @@ class _WorkItemsScreen extends StatelessWidget {
       onResetFilters: ctrl.resetFilters,
       onEmpty: 'No work items found',
       header: () {
-        final hasProjectFilter = ctrl.projectFilter != ctrl.projectAll;
-        final areas = ctrl.apiService.workItemAreas;
-
-        // show only areas of the selected project (if user has selected a project),
-        // and don't show areas that are identical to the project (projects with default area only)
-        final areasToShow = (hasProjectFilter ? [areas[ctrl.projectFilter.name!]!] : areas.values)
-            .where((p) => p.length > 1 || (p.first.children?.isNotEmpty ?? false))
-            .expand((a) => a);
-
-        final iterations = ctrl.apiService.workItemIterations;
-        final iterationsToShow = (hasProjectFilter ? [iterations[ctrl.projectFilter.name!]!] : iterations.values)
-            .where((p) => p.length > 1 || (p.first.children?.isNotEmpty ?? false))
-            .expand((a) => a);
+        final areasToShow = ctrl.getAreasToShow();
+        final iterationsToShow = ctrl.getIterationsToShow();
 
         return FiltersRow(
           resetFilters: ctrl.resetFilters,
