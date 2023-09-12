@@ -118,6 +118,30 @@ class _WorkItemDetailScreen extends StatelessWidget {
                     projectName: detail.fields.systemTeamProject,
                   ),
                   const SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'Area: ',
+                        style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                      ),
+                      Flexible(child: Text(detail.fields.systemAreaPath)),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'Iteration: ',
+                        style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                      ),
+                      Flexible(child: Text(detail.fields.systemIterationPath)),
+                    ],
+                  ),
+                  const SizedBox(
                     height: 20,
                   ),
                   Text(
