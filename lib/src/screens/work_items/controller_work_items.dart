@@ -34,11 +34,10 @@ class _WorkItemsController with FilterMixin {
 
   late WorkItemState statusFilter = WorkItemState.all;
   WorkItemType typeFilter = WorkItemType.all;
+  AreaOrIteration? areaFilter;
 
-  Map<String, List<WorkItemType>> allProjectsWorkItemTypes = {};
   late List<WorkItemType> allWorkItemTypes = [typeFilter];
-
-  late List<WorkItemState> allWorkItemState = [statusFilter];
+  late List<WorkItemState> allWorkItemStates = [statusFilter];
 
   void dispose() {
     instance = null;
@@ -47,12 +46,11 @@ class _WorkItemsController with FilterMixin {
 
   Future<void> init() async {
     allWorkItemTypes = [typeFilter];
-    allWorkItemState = [statusFilter];
+    allWorkItemStates = [statusFilter];
 
     final types = await apiService.getWorkItemTypes();
     if (!types.isError) {
       allWorkItemTypes.addAll(types.data!.values.expand((ts) => ts).toSet());
-      allProjectsWorkItemTypes = types.data!;
 
       final allStatesToAdd = <WorkItemState>{};
 
@@ -63,7 +61,7 @@ class _WorkItemsController with FilterMixin {
 
       final sortedStates = allStatesToAdd.sorted((a, b) => a.name.compareTo(b.name));
 
-      allWorkItemState.addAll(sortedStates);
+      allWorkItemStates.addAll(sortedStates);
     }
 
     await _getData();
@@ -79,7 +77,29 @@ class _WorkItemsController with FilterMixin {
 
     workItems.value = null;
     projectFilter = proj.name == projectAll.name ? projectAll : proj;
+
+    final projectAreas = apiService.workItemAreas[projectFilter.name!];
+
+    if (projectAreas != null && projectAreas.isNotEmpty) {
+      _resetAreaFilterIfNecessary(projectAreas);
+    }
+
     _getData();
+  }
+
+  /// Resets [areaFilter] if selected [projectFilter] doesn't contain this area
+  void _resetAreaFilterIfNecessary(List<AreaOrIteration> projectAreas) {
+    var area = projectAreas.first;
+    final flattenedAreas = <AreaOrIteration>[];
+
+    while (area.hasChildren) {
+      flattenedAreas.addAll([area, ...area.children!]);
+      area = area.children!.first;
+    }
+
+    if (areaFilter != null && !flattenedAreas.contains(areaFilter)) {
+      areaFilter = null;
+    }
   }
 
   void filterByStatus(WorkItemState state) {
@@ -106,6 +126,14 @@ class _WorkItemsController with FilterMixin {
     _getData();
   }
 
+  void filterByArea(AreaOrIteration? area) {
+    if (areaFilter != null && area?.name == areaFilter!.name) return;
+
+    workItems.value = null;
+    areaFilter = area;
+    _getData();
+  }
+
   Future<void> _getData() async {
     var assignedTo = userFilter == userAll ? null : userFilter;
     if (userFilter.displayName == 'Unassigned') {
@@ -117,6 +145,7 @@ class _WorkItemsController with FilterMixin {
       type: typeFilter == WorkItemType.all ? null : typeFilter,
       status: statusFilter == WorkItemState.all ? null : statusFilter,
       assignedTo: assignedTo,
+      area: areaFilter,
     );
     workItems.value = res;
   }
@@ -127,6 +156,7 @@ class _WorkItemsController with FilterMixin {
     typeFilter = WorkItemType.all;
     projectFilter = projectAll;
     userFilter = userAll;
+    areaFilter = null;
 
     init();
   }

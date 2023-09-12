@@ -63,16 +63,29 @@ class FilterMenu<T> extends StatelessWidget {
     required this.isDefaultFilter,
     required this.widgetBuilder,
     this.child,
+    this.body,
   });
+
+  const FilterMenu.custom({
+    required this.body,
+    required this.title,
+    required this.currentFilter,
+    this.formatLabel,
+    required this.isDefaultFilter,
+    this.child,
+  })  : widgetBuilder = null,
+        values = const [],
+        onSelected = null;
 
   final void Function(T)? onSelected;
   final List<T> values;
   final T currentFilter;
   final String title;
   final String Function(T)? formatLabel;
-  final Widget Function(T) widgetBuilder;
+  final Widget Function(T)? widgetBuilder;
   final bool isDefaultFilter;
   final Widget? child;
+  final Widget? body;
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +121,7 @@ class FilterMenu<T> extends StatelessWidget {
       onSelected: onSelected,
       widgetBuilder: widgetBuilder,
       currentFilter: currentFilter,
+      customBody: body,
       child: child ?? chip,
     );
   }
@@ -122,15 +136,17 @@ class _FilterBottomsheet<T> extends StatelessWidget {
     required this.widgetBuilder,
     required this.currentFilter,
     required this.child,
+    this.customBody,
   });
 
   final String title;
   final List<T> values;
   final String Function(T)? formatLabel;
   final void Function(T)? onSelected;
-  final Widget Function(T) widgetBuilder;
+  final Widget Function(T)? widgetBuilder;
   final T currentFilter;
   final Widget child;
+  final Widget? customBody;
 
   @override
   Widget build(BuildContext context) {
@@ -142,44 +158,46 @@ class _FilterBottomsheet<T> extends StatelessWidget {
           isScrollControlled: true,
           spaceUnderTitle: false,
           name: 'filter_$title',
-          builder: (context) => ListView(
-            children: values
-                .map(
-                  (v) => InkWell(
-                    key: ValueKey(formatLabel?.call(v) ?? v.toString()),
-                    onTap: () {
-                      onSelected!(v);
-                      AppRouter.popRoute();
-                    },
-                    child: Column(
-                      children: [
-                        Row(
+          builder: (context) =>
+              customBody ??
+              ListView(
+                children: values
+                    .map(
+                      (v) => InkWell(
+                        key: ValueKey(formatLabel?.call(v) ?? v.toString()),
+                        onTap: () {
+                          onSelected!(v);
+                          AppRouter.popRoute();
+                        },
+                        child: Column(
                           children: [
-                            SizedBox(
-                              height: imageSize,
-                              width: imageSize,
-                              child: widgetBuilder.call(v),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  height: imageSize,
+                                  width: imageSize,
+                                  child: widgetBuilder?.call(v),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Text(formatLabel?.call(v) ?? v.toString()),
+                                if (currentFilter == v) ...[
+                                  const Spacer(),
+                                  Icon(DevOpsIcons.success),
+                                ],
+                              ],
                             ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Text(formatLabel?.call(v) ?? v.toString()),
-                            if (currentFilter == v) ...[
-                              const Spacer(),
-                              Icon(DevOpsIcons.success),
-                            ],
+                            if (v != values.last)
+                              const Divider(
+                                height: 20,
+                              ),
                           ],
                         ),
-                        if (v != values.last)
-                          const Divider(
-                            height: 20,
-                          ),
-                      ],
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
+                      ),
+                    )
+                    .toList(),
+              ),
         );
       },
       child: child,

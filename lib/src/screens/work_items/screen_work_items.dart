@@ -25,47 +25,71 @@ class _WorkItemsScreen extends StatelessWidget {
       ],
       onResetFilters: ctrl.resetFilters,
       onEmpty: 'No work items found',
-      header: () => FiltersRow(
-        resetFilters: ctrl.resetFilters,
-        filters: [
-          FilterMenu<Project>(
-            title: 'Project',
-            values: ctrl.getProjects(ctrl.storageService),
-            currentFilter: ctrl.projectFilter,
-            onSelected: ctrl.filterByProject,
-            formatLabel: (p) => p.name!,
-            isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
-            widgetBuilder: (p) => ProjectFilterWidget(project: p),
-          ),
-          FilterMenu<WorkItemState>(
-            title: 'Status',
-            values: ctrl.allWorkItemState,
-            formatLabel: (t) => t.name,
-            currentFilter: ctrl.statusFilter,
-            onSelected: ctrl.filterByStatus,
-            isDefaultFilter: ctrl.statusFilter == WorkItemState.all,
-            widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
-          ),
-          WorkItemTypeFilterMenu(
-            title: 'Type',
-            values: ctrl.allWorkItemTypes,
-            formatLabel: (t) => [null, 'system'].contains(t.customization) ? t.name : '${t.name} (${t.customization})',
-            currentFilter: ctrl.typeFilter,
-            onSelected: ctrl.filterByType,
-            isDefaultFilter: ctrl.typeFilter.name == 'All',
-            widgetBuilder: (t) => WorkItemTypeFilter(type: t),
-          ),
-          FilterMenu<GraphUser>(
-            title: 'Assigned to',
-            values: ctrl.getAssignees(),
-            onSelected: ctrl.filterByUser,
-            formatLabel: (u) => u.displayName ?? '',
-            isDefaultFilter: ctrl.userFilter == ctrl.userAll,
-            currentFilter: ctrl.userFilter,
-            widgetBuilder: (u) => UserFilterWidget(user: u),
-          ),
-        ],
-      ),
+      header: () {
+        final hasProjectFilter = ctrl.projectFilter != ctrl.projectAll;
+        final areas = ctrl.apiService.workItemAreas;
+
+        // show only areas of the selected project (if user has selected a project),
+        // and don't show areas that are identical to the project (projects with default area only)
+        final areasToShow = (hasProjectFilter ? [areas[ctrl.projectFilter.name!]!] : areas.values)
+            .where((p) => p.length > 1 || (p.first.children?.isNotEmpty ?? false))
+            .expand((a) => a);
+
+        return FiltersRow(
+          resetFilters: ctrl.resetFilters,
+          filters: [
+            FilterMenu<Project>(
+              title: 'Project',
+              values: ctrl.getProjects(ctrl.storageService),
+              currentFilter: ctrl.projectFilter,
+              onSelected: ctrl.filterByProject,
+              formatLabel: (p) => p.name!,
+              isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
+              widgetBuilder: (p) => ProjectFilterWidget(project: p),
+            ),
+            FilterMenu<WorkItemState>(
+              title: 'Status',
+              values: ctrl.allWorkItemStates,
+              formatLabel: (t) => t.name,
+              currentFilter: ctrl.statusFilter,
+              onSelected: ctrl.filterByStatus,
+              isDefaultFilter: ctrl.statusFilter == WorkItemState.all,
+              widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
+            ),
+            WorkItemTypeFilterMenu(
+              title: 'Type',
+              values: ctrl.allWorkItemTypes,
+              formatLabel: (t) =>
+                  [null, 'system'].contains(t.customization) ? t.name : '${t.name} (${t.customization})',
+              currentFilter: ctrl.typeFilter,
+              onSelected: ctrl.filterByType,
+              isDefaultFilter: ctrl.typeFilter.name == 'All',
+              widgetBuilder: (t) => WorkItemTypeFilter(type: t),
+            ),
+            FilterMenu<GraphUser>(
+              title: 'Assigned to',
+              values: ctrl.getAssignees(),
+              onSelected: ctrl.filterByUser,
+              formatLabel: (u) => u.displayName ?? '',
+              isDefaultFilter: ctrl.userFilter == ctrl.userAll,
+              currentFilter: ctrl.userFilter,
+              widgetBuilder: (u) => UserFilterWidget(user: u),
+            ),
+            if (areasToShow.isNotEmpty)
+              FilterMenu<AreaOrIteration?>.custom(
+                title: 'Area',
+                formatLabel: (u) => u?.path.substring(1).replaceAll(r'\Area\', r'\') ?? '-',
+                isDefaultFilter: ctrl.areaFilter == null,
+                currentFilter: ctrl.areaFilter,
+                body: AreaFilterBody(
+                  currentFilter: ctrl.areaFilter,
+                  areasToShow: areasToShow,
+                  onTap: ctrl.filterByArea,
+                ),
+              ),
+          ],
+        );
+      },
       builder: (items) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: items!

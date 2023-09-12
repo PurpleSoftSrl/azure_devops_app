@@ -2,6 +2,7 @@
 
 import 'dart:typed_data';
 
+import 'package:azure_devops/src/models/areas_and_iterations.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:azure_devops/src/models/file_diff.dart';
@@ -34,6 +35,12 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Map<String, List<WorkItemType>> get workItemTypes => {};
+  
+  @override
+  Map<String, List<AreaOrIteration>> get workItemAreas => {};
+  
+  @override
+  Map<String, List<AreaOrIteration>> get workItemIterations => {};
 
   @override
   bool get isImageUnauthorized => false;
@@ -233,6 +240,7 @@ class AzureApiServiceMock implements AzureApiService {
     WorkItemType? type,
     WorkItemState? status,
     GraphUser? assignedTo,
+    AreaOrIteration? area,
   }) async {
     final emptyWorkItem = WorkItem.empty();
     final firstItem = emptyWorkItem.copyWith(
@@ -327,6 +335,8 @@ class AzureApiServiceMock implements AzureApiService {
           rev: 0,
           fields: ItemFields(
             systemTeamProject: 'TestProject',
+            systemAreaPath: 'TestArea',
+            systemIterationPath: 'TestIteration',
             systemWorkItemType: 'TestType',
             systemState: 'Active',
             systemCreatedDate: DateTime.now(),
@@ -672,6 +682,8 @@ extension on ItemFields {
   }) {
     return ItemFields(
       systemTeamProject: systemTeamProject ?? this.systemTeamProject,
+      systemAreaPath: systemAreaPath,
+      systemIterationPath: systemIterationPath,
       systemWorkItemType: systemWorkItemType ?? this.systemWorkItemType,
       systemState: systemState ?? this.systemState,
       systemCreatedDate: systemCreatedDate ?? this.systemCreatedDate,

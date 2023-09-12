@@ -8,6 +8,7 @@ import 'package:azure_devops/src/extensions/commit_extension.dart';
 import 'package:azure_devops/src/extensions/reponse_extension.dart';
 import 'package:azure_devops/src/extensions/work_item_update_extension.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
+import 'package:azure_devops/src/models/areas_and_iterations.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:azure_devops/src/models/file_diff.dart';
@@ -58,6 +59,12 @@ abstract class AzureApiService {
   /// Work item states for each work item type for each project
   Map<String, Map<String, List<WorkItemState>>> get workItemStates;
 
+  /// Work item area paths for each project
+  Map<String, List<AreaOrIteration>> get workItemAreas;
+
+  /// Work item iteration paths for each project
+  Map<String, List<AreaOrIteration>> get workItemIterations;
+
   bool get isImageUnauthorized;
 
   bool get isLoggedInWithMicrosoft;
@@ -83,6 +90,7 @@ abstract class AzureApiService {
     WorkItemType? type,
     WorkItemState? status,
     GraphUser? assignedTo,
+    AreaOrIteration? area,
   });
 
   Future<ApiResponse<List<WorkItem>>> getMyRecentWorkItems();
@@ -312,6 +320,16 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   Map<String, Map<String, List<WorkItemState>>> get workItemStates => _workItemStates;
   final Map<String, Map<String, List<WorkItemState>>> _workItemStates = {};
 
+  /// Work item area paths for each project
+  @override
+  Map<String, List<AreaOrIteration>> get workItemAreas => _workItemAreas;
+  final Map<String, List<AreaOrIteration>> _workItemAreas = {};
+
+  /// Work item iteration paths for each project
+  @override
+  Map<String, List<AreaOrIteration>> get workItemIterations => _workItemIterations;
+  final Map<String, List<AreaOrIteration>> _workItemIterations = {};
+
   void dispose() {
     instance = null;
   }
@@ -521,6 +539,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     setChosenProjects([]);
     _workItemTypes.clear();
     _workItemStates.clear();
+    _workItemAreas.clear();
+    _workItemIterations.clear();
   }
 
   @override
@@ -642,6 +662,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     WorkItemType? type,
     WorkItemState? status,
     GraphUser? assignedTo,
+    AreaOrIteration? area,
   }) async {
     final query = <String>[];
     if (project != null) {
@@ -673,6 +694,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (status != null) query.add(" [System.State] = '${status.name}' ");
 
     if (assignedTo != null) query.add(" [System.AssignedTo] = '${assignedTo.mailAddress}' ");
+
+    if (area != null) query.add(" [System.AreaPath] = '${area.path.substring(1).replaceAll(r'\\', r'\').replaceFirst(r'\Area', r'\')}' ");
 
     var queryStr = '';
     if (query.isNotEmpty) {
@@ -728,6 +751,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (force) {
       _workItemTypes.clear();
       _workItemStates.clear();
+      _workItemAreas.clear();
+      _workItemIterations.clear();
     }
 
     final processesRes = await _get('$_basePath/_apis/work/processes?\$expand=projects&$_apiVersion');
@@ -746,6 +771,22 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
             final types = GetWorkItemTypesResponse.fromResponse(res).where((t) => !t.isDisabled).toList();
             final projectsToSearch = proc.projects.where((p) => (_chosenProjects ?? _projects).contains(p));
             for (final proj in projectsToSearch) {
+              if (_workItemAreas[proj.name!] == null) {
+                // ignore: unawaited_futures, reason: speed up work items page loading time
+                _get('$_basePath/${proj.name}/_apis/wit/classificationnodes?\$depth=14&$_apiVersion').then((areaRes) {
+                  final areasAndIterations = AreasAndIterationsResponse.fromResponse(areaRes);
+
+                  _workItemAreas.putIfAbsent(
+                    proj.name!,
+                    () => areasAndIterations.areasAndIterations.where((i) => i.structureType == 'area').toList(),
+                  );
+                  _workItemIterations.putIfAbsent(
+                    proj.name!,
+                    () => areasAndIterations.areasAndIterations.where((i) => i.structureType == 'iteration').toList(),
+                  );
+                });
+              }
+
               _workItemTypes.putIfAbsent(proj.name!, () => types);
               processWorkItems.putIfAbsent(proc, () => types);
 

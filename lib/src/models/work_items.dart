@@ -86,6 +86,8 @@ class WorkItem {
         id: -1,
         fields: ItemFields(
           systemWorkItemType: '',
+          systemAreaPath: '',
+          systemIterationPath: '',
           systemState: '',
           systemTeamProject: '',
           systemTitle: '',
@@ -100,6 +102,8 @@ class WorkItem {
 class ItemFields {
   ItemFields({
     required this.systemTeamProject,
+    required this.systemAreaPath,
+    required this.systemIterationPath,
     required this.systemWorkItemType,
     required this.systemState,
     this.systemReason,
@@ -125,6 +129,8 @@ class ItemFields {
 
   factory ItemFields.fromJson(Map<String, dynamic> json) => ItemFields(
         systemTeamProject: json['System.TeamProject'] as String,
+        systemAreaPath: json['System.AreaPath'] as String,
+        systemIterationPath: json['System.IterationPath'] as String,
         systemWorkItemType: json['System.WorkItemType'] as String,
         systemState: json['System.State'] as String,
         systemReason: json['System.Reason'] as String?,
@@ -166,6 +172,8 @@ class ItemFields {
       );
 
   final String systemTeamProject;
+  final String systemAreaPath;
+  final String systemIterationPath;
   final String systemWorkItemType;
   final String systemState;
   final String? systemReason;
@@ -190,7 +198,7 @@ class ItemFields {
 
   @override
   String toString() {
-    return 'ItemFields(systemTeamProject: $systemTeamProject, systemWorkItemType: $systemWorkItemType, systemState: $systemState, systemReason: $systemReason, systemAssignedTo: $systemAssignedTo, systemCreatedDate: $systemCreatedDate, systemCreatedBy: $systemCreatedBy, systemChangedDate: $systemChangedDate, systemChangedBy: $systemChangedBy, systemCommentCount: $systemCommentCount, systemTitle: $systemTitle, microsoftVstsCommonStateChangeDate: $microsoftVstsCommonStateChangeDate, microsoftVstsCommonPriority: $microsoftVstsCommonPriority, systemDescription: $systemDescription, reproSteps: $reproSteps, microsoftVstsCommonClosedDate: $microsoftVstsCommonClosedDate, microsoftVstsCommonClosedBy: $microsoftVstsCommonClosedBy, microsoftVstsCommonActivatedDate: $microsoftVstsCommonActivatedDate, microsoftVstsCommonActivatedBy: $microsoftVstsCommonActivatedBy, microsoftVstsCommonResolvedDate: $microsoftVstsCommonResolvedDate, systemHistory: $systemHistory, systemTags: $systemTags)';
+    return 'ItemFields(systemTeamProject: $systemTeamProject, systemAreaPath: $systemAreaPath, systemIterationPath: $systemIterationPath systemWorkItemType: $systemWorkItemType, systemState: $systemState, systemReason: $systemReason, systemAssignedTo: $systemAssignedTo, systemCreatedDate: $systemCreatedDate, systemCreatedBy: $systemCreatedBy, systemChangedDate: $systemChangedDate, systemChangedBy: $systemChangedBy, systemCommentCount: $systemCommentCount, systemTitle: $systemTitle, microsoftVstsCommonStateChangeDate: $microsoftVstsCommonStateChangeDate, microsoftVstsCommonPriority: $microsoftVstsCommonPriority, systemDescription: $systemDescription, reproSteps: $reproSteps, microsoftVstsCommonClosedDate: $microsoftVstsCommonClosedDate, microsoftVstsCommonClosedBy: $microsoftVstsCommonClosedBy, microsoftVstsCommonActivatedDate: $microsoftVstsCommonActivatedDate, microsoftVstsCommonActivatedBy: $microsoftVstsCommonActivatedBy, microsoftVstsCommonResolvedDate: $microsoftVstsCommonResolvedDate, systemHistory: $systemHistory, systemTags: $systemTags)';
   }
 }
 
