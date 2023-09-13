@@ -11,38 +11,39 @@ class AreaFilterBody extends StatelessWidget {
     required this.areasToShow,
     required this.currentFilter,
     required this.onTap,
+    this.showActive = false,
   });
 
   final Iterable<AreaOrIteration> areasToShow;
   final AreaOrIteration? currentFilter;
   final void Function(AreaOrIteration?) onTap;
+  final bool showActive;
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: ProjectAreas(
-            area: AreaOrIteration.all(),
-            currentFilter: currentFilter,
-            onTap: (a) {
-              AppRouter.popRoute();
-              onTap(null); // reset area filter
-            },
-          ),
+        ProjectAreas(
+          area: AreaOrIteration.all(),
+          currentFilter: currentFilter,
+          onTap: (a) {
+            AppRouter.popRoute();
+            onTap(null); // reset area filter
+          },
+          showActive: showActive,
+        ),
+        const SizedBox(
+          height: 16,
         ),
         ...areasToShow.sortedBy((a) => a.path.toLowerCase()).map(
-              (a) => Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: ProjectAreas(
-                  area: a,
-                  currentFilter: currentFilter,
-                  onTap: (a) {
-                    AppRouter.popRoute();
-                    onTap(a);
-                  },
-                ),
+              (a) => ProjectAreas(
+                area: a,
+                currentFilter: currentFilter,
+                onTap: (a) {
+                  AppRouter.popRoute();
+                  onTap(a);
+                },
+                showActive: showActive,
               ),
             ),
       ],
@@ -51,14 +52,22 @@ class AreaFilterBody extends StatelessWidget {
 }
 
 class ProjectAreas extends StatelessWidget {
-  const ProjectAreas({required this.area, required this.onTap, this.currentFilter});
+  const ProjectAreas({required this.area, required this.onTap, this.currentFilter, required this.showActive});
 
   final AreaOrIteration area;
   final AreaOrIteration? currentFilter;
   final void Function(AreaOrIteration) onTap;
+  final bool showActive;
 
   @override
   Widget build(BuildContext context) {
+    if (showActive && area.name != AreaOrIteration.all().name) {
+      final isActive = area.isActive;
+      final hasActiveChildren = area.children != null && area.children!.any((a) => a.isActive);
+
+      if (!isActive && !hasActiveChildren) return const SizedBox();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -82,11 +91,12 @@ class ProjectAreas extends StatelessWidget {
         const Divider(),
         ...(area.children ?? []).map(
           (c) => Padding(
-            padding: const EdgeInsets.only(left: 16),
+            padding: EdgeInsets.only(left: 16, bottom: c == area.children!.last ? 16 : 0),
             child: ProjectAreas(
               area: c,
               onTap: onTap,
               currentFilter: currentFilter,
+              showActive: showActive,
             ),
           ),
         ),

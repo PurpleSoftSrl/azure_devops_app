@@ -87,10 +87,30 @@ class _WorkItemsScreen extends StatelessWidget {
                 formatLabel: (u) => u?.escapedIterationPath ?? '-',
                 isDefaultFilter: ctrl.iterationFilter == null,
                 currentFilter: ctrl.iterationFilter,
-                body: AreaFilterBody(
-                  currentFilter: ctrl.iterationFilter,
-                  areasToShow: iterationsToShow,
-                  onTap: ctrl.filterByIteration,
+                body: ValueListenableBuilder(
+                  valueListenable: ctrl.showActiveIterations,
+                  builder: (ctx, showActive, _) => Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text('Show active'),
+                          Checkbox(
+                            value: showActive,
+                            onChanged: (_) => ctrl.toggleShowActiveIterations(),
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: AreaFilterBody(
+                          currentFilter: ctrl.iterationFilter,
+                          areasToShow: iterationsToShow,
+                          onTap: ctrl.filterByIteration,
+                          showActive: showActive,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
           ],

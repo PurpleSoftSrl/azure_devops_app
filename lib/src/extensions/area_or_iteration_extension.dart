@@ -16,4 +16,9 @@ extension AreaOrIterationExt on AreaOrIteration {
     final res = startsWithBackslash ? path.substring(1) : path;
     return res.split(r'\').first;
   }
+
+  bool get isActive {
+    final now = DateTime.now();
+    return attributes != null && now.isAfter(attributes!.startDate) && now.isBefore(attributes!.finishDate);
+  }
 }

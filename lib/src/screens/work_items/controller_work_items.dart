@@ -37,6 +37,9 @@ class _WorkItemsController with FilterMixin {
   AreaOrIteration? areaFilter;
   AreaOrIteration? iterationFilter;
 
+  /// Used to show only active iterations in iteration filter
+  final showActiveIterations = ValueNotifier<bool>(false);
+
   late List<WorkItemType> allWorkItemTypes = [typeFilter];
   late List<WorkItemState> allWorkItemStates = [statusFilter];
 
@@ -231,5 +234,9 @@ class _WorkItemsController with FilterMixin {
         .expand((a) => a);
 
     return iterationsToShow;
+  }
+
+  void toggleShowActiveIterations() {
+    showActiveIterations.value =  !showActiveIterations.value;
   }
 }
