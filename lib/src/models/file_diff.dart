@@ -11,7 +11,7 @@ class GetFileDiffResponse {
         data: _DataProviders.fromJson(json['dataProviders'] as Map<String, dynamic>),
       );
 
-  static Diff fromResponse(Response res) =>
+  static Diff? fromResponse(Response res) =>
       GetFileDiffResponse.fromJson(json.decode(res.body) as Map<String, dynamic>).data.diff;
 
   final _DataProviders data;
@@ -20,13 +20,14 @@ class GetFileDiffResponse {
 class _DataProviders {
   _DataProviders({required this.diff});
 
-  factory _DataProviders.fromJson(Map<String, dynamic> json) => _DataProviders(
-        diff: Diff.fromJson(
-          json['ms.vss-code-web.file-diff-data-provider'] as Map<String, dynamic>,
-        ),
-      );
+  factory _DataProviders.fromJson(Map<String, dynamic> json) {
+    final diffData = json['ms.vss-code-web.file-diff-data-provider'];
+    return _DataProviders(
+      diff: diffData == null ? null : Diff.fromJson(diffData as Map<String, dynamic>),
+    );
+  }
 
-  final Diff diff;
+  final Diff? diff;
 }
 
 class Diff {
