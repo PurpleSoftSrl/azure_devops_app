@@ -139,7 +139,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       projectWorkItemTypes =
           allProjectsWorkItemTypes[newWorkItemProject.name]?.where((t) => t != WorkItemType.all).toList() ?? [];
 
-      if (!projectWorkItemTypes.contains(newWorkItemType)) {
+      if (!projectWorkItemTypes.contains(newWorkItemType) && projectWorkItemTypes.isNotEmpty) {
         newWorkItemType = projectWorkItemTypes.first;
       }
     }
@@ -160,7 +160,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     newWorkItemArea = area;
     _setHasChanged();
   }
- 
+
   void setIteration(AreaOrIteration? iteration) {
     if (iteration == newWorkItemIteration) return;
 
@@ -306,7 +306,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     final areas = apiService.workItemAreas;
     return areas[isEditing ? editingWorkItem!.fields.systemTeamProject : newWorkItemProject.name!]!;
   }
-  
+
   List<AreaOrIteration> getIterationsToShow() {
     final areas = apiService.workItemIterations;
     return areas[isEditing ? editingWorkItem!.fields.systemTeamProject : newWorkItemProject.name!]!;
