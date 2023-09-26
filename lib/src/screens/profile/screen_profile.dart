@@ -27,7 +27,7 @@ class _ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 MemberAvatar(
-                  userDescriptor: ctrl.author!.descriptor!,
+                  userDescriptor: ctrl.author!.descriptor,
                   radius: 60,
                   tappable: false,
                 ),

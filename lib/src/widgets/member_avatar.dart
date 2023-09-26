@@ -13,20 +13,20 @@ class MemberAvatar extends StatelessWidget {
   });
 
   final String? imageUrl;
-  final String userDescriptor;
+  final String? userDescriptor;
   final double radius;
   final bool tappable;
 
   Future<void> _goToMemberDetail() async {
-    await AppRouter.goToMemberDetail(userDescriptor);
+    await AppRouter.goToMemberDetail(userDescriptor!);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (imageUrl == null && userDescriptor.isEmpty) return const SizedBox();
+    if (imageUrl == null && (userDescriptor == null || userDescriptor!.isEmpty)) return const SizedBox();
 
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final url = imageUrl ?? apiService.getUserAvatarUrl(userDescriptor);
+    final url = imageUrl ?? apiService.getUserAvatarUrl(userDescriptor!);
     return InkWell(
       onTap: tappable ? _goToMemberDetail : null,
       child: ClipRRect(

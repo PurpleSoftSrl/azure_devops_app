@@ -99,7 +99,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                             width: 10,
                           ),
                           MemberAvatar(
-                            userDescriptor: detail.fields.systemCreatedBy!.descriptor!,
+                            userDescriptor: detail.fields.systemCreatedBy!.descriptor,
                             radius: 30,
                           ),
                           const SizedBox(
@@ -189,7 +189,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                           width: 20,
                         ),
                         MemberAvatar(
-                          userDescriptor: detail.fields.systemAssignedTo!.descriptor!,
+                          userDescriptor: detail.fields.systemAssignedTo!.descriptor,
                           radius: 30,
                         ),
                       ],

@@ -486,7 +486,7 @@ class __AddCommentFieldState extends State<_AddCommentField> with SingleTickerPr
               padding: EdgeInsets.all(10),
               child: Row(
                 children: [
-                  if (me != null) MemberAvatar(userDescriptor: me.descriptor!),
+                  if (me != null) MemberAvatar(userDescriptor: me.descriptor),
                   const SizedBox(
                     width: 20,
                   ),

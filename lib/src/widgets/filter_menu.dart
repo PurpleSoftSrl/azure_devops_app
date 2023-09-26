@@ -255,7 +255,7 @@ class UserFilterWidget extends StatelessWidget {
     return user.descriptor == null
         ? const SizedBox()
         : MemberAvatar(
-            userDescriptor: user.descriptor!,
+            userDescriptor: user.descriptor,
           );
   }
 }

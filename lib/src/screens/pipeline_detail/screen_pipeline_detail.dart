@@ -52,7 +52,7 @@ class _PipelineDetailScreen extends StatelessWidget {
                       width: 10,
                     ),
                     MemberAvatar(
-                      userDescriptor: pipeline.requestedFor!.descriptor!,
+                      userDescriptor: pipeline.requestedFor!.descriptor,
                     ),
                     const SizedBox(
                       width: 10,

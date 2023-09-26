@@ -60,7 +60,7 @@ class _ProjectDetailScreen extends StatelessWidget {
                         child: Column(
                           children: [
                             MemberAvatar(
-                              userDescriptor: m.identity!.descriptor!,
+                              userDescriptor: m.identity!.descriptor,
                               radius: parameters.memberAvatarSize,
                             ),
                             const SizedBox(
