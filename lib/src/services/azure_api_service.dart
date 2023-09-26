@@ -1179,7 +1179,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final policiesRes = await _get(
       '$_basePath/$projectName/_apis/policy/evaluations?artifactId=$artifactId&$_apiVersion-preview',
     );
-    final policies = PoliciesResponse.fromResponse(policiesRes).policies;
+    final policies = policiesRes.isError ? <Policy>[] : PoliciesResponse.fromResponse(policiesRes).policies;
 
     final conflicts = <Conflict>[];
     if (pr.mergeStatus == 'conflicts') {

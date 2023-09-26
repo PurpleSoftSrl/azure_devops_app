@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:azure_devops/main.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
@@ -6,7 +8,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 mixin AppLogger {
   /// Logs only if [kDebugMode]
   void logDebug(String msg) {
-    if (kDebugMode) print(msg);
+    if (kDebugMode) log(msg);
   }
 
   /// Logs on Sentry with level info only if ![kDebugMode]

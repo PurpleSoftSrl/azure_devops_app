@@ -39,4 +39,9 @@ class Policy {
   final DateTime? startedDate;
   final String? status;
   final DateTime? completedDate;
+
+  @override
+  String toString() {
+    return 'Policy(artifactId: $artifactId, evaluationId: $evaluationId, startedDate: $startedDate, status: $status, completedDate: $completedDate)';
+  }
 }
