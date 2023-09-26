@@ -108,7 +108,12 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
           states: [],
         );
     newWorkItemStatus = apiService.workItemStates[fields.systemTeamProject]?[fields.systemWorkItemType]
-        ?.firstWhereOrNull((s) => s.name == fields.systemState);
+            ?.firstWhereOrNull((s) => s.name == fields.systemState) ??
+        WorkItemState(
+          id: '',
+          name: fields.systemState,
+          color: 'FFFFFF',
+        );
 
     newWorkItemArea = AreaOrIteration.onlyPath(path: fields.systemAreaPath);
     newWorkItemIteration = AreaOrIteration.onlyPath(path: fields.systemIterationPath);
