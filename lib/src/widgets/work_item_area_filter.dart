@@ -12,29 +12,33 @@ class AreaFilterBody extends StatelessWidget {
     required this.currentFilter,
     required this.onTap,
     this.showActive = false,
+    this.showAllFilter = true,
   });
 
   final Iterable<AreaOrIteration> areasToShow;
   final AreaOrIteration? currentFilter;
   final void Function(AreaOrIteration?) onTap;
   final bool showActive;
+  final bool showAllFilter;
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        ProjectAreas(
-          area: AreaOrIteration.all(),
-          currentFilter: currentFilter,
-          onTap: (a) {
-            AppRouter.popRoute();
-            onTap(null); // reset area filter
-          },
-          showActive: showActive,
-        ),
-        const SizedBox(
-          height: 16,
-        ),
+        if (showAllFilter) ...[
+          ProjectAreas(
+            area: AreaOrIteration.all(),
+            currentFilter: currentFilter,
+            onTap: (a) {
+              AppRouter.popRoute();
+              onTap(null); // reset area filter
+            },
+            showActive: showActive,
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+        ],
         ...areasToShow.sortedBy((a) => a.path.toLowerCase()).map(
               (a) => ProjectAreas(
                 area: a,

@@ -309,11 +309,11 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   List<AreaOrIteration> getAreasToShow() {
     final areas = apiService.workItemAreas;
-    return areas[isEditing ? editingWorkItem!.fields.systemTeamProject : newWorkItemProject.name!]!;
+    return areas[isEditing ? editingWorkItem!.fields.systemTeamProject : newWorkItemProject.name!] ?? [];
   }
 
   List<AreaOrIteration> getIterationsToShow() {
     final areas = apiService.workItemIterations;
-    return areas[isEditing ? editingWorkItem!.fields.systemTeamProject : newWorkItemProject.name!]!;
+    return areas[isEditing ? editingWorkItem!.fields.systemTeamProject : newWorkItemProject.name!] ?? [];
   }
 }
