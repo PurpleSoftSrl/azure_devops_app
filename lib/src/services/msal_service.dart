@@ -1,8 +1,7 @@
-import 'dart:developer';
-
+import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:msal_flutter/msal_flutter.dart';
 
-class MsalService {
+class MsalService with AppLogger {
   factory MsalService() {
     return instance ??= MsalService._();
   }
@@ -38,8 +37,8 @@ class MsalService {
       if (_pca == null) await init();
 
       await _pca!.logout(browserLogout: true);
-    } catch (e) {
-      log('MSAL logout exception: $e');
+    } catch (e, s) {
+      logError('MSAL logout exception: $e', s);
     }
   }
 
@@ -50,8 +49,8 @@ class MsalService {
       final token = await _pca!.acquireToken(_scopes);
       _isLoggedIn = true;
       return token;
-    } catch (e) {
-      log('MSAL login exception: $e');
+    } catch (e, s) {
+      logError('MSAL login exception: $e', s);
       return null;
     }
   }
@@ -63,8 +62,8 @@ class MsalService {
       final token = await _pca!.acquireTokenSilent(_scopes);
       _isLoggedIn = true;
       return token;
-    } catch (e) {
-      log('MSAL loginSilently exception: $e');
+    } catch (e, s) {
+      logError('MSAL loginSilently exception: $e', s);
       return null;
     }
   }
