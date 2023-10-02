@@ -210,8 +210,9 @@ class _WorkItemsController with FilterMixin {
   Iterable<AreaOrIteration> getAreasToShow() {
     final hasProjectFilter = projectFilter != projectAll;
     final areas = apiService.workItemAreas;
+    final projectAreas = hasProjectFilter ? areas[projectFilter.name!] : null;
 
-    final areasToShow = (hasProjectFilter ? [areas[projectFilter.name!]!] : areas.values)
+    final areasToShow = (projectAreas != null ? [projectAreas] : areas.values)
         .where((p) => p.length > 1 || (p.first.children?.isNotEmpty ?? false))
         .expand((a) => a);
 
@@ -222,21 +223,20 @@ class _WorkItemsController with FilterMixin {
   // otherwise if user has selected an area show only iterations of the project which the area belongs to,
   // otherwise show all iterations
   Iterable<AreaOrIteration> getIterationsToShow() {
-    final hasProjectFilter = projectFilter != projectAll;
-    final hasAreaFilter = areaFilter != null;
     final iterations = apiService.workItemIterations;
 
-    final iterationsToShow = (hasProjectFilter
-            ? [iterations[projectFilter.name!]!]
-            : hasAreaFilter
-                ? [iterations[areaFilter?.projectName]!]
-                : iterations.values)
-        .expand((a) => a);
+    final hasProjectFilter = projectFilter != projectAll;
+    final projectIterations = hasProjectFilter ? iterations[projectFilter.name!] : null;
+
+    final hasAreaFilter = areaFilter != null;
+    final areaProjectIterations = hasAreaFilter ? iterations[areaFilter?.projectName] : null;
+
+    final iterationsToShow = projectIterations ?? areaProjectIterations ?? iterations.values.expand((a) => a);
 
     return iterationsToShow;
   }
 
   void toggleShowActiveIterations() {
-    showActiveIterations.value =  !showActiveIterations.value;
+    showActiveIterations.value = !showActiveIterations.value;
   }
 }
