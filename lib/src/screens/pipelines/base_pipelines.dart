@@ -15,6 +15,7 @@ import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/filter_menu.dart';
 import 'package:azure_devops/src/widgets/pipeline_list_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 part 'components_pipelines.dart';
 part 'controller_pipelines.dart';

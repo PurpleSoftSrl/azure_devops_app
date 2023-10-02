@@ -41,12 +41,19 @@ class _PipelinesController with FilterMixin {
 
   Timer? _timer;
 
+  final visibilityKey = GlobalKey();
+  var _hasStoppedTimer = false;
+
   void dispose() {
-    _timer?.cancel();
-    _timer = null;
+    _stopTimer();
 
     instance = null;
     _instances.remove(project.hashCode);
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+    _timer = null;
   }
 
   Future<void> init() async {
@@ -139,5 +146,14 @@ class _PipelinesController with FilterMixin {
     userFilter = userAll;
 
     init();
+  }
+
+  void visibilityChanged(VisibilityInfo info) {
+    if (info.visibleFraction <= 0 && _timer != null) {
+      _hasStoppedTimer = true;
+      _stopTimer();
+    } else if (info.visibleFraction > 0 && _hasStoppedTimer) {
+      init();
+    }
   }
 }

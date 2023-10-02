@@ -23,6 +23,7 @@ import 'package:azure_devops/src/widgets/project_and_repo_chips.dart';
 import 'package:azure_devops/src/widgets/text_title_description.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 part 'components_pipeline_detail.dart';
 part 'controller_pipeline_detail.dart';

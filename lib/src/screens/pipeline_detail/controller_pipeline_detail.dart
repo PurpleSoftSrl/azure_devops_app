@@ -32,12 +32,19 @@ class _PipelineDetailController with ShareMixin {
 
   Pipeline get pipeline => buildDetail.value!.data!.pipeline;
 
+  final visibilityKey = GlobalKey();
+  var _hasStoppedTimer = false;
+
   void dispose() {
-    _timer?.cancel();
-    _timer = null;
+    _stopTimer();
 
     instance = null;
     _instances.remove(args.hashCode);
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+    _timer = null;
   }
 
   Future<void> init() async {
@@ -216,6 +223,15 @@ class _PipelineDetailController with ShareMixin {
         logId: t.log!.id
       ),
     );
+  }
+
+  void visibilityChanged(VisibilityInfo info) {
+    if (info.visibleFraction <= 0 && _timer != null) {
+      _hasStoppedTimer = true;
+      _stopTimer();
+    } else if (info.visibleFraction > 0 && _hasStoppedTimer) {
+      init();
+    }
   }
 }
 
