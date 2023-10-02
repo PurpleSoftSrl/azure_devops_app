@@ -43,7 +43,7 @@ class _PipelineDetailController with ShareMixin {
   Future<void> init() async {
     await _init();
 
-    if (buildDetail.value != null) {
+    if (buildDetail.value?.data != null) {
       final pipeStatus = pipeline.status;
 
       // auto refresh page every 5 seconds until pipeline is completed
