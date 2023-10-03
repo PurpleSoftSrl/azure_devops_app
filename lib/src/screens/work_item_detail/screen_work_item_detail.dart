@@ -149,6 +149,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                     style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                   ),
                   Text(detail.fields.systemTitle),
+                  // TODO show all fields dynamically?
                   if (detail.fields.systemDescription != null) ...[
                     const SizedBox(
                       height: 20,

@@ -20,6 +20,7 @@ import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/team_member.dart';
 import 'package:azure_devops/src/models/user.dart';
+import 'package:azure_devops/src/models/work_item_fields.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
@@ -37,6 +38,9 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Map<String, List<WorkItemType>> get workItemTypes => {};
+
+  @override
+  Map<String, Map<String, List<WorkItemField>>> get workItemFields => {};
 
   @override
   Map<String, List<AreaOrIteration>> get workItemAreas => {};
@@ -285,6 +289,15 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
+  Future<ApiResponse<List<WorkItemField>>> getWorkItemTypeFields({
+    required String projectName,
+    required String workItemName,
+    required String workItemRefName,
+  }) async {
+    return ApiResponse.ok(<WorkItemField>[]);
+  }
+
+  @override
   Map<String, String>? get headers => {};
 
   @override
@@ -513,6 +526,7 @@ class AzureApiServiceMock implements AzureApiService {
     required String description,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    required Map<String, String> dynamicFields,
   }) {
     throw UnimplementedError();
   }
@@ -528,6 +542,7 @@ class AzureApiServiceMock implements AzureApiService {
     String? status,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    required Map<String, String> dynamicFields,
   }) {
     throw UnimplementedError();
   }

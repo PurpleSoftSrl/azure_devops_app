@@ -16,6 +16,8 @@ class DevOpsFormField extends StatelessWidget {
     this.enabled = true,
     this.fillColor,
     this.controller,
+    this.validator,
+    this.suffixIcon,
     this.suffix,
   });
 
@@ -33,6 +35,14 @@ class DevOpsFormField extends StatelessWidget {
   final Color? fillColor;
   final TextEditingController? controller;
   final Widget? suffix;
+  final String? Function(String?)? validator;
+  final Widget? suffixIcon; // TODO check suffixIcon
+
+  String? _validateField(String? s) {
+    if (validator != null) return validator!(s);
+
+    return s!.isEmpty ? 'Fill this field' : null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +50,14 @@ class DevOpsFormField extends StatelessWidget {
       controller: controller,
       key: formFieldKey,
       onChanged: onChanged,
-      validator: (s) => s!.isEmpty ? 'Fill this field' : null,
+      validator: _validateField,
       maxLines: maxLines,
       initialValue: initialValue,
       textCapitalization: textCapitalization ?? TextCapitalization.none,
       textInputAction: textInputAction,
       autofocus: autofocus,
       enabled: enabled,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),

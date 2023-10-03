@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:azure_devops/src/extensions/area_or_iteration_extension.dart';
@@ -32,6 +33,7 @@ import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/user_entitlements.dart';
 import 'package:azure_devops/src/models/work_item_comments.dart';
+import 'package:azure_devops/src/models/work_item_fields.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/msal_service.dart';
@@ -41,6 +43,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:xml/xml.dart';
 
 abstract class AzureApiService {
   const AzureApiService();
@@ -61,6 +64,9 @@ abstract class AzureApiService {
 
   /// Work item states for each work item type for each project
   Map<String, Map<String, List<WorkItemState>>> get workItemStates;
+
+  /// Work item fields for each work item type for each project
+  Map<String, Map<String, List<WorkItemField>>> get workItemFields;
 
   /// Work item area paths for each project
   Map<String, List<AreaOrIteration>> get workItemAreas;
@@ -99,6 +105,12 @@ abstract class AzureApiService {
 
   Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes({bool force = false});
 
+  Future<ApiResponse<List<WorkItemField>>> getWorkItemTypeFields({
+    required String projectName,
+    required String workItemName,
+    required String workItemRefName,
+  });
+
   Future<ApiResponse<WorkItemWithUpdates>> getWorkItemDetail({
     required String projectName,
     required int workItemId,
@@ -118,6 +130,7 @@ abstract class AzureApiService {
     required String description,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    required Map<String, String> dynamicFields,
   });
 
   Future<ApiResponse<WorkItem>> editWorkItem({
@@ -130,6 +143,7 @@ abstract class AzureApiService {
     String? status,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    required Map<String, String> dynamicFields,
   });
 
   Future<ApiResponse<bool>> addWorkItemComment({
@@ -368,12 +382,14 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   Map<String, Map<String, List<WorkItemState>>> get workItemStates => _workItemStates;
   final Map<String, Map<String, List<WorkItemState>>> _workItemStates = {};
 
-  /// Work item area paths for each project
+  @override
+  Map<String, Map<String, List<WorkItemField>>> get workItemFields => _workItemFields;
+  final Map<String, Map<String, List<WorkItemField>>> _workItemFields = {};
+
   @override
   Map<String, List<AreaOrIteration>> get workItemAreas => _workItemAreas;
   final Map<String, List<AreaOrIteration>> _workItemAreas = {};
 
-  /// Work item iteration paths for each project
   @override
   Map<String, List<AreaOrIteration>> get workItemIterations => _workItemIterations;
   final Map<String, List<AreaOrIteration>> _workItemIterations = {};
@@ -589,6 +605,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     _workItemStates.clear();
     _workItemAreas.clear();
     _workItemIterations.clear();
+    _workItemFields.clear();
   }
 
   @override
@@ -797,6 +814,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 
   @override
+  // ignore: long-method
   Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes({bool force = false}) async {
     if (_workItemTypes.isNotEmpty && !force) {
       // return cached types to avoid too many api calls
@@ -856,6 +874,59 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     ]);
 
     return ApiResponse.ok(_workItemTypes);
+  }
+
+  @override
+  Future<ApiResponse<List<WorkItemField>>> getWorkItemTypeFields({
+    required String projectName,
+    required String workItemName,
+    required String workItemRefName,
+  }) async {
+    final cachedFields = _workItemFields[projectName]?[workItemName];
+    if (cachedFields != null) return ApiResponse.ok(cachedFields);
+
+    final wtBasePath = '$_basePath/$projectName/_apis/wit/workItemTypes/$workItemName';
+
+    // get xmlForm with all visible fields
+    final typeRes = await _get('$wtBasePath?\$expand=allowedValues&$_apiVersion-preview');
+    if (typeRes.isError) return ApiResponse.error(null);
+
+    final xmlForm = jsonDecode(typeRes.body)['xmlForm'] as String?;
+    if (xmlForm == null) return ApiResponse.error(null);
+
+    final visibleFields = _parseXmlForm(xmlForm);
+
+    // get all fields with more info (previous call doesn't return allowedValues)
+    final fieldsRes = await _get('$wtBasePath/fields?\$expand=allowedValues&$_apiVersion-preview');
+    if (fieldsRes.isError) return ApiResponse.error(null);
+
+    final allFields = WorkItemTypeFieldsResponse.fromResponse(fieldsRes);
+
+    final fields = _matchFields(visibleFields, allFields);
+
+    final processesRes = await _get('$_basePath/_apis/work/processes?\$expand=projects&$_apiVersion');
+    if (processesRes.isError) return ApiResponse.error(null);
+
+    final processes = GetProcessesResponse.fromResponse(processesRes).where((p) => p.projects.isNotEmpty).toList();
+    final projectProcess = processes.firstWhere((p) => p.projects.any((proj) => proj.name == projectName));
+
+    // get all fields with more info (previous call doesn't return field data type)
+    final processTypesRes = await _get(
+      '$_basePath/_apis/work/processes/${projectProcess.typeId}/workItemTypes/$workItemRefName/fields?$_apiVersion',
+    );
+    if (processTypesRes.isError) return ApiResponse.error(null);
+
+    final processFields = WorkItemTypeFieldsResponse.fromResponse(processTypesRes);
+
+    for (final field in fields) {
+      final processField = processFields.firstWhere((f) => f.referenceName == field.referenceName);
+      field.type = processField.type;
+    }
+
+    _workItemFields.putIfAbsent(projectName, () => {workItemName: fields});
+    _workItemFields[projectName]!.putIfAbsent(workItemName, () => fields);
+
+    return ApiResponse.ok(fields);
   }
 
   @override
@@ -937,6 +1008,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     required String description,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    required Map<String, String> dynamicFields,
   }) async {
     final createRes = await _postList(
       '$_basePath/$projectName/_apis/wit/workitems/\$${type.name}?$_apiVersion-preview',
@@ -969,6 +1041,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
             'path': '/fields/System.IterationPath',
             'value': iteration.escapedIterationPath,
           },
+        for (final field in dynamicFields.entries)
+          {
+            'op': 'add',
+            'path': '/fields/${field.key}',
+            'value': field.value,
+          },
       ],
       contentType: 'application/json-patch+json',
     );
@@ -989,6 +1067,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     String? status,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    required Map<String, String> dynamicFields,
   }) async {
     final editRes = await _patchList(
       '$_basePath/$projectName/_apis/wit/workitems/$id?$_apiVersion-preview',
@@ -998,12 +1077,6 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
             'op': 'replace',
             'value': title,
             'path': '/fields/System.Title',
-          },
-        if (description != null)
-          {
-            'op': 'replace',
-            'value': description,
-            'path': '/fields/System.Description',
           },
         if (assignedTo != null)
           {
@@ -1034,6 +1107,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
             'op': 'replace',
             'path': '/fields/System.IterationPath',
             'value': iteration.escapedIterationPath,
+          },
+        for (final field in dynamicFields.entries)
+          {
+            'op': 'add',
+            'path': '/fields/${field.key}',
+            'value': field.value,
           },
       ],
       contentType: 'application/json-patch+json',
@@ -1903,6 +1982,55 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     _allUsers.clear();
     _user = null;
     dispose();
+  }
+
+  List<String> _parseXmlForm(String xmlForm) {
+    final visibleFields = <String>[];
+
+    const fieldNamesToSkip = [
+      'System.Id',
+      'System.Title',
+      'System.State',
+      'System.Reason',
+      'System.AssignedTo',
+      'System.AreaPath',
+      'System.IterationPath',
+      'Microsoft.VSTS.Common.ResolvedReason',
+    ];
+    log(xmlForm);
+    final document = XmlDocument.parse(xmlForm);
+    for (final desc in document.descendantElements) {
+      if (desc.name.toString() == 'Control') {
+        final fieldName = desc.attributes.firstWhereOrNull((att) => att.name.toString() == 'FieldName');
+        if (fieldName != null) {
+          final readOnlyAttribute = desc.attributes.firstWhereOrNull((att) => att.name.toString() == 'ReadOnly');
+          final isReadOnly = readOnlyAttribute != null && readOnlyAttribute.value == 'True';
+          if (!isReadOnly && !fieldNamesToSkip.contains(fieldName.value)) {
+            // get field group's label
+            final group = desc.ancestorElements.firstWhereOrNull((e) => e.name.toString() == 'Group');
+            final groupLabel = group?.attributes.firstWhereOrNull((att) => att.name.toString() == 'Label');
+            print(groupLabel);
+
+            visibleFields.add(fieldName.value);
+          }
+        }
+      }
+    }
+
+    return visibleFields;
+  }
+
+  List<WorkItemField> _matchFields(List<String> visibleFields, List<WorkItemField> allFields) {
+    final matchedFields = <WorkItemField>[];
+
+    for (final field in visibleFields) {
+      final matched = allFields.firstWhereOrNull((f) => f.referenceName == field);
+      if (matched != null && matched.referenceName != 'System.History' && matched.name != 'Id') {
+        matchedFields.add(matched);
+      }
+    }
+
+    return matchedFields;
   }
 }
 

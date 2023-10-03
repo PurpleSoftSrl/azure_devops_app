@@ -21,16 +21,13 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   final hasChanged = ValueNotifier<ApiResponse<bool>?>(null);
 
-  final editorController = HtmlEditorController();
-
-  // Used to ensure editor is visible when keyboard is opened
-  final editorGlobalKey = GlobalKey<State>();
-
   final titleFieldKey = GlobalKey<FormFieldState<dynamic>>();
 
   List<WorkItemType> allWorkItemTypes = [WorkItemType.all];
   Map<String, List<WorkItemType>> allProjectsWorkItemTypes = {};
   List<WorkItemState> allWorkItemStates = [WorkItemState.all];
+
+  List<WorkItemField> fieldsToShow = [];
 
   late List<WorkItemType> projectWorkItemTypes = allWorkItemTypes;
 
@@ -50,6 +47,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   bool get isEditing => args.id != null;
   WorkItem? editingWorkItem;
+
+  /// {field.referenceName: data}
+  final dynamicFields = <String, _DynamicFieldData>{};
 
   void dispose() {
     instance = null;
@@ -82,6 +82,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
         allWorkItemStates.addAll(sortedStates);
       }
     }
+
+    if (newWorkItemType != WorkItemType.all) await _getTypeFormFields();
 
     _refreshPage();
   }
@@ -119,7 +121,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     newWorkItemIteration = AreaOrIteration.onlyPath(path: fields.systemIterationPath);
   }
 
-  void setType(WorkItemType type) {
+  Future<void> setType(WorkItemType type) async {
     if (type == newWorkItemType) return;
 
     newWorkItemType = type;
@@ -132,10 +134,13 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
         newWorkItemStatus = allWorkItemStates.firstOrNull ?? newWorkItemStatus;
       }
     }
+
+    await _getTypeFormFields();
+
     _setHasChanged();
   }
 
-  void setProject(Project project) {
+  Future<void> setProject(Project project) async {
     if (project == newWorkItemProject) return;
 
     newWorkItemProject = project;
@@ -148,6 +153,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
         newWorkItemType = projectWorkItemTypes.first;
       }
     }
+
+    await _getTypeFormFields();
 
     _setHasChanged();
   }
@@ -194,9 +201,19 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   Future<void> confirm() async {
+    for (final key in dynamicFields.entries) {
+      final state = key.value.formFieldKey.currentState;
+      if (state == null) continue;
+
+      if (!state.validate()) return;
+    }
+
     if (!titleFieldKey.currentState!.validate()) return;
 
-    newWorkItemDescription = await editorController.getText();
+    for (final field in dynamicFields.entries) {
+      final text = await dynamicFields[field.key]?.editorController?.getText() ?? '';
+      dynamicFields[field.key]!.text = text;
+    }
 
     final errorMessage = _checkRequiredFields();
     if (errorMessage != null) return OverlayService.snackbar(errorMessage, isError: true);
@@ -258,6 +275,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       status: newWorkItemStatus?.name,
       area: newWorkItemArea,
       iteration: newWorkItemIteration,
+      dynamicFields: {for (final field in dynamicFields.entries) field.key: field.value.text},
     );
     return res;
   }
@@ -271,16 +289,17 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       description: newWorkItemDescription,
       area: newWorkItemArea,
       iteration: newWorkItemIteration,
+      dynamicFields: {for (final field in dynamicFields.entries) field.key: field.value.text},
     );
     return res;
   }
 
   /// Resets editor's height and scrolls the page to make it fully visible.
   /// The delay is to wait for the keyboard to show.
-  void ensureEditorIsVisible() {
+  void ensureEditorIsVisible(String fieldRefName) {
     Timer(Duration(milliseconds: 500), () {
-      editorController.resetHeight();
-      final ctx = editorGlobalKey.currentContext;
+      dynamicFields[fieldRefName]?.editorController?.resetHeight();
+      final ctx = dynamicFields[fieldRefName]?.editorGlobalKey?.currentContext;
       if (ctx == null) return;
 
       Scrollable.of(ctx).position.ensureVisible(
@@ -290,7 +309,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     });
   }
 
-  Future<void> addMention(GraphUser u) async {
+  Future<void> addMention(GraphUser u, String fieldRefName) async {
     final res = await apiService.getUserToMention(email: u.mailAddress!);
     if (res.isError || res.data == null) {
       return OverlayService.snackbar('Could not find user', isError: true);
@@ -299,7 +318,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     // remove `(me)` from user name if it's me
     final name = u.mailAddress == apiService.user!.emailAddress ? apiService.user!.displayName : u.displayName;
     final mention = '<a href="#" data-vss-mention="version:2.0,${res.data}">@$name</a>';
-    editorController.insertHtml(mention);
+    dynamicFields[fieldRefName]?.editorController?.insertHtml(mention);
   }
 
   List<GraphUser> getAssignees() {
@@ -316,4 +335,84 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     final areas = apiService.workItemIterations;
     return areas[isEditing ? editingWorkItem!.fields.systemTeamProject : newWorkItemProject.name!] ?? [];
   }
+
+  Future<void> _getTypeFormFields() async {
+    // refresh UI without any html editor and wait a bit to make the editors reinitialize correctly
+    fieldsToShow = [];
+    _setHasChanged();
+    await Future<void>.delayed(Duration(milliseconds: 50));
+
+    dynamicFields.clear();
+
+    final projectName = editingWorkItem?.fields.systemTeamProject ?? newWorkItemProject.name!;
+
+    final res = await apiService.getWorkItemTypeFields(
+      projectName: projectName,
+      workItemName: newWorkItemType.name,
+      workItemRefName: newWorkItemType.referenceName,
+    );
+
+    fieldsToShow = res.data ?? [];
+
+    for (final field in fieldsToShow) {
+      dynamicFields[field.referenceName] = _DynamicFieldData(required: field.required);
+
+      if (field.defaultValue != null) {
+        dynamicFields[field.referenceName]!.controller.text = field.defaultValue!;
+      }
+      if (isEditing) {
+        dynamicFields[field.referenceName]!.controller.text =
+            editingWorkItem!.fields.jsonFields[field.referenceName]?.toString() ?? field.defaultValue ?? '';
+      }
+    }
+
+    final htmlFieldsToShow = fieldsToShow.where((f) => f.type == 'html');
+
+    for (final field in htmlFieldsToShow) {
+      dynamicFields[field.referenceName]?.editorGlobalKey = GlobalKey<State>();
+      dynamicFields[field.referenceName]?.editorController = HtmlEditorController();
+
+      if (isEditing) {
+        dynamicFields[field.referenceName]!.editorInitialText =
+            editingWorkItem!.fields.jsonFields[field.referenceName]?.toString() ?? field.defaultValue ?? '';
+      }
+    }
+  }
+
+  void onFieldChanged(String str, String fieldRefName) {
+    dynamicFields[fieldRefName]!.text = str;
+    dynamicFields[fieldRefName]!.controller.text = str;
+  }
+
+  String? fieldValidator(String? str, WorkItemField field) {
+    if (str == null) return null;
+    if (field.type == null) return null;
+
+    if (str.isEmpty && !field.required) return null;
+
+    if (str.isEmpty) return 'Fill this field';
+
+    switch (field.type) {
+      case 'double':
+      case 'int':
+        return num.tryParse(str) != null ? null : 'Must be a number';
+      default:
+        return null;
+    }
+  }
+}
+
+class _DynamicFieldData {
+  _DynamicFieldData({required this.required});
+
+  String text = '';
+  GlobalKey<FormFieldState<dynamic>> formFieldKey = GlobalKey();
+  TextEditingController controller = TextEditingController();
+
+  // Used to ensure editor is visible when keyboard is opened
+  GlobalKey<State>? editorGlobalKey;
+  HtmlEditorController? editorController;
+  String? editorInitialText;
+
+  final bool required;
 }

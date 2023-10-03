@@ -194,23 +194,60 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          Text(
-            'Description',
-            style: context.textTheme.labelSmall!.copyWith(height: 1, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          DevOpsHtmlEditor(
-            editorController: ctrl.editorController,
-            editorGlobalKey: ctrl.editorGlobalKey,
-            initialText: ctrl.newWorkItemDescription,
-            onKeyUp: (_) => ctrl._setHasChanged(),
-          ),
-          SizedBox(
-            key: ctrl.editorGlobalKey,
-            height: 0,
-          ),
+          for (final field in ctrl.fieldsToShow)
+            if (field.type == 'html')
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    field.name,
+                    style: context.textTheme.labelSmall!.copyWith(height: 1, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  DevOpsHtmlEditor(
+                    editorController: ctrl.dynamicFields[field.referenceName]!.editorController!,
+                    editorGlobalKey: ctrl.dynamicFields[field.referenceName]!.editorGlobalKey!,
+                    initialText: ctrl.isEditing
+                        ? (ctrl.dynamicFields[field.referenceName]!.editorInitialText ?? field.defaultValue)
+                        : field.defaultValue,
+                    onKeyUp: (_) => ctrl._setHasChanged(),
+                  ),
+                  SizedBox(
+                    key: ctrl.dynamicFields[field.referenceName]?.editorGlobalKey,
+                    height: 0,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                ],
+              )
+            else
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: DevOpsFormField(
+                  onChanged: (s) => ctrl.onFieldChanged(s, field.referenceName),
+                  label: field.name,
+                  textInputAction: TextInputAction.next,
+                  validator: (s) => ctrl.fieldValidator(s, field),
+                  formFieldKey: ctrl.dynamicFields[field.referenceName]?.formFieldKey,
+                  controller: ctrl.dynamicFields[field.referenceName]?.controller,
+                  suffixIcon: field.allowedValues.where((v) => v != '<None>').isEmpty
+                      ? null
+                      : DevOpsPopupMenu(
+                          tooltip: '${field.name} allowed values',
+                          offset: const Offset(0, 20),
+                          items: () => [
+                            for (final value in field.allowedValues)
+                              PopupItem(
+                                onTap: () => ctrl.onFieldChanged(value, field.referenceName),
+                                text: value,
+                              ),
+                          ],
+                        ),
+                ),
+              ),
         ],
       ),
     );
