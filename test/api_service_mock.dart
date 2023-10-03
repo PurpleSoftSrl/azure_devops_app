@@ -292,7 +292,6 @@ class AzureApiServiceMock implements AzureApiService {
   Future<ApiResponse<Map<String, Set<WorkItemField>>>> getWorkItemTypeFields({
     required String projectName,
     required String workItemName,
-    required String workItemRefName,
   }) async {
     return ApiResponse.ok({});
   }

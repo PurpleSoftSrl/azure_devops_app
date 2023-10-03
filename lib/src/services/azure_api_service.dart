@@ -108,7 +108,6 @@ abstract class AzureApiService {
   Future<ApiResponse<Map<String, Set<WorkItemField>>>> getWorkItemTypeFields({
     required String projectName,
     required String workItemName,
-    required String workItemRefName,
   });
 
   Future<ApiResponse<WorkItemWithUpdates>> getWorkItemDetail({
@@ -880,7 +879,6 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   Future<ApiResponse<Map<String, Set<WorkItemField>>>> getWorkItemTypeFields({
     required String projectName,
     required String workItemName,
-    required String workItemRefName,
   }) async {
     final cachedFields = _workItemFields[projectName]?[workItemName];
     if (cachedFields != null) return ApiResponse.ok(cachedFields);
@@ -891,8 +889,11 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final typeRes = await _get('$wtBasePath?\$expand=allowedValues&$_apiVersion-preview');
     if (typeRes.isError) return ApiResponse.error(null);
 
-    final xmlForm = jsonDecode(typeRes.body)['xmlForm'] as String?;
+    final decodedTypeRes = jsonDecode(typeRes.body);
+    final xmlForm = decodedTypeRes['xmlForm'] as String?;
     if (xmlForm == null) return ApiResponse.error(null);
+
+    final refName = decodedTypeRes['referenceName'] as String?;
 
     final visibleFields = _parseXmlForm(xmlForm);
 
@@ -912,7 +913,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     // get all fields with more info (previous call doesn't return field data type)
     final processTypesRes = await _get(
-      '$_basePath/_apis/work/processes/${projectProcess.typeId}/workItemTypes/$workItemRefName/fields?$_apiVersion',
+      '$_basePath/_apis/work/processes/${projectProcess.typeId}/workItemTypes/$refName/fields?$_apiVersion',
     );
     if (processTypesRes.isError) return ApiResponse.error(null);
 

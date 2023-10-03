@@ -341,7 +341,6 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     final res = await apiService.getWorkItemTypeFields(
       projectName: projectName,
       workItemName: newWorkItemType.name,
-      workItemRefName: newWorkItemType.referenceName,
     );
 
     fieldsToShow = res.data ?? <String, Set<WorkItemField>>{};
