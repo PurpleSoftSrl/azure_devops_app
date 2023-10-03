@@ -115,14 +115,16 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
-              FilterMenu<GraphUser>(
-                title: 'Assigned to',
-                values: ctrl.getAssignees(),
-                currentFilter: ctrl.newWorkItemAssignedTo,
-                onSelected: ctrl.setAssignee,
-                formatLabel: (u) => u.displayName!,
-                isDefaultFilter: ctrl.newWorkItemAssignedTo.displayName == 'Unassigned',
-                widgetBuilder: (u) => UserFilterWidget(user: u),
+              Flexible(
+                child: FilterMenu<GraphUser>(
+                  title: 'Assigned to',
+                  values: ctrl.getAssignees(),
+                  currentFilter: ctrl.newWorkItemAssignedTo,
+                  onSelected: ctrl.setAssignee,
+                  formatLabel: (u) => u.displayName!,
+                  isDefaultFilter: ctrl.newWorkItemAssignedTo.displayName == 'Unassigned',
+                  widgetBuilder: (u) => UserFilterWidget(user: u),
+                ),
               ),
             ],
           ),
@@ -139,16 +141,18 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 const SizedBox(
                   width: 10,
                 ),
-                FilterMenu<AreaOrIteration?>.custom(
-                  title: 'Area',
-                  formatLabel: (u) => u?.escapedAreaPath ?? '-',
-                  isDefaultFilter: ctrl.newWorkItemArea == null,
-                  currentFilter: ctrl.newWorkItemArea,
-                  body: AreaFilterBody(
+                Flexible(
+                  child: FilterMenu<AreaOrIteration?>.custom(
+                    title: 'Area',
+                    formatLabel: (u) => u?.escapedAreaPath ?? '-',
+                    isDefaultFilter: ctrl.newWorkItemArea == null,
                     currentFilter: ctrl.newWorkItemArea,
-                    areasToShow: ctrl.getAreasToShow(),
-                    onTap: ctrl.setArea,
-                    showAllFilter: false,
+                    body: AreaFilterBody(
+                      currentFilter: ctrl.newWorkItemArea,
+                      areasToShow: ctrl.getAreasToShow(),
+                      onTap: ctrl.setArea,
+                      showAllFilter: false,
+                    ),
                   ),
                 ),
               ],
@@ -166,16 +170,18 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 const SizedBox(
                   width: 10,
                 ),
-                FilterMenu<AreaOrIteration?>.custom(
-                  title: 'Iteration',
-                  formatLabel: (u) => u?.escapedIterationPath ?? '-',
-                  isDefaultFilter: ctrl.newWorkItemIteration == null,
-                  currentFilter: ctrl.newWorkItemIteration,
-                  body: AreaFilterBody(
+                Flexible(
+                  child: FilterMenu<AreaOrIteration?>.custom(
+                    title: 'Iteration',
+                    formatLabel: (u) => u?.escapedIterationPath ?? '-',
+                    isDefaultFilter: ctrl.newWorkItemIteration == null,
                     currentFilter: ctrl.newWorkItemIteration,
-                    areasToShow: ctrl.getIterationsToShow(),
-                    onTap: ctrl.setIteration,
-                    showAllFilter: false,
+                    body: AreaFilterBody(
+                      currentFilter: ctrl.newWorkItemIteration,
+                      areasToShow: ctrl.getIterationsToShow(),
+                      onTap: ctrl.setIteration,
+                      showAllFilter: false,
+                    ),
                   ),
                 ),
               ],
