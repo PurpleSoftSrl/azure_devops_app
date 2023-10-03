@@ -56,6 +56,7 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
     await Scrollable.of(ctx).position.ensureVisible(
           ctx.findRenderObject()!,
           duration: Duration(milliseconds: 250),
+          alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
         );
   }
 

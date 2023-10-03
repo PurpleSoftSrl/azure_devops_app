@@ -301,21 +301,6 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     return res;
   }
 
-  /// Resets editor's height and scrolls the page to make it fully visible.
-  /// The delay is to wait for the keyboard to show.
-  void ensureEditorIsVisible(String fieldRefName) {
-    Timer(Duration(milliseconds: 500), () {
-      dynamicFields[fieldRefName]?.editorController?.resetHeight();
-      final ctx = dynamicFields[fieldRefName]?.editorGlobalKey?.currentContext;
-      if (ctx == null) return;
-
-      Scrollable.of(ctx).position.ensureVisible(
-            ctx.findRenderObject()!,
-            duration: Duration(milliseconds: 250),
-          );
-    });
-  }
-
   Future<void> addMention(GraphUser u, String fieldRefName) async {
     final res = await apiService.getUserToMention(email: u.mailAddress!);
     if (res.isError || res.data == null) {
