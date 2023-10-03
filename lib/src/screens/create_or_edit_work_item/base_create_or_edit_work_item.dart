@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:azure_devops/src/extensions/area_or_iteration_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
+import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/models/areas_and_iterations.dart';

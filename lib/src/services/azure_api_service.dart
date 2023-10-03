@@ -66,7 +66,7 @@ abstract class AzureApiService {
   Map<String, Map<String, List<WorkItemState>>> get workItemStates;
 
   /// Work item fields for each work item type for each project
-  Map<String, Map<String, List<WorkItemField>>> get workItemFields;
+  Map<String, Map<String, Map<String, Set<WorkItemField>>>> get workItemFields;
 
   /// Work item area paths for each project
   Map<String, List<AreaOrIteration>> get workItemAreas;
@@ -105,7 +105,7 @@ abstract class AzureApiService {
 
   Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes({bool force = false});
 
-  Future<ApiResponse<List<WorkItemField>>> getWorkItemTypeFields({
+  Future<ApiResponse<Map<String, Set<WorkItemField>>>> getWorkItemTypeFields({
     required String projectName,
     required String workItemName,
     required String workItemRefName,
@@ -383,8 +383,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   final Map<String, Map<String, List<WorkItemState>>> _workItemStates = {};
 
   @override
-  Map<String, Map<String, List<WorkItemField>>> get workItemFields => _workItemFields;
-  final Map<String, Map<String, List<WorkItemField>>> _workItemFields = {};
+  Map<String, Map<String, Map<String, Set<WorkItemField>>>> get workItemFields => _workItemFields;
+  final Map<String, Map<String, Map<String, Set<WorkItemField>>>> _workItemFields = {};
 
   @override
   Map<String, List<AreaOrIteration>> get workItemAreas => _workItemAreas;
@@ -877,7 +877,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<WorkItemField>>> getWorkItemTypeFields({
+  Future<ApiResponse<Map<String, Set<WorkItemField>>>> getWorkItemTypeFields({
     required String projectName,
     required String workItemName,
     required String workItemRefName,
@@ -918,9 +918,11 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final processFields = WorkItemTypeFieldsResponse.fromResponse(processTypesRes);
 
-    for (final field in fields) {
-      final processField = processFields.firstWhere((f) => f.referenceName == field.referenceName);
-      field.type = processField.type;
+    for (final entry in fields.entries) {
+      for (final field in entry.value) {
+        final processField = processFields.firstWhere((f) => f.referenceName == field.referenceName);
+        field.type = processField.type;
+      }
     }
 
     _workItemFields.putIfAbsent(projectName, () => {workItemName: fields});
@@ -1017,11 +1019,6 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
           'op': 'add',
           'value': title,
           'path': '/fields/System.Title',
-        },
-        {
-          'op': 'add',
-          'value': description,
-          'path': '/fields/System.Description',
         },
         if (assignedTo != null)
           {
@@ -1984,8 +1981,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     dispose();
   }
 
-  List<String> _parseXmlForm(String xmlForm) {
-    final visibleFields = <String>[];
+  Map<String, Set<String>> _parseXmlForm(String xmlForm) {
+    final visibleFields = <String, Set<String>>{};
 
     const fieldNamesToSkip = [
       'System.Id',
@@ -2008,10 +2005,10 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
           if (!isReadOnly && !fieldNamesToSkip.contains(fieldName.value)) {
             // get field group's label
             final group = desc.ancestorElements.firstWhereOrNull((e) => e.name.toString() == 'Group');
-            final groupLabel = group?.attributes.firstWhereOrNull((att) => att.name.toString() == 'Label');
-            print(groupLabel);
+            final groupLabel = group?.attributes.firstWhereOrNull((att) => att.name.toString() == 'Label')?.value ?? '';
 
-            visibleFields.add(fieldName.value);
+            visibleFields.putIfAbsent(groupLabel, () => {fieldName.value});
+            visibleFields[groupLabel]!.add(fieldName.value);
           }
         }
       }
@@ -2020,13 +2017,16 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     return visibleFields;
   }
 
-  List<WorkItemField> _matchFields(List<String> visibleFields, List<WorkItemField> allFields) {
-    final matchedFields = <WorkItemField>[];
+  Map<String, Set<WorkItemField>> _matchFields(Map<String, Set<String>> visibleFields, List<WorkItemField> allFields) {
+    final matchedFields = <String, Set<WorkItemField>>{};
 
-    for (final field in visibleFields) {
-      final matched = allFields.firstWhereOrNull((f) => f.referenceName == field);
-      if (matched != null && matched.referenceName != 'System.History' && matched.name != 'Id') {
-        matchedFields.add(matched);
+    for (final entry in visibleFields.entries) {
+      for (final field in entry.value) {
+        final matched = allFields.firstWhereOrNull((f) => f.referenceName == field);
+        if (matched != null && matched.referenceName != 'System.History' && matched.name != 'Id') {
+          matchedFields.putIfAbsent(entry.key, () => {matched});
+          matchedFields[entry.key]!.add(matched);
+        }
       }
     }
 

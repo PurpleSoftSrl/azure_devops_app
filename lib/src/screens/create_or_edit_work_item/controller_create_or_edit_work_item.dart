@@ -27,7 +27,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   Map<String, List<WorkItemType>> allProjectsWorkItemTypes = {};
   List<WorkItemState> allWorkItemStates = [WorkItemState.all];
 
-  List<WorkItemField> fieldsToShow = [];
+  Map<String, Set<WorkItemField>> fieldsToShow = {};
 
   late List<WorkItemType> projectWorkItemTypes = allWorkItemTypes;
 
@@ -210,9 +210,16 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     if (!titleFieldKey.currentState!.validate()) return;
 
-    for (final field in dynamicFields.entries) {
-      final text = await dynamicFields[field.key]?.editorController?.getText() ?? '';
-      dynamicFields[field.key]!.text = text;
+    final htmlFieldsToShow = fieldsToShow.values.expand((f) => f).where((f) => f.type == 'html');
+    for (final field in htmlFieldsToShow) {
+      final text = await dynamicFields[field.referenceName]?.editorController?.getText() ?? '';
+      dynamicFields[field.referenceName]!.text = text;
+    }
+
+    final textFieldsToShow = fieldsToShow.values.expand((f) => f).where((f) => f.type != 'html');
+    for (final field in textFieldsToShow) {
+      final text = dynamicFields[field.referenceName]?.controller.text ?? '';
+      dynamicFields[field.referenceName]!.text = text;
     }
 
     final errorMessage = _checkRequiredFields();
@@ -338,7 +345,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   Future<void> _getTypeFormFields() async {
     // refresh UI without any html editor and wait a bit to make the editors reinitialize correctly
-    fieldsToShow = [];
+    fieldsToShow = {};
     _setHasChanged();
     await Future<void>.delayed(Duration(milliseconds: 50));
 
@@ -352,21 +359,23 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       workItemRefName: newWorkItemType.referenceName,
     );
 
-    fieldsToShow = res.data ?? [];
+    fieldsToShow = res.data ?? <String, Set<WorkItemField>>{};
 
-    for (final field in fieldsToShow) {
-      dynamicFields[field.referenceName] = _DynamicFieldData(required: field.required);
+    for (final entry in fieldsToShow.entries) {
+      for (final field in entry.value) {
+        dynamicFields[field.referenceName] = _DynamicFieldData(required: field.required);
 
-      if (field.defaultValue != null) {
-        dynamicFields[field.referenceName]!.controller.text = field.defaultValue!;
-      }
-      if (isEditing) {
-        dynamicFields[field.referenceName]!.controller.text =
-            editingWorkItem!.fields.jsonFields[field.referenceName]?.toString() ?? field.defaultValue ?? '';
+        if (field.defaultValue != null) {
+          dynamicFields[field.referenceName]!.controller.text = field.defaultValue!;
+        }
+        if (isEditing) {
+          dynamicFields[field.referenceName]!.controller.text =
+              editingWorkItem!.fields.jsonFields[field.referenceName]?.toString() ?? field.defaultValue ?? '';
+        }
       }
     }
 
-    final htmlFieldsToShow = fieldsToShow.where((f) => f.type == 'html');
+    final htmlFieldsToShow = fieldsToShow.values.expand((f) => f).where((f) => f.type == 'html');
 
     for (final field in htmlFieldsToShow) {
       dynamicFields[field.referenceName]?.editorGlobalKey = GlobalKey<State>();
@@ -396,9 +405,33 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       case 'double':
       case 'int':
         return num.tryParse(str) != null ? null : 'Must be a number';
+      case 'dateTime':
+        return DateTime.tryParse(str) != null ? null : 'Must be a valid date';
       default:
         return null;
     }
+  }
+
+  Future<void> setDateField(String fieldRefName) async {
+    final date = await showDatePicker(
+      context: AppRouter.rootNavigator!.context,
+      initialDate: DateTime.tryParse(dynamicFields[fieldRefName]?.text ?? '')?.toLocal() ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now().add(Duration(days: 365)),
+    );
+
+    if (date == null) return;
+
+    final dateMinutes = date.timeZoneOffset.inMinutes.abs() % 60;
+    final dateHours = date.timeZoneOffset.inHours;
+    final datePrefix = dateHours.isNegative ? '-' : '+';
+
+    final dateText =
+        '${date.toIso8601String()}$datePrefix${dateHours.abs().toString().padLeft(2, '0')}:${dateMinutes.toString().padLeft(2, '0')}';
+
+    onFieldChanged(dateText, fieldRefName);
+
+    _setHasChanged();
   }
 }
 

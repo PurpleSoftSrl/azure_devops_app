@@ -19,6 +19,8 @@ class DevOpsFormField extends StatelessWidget {
     this.validator,
     this.suffixIcon,
     this.suffix,
+    this.readOnly = false,
+    this.onTap,
   });
 
   final VoidCallback? onFieldSubmitted;
@@ -37,6 +39,8 @@ class DevOpsFormField extends StatelessWidget {
   final Widget? suffix;
   final String? Function(String?)? validator;
   final Widget? suffixIcon; // TODO check suffixIcon
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   String? _validateField(String? s) {
     if (validator != null) return validator!(s);
@@ -57,6 +61,8 @@ class DevOpsFormField extends StatelessWidget {
       textInputAction: textInputAction,
       autofocus: autofocus,
       enabled: enabled,
+      readOnly: readOnly,
+      onTap: onTap,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
         border: OutlineInputBorder(
