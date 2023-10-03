@@ -346,7 +346,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   Future<void> _getTypeFormFields() async {
     // refresh UI without any html editor and wait a bit to make the editors reinitialize correctly
     fieldsToShow = {};
-    _setHasChanged();
+    _refreshPage();
     await Future<void>.delayed(Duration(milliseconds: 50));
 
     dynamicFields.clear();
@@ -369,14 +369,13 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
           dynamicFields[field.referenceName]!.controller.text = field.defaultValue!;
         }
         if (isEditing) {
-          dynamicFields[field.referenceName]!.controller.text =
-              editingWorkItem!.fields.jsonFields[field.referenceName]?.toString() ?? field.defaultValue ?? '';
+          final text = editingWorkItem!.fields.jsonFields[field.referenceName]?.toString() ?? field.defaultValue ?? '';
+          onFieldChanged(text, field.referenceName);
         }
       }
     }
 
     final htmlFieldsToShow = fieldsToShow.values.expand((f) => f).where((f) => f.type == 'html');
-
     for (final field in htmlFieldsToShow) {
       dynamicFields[field.referenceName]?.editorGlobalKey = GlobalKey<State>();
       dynamicFields[field.referenceName]?.editorController = HtmlEditorController();
@@ -390,7 +389,17 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   void onFieldChanged(String str, String fieldRefName) {
     dynamicFields[fieldRefName]!.text = str;
-    dynamicFields[fieldRefName]!.controller.text = str;
+
+    final date = DateTime.tryParse(str);
+    final number = num.tryParse(str);
+
+    if (date != null) {
+      dynamicFields[fieldRefName]!.controller.text = date.toDate();
+    } else if (number != null) {
+      dynamicFields[fieldRefName]!.controller.text = (number == number.toInt() ? number.toInt() : number).toString();
+    } else {
+      dynamicFields[fieldRefName]!.controller.text = str;
+    }
   }
 
   String? fieldValidator(String? str, WorkItemField field) {
@@ -405,8 +414,6 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       case 'double':
       case 'int':
         return num.tryParse(str) != null ? null : 'Must be a number';
-      case 'dateTime':
-        return DateTime.tryParse(str) != null ? null : 'Must be a valid date';
       default:
         return null;
     }
