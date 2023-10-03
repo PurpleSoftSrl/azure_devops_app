@@ -237,7 +237,7 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                     )
                   else if (field.type == 'dateTime')
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.only(bottom: 16),
                       child: DevOpsFormField(
                         onChanged: (s) => true,
                         label: field.name,
@@ -251,7 +251,7 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                     )
                   else
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.only(bottom: 16),
                       child: DevOpsFormField(
                         onChanged: (s) => ctrl.onFieldChanged(s, field.referenceName),
                         label: field.name,

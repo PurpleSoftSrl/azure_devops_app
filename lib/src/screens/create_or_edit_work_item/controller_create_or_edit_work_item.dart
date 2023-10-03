@@ -400,6 +400,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     } else {
       dynamicFields[fieldRefName]!.controller.text = str;
     }
+
+    _setHasChanged();
   }
 
   String? fieldValidator(String? str, WorkItemField field) {
