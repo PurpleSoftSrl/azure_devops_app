@@ -149,10 +149,10 @@ class _WorkItemDetailScreen extends StatelessWidget {
                     style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                   ),
                   Text(detail.fields.systemTitle),
-                  const Divider(
-                    height: 40,
-                  ),
-                  if (detail.fields.systemAssignedTo != null)
+                  if (detail.fields.systemAssignedTo != null) ...[
+                    const SizedBox(
+                      height: 20,
+                    ),
                     Row(
                       children: [
                         TextTitleDescription(
@@ -168,23 +168,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextTitleDescription(
-                    title: 'Created at: ',
-                    description: detail.fields.systemCreatedDate!.toSimpleDate(),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextTitleDescription(
-                    title: 'Change date: ',
-                    description: detail.fields.systemChangedDate.toSimpleDate(),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  ],
                   for (final entry in ctrl.fieldsToShow.entries)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,13 +209,27 @@ class _WorkItemDetailScreen extends StatelessWidget {
                                       style: context.textTheme.titleSmall,
                                     )
                                   else
-                                    Text(textToShow!.toString()),
+                                    Text(textToShow!.toString().formatted),
                                 ],
                               );
                             },
                           ),
                       ],
                     ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  TextTitleDescription(
+                    title: 'Created at: ',
+                    description: detail.fields.systemCreatedDate!.toSimpleDate(),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextTitleDescription(
+                    title: 'Change date: ',
+                    description: detail.fields.systemChangedDate.toSimpleDate(),
+                  ),
                   const SizedBox(
                     height: 40,
                   ),

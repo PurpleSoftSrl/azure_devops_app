@@ -373,18 +373,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   void onFieldChanged(String str, String fieldRefName) {
     dynamicFields[fieldRefName]!.text = str;
-
-    final date = DateTime.tryParse(str);
-    final number = num.tryParse(str);
-
-    if (date != null) {
-      dynamicFields[fieldRefName]!.controller.text = date.toDate();
-    } else if (number != null) {
-      dynamicFields[fieldRefName]!.controller.text = (number == number.toInt() ? number.toInt() : number).toString();
-    } else {
-      dynamicFields[fieldRefName]!.controller.text = str;
-    }
-
+    dynamicFields[fieldRefName]!.controller.text = str.formatted;
+    
     _setHasChanged();
   }
 
