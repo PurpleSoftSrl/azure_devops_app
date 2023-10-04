@@ -45,6 +45,8 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
 
   final showCommentField = ValueNotifier<bool>(false);
 
+  Map<String, Set<WorkItemField>> fieldsToShow = {};
+
   void dispose() {
     instance = null;
     _instances.remove(args.hashCode);
@@ -52,6 +54,15 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
 
   Future<void> init() async {
     final res = await apiService.getWorkItemDetail(projectName: args.project, workItemId: args.id);
+
+    if (!res.isError) {
+      final fieldsRes = await apiService.getWorkItemTypeFields(
+        projectName: args.project,
+        workItemName: res.data!.item.fields.systemWorkItemType,
+      );
+
+      fieldsToShow = fieldsRes.data ?? <String, Set<WorkItemField>>{};
+    }
 
     itemDetail.value = res;
     updates = itemDetail.value?.data?.updates ?? [];
@@ -244,5 +255,16 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
 
     OverlayService.snackbar('Attachment successfully added');
     await init();
+  }
+
+  /// Returns true if there are some fields in the given group and there is at least
+  /// on field set by the user in this group.
+  bool shouldShowGroupLabel({required String group}) {
+    final fields = fieldsToShow[group] ?? {};
+    if (fields.isEmpty) return false;
+
+    final jsonFields = itemDetail.value!.data!.item.fields.jsonFields;
+    final hasSetSomeFields = fields.firstWhereOrNull((f) => jsonFields[f.referenceName] != null) != null;
+    return hasSetSomeFields;
   }
 }
