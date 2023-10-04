@@ -128,7 +128,7 @@ abstract class AzureApiService {
     required String description,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
-    required Map<String, String> dynamicFields,
+    required Map<String, String> formFields,
   });
 
   Future<ApiResponse<WorkItem>> editWorkItem({
@@ -141,7 +141,7 @@ abstract class AzureApiService {
     String? status,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
-    required Map<String, String> dynamicFields,
+    required Map<String, String> formFields,
   });
 
   Future<ApiResponse<bool>> addWorkItemComment({
@@ -1010,7 +1010,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     required String description,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
-    required Map<String, String> dynamicFields,
+    required Map<String, String> formFields,
   }) async {
     final createRes = await _postList(
       '$_basePath/$projectName/_apis/wit/workitems/\$${type.name}?$_apiVersion-preview',
@@ -1038,7 +1038,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
             'path': '/fields/System.IterationPath',
             'value': iteration.escapedIterationPath,
           },
-        for (final field in dynamicFields.entries)
+        for (final field in formFields.entries)
           {
             'op': 'add',
             'path': '/fields/${field.key}',
@@ -1064,7 +1064,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     String? status,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
-    required Map<String, String> dynamicFields,
+    required Map<String, String> formFields,
   }) async {
     final editRes = await _patchList(
       '$_basePath/$projectName/_apis/wit/workitems/$id?$_apiVersion-preview',
@@ -1105,7 +1105,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
             'path': '/fields/System.IterationPath',
             'value': iteration.escapedIterationPath,
           },
-        for (final field in dynamicFields.entries)
+        for (final field in formFields.entries)
           {
             'op': 'add',
             'path': '/fields/${field.key}',

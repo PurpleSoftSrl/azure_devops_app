@@ -525,7 +525,7 @@ class AzureApiServiceMock implements AzureApiService {
     required String description,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
-    required Map<String, String> dynamicFields,
+    required Map<String, String> formFields,
   }) {
     throw UnimplementedError();
   }
@@ -541,7 +541,7 @@ class AzureApiServiceMock implements AzureApiService {
     String? status,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
-    required Map<String, String> dynamicFields,
+    required Map<String, String> formFields,
   }) {
     throw UnimplementedError();
   }

@@ -48,8 +48,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   bool get isEditing => args.id != null;
   WorkItem? editingWorkItem;
 
-  /// {field.referenceName: data}
-  final dynamicFields = <String, _DynamicFieldData>{};
+  /// Data used to read/write each field. The keys are fields' reference names.
+  final formFields = <String, _DynamicFieldData>{};
 
   void dispose() {
     instance = null;
@@ -91,31 +91,37 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   void _setFields(WorkItem item) {
     editingWorkItem = item;
     final fields = item.fields;
-    projectWorkItemTypes = apiService.workItemTypes[fields.systemTeamProject] ?? <WorkItemType>[];
-    allWorkItemStates = apiService.workItemStates[fields.systemTeamProject]?[fields.systemWorkItemType] ?? [];
+    final project = fields.systemTeamProject;
+    final workItemType = fields.systemWorkItemType;
+
+    projectWorkItemTypes = apiService.workItemTypes[project] ?? <WorkItemType>[];
+    allWorkItemStates = apiService.workItemStates[project]?[workItemType] ?? [];
 
     newWorkItemTitle = fields.systemTitle;
     newWorkItemDescription = fields.systemDescription ?? '';
+
     if (fields.systemAssignedTo != null) {
       newWorkItemAssignedTo =
           getSortedUsers(apiService).firstWhereOrNull((u) => u.mailAddress == fields.systemAssignedTo?.uniqueName) ??
               unassigned;
     }
-    newWorkItemType = projectWorkItemTypes.firstWhereOrNull((t) => t.name == fields.systemWorkItemType) ??
+
+    newWorkItemType = projectWorkItemTypes.firstWhereOrNull((t) => t.name == workItemType) ??
         WorkItemType(
-          name: fields.systemWorkItemType,
-          referenceName: fields.systemWorkItemType,
+          name: workItemType,
+          referenceName: workItemType,
           isDisabled: false,
           icon: '',
           states: [],
         );
-    newWorkItemStatus = apiService.workItemStates[fields.systemTeamProject]?[fields.systemWorkItemType]
-            ?.firstWhereOrNull((s) => s.name == fields.systemState) ??
-        WorkItemState(
-          id: '',
-          name: fields.systemState,
-          color: 'FFFFFF',
-        );
+
+    newWorkItemStatus =
+        apiService.workItemStates[project]?[workItemType]?.firstWhereOrNull((s) => s.name == fields.systemState) ??
+            WorkItemState(
+              id: '',
+              name: fields.systemState,
+              color: 'FFFFFF',
+            );
 
     newWorkItemArea = AreaOrIteration.onlyPath(path: fields.systemAreaPath);
     newWorkItemIteration = AreaOrIteration.onlyPath(path: fields.systemIterationPath);
@@ -127,8 +133,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     newWorkItemType = type;
 
     if (isEditing) {
-      allWorkItemStates =
-          apiService.workItemStates[editingWorkItem!.fields.systemTeamProject]![newWorkItemType.name] ?? [];
+      final project = editingWorkItem!.fields.systemTeamProject;
+      final workItemType = newWorkItemType.name;
+      allWorkItemStates = apiService.workItemStates[project]![workItemType] ?? [];
       if (!allWorkItemStates.contains(newWorkItemStatus)) {
         // change status if new type doesn't support current status
         newWorkItemStatus = allWorkItemStates.firstOrNull ?? newWorkItemStatus;
@@ -201,7 +208,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   Future<void> confirm() async {
-    for (final key in dynamicFields.entries) {
+    for (final key in formFields.entries) {
       final state = key.value.formFieldKey.currentState;
       if (state == null) continue;
 
@@ -212,14 +219,16 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     final htmlFieldsToShow = fieldsToShow.values.expand((f) => f).where((f) => f.type == 'html');
     for (final field in htmlFieldsToShow) {
-      final text = await dynamicFields[field.referenceName]?.editorController?.getText() ?? '';
-      dynamicFields[field.referenceName]!.text = text;
+      final formField = formFields[field.referenceName];
+      final text = await formField?.editorController?.getText() ?? '';
+      formField?.text = text;
     }
 
     final textFieldsToShow = fieldsToShow.values.expand((f) => f).where((f) => f.type != 'html');
     for (final field in textFieldsToShow) {
-      final text = dynamicFields[field.referenceName]?.controller.text ?? '';
-      dynamicFields[field.referenceName]!.text = text;
+      final formField = formFields[field.referenceName];
+      final text = formField?.controller.text ?? '';
+      formField?.text = text;
     }
 
     final errorMessage = _checkRequiredFields();
@@ -282,7 +291,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       status: newWorkItemStatus?.name,
       area: newWorkItemArea,
       iteration: newWorkItemIteration,
-      dynamicFields: {for (final field in dynamicFields.entries) field.key: field.value.text},
+      formFields: {for (final field in formFields.entries) field.key: field.value.text},
     );
     return res;
   }
@@ -296,7 +305,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       description: newWorkItemDescription,
       area: newWorkItemArea,
       iteration: newWorkItemIteration,
-      dynamicFields: {for (final field in dynamicFields.entries) field.key: field.value.text},
+      formFields: {for (final field in formFields.entries) field.key: field.value.text},
     );
     return res;
   }
@@ -310,7 +319,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     // remove `(me)` from user name if it's me
     final name = u.mailAddress == apiService.user!.emailAddress ? apiService.user!.displayName : u.displayName;
     final mention = '<a href="#" data-vss-mention="version:2.0,${res.data}">@$name</a>';
-    dynamicFields[fieldRefName]?.editorController?.insertHtml(mention);
+    formFields[fieldRefName]?.editorController?.insertHtml(mention);
   }
 
   List<GraphUser> getAssignees() {
@@ -328,13 +337,14 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     return areas[isEditing ? editingWorkItem!.fields.systemTeamProject : newWorkItemProject.name!] ?? [];
   }
 
+  /// Gets all the fields for the selected work item type.
   Future<void> _getTypeFormFields() async {
     // refresh UI without any html editor and wait a bit to make the editors reinitialize correctly
     fieldsToShow = {};
     _refreshPage();
     await Future<void>.delayed(Duration(milliseconds: 50));
 
-    dynamicFields.clear();
+    formFields.clear();
 
     final projectName = editingWorkItem?.fields.systemTeamProject ?? newWorkItemProject.name!;
 
@@ -347,34 +357,38 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     for (final entry in fieldsToShow.entries) {
       for (final field in entry.value) {
-        dynamicFields[field.referenceName] = _DynamicFieldData(required: field.required);
+        final refName = field.referenceName;
+        formFields[refName] = _DynamicFieldData(required: field.required);
 
         if (field.defaultValue != null) {
-          dynamicFields[field.referenceName]!.controller.text = field.defaultValue!;
+          formFields[refName]!.controller.text = field.defaultValue!;
         }
+
         if (isEditing) {
-          final text = editingWorkItem!.fields.jsonFields[field.referenceName]?.toString() ?? field.defaultValue ?? '';
-          onFieldChanged(text, field.referenceName);
+          final text = editingWorkItem!.fields.jsonFields[refName]?.toString() ?? field.defaultValue ?? '';
+          onFieldChanged(text, refName);
         }
       }
     }
 
     final htmlFieldsToShow = fieldsToShow.values.expand((f) => f).where((f) => f.type == 'html');
     for (final field in htmlFieldsToShow) {
-      dynamicFields[field.referenceName]?.editorGlobalKey = GlobalKey<State>();
-      dynamicFields[field.referenceName]?.editorController = HtmlEditorController();
+      final formField = formFields[field.referenceName];
+      formField?.editorGlobalKey = GlobalKey<State>();
+      formField?.editorController = HtmlEditorController();
 
       if (isEditing) {
-        dynamicFields[field.referenceName]!.editorInitialText =
+        formField?.editorInitialText =
             editingWorkItem!.fields.jsonFields[field.referenceName]?.toString() ?? field.defaultValue ?? '';
       }
     }
   }
 
   void onFieldChanged(String str, String fieldRefName) {
-    dynamicFields[fieldRefName]!.text = str;
-    dynamicFields[fieldRefName]!.controller.text = str.formatted;
-    
+    final formField = formFields[fieldRefName];
+    formField?.text = str;
+    formField?.controller.text = str.formatted;
+
     _setHasChanged();
   }
 
@@ -398,7 +412,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   Future<void> setDateField(String fieldRefName) async {
     final date = await showDatePicker(
       context: AppRouter.rootNavigator!.context,
-      initialDate: DateTime.tryParse(dynamicFields[fieldRefName]?.text ?? '')?.toLocal() ?? DateTime.now(),
+      initialDate: DateTime.tryParse(formFields[fieldRefName]?.text ?? '')?.toLocal() ?? DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now().add(Duration(days: 365)),
     );

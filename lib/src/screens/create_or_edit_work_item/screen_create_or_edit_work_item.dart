@@ -213,73 +213,11 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                     ),
                   ),
                 for (final field in entry.value)
-                  if (field.type == 'html')
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          field.name,
-                          style: context.textTheme.labelSmall!.copyWith(height: 1, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        DevOpsHtmlEditor(
-                          editorController: ctrl.dynamicFields[field.referenceName]!.editorController!,
-                          editorGlobalKey: ctrl.dynamicFields[field.referenceName]!.editorGlobalKey!,
-                          initialText: ctrl.isEditing
-                              ? (ctrl.dynamicFields[field.referenceName]!.editorInitialText ?? field.defaultValue)
-                              : field.defaultValue,
-                          onKeyUp: (_) => ctrl._setHasChanged(),
-                        ),
-                        SizedBox(
-                          key: ctrl.dynamicFields[field.referenceName]?.editorGlobalKey,
-                          height: 0,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                      ],
-                    )
-                  else if (field.type == 'dateTime')
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: DevOpsFormField(
-                        onChanged: (s) => true,
-                        label: field.name,
-                        readOnly: true,
-                        onTap: () => ctrl.setDateField(field.referenceName),
-                        textInputAction: TextInputAction.next,
-                        validator: (s) => ctrl.fieldValidator(s, field),
-                        formFieldKey: ctrl.dynamicFields[field.referenceName]?.formFieldKey,
-                        controller: ctrl.dynamicFields[field.referenceName]?.controller,
-                      ),
-                    )
-                  else
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: DevOpsFormField(
-                        onChanged: (s) => ctrl.onFieldChanged(s, field.referenceName),
-                        label: field.name,
-                        textInputAction: TextInputAction.next,
-                        validator: (s) => ctrl.fieldValidator(s, field),
-                        formFieldKey: ctrl.dynamicFields[field.referenceName]?.formFieldKey,
-                        controller: ctrl.dynamicFields[field.referenceName]?.controller,
-                        suffixIcon: field.allowedValues.where((v) => v != '<None>').isEmpty
-                            ? null
-                            : DevOpsPopupMenu(
-                                tooltip: '${field.name} allowed values',
-                                offset: const Offset(0, 20),
-                                items: () => [
-                                  for (final value in field.allowedValues)
-                                    PopupItem(
-                                      onTap: () => ctrl.onFieldChanged(value, field.referenceName),
-                                      text: value,
-                                    ),
-                                ],
-                              ),
-                      ),
-                    ),
+                  switch (field.type) {
+                    'html' => _HtmlFormField(field: field, ctrl: ctrl),
+                    'dateTime' => _DateFormField(field: field, ctrl: ctrl),
+                    _ => _DefaultFormField(ctrl: ctrl, field: field),
+                  },
               ],
             ),
         ],
