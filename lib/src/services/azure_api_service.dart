@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:azure_devops/src/extensions/area_or_iteration_extension.dart';
@@ -1995,18 +1994,18 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       'System.IterationPath',
       'Microsoft.VSTS.Common.ResolvedReason',
     ];
-    log(xmlForm);
+
     final document = XmlDocument.parse(xmlForm);
     for (final desc in document.descendantElements) {
-      if (desc.name.toString() == 'Control') {
-        final fieldName = desc.attributes.firstWhereOrNull((att) => att.name.toString() == 'FieldName');
+      if (desc.localName == 'Control') {
+        final fieldName = desc.attributes.firstWhereOrNull((att) => att.localName == 'FieldName');
         if (fieldName != null) {
-          final readOnlyAttribute = desc.attributes.firstWhereOrNull((att) => att.name.toString() == 'ReadOnly');
+          final readOnlyAttribute = desc.attributes.firstWhereOrNull((att) => att.localName == 'ReadOnly');
           final isReadOnly = readOnlyAttribute != null && readOnlyAttribute.value == 'True';
           if (!isReadOnly && !fieldNamesToSkip.contains(fieldName.value)) {
             // get field group's label
-            final group = desc.ancestorElements.firstWhereOrNull((e) => e.name.toString() == 'Group');
-            final groupLabel = group?.attributes.firstWhereOrNull((att) => att.name.toString() == 'Label')?.value ?? '';
+            final group = desc.ancestorElements.firstWhereOrNull((e) => e.localName == 'Group');
+            final groupLabel = group?.attributes.firstWhereOrNull((att) => att.localName == 'Label')?.value ?? '';
 
             visibleFields.putIfAbsent(groupLabel, () => {fieldName.value});
             visibleFields[groupLabel]!.add(fieldName.value);

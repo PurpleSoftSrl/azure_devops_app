@@ -128,53 +128,50 @@ class ItemFields {
     this.jsonFields = const {},
   });
 
-
-  factory ItemFields.fromJson(Map<String, dynamic> json) {
-    return ItemFields(
-      systemTeamProject: json['System.TeamProject'] as String,
-      systemAreaPath: json['System.AreaPath'] as String,
-      systemIterationPath: json['System.IterationPath'] as String,
-      systemWorkItemType: json['System.WorkItemType'] as String,
-      systemState: json['System.State'] as String,
-      systemReason: json['System.Reason'] as String?,
-      systemAssignedTo: json['System.AssignedTo'] == null
-          ? null
-          : WorkItemUser.fromJson(json['System.AssignedTo'] as Map<String, dynamic>),
-      systemCreatedDate: DateTime.parse(json['System.CreatedDate']!.toString()).toLocal(),
-      systemCreatedBy: WorkItemUser.fromJson(json['System.CreatedBy'] as Map<String, dynamic>),
-      systemChangedDate: DateTime.parse(json['System.ChangedDate']!.toString()).toLocal(),
-      systemChangedBy: json['System.ChangedBy'] == null
-          ? null
-          : WorkItemUser.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
-      systemCommentCount: json['System.CommentCount'] as int?,
-      systemTitle: json['System.Title'] as String,
-      microsoftVstsCommonStateChangeDate: json['Microsoft.VSTS.Common.StateChangeDate'] == null
-          ? null
-          : DateTime.parse(json['Microsoft.VSTS.Common.StateChangeDate']!.toString()).toLocal(),
-      microsoftVstsCommonPriority:
-          json['Microsoft.VSTS.Common.Priority'] == null ? null : json['Microsoft.VSTS.Common.Priority'] as int,
-      systemDescription: json['System.Description'] as String?,
-      reproSteps: json['Microsoft.VSTS.TCM.ReproSteps'] as String?,
-      microsoftVstsCommonClosedDate: json['Microsoft.VSTS.Common.ClosedDate'] == null
-          ? null
-          : DateTime.parse(json['Microsoft.VSTS.Common.ClosedDate']!.toString()).toLocal(),
-      microsoftVstsCommonClosedBy: json['Microsoft.VSTS.Common.ClosedBy'] == null
-          ? null
-          : WorkItemUser.fromJson(json['Microsoft.VSTS.Common.ClosedBy'] as Map<String, dynamic>),
-      microsoftVstsCommonActivatedDate: json['Microsoft.VSTS.Common.ActivatedDate'] == null
-          ? null
-          : DateTime.parse(json['Microsoft.VSTS.Common.ActivatedDate']!.toString()).toLocal(),
-      microsoftVstsCommonActivatedBy: json['Microsoft.VSTS.Common.ActivatedBy'] == null
-          ? null
-          : WorkItemUser.fromJson(json['Microsoft.VSTS.Common.ActivatedBy'] as Map<String, dynamic>),
-      microsoftVstsCommonResolvedDate: json['Microsoft.VSTS.Common.ResolvedDate'] == null
-          ? null
-          : DateTime.parse(json['Microsoft.VSTS.Common.ResolvedDate']!.toString()).toLocal(),
-      systemHistory: json['System.History'] as String?,
-      systemTags: json['System.Tags'] as String?,
-      jsonFields: json,
-    );
-  }
+  factory ItemFields.fromJson(Map<String, dynamic> json) => ItemFields(
+        systemTeamProject: json['System.TeamProject'] as String,
+        systemAreaPath: json['System.AreaPath'] as String,
+        systemIterationPath: json['System.IterationPath'] as String,
+        systemWorkItemType: json['System.WorkItemType'] as String,
+        systemState: json['System.State'] as String,
+        systemReason: json['System.Reason'] as String?,
+        systemAssignedTo: json['System.AssignedTo'] == null
+            ? null
+            : WorkItemUser.fromJson(json['System.AssignedTo'] as Map<String, dynamic>),
+        systemCreatedDate: DateTime.parse(json['System.CreatedDate']!.toString()).toLocal(),
+        systemCreatedBy: WorkItemUser.fromJson(json['System.CreatedBy'] as Map<String, dynamic>),
+        systemChangedDate: DateTime.parse(json['System.ChangedDate']!.toString()).toLocal(),
+        systemChangedBy: json['System.ChangedBy'] == null
+            ? null
+            : WorkItemUser.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
+        systemCommentCount: json['System.CommentCount'] as int?,
+        systemTitle: json['System.Title'] as String,
+        microsoftVstsCommonStateChangeDate: json['Microsoft.VSTS.Common.StateChangeDate'] == null
+            ? null
+            : DateTime.parse(json['Microsoft.VSTS.Common.StateChangeDate']!.toString()).toLocal(),
+        microsoftVstsCommonPriority:
+            json['Microsoft.VSTS.Common.Priority'] == null ? null : json['Microsoft.VSTS.Common.Priority'] as int,
+        systemDescription: json['System.Description'] as String?,
+        reproSteps: json['Microsoft.VSTS.TCM.ReproSteps'] as String?,
+        microsoftVstsCommonClosedDate: json['Microsoft.VSTS.Common.ClosedDate'] == null
+            ? null
+            : DateTime.parse(json['Microsoft.VSTS.Common.ClosedDate']!.toString()).toLocal(),
+        microsoftVstsCommonClosedBy: json['Microsoft.VSTS.Common.ClosedBy'] == null
+            ? null
+            : WorkItemUser.fromJson(json['Microsoft.VSTS.Common.ClosedBy'] as Map<String, dynamic>),
+        microsoftVstsCommonActivatedDate: json['Microsoft.VSTS.Common.ActivatedDate'] == null
+            ? null
+            : DateTime.parse(json['Microsoft.VSTS.Common.ActivatedDate']!.toString()).toLocal(),
+        microsoftVstsCommonActivatedBy: json['Microsoft.VSTS.Common.ActivatedBy'] == null
+            ? null
+            : WorkItemUser.fromJson(json['Microsoft.VSTS.Common.ActivatedBy'] as Map<String, dynamic>),
+        microsoftVstsCommonResolvedDate: json['Microsoft.VSTS.Common.ResolvedDate'] == null
+            ? null
+            : DateTime.parse(json['Microsoft.VSTS.Common.ResolvedDate']!.toString()).toLocal(),
+        systemHistory: json['System.History'] as String?,
+        systemTags: json['System.Tags'] as String?,
+        jsonFields: json,
+      );
 
   final String systemTeamProject;
   final String systemAreaPath;
