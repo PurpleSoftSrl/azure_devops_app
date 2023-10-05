@@ -408,7 +408,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     switch (field.type) {
       case 'double':
-      case 'int':
+      case 'integer':
         return num.tryParse(str) != null ? null : 'Must be a number';
       default:
         return null;
