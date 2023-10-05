@@ -382,6 +382,12 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
             editingWorkItem!.fields.jsonFields[field.referenceName]?.toString() ?? field.defaultValue ?? '';
       }
     }
+
+    final selectableFieldsToShow = fieldsToShow.values.expand((f) => f).where((f) => f.hasMeaningfulAllowedValues);
+    for (final field in selectableFieldsToShow) {
+      final formField = formFields[field.referenceName];
+      formField?.popupMenuKey = GlobalKey<PopupMenuButtonState<dynamic>>();
+    }
   }
 
   void onFieldChanged(String str, String fieldRefName) {
@@ -430,6 +436,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     _setHasChanged();
   }
+
+  void showPopupMenu(String fieldRefName) {
+    formFields[fieldRefName]?.popupMenuKey?.currentState?.showButtonMenu();
+  }
 }
 
 class _DynamicFieldData {
@@ -443,6 +453,11 @@ class _DynamicFieldData {
   GlobalKey<State>? editorGlobalKey;
   HtmlEditorController? editorController;
   String? editorInitialText;
+  GlobalKey<PopupMenuButtonState<dynamic>>? popupMenuKey;
 
   final bool required;
+}
+
+extension on WorkItemField {
+  bool get hasMeaningfulAllowedValues => allowedValues.where((v) => v != '<None>').isNotEmpty;
 }

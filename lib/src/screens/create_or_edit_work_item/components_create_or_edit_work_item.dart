@@ -68,6 +68,46 @@ class _DateFormField extends StatelessWidget {
   }
 }
 
+class _SelectionFormField extends StatelessWidget {
+  const _SelectionFormField({
+    required this.ctrl,
+    required this.field,
+  });
+
+  final _CreateOrEditWorkItemController ctrl;
+  final WorkItemField field;
+
+  @override
+  Widget build(BuildContext context) {
+    final formField = ctrl.formFields[field.referenceName];
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: DevOpsFormField(
+        onChanged: (s) => true,
+        label: field.name,
+        readOnly: true,
+        onTap: () => ctrl.showPopupMenu(field.referenceName),
+        textInputAction: TextInputAction.next,
+        validator: (s) => ctrl.fieldValidator(s, field),
+        formFieldKey: formField?.formFieldKey,
+        controller: formField?.controller,
+        suffixIcon: DevOpsPopupMenu(
+        menuKey: formField?.popupMenuKey,
+          tooltip: '${field.name} allowed values',
+          offset: const Offset(0, 20),
+          items: () => [
+            for (final value in field.allowedValues)
+              PopupItem(
+                onTap: () => ctrl.onFieldChanged(value, field.referenceName),
+                text: value,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _DefaultFormField extends StatelessWidget {
   const _DefaultFormField({
     required this.ctrl,
@@ -89,19 +129,6 @@ class _DefaultFormField extends StatelessWidget {
         validator: (s) => ctrl.fieldValidator(s, field),
         formFieldKey: formField?.formFieldKey,
         controller: formField?.controller,
-        suffixIcon: field.allowedValues.where((v) => v != '<None>').isEmpty
-            ? null
-            : DevOpsPopupMenu(
-                tooltip: '${field.name} allowed values',
-                offset: const Offset(0, 20),
-                items: () => [
-                  for (final value in field.allowedValues)
-                    PopupItem(
-                      onTap: () => ctrl.onFieldChanged(value, field.referenceName),
-                      text: value,
-                    ),
-                ],
-              ),
       ),
     );
   }
