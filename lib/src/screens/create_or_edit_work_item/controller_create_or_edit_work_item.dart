@@ -224,13 +224,6 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       formField?.text = text;
     }
 
-    final textFieldsToShow = fieldsToShow.values.expand((f) => f).where((f) => f.type != 'html');
-    for (final field in textFieldsToShow) {
-      final formField = formFields[field.referenceName];
-      final text = formField?.controller.text ?? '';
-      formField?.text = text;
-    }
-
     final errorMessage = _checkRequiredFields();
     if (errorMessage != null) return OverlayService.snackbar(errorMessage, isError: true);
 
@@ -362,6 +355,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
         if (field.defaultValue != null) {
           formFields[refName]!.controller.text = field.defaultValue!;
+          formFields[refName]!.text = field.defaultValue!;
         }
 
         if (isEditing) {
