@@ -4,9 +4,8 @@ import 'package:azure_devops/src/extensions/pipeline_result_extension.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/pipeline_in_progress_animated_icon.dart';
 import 'package:flutter/material.dart';
-
-import 'pipeline_in_progress_animated_icon.dart';
 
 class PipelineListTile extends StatelessWidget {
   const PipelineListTile({

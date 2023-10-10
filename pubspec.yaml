@@ -10,13 +10,13 @@ environment:
 
 dependencies:
   flutter: { sdk: flutter }
-  google_fonts: ^4.0.4
-  http: ^0.13.6
+  google_fonts: ^6.1.0
+  http: ^1.1.0
   shared_preferences: ^2.1.1
   pull_to_refresh_flutter3: ^2.0.1
   intl: ^0.18.1
   url_launcher: ^6.1.11
-  share_plus: ^7.0.0
+  share_plus: ^8.0.0
   sentry_flutter: ^7.6.1
   cached_network_image: ^3.2.3
   package_info_plus: ^4.0.2
