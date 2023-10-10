@@ -12,7 +12,7 @@ class _FileDetailController with ShareMixin {
   final AzureApiService apiService;
   final RepoDetailArgs args;
 
-  final fileContent = ValueNotifier<ApiResponse<FileDetailResponse>?>(null);
+  final fileContent = ValueNotifier<ApiResponse<FileDetailResponse?>?>(null);
 
   void dispose() {
     instance = null;
