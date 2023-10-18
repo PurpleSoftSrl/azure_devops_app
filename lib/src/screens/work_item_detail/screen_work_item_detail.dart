@@ -187,7 +187,9 @@ class _WorkItemDetailScreen extends StatelessWidget {
                           Builder(
                             builder: (context) {
                               final textToShow = detail.fields.jsonFields[field.referenceName] ?? field.defaultValue;
-                              if (textToShow == null) return const SizedBox();
+                              if (textToShow == null || textToShow.toString().isEmpty) {
+                                return const SizedBox();
+                              }
 
                               final shouldShowFieldName = entry.value.length > 1 || field.name != entry.key;
 

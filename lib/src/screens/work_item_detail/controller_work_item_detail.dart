@@ -258,13 +258,14 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
   }
 
   /// Returns true if there are some fields in the given group and there is at least
-  /// on field set by the user in this group.
+  /// one field set by the user in this group.
   bool shouldShowGroupLabel({required String group}) {
     final fields = fieldsToShow[group] ?? {};
     if (fields.isEmpty) return false;
 
     final jsonFields = itemDetail.value!.data!.item.fields.jsonFields;
-    final hasSetSomeFields = fields.firstWhereOrNull((f) => jsonFields[f.referenceName] != null) != null;
-    return hasSetSomeFields;
+    return fields.any(
+      (f) => jsonFields[f.referenceName] != null && jsonFields[f.referenceName]!.toString().isNotEmpty,
+    );
   }
 }
