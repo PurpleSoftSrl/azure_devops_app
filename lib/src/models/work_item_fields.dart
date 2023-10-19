@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:http/http.dart';
 
 class WorkItemTypeFieldsResponse {
@@ -19,11 +20,19 @@ class WorkItemTypeFieldsResponse {
   final List<WorkItemField> fields;
 }
 
+class WorkItemFieldsWithRules {
+  WorkItemFieldsWithRules({required this.fields, required this.rules});
+
+  final LabeledWorkItemFields fields;
+  final WorkItemTypeRules rules;
+}
+
 class WorkItemField {
   WorkItemField({
     required this.referenceName,
     required this.name,
     required this.required,
+    this.readOnly = false,
     this.defaultValue,
     this.allowedValues = const [],
     this.type,
@@ -41,6 +50,7 @@ class WorkItemField {
   final String referenceName;
   final String name;
   final bool required;
+  bool readOnly;
   final String? defaultValue;
   String? type;
   final List<String> allowedValues;

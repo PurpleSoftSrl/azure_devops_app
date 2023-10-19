@@ -21,6 +21,7 @@ class DevOpsHtmlEditor extends StatefulWidget {
     this.hint,
     this.showToolbar = true,
     this.autofocus = false,
+    this.readOnly = false,
   });
 
   final String? initialText;
@@ -35,6 +36,8 @@ class DevOpsHtmlEditor extends StatefulWidget {
   final GlobalKey<State> editorGlobalKey;
 
   final double height;
+
+  final bool readOnly;
 
   @override
   State<DevOpsHtmlEditor> createState() => _DevOpsHtmlEditorState();
@@ -72,6 +75,24 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
     widget.editorController.insertHtml(mention);
   }
 
+  void enable() {
+    widget.editorController.enable();
+  }
+
+  void disable() {
+    widget.editorController.disable();
+  }
+
+  @override
+  void didUpdateWidget(DevOpsHtmlEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.readOnly && !oldWidget.readOnly) {
+      disable();
+    } else if (!widget.readOnly && oldWidget.readOnly) {
+      enable();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
@@ -81,6 +102,8 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
         onInit: () {
           widget.editorController.setFullScreen();
           if (widget.autofocus) widget.editorController.setFocus();
+
+          if (widget.readOnly) disable();
         },
         onFocus: _ensureEditorIsVisible,
         onKeyUp: widget.onKeyUp,

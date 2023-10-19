@@ -61,7 +61,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
         workItemName: res.data!.item.fields.systemWorkItemType,
       );
 
-      fieldsToShow = fieldsRes.data ?? <String, Set<WorkItemField>>{};
+      fieldsToShow = fieldsRes.data?.fields ?? <String, Set<WorkItemField>>{};
     }
 
     itemDetail.value = res;

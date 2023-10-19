@@ -40,7 +40,7 @@ class AzureApiServiceMock implements AzureApiService {
   Map<String, List<WorkItemType>> get workItemTypes => {};
 
   @override
-  Map<String, Map<String, Map<String, Set<WorkItemField>>>> get workItemFields => {};
+  Map<String, Map<String, WorkItemFieldsWithRules>> get workItemFields => {};
 
   @override
   Map<String, List<AreaOrIteration>> get workItemAreas => {};
@@ -289,11 +289,11 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<Map<String, Set<WorkItemField>>>> getWorkItemTypeFields({
+  Future<ApiResponse<WorkItemFieldsWithRules>> getWorkItemTypeFields({
     required String projectName,
     required String workItemName,
   }) async {
-    return ApiResponse.ok({});
+    return ApiResponse.ok(WorkItemFieldsWithRules(fields: {}, rules: {}));
   }
 
   @override

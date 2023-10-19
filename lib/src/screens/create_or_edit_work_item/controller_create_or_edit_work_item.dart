@@ -27,7 +27,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   Map<String, List<WorkItemType>> allProjectsWorkItemTypes = {};
   List<WorkItemState> allWorkItemStates = [WorkItemState.all];
 
-  Map<String, Set<WorkItemField>> fieldsToShow = {};
+  LabeledWorkItemFields fieldsToShow = {};
+  WorkItemTypeRules allRules = {};
 
   late List<WorkItemType> projectWorkItemTypes = allWorkItemTypes;
 
@@ -39,8 +40,11 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   late WorkItemType newWorkItemType = allWorkItemTypes.first;
   late Project newWorkItemProject = getProjects(storageService).firstWhereOrNull((p) => p.id != '-1') ?? projectAll;
 
-  // used only in edit mode
+  // Used only in edit mode
   WorkItemState? newWorkItemStatus;
+
+  /// Used to compare current state to initial one for rules validation
+  WorkItemState? _initialWorkItemStatus;
 
   AreaOrIteration? newWorkItemArea;
   AreaOrIteration? newWorkItemIteration;
@@ -50,6 +54,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   /// Data used to read/write each field. The keys are fields' reference names.
   final formFields = <String, _DynamicFieldData>{};
+
+  /// Used to compare current fields values to initial ones for rules validation
+  Map<String, _DynamicFieldData> _initialFormFields = {};
 
   void dispose() {
     instance = null;
@@ -115,7 +122,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
           states: [],
         );
 
-    newWorkItemStatus =
+    _initialWorkItemStatus = newWorkItemStatus =
         apiService.workItemStates[project]?[workItemType]?.firstWhereOrNull((s) => s.name == fields.systemState) ??
             WorkItemState(
               id: '',
@@ -192,6 +199,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     newWorkItemStatus = state;
     _setHasChanged();
+
+    _checkRules();
+    _refreshPage();
   }
 
   void onTitleChanged(String value) {
@@ -252,7 +262,28 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     OverlayService.snackbar('Changes saved');
     hasChanged.value = ApiResponse.ok(false);
 
-    if (!isEditing) AppRouter.pop();
+    if (!isEditing) {
+      AppRouter.pop();
+    } else {
+      _resetInitialFormFields();
+    }
+  }
+
+  /// When the user navigates to this page, and after each confirmed change,
+  /// we have to reset [_initialFormFields] to restart rules validation from current state.
+  void _resetInitialFormFields() {
+    _initialFormFields = {
+      for (final field in formFields.entries)
+        field.key: _DynamicFieldData(required: field.value.required)
+          ..controller = field.value.controller
+          ..text = field.value.controller.text.formatted
+          ..editorController = field.value.editorController
+          ..editorGlobalKey = field.value.editorGlobalKey
+          ..editorInitialText = field.value.editorInitialText
+          ..formFieldKey = field.value.formFieldKey
+          ..popupMenuKey = field.value.popupMenuKey
+          ..text = field.value.text,
+    };
   }
 
   String? _checkRequiredFields() {
@@ -346,14 +377,20 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       workItemName: newWorkItemType.name,
     );
 
-    fieldsToShow = res.data ?? <String, Set<WorkItemField>>{};
+    if (res.isError) {
+      OverlayService.snackbar('Could not get fields for type ${newWorkItemType.name}', isError: true);
+      return;
+    }
+
+    fieldsToShow = res.data?.fields ?? <String, Set<WorkItemField>>{};
+    allRules = res.data?.rules ?? {};
 
     for (final entry in fieldsToShow.entries) {
       for (final field in entry.value) {
         final refName = field.referenceName;
         formFields[refName] = _DynamicFieldData(required: field.required);
 
-        if (field.defaultValue != null) {
+        if (!field.readOnly && field.defaultValue != null) {
           formFields[refName]!.controller.text = field.defaultValue!;
           formFields[refName]!.text = field.defaultValue!;
         }
@@ -382,6 +419,29 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       final formField = formFields[field.referenceName];
       formField?.popupMenuKey = GlobalKey<PopupMenuButtonState<dynamic>>();
     }
+
+    _checkRules();
+    _resetInitialFormFields();
+  }
+
+  void _checkRules() {
+    for (final entry in fieldsToShow.entries) {
+      for (final field in entry.value) {
+        // TODO check readOnly/required
+        field.readOnly = _checkIfIsReadOnly(field);
+
+        final refName = field.referenceName;
+
+        if (formFields[refName] != null && field.readOnly) {
+          // reset field to previous value
+          final initialValue = _initialFormFields[refName];
+          if (initialValue != null) {
+            formFields[refName]!.text = initialValue.text;
+            formFields[refName]!.controller.text = initialValue.text.formatted;
+          }
+        }
+      }
+    }
   }
 
   void onFieldChanged(String str, String fieldRefName) {
@@ -390,6 +450,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     formField?.controller.text = str.formatted;
 
     _setHasChanged();
+
+    _checkRules();
+    _refreshPage();
   }
 
   String? fieldValidator(String? str, WorkItemField field) {
@@ -433,6 +496,90 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   void showPopupMenu(String fieldRefName) {
     formFields[fieldRefName]?.popupMenuKey?.currentState?.showButtonMenu();
+  }
+
+  // TODO extract class RulesValidator
+  /// Checks whether this field should be read-only according to the rules.
+  ///
+  /// A rule can have a maximum of 2 conditions, and if they're all true, then
+  /// the actions (maximum 10) will be applied.
+  bool _checkIfIsReadOnly(WorkItemField field) {
+    final rules = allRules[field.referenceName] ?? [];
+    if (rules.isEmpty) return false;
+
+    final makeReadOnlyActions = rules.where((r) => r.action == ActionType.makeReadOnly).toList();
+    if (makeReadOnlyActions.isEmpty) return false;
+
+    var isReadOnly = false;
+
+    for (final rule in makeReadOnlyActions) {
+      final conditions = rule.conditions;
+      if (conditions.isEmpty) break;
+
+      if (conditions.length == 1) {
+        final cond = conditions.single;
+        isReadOnly = _checkSingleReadOnly(cond);
+        continue;
+      }
+
+      // we have 2 conditions
+      final firstCond = conditions.first;
+      final secondCond = conditions.last;
+      isReadOnly = _checkSingleReadOnly(firstCond) && _checkSingleReadOnly(secondCond);
+    }
+
+    return isReadOnly;
+  }
+
+  String getFieldName(WorkItemField field) {
+    final fieldName = field.name;
+    final isReadOnly = field.readOnly;
+    return isReadOnly ? '$fieldName (read-only)' : fieldName;
+  }
+
+  bool _checkSingleReadOnly(Condition cond) {
+    if (cond.conditionType == ConditionType.whenNotChanged) {
+      // rule on edit
+      return true;
+    }
+
+    if (cond.conditionType == ConditionType.whenWas && cond.field == 'System.State' && cond.value == '' && !isEditing) {
+      // rule on create
+      return true;
+    }
+
+    if (cond.conditionType == ConditionType.whenChanged &&
+        cond.field == 'System.State' &&
+        cond.value == null &&
+        isEditing) {
+      // rule on change state
+      return true;
+    }
+
+    if (cond.conditionType == ConditionType.whenWas &&
+        cond.field == 'System.State' &&
+        cond.value == _initialWorkItemStatus?.name &&
+        isEditing) {
+      // rule on change from state
+      return true;
+    }
+
+    if (cond.conditionType == ConditionType.when &&
+        cond.field == 'System.State' &&
+        cond.value == newWorkItemStatus?.name &&
+        isEditing) {
+      // rule on change to state
+      return true;
+    }
+
+    if (cond.conditionType == ConditionType.when &&
+        formFields[cond.field] != null &&
+        formFields[cond.field]!.text.formatted == cond.value?.formatted) {
+      // rule on field value equals
+      return true;
+    }
+
+    return false;
   }
 }
 
