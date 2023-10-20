@@ -420,8 +420,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       formField?.popupMenuKey = GlobalKey<PopupMenuButtonState<dynamic>>();
     }
 
-    _checkRules();
     _resetInitialFormFields();
+    _checkRules();
   }
 
   void _checkRules() {
@@ -499,6 +499,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   // TODO extract class RulesValidator
+  // TODO handle makeRequired
+  // TODO handle rules on fields outside form (title, areaId, maybe iterationId and maybe assignedTo)
+  // TODO show meaningful error (like 'The field Description is required/read-only)
+
   /// Checks whether this field should be read-only according to the rules.
   ///
   /// A rule can have a maximum of 2 conditions, and if they're all true, then
@@ -518,14 +522,14 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
       if (conditions.length == 1) {
         final cond = conditions.single;
-        isReadOnly = _checkSingleReadOnly(cond);
+        isReadOnly |= _checkSingleReadOnly(cond);
         continue;
       }
 
       // we have 2 conditions
       final firstCond = conditions.first;
       final secondCond = conditions.last;
-      isReadOnly = _checkSingleReadOnly(firstCond) && _checkSingleReadOnly(secondCond);
+      isReadOnly |= _checkSingleReadOnly(firstCond) && _checkSingleReadOnly(secondCond);
     }
 
     return isReadOnly;
@@ -538,8 +542,11 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   bool _checkSingleReadOnly(Condition cond) {
-    if (cond.conditionType == ConditionType.whenNotChanged) {
-      // rule on edit
+    if (cond.conditionType == ConditionType.whenNotChanged &&
+        cond.field == 'System.State' &&
+        cond.value == null &&
+        _initialWorkItemStatus?.name == newWorkItemStatus?.name) {
+      // rule on state not changed
       return true;
     }
 
@@ -553,6 +560,22 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
         cond.value == null &&
         isEditing) {
       // rule on change state
+      return true;
+    }
+
+    if (cond.conditionType == ConditionType.whenChanged &&
+        formFields[cond.field] != null &&
+        cond.value == null &&
+        _initialFormFields[cond.field]?.text.formatted != formFields[cond.field]?.text.formatted) {
+      // rule on change field value
+      return true;
+    }
+
+    if (cond.conditionType == ConditionType.whenNotChanged &&
+        formFields[cond.field] != null &&
+        cond.value == null &&
+        _initialFormFields[cond.field]?.text.formatted == formFields[cond.field]?.text.formatted) {
+      // rule on field value not changed
       return true;
     }
 
@@ -576,6 +599,20 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
         formFields[cond.field] != null &&
         formFields[cond.field]!.text.formatted == cond.value?.formatted) {
       // rule on field value equals
+      return true;
+    }
+
+    if (cond.conditionType == ConditionType.whenNot &&
+        cond.field == 'System.State' &&
+        cond.value != newWorkItemStatus?.name) {
+      // rule on state not equals
+      return true;
+    }
+
+    if (cond.conditionType == ConditionType.whenNot &&
+        formFields[cond.field] != null &&
+        formFields[cond.field]!.text.formatted != cond.value?.formatted) {
+      // rule on field value not equals
       return true;
     }
 

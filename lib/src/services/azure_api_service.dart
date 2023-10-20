@@ -934,7 +934,11 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (isInheritedProcess) {
       final type = _workItemTypes[projectName]?.firstWhereOrNull((t) => t.name == workItemName);
       final isInheritedType = type?.customization == 'inherited';
-      if (isInheritedType) refName = '${projectProcess.name}.$workItemName';
+      
+      if (isInheritedType) {
+        // inherited types have a different name format
+        refName = '${projectProcess.name}.${workItemName.replaceAll(' ', '')}';
+      }
     }
 
     // get all fields with more info (previous call doesn't return field data type)

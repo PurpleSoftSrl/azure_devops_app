@@ -78,11 +78,6 @@ enum ActionType {
   }
 }
 
-final actionTypeValues = EnumValues({
-  'makeReadOnly': ActionType.makeReadOnly,
-  'makeRequired': ActionType.makeRequired,
-});
-
 class Condition {
   Condition({
     required this.conditionType,
@@ -91,7 +86,7 @@ class Condition {
   });
 
   factory Condition.fromJson(Map<String, dynamic> json) => Condition(
-        conditionType: conditionTypeValues.map[json['conditionType']]!,
+        conditionType: ConditionType.fromString(json['conditionType'] as String? ?? ''),
         field: json['field'] as String,
         value: json['value'] as String?,
       );
@@ -104,17 +99,22 @@ class Condition {
   String toString() => 'Condition(conditionType: $conditionType, field: $field, value: $value)';
 }
 
-enum ConditionType { when, whenChanged, whenNotChanged, whenWas }
+enum ConditionType {
+  when,
+  whenNot,
+  whenChanged,
+  whenNotChanged,
+  whenWas,
+  unsupported;
 
-final conditionTypeValues = EnumValues({
-  'when': ConditionType.when,
-  'whenChanged': ConditionType.whenChanged,
-  'whenNotChanged': ConditionType.whenNotChanged,
-  'whenWas': ConditionType.whenWas,
-});
-
-class EnumValues<T> {
-  EnumValues(this.map);
-
-  Map<String, T> map;
+  static ConditionType fromString(String str) {
+    return switch (str) {
+      'when' => ConditionType.when,
+      'whenNot' => ConditionType.whenNot,
+      'whenChanged' => ConditionType.whenChanged,
+      'whenNotChanged' => ConditionType.whenNotChanged,
+      'whenWas' => ConditionType.whenWas,
+      _ => ConditionType.unsupported,
+    };
+  }
 }
