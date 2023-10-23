@@ -218,19 +218,32 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   Future<void> confirm() async {
+    if (!titleFieldKey.currentState!.validate()) {
+      _showFormValidationError('Title');
+      return;
+    }
+
     for (final key in formFields.entries) {
       final state = key.value.formFieldKey.currentState;
       if (state == null) continue;
 
-      if (!state.validate()) return;
+      if (!state.validate()) {
+        final field = fieldsToShow.values.expand((f) => f).firstWhereOrNull((f) => f.referenceName == key.key);
+        _showFormValidationError(field?.name ?? key.key);
+        return;
+      }
     }
-
-    if (!titleFieldKey.currentState!.validate()) return;
 
     final htmlFieldsToShow = fieldsToShow.values.expand((f) => f).where((f) => f.type == 'html');
     for (final field in htmlFieldsToShow) {
       final formField = formFields[field.referenceName];
       final text = await formField?.editorController?.getText() ?? '';
+
+      if (field.required && text.isEmpty) {
+        _showFormValidationError(field.name);
+        return;
+      }
+
       formField?.text = text;
     }
 
@@ -267,6 +280,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     } else {
       _resetInitialFormFields();
     }
+  }
+
+  void _showFormValidationError(String fieldName) {
+    OverlayService.snackbar("Field '$fieldName' is required", isError: true);
   }
 
   /// When the user navigates to this page, and after each confirmed change,
@@ -427,8 +444,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   void _checkRules() {
     for (final entry in fieldsToShow.entries) {
       for (final field in entry.value) {
-        // TODO check readOnly/required
-        field.readOnly = _checkIfIsReadOnly(field);
+        field
+          ..readOnly = _checkIfIsReadOnly(field)
+          ..required = _checkIfIsRequired(field);
 
         final refName = field.referenceName;
 
@@ -499,9 +517,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   // TODO extract class RulesValidator
-  // TODO handle makeRequired
   // TODO handle rules on fields outside form (title, areaId, maybe iterationId and maybe assignedTo)
-  // TODO show meaningful error (like 'The field Description is required/read-only)
+  // TODO show meaningful error (parsed from api response) (like 'The field Description is required/read-only)
 
   /// Checks whether this field should be read-only according to the rules.
   ///
@@ -535,10 +552,54 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     return isReadOnly;
   }
 
+  /// Checks whether this field should be required according to the rules.
+  ///
+  /// A rule can have a maximum of 2 conditions, and if they're all true, then
+  /// the actions (maximum 10) will be applied.
+  // TODO make one method that takes [makeRequiredActions] or [makeReadOnlyActions] as input
+  bool _checkIfIsRequired(WorkItemField field) {
+    final rules = allRules[field.referenceName] ?? [];
+    if (rules.isEmpty) return false;
+
+    final makeRequiredActions = rules.where((r) => r.action == ActionType.makeRequired).toList();
+    if (makeRequiredActions.isEmpty) return false;
+
+    var isReadOnly = false;
+
+    for (final rule in makeRequiredActions) {
+      final conditions = rule.conditions;
+      if (conditions.isEmpty) break;
+
+      if (conditions.length == 1) {
+        final cond = conditions.single;
+        isReadOnly |= _checkSingleReadOnly(cond);
+        continue;
+      }
+
+      // we have 2 conditions
+      final firstCond = conditions.first;
+      final secondCond = conditions.last;
+      isReadOnly |= _checkSingleReadOnly(firstCond) && _checkSingleReadOnly(secondCond);
+    }
+
+    return isReadOnly;
+  }
+
   String getFieldName(WorkItemField field) {
     final fieldName = field.name;
     final isReadOnly = field.readOnly;
-    return isReadOnly ? '$fieldName (read-only)' : fieldName;
+
+    if (isReadOnly) {
+      return '$fieldName (read-only)';
+    }
+
+    final isRequired = field.required;
+
+    if (isRequired) {
+      return '$fieldName *';
+    }
+
+    return fieldName;
   }
 
   bool _checkSingleReadOnly(Condition cond) {

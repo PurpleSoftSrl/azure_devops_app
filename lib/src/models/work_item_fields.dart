@@ -31,7 +31,7 @@ class WorkItemField {
   WorkItemField({
     required this.referenceName,
     required this.name,
-    required this.required,
+    this.required = false,
     this.readOnly = false,
     this.defaultValue,
     this.allowedValues = const [],
@@ -49,7 +49,7 @@ class WorkItemField {
 
   final String referenceName;
   final String name;
-  final bool required;
+  bool required;
   bool readOnly;
   final String? defaultValue;
   String? type;
