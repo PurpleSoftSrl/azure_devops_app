@@ -18,16 +18,16 @@ class RulesChecker {
     required this.initialFormFields,
     required this.formFields,
     required this.isEditing,
-    required this.initialStatus,
-    required this.status,
+    required this.initialState,
+    required this.state,
   });
 
   final WorkItemTypeRules allRules;
   final Map<String, DynamicFieldData> initialFormFields;
   final Map<String, DynamicFieldData> formFields;
   final bool isEditing;
-  final WorkItemState? initialStatus;
-  final WorkItemState? status;
+  final WorkItemState? initialState;
+  final WorkItemState? state;
 
   /// Checks if `readOnly` or `required` actions should be applied to [field].
   RulesResult checkRules(WorkItemField field) {
@@ -59,6 +59,7 @@ class RulesChecker {
     return _checkIfMatchesRule(rules);
   }
 
+  /// Checks if any of the [rules] should be applied
   bool _checkIfMatchesRule(List<WorkItemRule> rules) {
     var isReadOnly = false;
 
@@ -82,80 +83,63 @@ class RulesChecker {
   }
 
   bool _checkSingleRule(Condition cond) {
-    if (cond.conditionType == ConditionType.whenNotChanged &&
-        cond.field == 'System.State' &&
-        cond.value == null &&
-        initialStatus?.name == status?.name) {
-      // rule on state not changed
-      return true;
-    }
-
-    if (cond.conditionType == ConditionType.whenWas && cond.field == 'System.State' && cond.value == '' && !isEditing) {
+    if (cond.isCreated && !isEditing) {
       // rule on create
       return true;
     }
 
-    if (cond.conditionType == ConditionType.whenChanged &&
-        cond.field == 'System.State' &&
-        cond.value == null &&
-        isEditing) {
-      // rule on change state
+    if (cond.isStateChanged && isEditing) {
+      // rule on state changed
       return true;
     }
 
-    if (cond.conditionType == ConditionType.whenChanged &&
-        formFields[cond.field] != null &&
-        cond.value == null &&
-        initialFormFields[cond.field]?.text.formatted != formFields[cond.field]?.text.formatted) {
-      // rule on change field value
+    if (cond.isStateNotChanged && initialState?.name == state?.name) {
+      // rule on state not changed
       return true;
     }
 
-    if (cond.conditionType == ConditionType.whenNotChanged &&
-        formFields[cond.field] != null &&
-        cond.value == null &&
-        initialFormFields[cond.field]?.text.formatted == formFields[cond.field]?.text.formatted) {
-      // rule on field value not changed
+    if (cond.isChangedFromState && cond.value == initialState?.name && isEditing) {
+      // rule on state changed from
       return true;
     }
 
-    if (cond.conditionType == ConditionType.whenWas &&
-        cond.field == 'System.State' &&
-        cond.value == initialStatus?.name &&
-        isEditing) {
-      // rule on change from state
+    if (cond.isChangedToState && cond.value == state?.name && isEditing) {
+      // rule on state is
       return true;
     }
 
-    if (cond.conditionType == ConditionType.when &&
-        cond.field == 'System.State' &&
-        cond.value == status?.name &&
-        isEditing) {
-      // rule on change to state
+    if (cond.isStateNotEquals && cond.value != state?.name) {
+      // rule on state is not
       return true;
     }
 
-    if (cond.conditionType == ConditionType.when &&
-        formFields[cond.field] != null &&
-        formFields[cond.field]!.text.formatted == cond.value?.formatted) {
+    if (cond.isFieldValueEquals(formFields)) {
       // rule on field value equals
       return true;
     }
 
-    if (cond.conditionType == ConditionType.whenNot && cond.field == 'System.State' && cond.value != status?.name) {
-      // rule on state not equals
+    if (cond.isFieldValueNotEquals(formFields)) {
+      // rule on field value not equals
       return true;
     }
 
-    if (cond.conditionType == ConditionType.whenNot &&
-        formFields[cond.field] != null &&
-        formFields[cond.field]!.text.formatted != cond.value?.formatted) {
-      // rule on field value not equals
+    if (cond.isFieldValueChanged(formFields) && _fieldValueIsChanged(cond.field)) {
+      // rule on field value changed
+      return true;
+    }
+
+    if (cond.isFieldValueNotChanged(formFields) && _fieldValueIsNotChanged(cond.field)) {
+      // rule on field value not changed
       return true;
     }
 
     return false;
   }
+
+  bool _fieldValueIsChanged(String field) =>
+      initialFormFields[field]?.text.formatted != formFields[field]?.text.formatted;
+
+  bool _fieldValueIsNotChanged(String field) => !_fieldValueIsChanged(field);
 }
 
 class DynamicFieldData {
@@ -172,4 +156,32 @@ class DynamicFieldData {
   GlobalKey<PopupMenuButtonState<dynamic>>? popupMenuKey;
 
   final bool required;
+}
+
+extension on Condition {
+  bool get _isStateField => field == 'System.State';
+
+  bool get isStateNotChanged => conditionType.isWhenNotChanged && _isStateField && value == null;
+
+  bool get isCreated => conditionType.isWhenWas && _isStateField && value == '';
+
+  bool get isStateChanged => conditionType.isWhenChanged && _isStateField && value == null;
+
+  bool get isChangedFromState => conditionType.isWhenWas && _isStateField;
+
+  bool get isChangedToState => conditionType.isWhen && _isStateField;
+
+  bool get isStateNotEquals => conditionType.isWhenNot && _isStateField;
+
+  bool isFieldValueEquals(Map<String, DynamicFieldData> formFields) =>
+      conditionType.isWhen && formFields[field] != null && formFields[field]!.text.formatted == value?.formatted;
+
+  bool isFieldValueNotEquals(Map<String, DynamicFieldData> formFields) =>
+      conditionType.isWhenNot && formFields[field] != null && formFields[field]!.text.formatted != value?.formatted;
+
+  bool isFieldValueChanged(Map<String, DynamicFieldData> formFields) =>
+      conditionType.isWhenChanged && formFields[field] != null && value == null;
+
+  bool isFieldValueNotChanged(Map<String, DynamicFieldData> formFields) =>
+      conditionType.isWhenNotChanged && value == null && formFields[field] != null;
 }

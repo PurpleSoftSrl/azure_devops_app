@@ -538,7 +538,7 @@ class AzureApiServiceMock implements AzureApiService {
     GraphUser? assignedTo,
     String? title,
     String? description,
-    String? status,
+    String? state,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
     required Map<String, String> formFields,

@@ -41,10 +41,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   late Project newWorkItemProject = getProjects(storageService).firstWhereOrNull((p) => p.id != '-1') ?? projectAll;
 
   // Used only in edit mode
-  WorkItemState? newWorkItemStatus;
+  WorkItemState? newWorkItemState;
 
   /// Used to compare current state to initial one for rules validation
-  WorkItemState? _initialWorkItemStatus;
+  WorkItemState? _initialWorkItemState;
 
   AreaOrIteration? newWorkItemArea;
   AreaOrIteration? newWorkItemIteration;
@@ -122,7 +122,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
           states: [],
         );
 
-    _initialWorkItemStatus = newWorkItemStatus =
+    _initialWorkItemState = newWorkItemState =
         apiService.workItemStates[project]?[workItemType]?.firstWhereOrNull((s) => s.name == fields.systemState) ??
             WorkItemState(
               id: '',
@@ -143,9 +143,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       final project = editingWorkItem!.fields.systemTeamProject;
       final workItemType = newWorkItemType.name;
       allWorkItemStates = apiService.workItemStates[project]![workItemType] ?? [];
-      if (!allWorkItemStates.contains(newWorkItemStatus)) {
+      if (!allWorkItemStates.contains(newWorkItemState)) {
         // change status if new type doesn't support current status
-        newWorkItemStatus = allWorkItemStates.firstOrNull ?? newWorkItemStatus;
+        newWorkItemState = allWorkItemStates.firstOrNull ?? newWorkItemState;
       }
     }
 
@@ -195,9 +195,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   void setState(WorkItemState state) {
-    if (state == newWorkItemStatus) return;
+    if (state == newWorkItemState) return;
 
-    newWorkItemStatus = state;
+    newWorkItemState = state;
     _setHasChanged();
 
     _checkRules();
@@ -278,7 +278,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     if (!isEditing) {
       AppRouter.pop();
     } else {
-      _resetInitialFormFields();
+      _resetInitialStateAndFormFields();
     }
   }
 
@@ -287,8 +287,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   /// When the user navigates to this page, and after each confirmed change,
-  /// we have to reset [_initialFormFields] to restart rules validation from current state.
-  void _resetInitialFormFields() {
+  /// we have to reset [_initialWorkItemState] and [_initialFormFields] to restart rules validation from current state.
+  void _resetInitialStateAndFormFields() {
+    _initialWorkItemState = newWorkItemState;
+
     _initialFormFields = {
       for (final field in formFields.entries)
         field.key: DynamicFieldData(required: field.value.required)
@@ -329,7 +331,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       title: newWorkItemTitle,
       assignedTo: assignedTo,
       description: newWorkItemDescription,
-      status: newWorkItemStatus?.name,
+      state: newWorkItemState?.name,
       area: newWorkItemArea,
       iteration: newWorkItemIteration,
       formFields: {for (final field in formFields.entries) field.key: field.value.text},
@@ -437,7 +439,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       formField?.popupMenuKey = GlobalKey<PopupMenuButtonState<dynamic>>();
     }
 
-    _resetInitialFormFields();
+    _resetInitialStateAndFormFields();
     _checkRules();
   }
 
@@ -447,8 +449,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       initialFormFields: _initialFormFields,
       formFields: formFields,
       isEditing: isEditing,
-      initialStatus: _initialWorkItemStatus,
-      status: newWorkItemStatus,
+      initialState: _initialWorkItemState,
+      state: newWorkItemState,
     );
 
     for (final entry in fieldsToShow.entries) {

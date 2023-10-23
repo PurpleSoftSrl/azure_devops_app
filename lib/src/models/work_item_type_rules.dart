@@ -117,4 +117,10 @@ enum ConditionType {
       _ => ConditionType.unsupported,
     };
   }
+
+  bool get isWhen => this == ConditionType.when;
+  bool get isWhenNot => this == ConditionType.whenNot;
+  bool get isWhenChanged => this == ConditionType.whenChanged;
+  bool get isWhenNotChanged => this == ConditionType.whenNotChanged;
+  bool get isWhenWas => this == ConditionType.whenWas;
 }

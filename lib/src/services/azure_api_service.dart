@@ -146,7 +146,7 @@ abstract class AzureApiService {
     GraphUser? assignedTo,
     String? title,
     String? description,
-    String? status,
+    String? state,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
     required Map<String, String> formFields,
@@ -1131,7 +1131,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     GraphUser? assignedTo,
     String? title,
     String? description,
-    String? status,
+    String? state,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
     required Map<String, String> formFields,
@@ -1157,10 +1157,10 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
             'value': type.name,
             'path': '/fields/System.WorkItemType',
           },
-        if (status != null)
+        if (state != null)
           {
             'op': 'replace',
-            'value': status,
+            'value': state,
             'path': '/fields/System.State',
           },
         if (area != null)
