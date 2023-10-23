@@ -45,7 +45,9 @@ import 'package:http/http.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:xml/xml.dart';
 
-typedef WorkItemTypeRules = Map<String, List<({ActionType action, List<Condition> conditions})>>;
+typedef WorkItemRule = ({ActionType action, List<Condition> conditions});
+
+typedef WorkItemTypeRules = Map<String, List<WorkItemRule>>;
 
 typedef LabeledWorkItemFields = Map<String, Set<WorkItemField>>;
 
@@ -934,7 +936,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (isInheritedProcess) {
       final type = _workItemTypes[projectName]?.firstWhereOrNull((t) => t.name == workItemName);
       final isInheritedType = type?.customization == 'inherited';
-      
+
       if (isInheritedType) {
         // inherited types have a different name format
         refName = '${projectProcess.name}.${workItemName.replaceAll(' ', '')}';
@@ -979,7 +981,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final rules = WorkItemTypeRulesResponse.fromResponse(rulesRes).rules;
 
-    final mappedRules = <String, List<({List<Condition> conditions, ActionType action})>>{};
+    final mappedRules = <String, List<WorkItemRule>>{};
 
     for (final r in rules.where((r) => r.conditions.isNotEmpty)) {
       final conditions = r.conditions;

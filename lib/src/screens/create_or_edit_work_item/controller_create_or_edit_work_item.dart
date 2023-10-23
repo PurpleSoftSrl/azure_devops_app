@@ -53,10 +53,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   WorkItem? editingWorkItem;
 
   /// Data used to read/write each field. The keys are fields' reference names.
-  final formFields = <String, _DynamicFieldData>{};
+  final formFields = <String, DynamicFieldData>{};
 
   /// Used to compare current fields values to initial ones for rules validation
-  Map<String, _DynamicFieldData> _initialFormFields = {};
+  Map<String, DynamicFieldData> _initialFormFields = {};
 
   void dispose() {
     instance = null;
@@ -291,7 +291,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   void _resetInitialFormFields() {
     _initialFormFields = {
       for (final field in formFields.entries)
-        field.key: _DynamicFieldData(required: field.value.required)
+        field.key: DynamicFieldData(required: field.value.required)
           ..controller = field.value.controller
           ..text = field.value.controller.text.formatted
           ..editorController = field.value.editorController
@@ -405,7 +405,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     for (final entry in fieldsToShow.entries) {
       for (final field in entry.value) {
         final refName = field.referenceName;
-        formFields[refName] = _DynamicFieldData(required: field.required);
+        formFields[refName] = DynamicFieldData(required: field.required);
 
         if (!field.readOnly && field.defaultValue != null) {
           formFields[refName]!.controller.text = field.defaultValue!;
@@ -442,20 +442,31 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   void _checkRules() {
+    final checker = RulesChecker(
+      allRules: allRules,
+      initialFormFields: _initialFormFields,
+      formFields: formFields,
+      isEditing: isEditing,
+      initialStatus: _initialWorkItemStatus,
+      status: newWorkItemStatus,
+    );
+
     for (final entry in fieldsToShow.entries) {
       for (final field in entry.value) {
+        final rules = checker.checkRules(field);
         field
-          ..readOnly = _checkIfIsReadOnly(field)
-          ..required = _checkIfIsRequired(field);
+          ..readOnly = rules.readOnly
+          ..required = rules.required;
 
         final refName = field.referenceName;
 
         if (formFields[refName] != null && field.readOnly) {
-          // reset field to previous value
+          // reset field to previous value if it's editing mode, otherwise set it to empty string
           final initialValue = _initialFormFields[refName];
           if (initialValue != null) {
-            formFields[refName]!.text = initialValue.text;
-            formFields[refName]!.controller.text = initialValue.text.formatted;
+            final text = isEditing ? initialValue.text : '';
+            formFields[refName]!.text = text;
+            formFields[refName]!.controller.text = text.formatted;
           }
         }
       }
@@ -516,74 +527,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     formFields[fieldRefName]?.popupMenuKey?.currentState?.showButtonMenu();
   }
 
-  // TODO extract class RulesValidator
   // TODO handle rules on fields outside form (title, areaId, maybe iterationId and maybe assignedTo)
   // TODO show meaningful error (parsed from api response) (like 'The field Description is required/read-only)
-
-  /// Checks whether this field should be read-only according to the rules.
-  ///
-  /// A rule can have a maximum of 2 conditions, and if they're all true, then
-  /// the actions (maximum 10) will be applied.
-  bool _checkIfIsReadOnly(WorkItemField field) {
-    final rules = allRules[field.referenceName] ?? [];
-    if (rules.isEmpty) return false;
-
-    final makeReadOnlyActions = rules.where((r) => r.action == ActionType.makeReadOnly).toList();
-    if (makeReadOnlyActions.isEmpty) return false;
-
-    var isReadOnly = false;
-
-    for (final rule in makeReadOnlyActions) {
-      final conditions = rule.conditions;
-      if (conditions.isEmpty) break;
-
-      if (conditions.length == 1) {
-        final cond = conditions.single;
-        isReadOnly |= _checkSingleReadOnly(cond);
-        continue;
-      }
-
-      // we have 2 conditions
-      final firstCond = conditions.first;
-      final secondCond = conditions.last;
-      isReadOnly |= _checkSingleReadOnly(firstCond) && _checkSingleReadOnly(secondCond);
-    }
-
-    return isReadOnly;
-  }
-
-  /// Checks whether this field should be required according to the rules.
-  ///
-  /// A rule can have a maximum of 2 conditions, and if they're all true, then
-  /// the actions (maximum 10) will be applied.
-  // TODO make one method that takes [makeRequiredActions] or [makeReadOnlyActions] as input
-  bool _checkIfIsRequired(WorkItemField field) {
-    final rules = allRules[field.referenceName] ?? [];
-    if (rules.isEmpty) return false;
-
-    final makeRequiredActions = rules.where((r) => r.action == ActionType.makeRequired).toList();
-    if (makeRequiredActions.isEmpty) return false;
-
-    var isReadOnly = false;
-
-    for (final rule in makeRequiredActions) {
-      final conditions = rule.conditions;
-      if (conditions.isEmpty) break;
-
-      if (conditions.length == 1) {
-        final cond = conditions.single;
-        isReadOnly |= _checkSingleReadOnly(cond);
-        continue;
-      }
-
-      // we have 2 conditions
-      final firstCond = conditions.first;
-      final secondCond = conditions.last;
-      isReadOnly |= _checkSingleReadOnly(firstCond) && _checkSingleReadOnly(secondCond);
-    }
-
-    return isReadOnly;
-  }
 
   String getFieldName(WorkItemField field) {
     final fieldName = field.name;
@@ -601,100 +546,6 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     return fieldName;
   }
-
-  bool _checkSingleReadOnly(Condition cond) {
-    if (cond.conditionType == ConditionType.whenNotChanged &&
-        cond.field == 'System.State' &&
-        cond.value == null &&
-        _initialWorkItemStatus?.name == newWorkItemStatus?.name) {
-      // rule on state not changed
-      return true;
-    }
-
-    if (cond.conditionType == ConditionType.whenWas && cond.field == 'System.State' && cond.value == '' && !isEditing) {
-      // rule on create
-      return true;
-    }
-
-    if (cond.conditionType == ConditionType.whenChanged &&
-        cond.field == 'System.State' &&
-        cond.value == null &&
-        isEditing) {
-      // rule on change state
-      return true;
-    }
-
-    if (cond.conditionType == ConditionType.whenChanged &&
-        formFields[cond.field] != null &&
-        cond.value == null &&
-        _initialFormFields[cond.field]?.text.formatted != formFields[cond.field]?.text.formatted) {
-      // rule on change field value
-      return true;
-    }
-
-    if (cond.conditionType == ConditionType.whenNotChanged &&
-        formFields[cond.field] != null &&
-        cond.value == null &&
-        _initialFormFields[cond.field]?.text.formatted == formFields[cond.field]?.text.formatted) {
-      // rule on field value not changed
-      return true;
-    }
-
-    if (cond.conditionType == ConditionType.whenWas &&
-        cond.field == 'System.State' &&
-        cond.value == _initialWorkItemStatus?.name &&
-        isEditing) {
-      // rule on change from state
-      return true;
-    }
-
-    if (cond.conditionType == ConditionType.when &&
-        cond.field == 'System.State' &&
-        cond.value == newWorkItemStatus?.name &&
-        isEditing) {
-      // rule on change to state
-      return true;
-    }
-
-    if (cond.conditionType == ConditionType.when &&
-        formFields[cond.field] != null &&
-        formFields[cond.field]!.text.formatted == cond.value?.formatted) {
-      // rule on field value equals
-      return true;
-    }
-
-    if (cond.conditionType == ConditionType.whenNot &&
-        cond.field == 'System.State' &&
-        cond.value != newWorkItemStatus?.name) {
-      // rule on state not equals
-      return true;
-    }
-
-    if (cond.conditionType == ConditionType.whenNot &&
-        formFields[cond.field] != null &&
-        formFields[cond.field]!.text.formatted != cond.value?.formatted) {
-      // rule on field value not equals
-      return true;
-    }
-
-    return false;
-  }
-}
-
-class _DynamicFieldData {
-  _DynamicFieldData({required this.required});
-
-  String text = '';
-  GlobalKey<FormFieldState<dynamic>> formFieldKey = GlobalKey();
-  TextEditingController controller = TextEditingController();
-
-  // Used to ensure editor is visible when keyboard is opened
-  GlobalKey<State>? editorGlobalKey;
-  HtmlEditorController? editorController;
-  String? editorInitialText;
-  GlobalKey<PopupMenuButtonState<dynamic>>? popupMenuKey;
-
-  final bool required;
 }
 
 extension on WorkItemField {
