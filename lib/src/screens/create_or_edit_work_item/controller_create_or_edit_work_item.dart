@@ -264,7 +264,22 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       final isInherited = ![null, 'system'].contains(newWorkItemType.customization);
       var description = 'Work item not ${isEditing ? 'edited' : 'created'}.';
       if (isInherited) {
-        description += '\nInherited processes are not fully supported yet.';
+        final responseBody = res.errorResponse?.body ?? '';
+
+        if (responseBody.isEmpty) {
+          description += '\nInherited processes are not fully supported yet.';
+        } else {
+          final apiErrorMessage = jsonDecode(responseBody) as Map<String, dynamic>;
+          final msg = apiErrorMessage['customProperties']['ErrorMessage'] as String? ?? '';
+          final firstMsg = msg.substring(msg.indexOf(':') + 1).split('.').first;
+
+          description += '\n$firstMsg';
+          if (msg.contains('ReadOnly')) {
+            description += ', the field is read-only.';
+          } else if (msg.contains('Required')) {
+            description += ', the field is required.';
+          }
+        }
       }
       return OverlayService.error(
         'Error',
@@ -530,7 +545,6 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   // TODO handle rules on fields outside form (title, areaId, maybe iterationId and maybe assignedTo)
-  // TODO show meaningful error (parsed from api response) (like 'The field Description is required/read-only)
 
   String getFieldName(WorkItemField field) {
     final fieldName = field.name;
