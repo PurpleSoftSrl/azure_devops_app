@@ -29,6 +29,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   LabeledWorkItemFields fieldsToShow = {};
   WorkItemTypeRules allRules = {};
+  Map<String, List<String>> allTransitions = {};
 
   late List<WorkItemType> projectWorkItemTypes = allWorkItemTypes;
 
@@ -102,7 +103,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     final workItemType = fields.systemWorkItemType;
 
     projectWorkItemTypes = apiService.workItemTypes[project] ?? <WorkItemType>[];
-    allWorkItemStates = apiService.workItemStates[project]?[workItemType] ?? [];
+    allWorkItemStates = _getTransitionableStates(project: project, workItemType: workItemType);
 
     newWorkItemTitle = fields.systemTitle;
     newWorkItemDescription = fields.systemDescription ?? '';
@@ -142,7 +143,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     if (isEditing) {
       final project = editingWorkItem!.fields.systemTeamProject;
       final workItemType = newWorkItemType.name;
-      allWorkItemStates = apiService.workItemStates[project]![workItemType] ?? [];
+      allWorkItemStates = _getTransitionableStates(project: project, workItemType: workItemType);
       if (!allWorkItemStates.contains(newWorkItemState)) {
         // change status if new type doesn't support current status
         newWorkItemState = allWorkItemStates.firstOrNull ?? newWorkItemState;
@@ -199,6 +200,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     newWorkItemState = state;
     _setHasChanged();
+
+    allWorkItemStates = _getTransitionableStates(project: args.project!, workItemType: newWorkItemType.name);
 
     _checkRules();
     _refreshPage();
@@ -418,6 +421,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     fieldsToShow = res.data?.fields ?? <String, Set<WorkItemField>>{};
     allRules = res.data?.rules ?? {};
+    allTransitions = res.data?.transitions ?? {};
+
+    allWorkItemStates = _getTransitionableStates(project: projectName, workItemType: newWorkItemType.name);
 
     for (final entry in fieldsToShow.entries) {
       for (final field in entry.value) {
@@ -561,6 +567,18 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     }
 
     return fieldName;
+  }
+
+  List<WorkItemState> _getTransitionableStates({required String project, required String workItemType}) {
+    final allStates = apiService.workItemStates[project]?[workItemType] ?? [];
+
+    if (newWorkItemState == null) return allStates;
+
+    final currentTransitionableStates = allTransitions[newWorkItemState!.name] ?? [];
+
+    if (currentTransitionableStates.isEmpty) return allStates;
+
+    return allStates.where((state) => currentTransitionableStates.contains(state.name)).toList();
   }
 }
 

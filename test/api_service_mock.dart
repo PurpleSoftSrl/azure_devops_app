@@ -293,7 +293,7 @@ class AzureApiServiceMock implements AzureApiService {
     required String projectName,
     required String workItemName,
   }) async {
-    return ApiResponse.ok(WorkItemFieldsWithRules(fields: {}, rules: {}));
+    return ApiResponse.ok(WorkItemFieldsWithRules(fields: {}, rules: {}, transitions: {}));
   }
 
   @override

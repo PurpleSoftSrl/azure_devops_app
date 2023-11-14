@@ -21,10 +21,11 @@ class WorkItemTypeFieldsResponse {
 }
 
 class WorkItemFieldsWithRules {
-  WorkItemFieldsWithRules({required this.fields, required this.rules});
+  WorkItemFieldsWithRules({required this.fields, required this.rules, required this.transitions});
 
   final LabeledWorkItemFields fields;
   final WorkItemTypeRules rules;
+  final Map<String, List<String>> transitions;
 }
 
 class WorkItemField {

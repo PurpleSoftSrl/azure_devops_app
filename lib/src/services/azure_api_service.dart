@@ -34,6 +34,7 @@ import 'package:azure_devops/src/models/user_entitlements.dart';
 import 'package:azure_devops/src/models/work_item_comments.dart';
 import 'package:azure_devops/src/models/work_item_fields.dart';
 import 'package:azure_devops/src/models/work_item_type_rules.dart';
+import 'package:azure_devops/src/models/work_item_type_with_transitions.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/msal_service.dart';
@@ -906,15 +907,13 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     // get xmlForm with all visible fields
     final typeRes = await _get('$wtBasePath?\$expand=allowedValues&$_apiVersion-preview');
     if (typeRes.isError) return ApiResponse.error(null);
-    // TODO get state transitions from typeRes, to know which states we can transition to from current state
-    final decodedTypeRes = jsonDecode(typeRes.body);
-    final xmlForm = decodedTypeRes['xmlForm'] as String?;
-    if (xmlForm == null) return ApiResponse.error(null);
 
-    var refName = decodedTypeRes['referenceName'] as String?;
-    if (refName == null) return ApiResponse.error(null);
+    final typeWithTransitions = WorkItemTypeWithTransitions.fromResponse(typeRes);
+    var refName = typeWithTransitions.referenceName;
 
-    final visibleFields = _parseXmlForm(xmlForm);
+    if (typeWithTransitions.xmlForm.isEmpty || refName.isEmpty) return ApiResponse.error(null);
+
+    final visibleFields = _parseXmlForm(typeWithTransitions.xmlForm);
 
     // get all fields with more info (previous call doesn't return allowedValues)
     final fieldsRes = await _get('$wtBasePath/fields?\$expand=allowedValues&$_apiVersion-preview');
@@ -962,7 +961,11 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final rules = await _getWorkItemTypeRules(projectProcess, refName, fieldNames);
 
-    final fieldsWithRules = WorkItemFieldsWithRules(fields: fields, rules: rules);
+    final fieldsWithRules = WorkItemFieldsWithRules(
+      fields: fields,
+      rules: rules,
+      transitions: typeWithTransitions.transitions,
+    );
 
     _workItemFields.putIfAbsent(projectName, () => {workItemName: fieldsWithRules});
     _workItemFields[projectName]!.putIfAbsent(workItemName, () => fieldsWithRules);
