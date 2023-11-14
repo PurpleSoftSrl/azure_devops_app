@@ -35,7 +35,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Map<String, List<WorkItemType>> get workItemTypes => {};
-  
+
   @override
   Map<String, List<AreaOrIteration>> get workItemAreas => {};
   
@@ -44,9 +44,6 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   bool get isImageUnauthorized => false;
-
-  @override
-  bool get isLoggedInWithMicrosoft => false;
 
   @override
   Future<ApiResponse<Pipeline>> cancelPipeline({required int buildId, required String projectId}) {

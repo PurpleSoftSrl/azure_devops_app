@@ -13,13 +13,8 @@ class _SettingsController with ShareMixin, AppLogger {
   final StorageService storageService;
 
   late String gitUsername = apiService.user!.emailAddress!;
-  late String pat = apiService.accessToken;
 
   String appVersion = '';
-
-  late final patTextFieldController = TextEditingController(text: pat);
-
-  final isEditing = ValueNotifier(false);
 
   final organizations = ValueNotifier<ApiResponse<List<Organization>>?>(null);
 
@@ -74,29 +69,6 @@ class _SettingsController with ShareMixin, AppLogger {
     OverlayService.snackbar('Cache cleared!');
 
     AppRouter.goToChooseProjects(removeRoutes: false);
-  }
-
-  Future<void> setNewToken(String token) async {
-    if (token.isEmpty || token.trim() == pat.trim()) return;
-
-    final res = await apiService.login(token);
-
-    if (res == LoginStatus.failed || res == LoginStatus.unauthorized) {
-      patTextFieldController.text = pat;
-      return OverlayService.error(
-        'Login failed',
-        description: 'Check that the Personal Access Token is valid and retry',
-      );
-    }
-
-    storageService.clearNoToken();
-    unawaited(AppRouter.goToSplash());
-  }
-
-  void toggleIsEditingToken() {
-    isEditing.value = !isEditing.value;
-
-    if (!isEditing.value) setNewToken(patTextFieldController.text);
   }
 
   void openPurplesoftWebsite(FollowLink? link) {

@@ -68,8 +68,6 @@ abstract class AzureApiService {
 
   bool get isImageUnauthorized;
 
-  bool get isLoggedInWithMicrosoft;
-
   String getUserAvatarUrl(String userDescriptor);
 
   Future<LoginStatus> login(String accessToken);
@@ -303,8 +301,6 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   bool get isImageUnauthorized => _isImageUnauthorized;
   bool _isImageUnauthorized = false;
 
-  @override
-  bool get isLoggedInWithMicrosoft => _isJwt;
   bool _isJwt = false;
 
   @override
