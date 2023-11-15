@@ -32,11 +32,11 @@ class PipelinesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final storageService = StorageServiceInherited.of(context).storageService;
-    final project = AppRouter.getPipelinesArgs(context);
+    final args = AppRouter.getPipelinesArgs(context);
     final ctrl = _PipelinesController(
       apiService: apiService,
       storageService: storageService,
-      project: project,
+      args: args,
     );
     return LayoutBuilder(
       builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint

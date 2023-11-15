@@ -21,14 +21,19 @@ class _PipelineDetailScreen extends StatelessWidget {
             tooltip: 'Pipeline actions',
             items: () => [
               PopupItem(
-                onTap: ctrl.shareBuild,
-                text: 'Share',
-                icon: DevOpsIcons.share,
+                onTap: ctrl.goToPreviousRuns,
+                text: 'Previous runs',
+                icon: DevOpsIcons.pipeline,
               ),
               PopupItem(
                 onTap: ctrl.getActionFromStatus,
                 text: ctrl.getActionTextFromStatus(),
                 icon: ctrl.getActionIconFromStatus(),
+              ),
+              PopupItem(
+                onTap: ctrl.shareBuild,
+                text: 'Share',
+                icon: DevOpsIcons.share,
               ),
             ],
           ),

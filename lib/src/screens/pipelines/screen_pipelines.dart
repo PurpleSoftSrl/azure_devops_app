@@ -8,13 +8,14 @@ class _PipelinesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final definition = ctrl.args?.definition;
     return VisibilityDetector(
       key: ctrl.visibilityKey,
       onVisibilityChanged: ctrl.visibilityChanged,
       child: AppPage<List<Pipeline>?>(
         init: ctrl.init,
         dispose: ctrl.dispose,
-        title: 'Pipelines',
+        title: 'Pipelines ${definition != null ? '(#$definition)' : ''}',
         notifier: ctrl.pipelines,
         showScrollbar: true,
         onResetFilters: ctrl.resetFilters,
@@ -22,15 +23,16 @@ class _PipelinesScreen extends StatelessWidget {
         header: () => FiltersRow(
           resetFilters: ctrl.resetFilters,
           filters: [
-            FilterMenu<Project>(
-              title: 'Project',
-              values: ctrl.getProjects(ctrl.storageService),
-              currentFilter: ctrl.projectFilter,
-              onSelected: ctrl.filterByProject,
-              formatLabel: (p) => p.name!,
-              isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
-              widgetBuilder: (p) => ProjectFilterWidget(project: p),
-            ),
+            if (ctrl.args?.definition == null)
+              FilterMenu<Project>(
+                title: 'Project',
+                values: ctrl.getProjects(ctrl.storageService),
+                currentFilter: ctrl.projectFilter,
+                onSelected: ctrl.filterByProject,
+                formatLabel: (p) => p.name!,
+                isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
+                widgetBuilder: (p) => ProjectFilterWidget(project: p),
+              ),
             FilterMenu<PipelineResult>(
               title: 'Result',
               values: PipelineResult.values.where((v) => v != PipelineResult.none).toList(),

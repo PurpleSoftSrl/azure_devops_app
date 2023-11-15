@@ -4,23 +4,23 @@ class _PipelinesController with FilterMixin {
   factory _PipelinesController({
     required AzureApiService apiService,
     required StorageService storageService,
-    Project? project,
+    PipelinesArgs? args,
   }) {
-    // handle page already in memory with a different project filter
-    if (_instances[project.hashCode] != null) {
-      return _instances[project.hashCode]!;
+    // handle page already in memory with a different filter
+    if (_instances[args.hashCode] != null) {
+      return _instances[args.hashCode]!;
     }
 
-    if (instance != null && project?.id != instance!.project?.id) {
-      instance = _PipelinesController._(apiService, storageService, project);
+    if (instance != null && args != instance!.args) {
+      instance = _PipelinesController._(apiService, storageService, args);
     }
 
-    instance ??= _PipelinesController._(apiService, storageService, project);
-    return _instances.putIfAbsent(project.hashCode, () => instance!);
+    instance ??= _PipelinesController._(apiService, storageService, args);
+    return _instances.putIfAbsent(args.hashCode, () => instance!);
   }
 
-  _PipelinesController._(this.apiService, this.storageService, this.project) {
-    projectFilter = project ?? projectAll;
+  _PipelinesController._(this.apiService, this.storageService, this.args) {
+    projectFilter = args?.project ?? projectAll;
   }
 
   static _PipelinesController? instance;
@@ -28,7 +28,7 @@ class _PipelinesController with FilterMixin {
 
   final AzureApiService apiService;
   final StorageService storageService;
-  final Project? project;
+  final PipelinesArgs? args;
 
   final pipelines = ValueNotifier<ApiResponse<List<Pipeline>?>?>(null);
 
@@ -48,7 +48,7 @@ class _PipelinesController with FilterMixin {
     _stopTimer();
 
     instance = null;
-    _instances.remove(project.hashCode);
+    _instances.remove(args.hashCode);
   }
 
   void _stopTimer() {
@@ -80,6 +80,7 @@ class _PipelinesController with FilterMixin {
 
     final res = await apiService.getRecentPipelines(
       project: projectFilter.name == projectAll.name ? null : projectFilter,
+      definition: args?.definition,
       result: resultFilter,
       status: statusFilter,
       triggeredBy: userFilter.displayName == userAll.displayName ? null : userFilter.mailAddress,
@@ -140,10 +141,11 @@ class _PipelinesController with FilterMixin {
 
   void resetFilters() {
     pipelines.value = null;
-    projectFilter = projectAll;
     resultFilter = PipelineResult.all;
     statusFilter = PipelineStatus.all;
     userFilter = userAll;
+
+    if (args?.definition == null) projectFilter = projectAll;
 
     init();
   }

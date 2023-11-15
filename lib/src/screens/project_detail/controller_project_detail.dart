@@ -91,7 +91,7 @@ class _ProjectDetailController {
   }
 
   void goToPipelines() {
-    AppRouter.goToPipelines(project: project.value?.data?.project);
+    AppRouter.goToPipelines(args: (project: project.value?.data?.project, definition: null));
   }
 
   void goToWorkItems() {

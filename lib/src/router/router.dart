@@ -31,6 +31,7 @@ typedef PullRequestDetailArgs = ({String project, String repository, int id});
 typedef CommitDetailArgs = ({String project, String repository, String commitId});
 typedef FileDiffArgs = ({Commit commit, String filePath, bool isAdded, bool isDeleted});
 typedef PipelineLogsArgs = ({String project, int pipelineId, String taskId, String parentTaskId, int logId});
+typedef PipelinesArgs = ({Project? project, int? definition});
 
 class AppRouter {
   AppRouter._();
@@ -126,9 +127,9 @@ class AppRouter {
 
   static bool getChooseProjectArgs(BuildContext context) => _getArgs(context);
 
-  static Future<void> goToPipelines({Project? project}) => _goTo(_pipelines, args: project);
+  static Future<void> goToPipelines({PipelinesArgs? args}) => _goTo(_pipelines, args: args);
 
-  static Project? getPipelinesArgs(BuildContext context) => _getArgs(context);
+  static PipelinesArgs? getPipelinesArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToPipelineDetail({required int id, required String project}) =>
       _goTo(_pipelineDetail, args: (id: id, project: project));
