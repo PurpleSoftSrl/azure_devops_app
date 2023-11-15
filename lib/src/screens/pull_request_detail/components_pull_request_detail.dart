@@ -297,7 +297,19 @@ class _PullRequestOverview extends StatelessWidget {
                                   ],
                                 ),
                               IterationUpdate() => _RefUpdateWidget(ctrl: ctrl, iteration: u),
-                              CommentUpdate() => _CommentWidget(ctrl: ctrl, comment: u),
+                              ThreadUpdate() => Column(
+                                  children: u.comments
+                                      .map(
+                                        (c) => _CommentWidget(
+                                          ctrl: ctrl,
+                                          comment: c,
+                                          threadId: u.id,
+                                          borderRadiusBottom: u.comments.length < 2 || c == u.comments.last,
+                                          borderRadiusTop: u.comments.length < 2 || c == u.comments.first,
+                                        ),
+                                      )
+                                      .toList(),
+                                ),
                               SystemUpdate() || _ => Row(
                                   children: [
                                     _UserAvatar(update: u),
@@ -306,8 +318,10 @@ class _PullRequestOverview extends StatelessWidget {
                                 )
                             },
                           ),
-                          const SizedBox(width: 10),
-                          Text(u.date.minutesAgo),
+                          if (u is! ThreadUpdate) ...[
+                            const SizedBox(width: 10),
+                            Text(u.date.minutesAgo),
+                          ],
                         ],
                       ),
                       const Divider(height: 30),
@@ -429,21 +443,37 @@ class _UserAvatar extends StatelessWidget {
 }
 
 class _CommentWidget extends StatelessWidget {
-  const _CommentWidget({required this.ctrl, required this.comment});
+  const _CommentWidget({
+    required this.ctrl,
+    required this.comment,
+    required this.threadId,
+    required this.borderRadiusBottom,
+    required this.borderRadiusTop,
+  });
 
   final _PullRequestDetailController ctrl;
-  final CommentUpdate comment;
+  final int threadId;
+  final PrComment comment;
+  final bool borderRadiusTop;
+  final bool borderRadiusBottom;
 
   @override
   Widget build(BuildContext context) {
-    final isEdited = comment.date.isBefore(comment.updatedDate);
+    final isEdited = comment.publishedDate.isBefore(comment.lastUpdatedDate);
     final isReply = comment.parentCommentId > 0;
+
     return Container(
       width: double.maxFinite,
       padding: const EdgeInsets.all(8),
+      margin: EdgeInsets.only(top: !borderRadiusTop ? 1 : 0),
       decoration: BoxDecoration(
         color: context.colorScheme.surface,
-        borderRadius: BorderRadius.circular(AppTheme.radius),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(borderRadiusBottom ? AppTheme.radius : 0),
+          bottomRight: Radius.circular(borderRadiusBottom ? AppTheme.radius : 0),
+          topLeft: Radius.circular(borderRadiusTop ? AppTheme.radius : 0),
+          topRight: Radius.circular(borderRadiusTop ? AppTheme.radius : 0),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -458,7 +488,8 @@ class _CommentWidget extends StatelessWidget {
                     children: [
                       TextSpan(text: comment.author.displayName),
                       TextSpan(
-                        text: '  ${isReply ? 'replied' : 'commented'} ${isEdited ? '(edited)' : ''}',
+                        text:
+                            '  ${(isEdited ? comment.publishedDate : comment.lastUpdatedDate).minutesAgo} ${isReply ? 'replied' : ''} ${isEdited ? '(edited)' : ''}',
                         style: context.textTheme.labelSmall,
                       ),
                     ],
@@ -470,17 +501,17 @@ class _CommentWidget extends StatelessWidget {
                 offset: const Offset(0, 20),
                 items: () => [
                   PopupItem(
-                    onTap: () => ctrl.editComment(comment),
+                    onTap: () => ctrl.editComment(comment, threadId: threadId),
                     text: 'Edit',
                     icon: DevOpsIcons.edit,
                   ),
                   PopupItem(
-                    onTap: () => ctrl.addComment(threadId: comment.threadId, parentCommentId: comment.id),
+                    onTap: () => ctrl.addComment(threadId: threadId, parentCommentId: comment.id),
                     text: 'Reply',
                     icon: DevOpsIcons.send,
                   ),
                   PopupItem(
-                    onTap: () => ctrl.deleteComment(comment),
+                    onTap: () => ctrl.deleteComment(comment, threadId: threadId),
                     text: 'Delete',
                     icon: DevOpsIcons.failed,
                   ),

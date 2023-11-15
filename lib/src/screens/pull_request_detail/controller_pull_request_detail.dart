@@ -179,9 +179,13 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
     final updates = <PullRequestUpdate>[];
 
     for (final update in data?.updates ?? <PullRequestUpdate>[]) {
-      if (update is CommentUpdate) {
-        final replacedComment = _replaceWorkItemLinks(update.content);
-        updates.add(update.copyWith(content: replacedComment));
+      if (update is ThreadUpdate) {
+        final replacedComments = <PrComment>[];
+        for (final comment in update.comments) {
+          final replacedComment = _replaceWorkItemLinks(comment.content);
+          replacedComments.add(comment.copyWith(content: replacedComment));
+        }
+        updates.add(update.copyWith(comments: replacedComments));
       } else {
         updates.add(update);
       }
@@ -570,7 +574,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
     await init();
   }
 
-  Future<void> editComment(CommentUpdate comment) async {
+  Future<void> editComment(PrComment comment, {required int threadId}) async {
     final editorController = HtmlEditorController();
     final editorGlobalKey = GlobalKey<State>();
 
@@ -589,6 +593,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
       projectName: args.project,
       repositoryId: args.repository,
       pullRequestId: args.id,
+      threadId: threadId,
       comment: comment,
       text: text,
     );
@@ -600,7 +605,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
     await init();
   }
 
-  Future<void> deleteComment(CommentUpdate comment) async {
+  Future<void> deleteComment(PrComment comment, {required int threadId}) async {
     final confirm = await OverlayService.confirm(
       'Attention',
       description: 'Do you really want to delete this comment?',
@@ -611,6 +616,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
       projectName: args.project,
       repositoryId: args.repository,
       pullRequestId: args.id,
+      threadId: threadId,
       comment: comment,
     );
 

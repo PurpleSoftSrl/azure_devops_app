@@ -622,7 +622,8 @@ class AzureApiServiceMock implements AzureApiService {
     required String projectName,
     required String repositoryId,
     required int pullRequestId,
-    required pr.CommentUpdate comment,
+    required int threadId,
+    required pr.PrComment comment,
   }) {
     throw UnimplementedError();
   }
@@ -632,7 +633,8 @@ class AzureApiServiceMock implements AzureApiService {
     required String projectName,
     required String repositoryId,
     required int pullRequestId,
-    required pr.CommentUpdate comment,
+    required int threadId,
+    required pr.PrComment comment,
     required String text,
   }) {
     throw UnimplementedError();

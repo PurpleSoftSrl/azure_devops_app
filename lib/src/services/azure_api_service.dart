@@ -276,7 +276,8 @@ abstract class AzureApiService {
     required String projectName,
     required String repositoryId,
     required int pullRequestId,
-    required CommentUpdate comment,
+    required int threadId,
+    required PrComment comment,
     required String text,
   });
 
@@ -284,7 +285,8 @@ abstract class AzureApiService {
     required String projectName,
     required String repositoryId,
     required int pullRequestId,
-    required CommentUpdate comment,
+    required int threadId,
+    required PrComment comment,
   });
 
   Future<void> logout();
@@ -1240,19 +1242,15 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
         threads.where((t) => !['VoteUpdate', 'StatusUpdate', 'RefUpdate'].contains(t.properties?.type?.value));
 
     final updates = [
-      for (final t in threads)
-        for (final c in t.comments.where((c) => c.commentType == 'text'))
-          // TODO organize comments by thread
-          CommentUpdate(
-            id: c.id,
-            threadId: t.id,
-            date: c.publishedDate,
-            content: c.content,
-            updatedDate: c.lastUpdatedDate,
-            author: c.author,
-            identity: t.identities?.entries.firstOrNull?.value,
-            parentCommentId: c.parentCommentId,
-          ),
+      for (final t in threads.where((t) => t.comments.any((c) => c.commentType == 'text')))
+        ThreadUpdate(
+          id: t.id,
+          date: t.comments.where((c) => c.commentType == 'text').first.publishedDate,
+          content: t.comments.where((c) => c.commentType == 'text').first.content,
+          author: t.comments.where((c) => c.commentType == 'text').first.author,
+          identity: t.identities?.entries.firstOrNull?.value,
+          comments: t.comments.where((c) => c.commentType == 'text').toList(),
+        ),
       ...iterations.map(
         (u) => IterationUpdate(
           date: u.createdDate,
@@ -1404,11 +1402,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     required String projectName,
     required String repositoryId,
     required int pullRequestId,
-    required CommentUpdate comment,
+    required int threadId,
+    required PrComment comment,
     required String text,
   }) async {
     final prPath =
-        '$_basePath/_apis/git/repositories/$repositoryId/pullRequests/$pullRequestId/threads/${comment.threadId}/comments/${comment.id}?$_apiVersion';
+        '$_basePath/_apis/git/repositories/$repositoryId/pullRequests/$pullRequestId/threads/$threadId/comments/${comment.id}?$_apiVersion';
 
     final commentBody = {
       'content': text,
@@ -1430,10 +1429,11 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     required String projectName,
     required String repositoryId,
     required int pullRequestId,
-    required CommentUpdate comment,
+    required int threadId,
+    required PrComment comment,
   }) async {
     final prPath =
-        '$_basePath/_apis/git/repositories/$repositoryId/pullRequests/$pullRequestId/threads/${comment.threadId}/comments/${comment.id}?$_apiVersion';
+        '$_basePath/_apis/git/repositories/$repositoryId/pullRequests/$pullRequestId/threads/$threadId/comments/${comment.id}?$_apiVersion';
 
     final res = await _delete(prPath);
 

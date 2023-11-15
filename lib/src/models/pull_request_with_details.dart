@@ -201,8 +201,8 @@ class Thread {
         id: json['id'] as int,
         publishedDate: DateTime.parse(json['publishedDate']!.toString()).toLocal(),
         lastUpdatedDate: DateTime.parse(json['lastUpdatedDate']!.toString()).toLocal(),
-        comments: List<Comment>.from(
-          (json['comments'] as List<dynamic>).map((c) => Comment.fromJson(c as Map<String, dynamic>)),
+        comments: List<PrComment>.from(
+          (json['comments'] as List<dynamic>).map((c) => PrComment.fromJson(c as Map<String, dynamic>)),
         ),
         isDeleted: json['isDeleted'] as bool,
         properties: json['properties'] == null ? null : Properties.fromJson(json['properties'] as Map<String, dynamic>),
@@ -212,12 +212,12 @@ class Thread {
   final int id;
   final DateTime publishedDate;
   final DateTime lastUpdatedDate;
-  final List<Comment> comments;
+  final List<PrComment> comments;
   final bool isDeleted;
   final Properties? properties;
   final Map<String, dynamic>? identities;
 
-  Thread copyWith({List<Comment>? comments}) {
+  Thread copyWith({List<PrComment>? comments}) {
     return Thread(
       id: id,
       publishedDate: publishedDate,
@@ -261,8 +261,8 @@ class Property<T> {
   final T value;
 }
 
-class Comment {
-  Comment({
+class PrComment {
+  PrComment({
     required this.id,
     required this.parentCommentId,
     required this.author,
@@ -272,7 +272,7 @@ class Comment {
     required this.commentType,
   });
 
-  factory Comment.fromJson(Map<String, dynamic> json) => Comment(
+  factory PrComment.fromJson(Map<String, dynamic> json) => PrComment(
         id: json['id'] as int,
         parentCommentId: json['parentCommentId'] as int,
         author: Author.fromJson(json['author'] as Map<String, dynamic>),
@@ -290,8 +290,8 @@ class Comment {
   final DateTime lastUpdatedDate;
   final String? commentType;
 
-  Comment copyWith({String? content}) {
-    return Comment(
+  PrComment copyWith({String? content}) {
+    return PrComment(
       id: id,
       parentCommentId: parentCommentId,
       author: author,
@@ -345,32 +345,26 @@ sealed class PullRequestUpdate {
   final String content;
 }
 
-final class CommentUpdate extends PullRequestUpdate {
-  CommentUpdate({
+final class ThreadUpdate extends PullRequestUpdate {
+  ThreadUpdate({
     required super.date,
     required super.author,
     required super.identity,
     required super.content,
-    required this.updatedDate,
-    required this.parentCommentId,
-    required this.threadId,
     required this.id,
+    required this.comments,
   });
 
-  final DateTime updatedDate;
-  final int parentCommentId;
-  final int threadId;
   final int id;
+  final List<PrComment> comments;
 
-  CommentUpdate copyWith({String? content}) => CommentUpdate(
+  ThreadUpdate copyWith({String? content, List<PrComment>? comments}) => ThreadUpdate(
+        id: id,
         content: content ?? this.content,
         author: author,
         date: date,
         identity: identity,
-        parentCommentId: parentCommentId,
-        updatedDate: updatedDate,
-        threadId: threadId,
-        id: id,
+        comments: comments ?? this.comments,
       );
 }
 
