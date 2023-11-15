@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:azure_devops/src/models/areas_and_iterations.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
+import 'package:azure_devops/src/models/commits_tags.dart';
 import 'package:azure_devops/src/models/file_diff.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
@@ -148,6 +149,11 @@ class AzureApiServiceMock implements AzureApiService {
     return ApiResponse.ok([firstCommit, secondCommit, thirdCommit]);
   }
 
+  @override
+  Future<TagsData?> getTags(List<Commit> commits) async {
+    return null;
+  }
+  
   @override
   Future<ApiResponse<List<Organization>>> getOrganizations() {
     throw UnimplementedError();

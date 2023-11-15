@@ -2,7 +2,9 @@ import 'package:azure_devops/src/extensions/commit_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/models/commit.dart';
+import 'package:azure_devops/src/models/commits_tags.dart';
 import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/popup_menu.dart';
 import 'package:flutter/material.dart';
 
 class CommitListTile extends StatelessWidget {
@@ -66,6 +68,14 @@ class CommitListTile extends StatelessWidget {
                     const SizedBox(
                       width: 8,
                     ),
+                    if (commit.tags?.isNotEmpty ?? false)
+                      for (final tag in commit.tags!)
+                        TagChip(
+                          tag: tag,
+                        ),
+                    const SizedBox(
+                      width: 8,
+                    ),
                     Text(
                       commit.author?.date?.minutesAgo ?? '',
                       style: subtitleStyle,
@@ -88,6 +98,51 @@ class CommitListTile extends StatelessWidget {
                     ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class TagChip extends StatelessWidget {
+  const TagChip({required this.tag});
+
+  final Tag tag;
+
+  @override
+  Widget build(BuildContext context) {
+    final subtitleStyle = context.textTheme.labelSmall!.copyWith(height: 1);
+    return DevOpsPopupMenu(
+      tooltip: tag.name,
+      items: () => [
+        PopupItem(
+          text: '${tag.comment ?? ''}\n${tag.tagger?.name}\n${tag.tagger?.date.toDate()}',
+          onTap: () {},
+        ),
+      ],
+      offset: Offset(0, 20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        decoration: BoxDecoration(
+          color: context.colorScheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.sell_outlined,
+              size: 10,
+              color: context.colorScheme.onBackground,
+            ),
+            const SizedBox(
+              width: 4,
+            ),
+            Text(
+              tag.name,
+              style: subtitleStyle,
+            ),
+          ],
+        ),
       ),
     );
   }

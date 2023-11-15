@@ -12,6 +12,7 @@ import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/changed_files.dart';
+import 'package:azure_devops/src/widgets/commit_list_tile.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
 import 'package:azure_devops/src/widgets/project_and_repo_chips.dart';
 import 'package:flutter/material.dart';

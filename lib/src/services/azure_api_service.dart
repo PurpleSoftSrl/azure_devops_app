@@ -12,6 +12,7 @@ import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/models/areas_and_iterations.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
+import 'package:azure_devops/src/models/commits_tags.dart';
 import 'package:azure_devops/src/models/file_diff.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
@@ -188,6 +189,8 @@ abstract class AzureApiService {
   });
 
   Future<ApiResponse<List<Commit>>> getRecentCommits({Project? project, String? author, int? maxCount});
+
+  Future<TagsData?> getTags(List<Commit> commits);
 
   Future<ApiResponse<CommitWithChanges>> getCommitDetail({
     required String projectId,
@@ -1424,7 +1427,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final resultSearch = '&resultFilter=${result.stringValue}';
     final statusSearch = result != PipelineResult.all ? '' : '&statusFilter=${status.stringValue}';
     final triggeredBySearch = triggeredBy == null ? '' : '&requestedFor=$triggeredBy';
-    
+
     final definitionSearch = definition == null ? '' : '&definitions=$definition';
 
     final queryParams = '$_apiVersion$orderSearch$resultSearch$statusSearch$triggeredBySearch$definitionSearch';
@@ -1520,10 +1523,35 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     if (isAllCommitsError) return ApiResponse.error(allProjectCommits.firstOrNull);
 
-    final res =
+    final commits =
         allProjectCommits.where((r) => !r.isError).map(GetCommitsResponse.fromResponse).expand((c) => c).toList();
 
-    return ApiResponse.ok(res);
+    return ApiResponse.ok(commits);
+  }
+
+  @override
+  Future<TagsData?> getTags(List<Commit> commits) async {
+    final tagsRes = await _post(
+      '$_basePath/_apis/contribution/hierarchyQuery/project/${commits.first.projectId}?$_apiVersion-preview',
+      body: {
+        'contributionIds': ['ms.vss-code-web.commits-data-provider'],
+        'dataProviderContext': {
+          'properties': {
+            'repositoryId': commits.first.repositoryId,
+            'searchCriteria': {
+              'gitArtifactsQueryArguments': {
+                'fetchTags': true,
+                'commitIds': commits.map((e) => e.commitId).toList(),
+              },
+            },
+          },
+        },
+      },
+    );
+
+    return TagsResponse.fromResponse(tagsRes)
+      ?..projectId = commits.first.projectId
+      ..repositoryId = commits.first.repositoryId;
   }
 
   @override
@@ -1543,6 +1571,9 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final commit = Commit.fromResponse(detailRes);
     final changes = changesRes.isError ? null : CommitChanges.fromResponse(changesRes);
+
+    final tags = await getTags([commit]);
+    commit.tags = tags?.tags[commitId];
     return ApiResponse.ok(CommitWithChanges(commit: commit, changes: changes));
   }
 

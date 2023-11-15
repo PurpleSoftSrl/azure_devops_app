@@ -50,6 +50,19 @@ class _CommitsController with FilterMixin {
 
     commits = commits.take(100).toList();
 
+    final projectRepos = groupBy(commits, (c) => '${c.projectId}_${c.repositoryId}');
+    final allTags = <TagsData?>[
+      ...await Future.wait([
+        for (final repoEntry in projectRepos.entries) apiService.getTags(repoEntry.value),
+      ]),
+    ]..removeWhere((data) => data == null || data.tags.isEmpty);
+
+    for (final commit in commits) {
+      final repoTags = allTags
+          .firstWhereOrNull((tags) => tags!.projectId == commit.projectId && tags.repositoryId == commit.repositoryId);
+      commit.tags = repoTags?.tags[commit.commitId];
+    }
+
     recentCommits.value = res.copyWith(data: commits);
   }
 

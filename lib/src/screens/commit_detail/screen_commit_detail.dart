@@ -8,6 +8,7 @@ class _CommitDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final labelStyle = context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary);
     return AppPage<CommitWithChanges?>(
       init: ctrl.init,
       dispose: ctrl.dispose,
@@ -37,7 +38,7 @@ class _CommitDetailScreen extends StatelessWidget {
                         children: [
                           Text(
                             'Author: ',
-                            style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                            style: labelStyle,
                           ),
                           Text(
                             author.name!,
@@ -77,7 +78,7 @@ class _CommitDetailScreen extends StatelessWidget {
                     ),
                     Text(
                       'Message: ',
-                      style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                      style: labelStyle,
                     ),
                     Text(
                       detail.commit.comment!,
@@ -87,7 +88,7 @@ class _CommitDetailScreen extends StatelessWidget {
                     ),
                     Text(
                       'CommitId: ',
-                      style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                      style: labelStyle,
                     ),
                     SelectableText(ctrl.args.commitId),
                     const SizedBox(
@@ -98,7 +99,7 @@ class _CommitDetailScreen extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: 'Committed at: ',
-                            style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                            style: labelStyle,
                           ),
                           TextSpan(
                             text: author?.date?.toSimpleDate() ?? '-',
@@ -107,6 +108,22 @@ class _CommitDetailScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+                    if (detail.commit.tags?.isNotEmpty ?? false) ...[
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        'Tags: ',
+                        style: labelStyle,
+                      ),
+                      for (final tag in detail.commit.tags!)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: TagChip(
+                            tag: tag,
+                          ),
+                        ),
+                    ],
                   ],
                 ),
               ),

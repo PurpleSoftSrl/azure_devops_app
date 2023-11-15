@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:azure_devops/src/models/commit_detail.dart';
+import 'package:azure_devops/src/models/commits_tags.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
@@ -72,6 +73,7 @@ class Commit {
   final String? url;
   final String? remoteUrl;
   final List<String>? parents;
+  List<Tag>? tags;
 
   static Commit empty() {
     return Commit(
