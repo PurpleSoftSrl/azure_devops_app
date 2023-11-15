@@ -13,7 +13,7 @@ Unofficial [Azure DevOps](https://azure.microsoft.com/en-us/products/devops) mob
 
 
 Features:
-- Login with your Personal Access Token
+- Login with Microsoft or with your Personal Access Token
 - See and manage your pipelines
 - See your commits
 - See and manage your work items
