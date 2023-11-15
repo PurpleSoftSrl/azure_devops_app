@@ -263,6 +263,30 @@ abstract class AzureApiService {
     PullRequestCompletionOptions? completionOptions,
   });
 
+  Future<ApiResponse<bool>> addPullRequestComment({
+    required String projectName,
+    required String repositoryId,
+    required int pullRequestId,
+    required String text,
+    required int? threadId,
+    required int? parentCommentId,
+  });
+
+  Future<ApiResponse<bool>> editPullRequestComment({
+    required String projectName,
+    required String repositoryId,
+    required int pullRequestId,
+    required CommentUpdate comment,
+    required String text,
+  });
+
+  Future<ApiResponse<bool>> deletePullRequestComment({
+    required String projectName,
+    required String repositoryId,
+    required int pullRequestId,
+    required CommentUpdate comment,
+  });
+
   Future<void> logout();
 }
 
@@ -1218,7 +1242,10 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final updates = [
       for (final t in threads)
         for (final c in t.comments.where((c) => c.commentType == 'text'))
+          // TODO organize comments by thread
           CommentUpdate(
+            id: c.id,
+            threadId: t.id,
             date: c.publishedDate,
             content: c.content,
             updatedDate: c.lastUpdatedDate,
@@ -1335,6 +1362,82 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       },
     );
     if (editRes.isError) return ApiResponse.error(editRes);
+
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> addPullRequestComment({
+    required String projectName,
+    required String repositoryId,
+    required int? threadId,
+    required int pullRequestId,
+    required String text,
+    required int? parentCommentId,
+  }) async {
+    final threadsPath = '$_basePath/_apis/git/repositories/$repositoryId/pullRequests/$pullRequestId/threads';
+
+    final prPath = threadId == null ? '$threadsPath?$_apiVersion' : '$threadsPath/$threadId/comments?$_apiVersion';
+
+    final commentBody = {
+      'content': text,
+      'commentType': 1,
+      if (parentCommentId != null) 'parentCommentId': parentCommentId,
+    };
+
+    final createRes = await _post(
+      prPath,
+      body: threadId == null
+          ? {
+              'comments': [commentBody],
+            }
+          : commentBody,
+    );
+
+    if (createRes.isError) return ApiResponse.error(createRes);
+
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> editPullRequestComment({
+    required String projectName,
+    required String repositoryId,
+    required int pullRequestId,
+    required CommentUpdate comment,
+    required String text,
+  }) async {
+    final prPath =
+        '$_basePath/_apis/git/repositories/$repositoryId/pullRequests/$pullRequestId/threads/${comment.threadId}/comments/${comment.id}?$_apiVersion';
+
+    final commentBody = {
+      'content': text,
+      'commentType': 1,
+    };
+
+    final res = await _patch(
+      prPath,
+      body: commentBody,
+    );
+
+    if (res.isError) return ApiResponse.error(res);
+
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> deletePullRequestComment({
+    required String projectName,
+    required String repositoryId,
+    required int pullRequestId,
+    required CommentUpdate comment,
+  }) async {
+    final prPath =
+        '$_basePath/_apis/git/repositories/$repositoryId/pullRequests/$pullRequestId/threads/${comment.threadId}/comments/${comment.id}?$_apiVersion';
+
+    final res = await _delete(prPath);
+
+    if (res.isError) return ApiResponse.error(res);
 
     return ApiResponse.ok(true);
   }

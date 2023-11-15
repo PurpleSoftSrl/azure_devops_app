@@ -353,10 +353,14 @@ final class CommentUpdate extends PullRequestUpdate {
     required super.content,
     required this.updatedDate,
     required this.parentCommentId,
+    required this.threadId,
+    required this.id,
   });
 
   final DateTime updatedDate;
   final int parentCommentId;
+  final int threadId;
+  final int id;
 
   CommentUpdate copyWith({String? content}) => CommentUpdate(
         content: content ?? this.content,
@@ -365,6 +369,8 @@ final class CommentUpdate extends PullRequestUpdate {
         identity: identity,
         parentCommentId: parentCommentId,
         updatedDate: updatedDate,
+        threadId: threadId,
+        id: id,
       );
 }
 

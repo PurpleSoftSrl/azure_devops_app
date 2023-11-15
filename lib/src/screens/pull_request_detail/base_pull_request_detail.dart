@@ -15,6 +15,7 @@ import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/add_comment_field.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/changed_files.dart';
 import 'package:azure_devops/src/widgets/commit_list_tile.dart';
@@ -28,8 +29,10 @@ import 'package:azure_devops/src/widgets/text_title_description.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:path/path.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 part 'components_pull_request_detail.dart';
 part 'controller_pull_request_detail.dart';

@@ -124,200 +124,207 @@ class _PullRequestOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pr = prWithDetails.pr;
-    return Visibility(
-      visible: visiblePage == 0,
-      child: DefaultTextStyle(
-        style: context.textTheme.titleSmall!,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (ctrl.hasAutoCompleteOn) ...[
-              Text(
-                'Auto-complete: ${prWithDetails.pr.autoCompleteSetBy!.displayName} set this pull request to automatically complete when all requirements are met.',
-              ),
-              const SizedBox(height: 10),
-            ],
-            TextTitleDescription(title: 'Id: ', description: pr.pullRequestId.toString()),
-            Row(
-              children: [
+    return VisibilityDetector(
+      key: ctrl.historyKey,
+      onVisibilityChanged: ctrl.onHistoryVisibilityChanged,
+      child: Visibility(
+        visible: visiblePage == 0,
+        child: DefaultTextStyle(
+          style: context.textTheme.titleSmall!,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (ctrl.hasAutoCompleteOn) ...[
                 Text(
-                  'Status: ',
-                  style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                  'Auto-complete: ${prWithDetails.pr.autoCompleteSetBy!.displayName} set this pull request to automatically complete when all requirements are met.',
                 ),
-                Text(
-                  pr.isDraft && pr.status != PullRequestState.abandoned ? 'Draft' : pr.status.toString(),
-                  style: context.textTheme.titleSmall!.copyWith(color: pr.status.color),
-                ),
+                const SizedBox(height: 10),
               ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                TextTitleDescription(title: 'Created by: ', description: pr.createdBy.displayName),
-                const SizedBox(
-                  width: 20,
-                ),
-                MemberAvatar(
-                  userDescriptor: pr.createdBy.descriptor,
-                  radius: 20,
-                ),
-                const Spacer(),
-                Text(pr.creationDate.minutesAgo),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            ProjectChip(
-              onTap: ctrl.goToProject,
-              projectName: pr.repository.project.name,
-            ),
-            RepositoryChip(
-              onTap: ctrl.goToRepo,
-              repositoryName: pr.repository.name,
-            ),
-            Wrap(
-              children: [
-                TextTitleDescription(title: 'From: ', description: pr.sourceBranch),
-                const SizedBox(
-                  width: 20,
-                ),
-                TextTitleDescription(title: 'To: ', description: pr.targetBranch),
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            if (prWithDetails.conflicts.isNotEmpty) ...[
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(AppTheme.radius),
-                  border: Border.all(color: context.colorScheme.error, width: 2),
-                ),
-                padding: const EdgeInsets.all(12),
-                margin: const EdgeInsets.symmetric(vertical: 12),
-                child: GroupedFiles(
-                  bottomSpace: false,
-                  groupedFiles: ctrl.groupedConflictingFiles,
-                ),
-              ),
-            ],
-            Text(
-              'Title: ',
-              style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-            ),
-            Text(pr.title),
-            const SizedBox(
-              height: 10,
-            ),
-            if (pr.description != null && pr.description!.isNotEmpty) ...[
-              Text(
-                'Description: ',
-                style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-              ),
-              MarkdownBody(
-                data: '${pr.description}',
-                styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
-                onTapLink: ctrl.onTapMarkdownLink,
+              TextTitleDescription(title: 'Id: ', description: pr.pullRequestId.toString()),
+              Row(
+                children: [
+                  Text(
+                    'Status: ',
+                    style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                  ),
+                  Text(
+                    pr.isDraft && pr.status != PullRequestState.abandoned ? 'Draft' : pr.status.toString(),
+                    style: context.textTheme.titleSmall!.copyWith(color: pr.status.color),
+                  ),
+                ],
               ),
               const SizedBox(
                 height: 20,
               ),
-            ],
-            if (pr.mergeStatus != null && pr.mergeStatus!.isNotEmpty)
-              TextTitleDescription(title: 'Merge status: ', description: '${pr.mergeStatus}'),
-            const SizedBox(
-              height: 10,
-            ),
-            TextTitleDescription(title: 'Created at: ', description: pr.creationDate.toSimpleDate()),
-            if (pr.reviewers.isNotEmpty) ...[
-              SectionHeader(text: 'Reviewers'),
-              ...pr.reviewers.map(
-                (r) => Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: Row(
-                    children: [
-                      MemberAvatar(
-                        userDescriptor: ctrl.reviewers.firstWhere((rev) => rev.reviewer.id == r.id).descriptor,
-                        radius: 20,
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Text(r.displayName),
-                      if (r.isRequired) Text(' (required)'),
-                      const Spacer(),
-                      if (r.vote > 0)
-                        Icon(
-                          DevOpsIcons.success,
-                          color: Colors.green,
-                        )
-                      else if (r.vote < 0)
-                        Icon(
-                          DevOpsIcons.failed,
-                          color: context.colorScheme.error,
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-            if (prWithDetails.updates.isNotEmpty) ...[
-              SectionHeader(text: 'History'),
-              ...prWithDetails.updates.map(
-                (u) => Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: switch (u) {
-                            VoteUpdate() => Row(
-                                children: [
-                                  if (u.content.voteIcon != null) ...[
-                                    u.content.voteIcon!,
-                                    const SizedBox(width: 10),
-                                  ],
-                                  _UserAvatar(update: u),
-                                  Expanded(child: Text('${u.author.displayName} ${u.content.voteDescription}')),
-                                ],
-                              ),
-                            StatusUpdate() => Row(
-                                children: [
-                                  _UserAvatar(update: u),
-                                  Expanded(
-                                    child: Text(
-                                      '${u.identity['displayName'] ?? u.author.displayName} ${u.content.statusUpdateDescription} the pull request',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            IterationUpdate() => _RefUpdateWidget(ctrl: ctrl, iteration: u),
-                            CommentUpdate() => _CommentWidget(ctrl: ctrl, comment: u),
-                            SystemUpdate() ||
-                            _ =>
-                              Row(children: [_UserAvatar(update: u), Expanded(child: Text(u.content))])
-                          },
-                        ),
-                        const SizedBox(width: 10),
-                        Text(u.date.minutesAgo),
-                      ],
-                    ),
-                    const Divider(height: 30),
-                  ],
-                ),
-              ),
               Row(
                 children: [
-                  MemberAvatar(userDescriptor: pr.createdBy.descriptor, radius: 20),
-                  const SizedBox(width: 10),
-                  Expanded(child: Text('${pr.createdBy.displayName} created the pull request')),
+                  TextTitleDescription(title: 'Created by: ', description: pr.createdBy.displayName),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  MemberAvatar(
+                    userDescriptor: pr.createdBy.descriptor,
+                    radius: 20,
+                  ),
+                  const Spacer(),
                   Text(pr.creationDate.minutesAgo),
                 ],
               ),
+              const SizedBox(
+                height: 20,
+              ),
+              ProjectChip(
+                onTap: ctrl.goToProject,
+                projectName: pr.repository.project.name,
+              ),
+              RepositoryChip(
+                onTap: ctrl.goToRepo,
+                repositoryName: pr.repository.name,
+              ),
+              Wrap(
+                children: [
+                  TextTitleDescription(title: 'From: ', description: pr.sourceBranch),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  TextTitleDescription(title: 'To: ', description: pr.targetBranch),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              if (prWithDetails.conflicts.isNotEmpty) ...[
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(AppTheme.radius),
+                    border: Border.all(color: context.colorScheme.error, width: 2),
+                  ),
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  child: GroupedFiles(
+                    bottomSpace: false,
+                    groupedFiles: ctrl.groupedConflictingFiles,
+                  ),
+                ),
+              ],
+              Text(
+                'Title: ',
+                style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+              ),
+              Text(pr.title),
+              const SizedBox(
+                height: 10,
+              ),
+              if (pr.description != null && pr.description!.isNotEmpty) ...[
+                Text(
+                  'Description: ',
+                  style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                ),
+                MarkdownBody(
+                  data: '${pr.description}',
+                  styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
+                  onTapLink: ctrl.onTapMarkdownLink,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
+              if (pr.mergeStatus != null && pr.mergeStatus!.isNotEmpty)
+                TextTitleDescription(title: 'Merge status: ', description: '${pr.mergeStatus}'),
+              const SizedBox(
+                height: 10,
+              ),
+              TextTitleDescription(title: 'Created at: ', description: pr.creationDate.toSimpleDate()),
+              if (pr.reviewers.isNotEmpty) ...[
+                SectionHeader(text: 'Reviewers'),
+                ...pr.reviewers.map(
+                  (r) => Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Row(
+                      children: [
+                        MemberAvatar(
+                          userDescriptor: ctrl.reviewers.firstWhere((rev) => rev.reviewer.id == r.id).descriptor,
+                          radius: 20,
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Text(r.displayName),
+                        if (r.isRequired) Text(' (required)'),
+                        const Spacer(),
+                        if (r.vote > 0)
+                          Icon(
+                            DevOpsIcons.success,
+                            color: Colors.green,
+                          )
+                        else if (r.vote < 0)
+                          Icon(
+                            DevOpsIcons.failed,
+                            color: context.colorScheme.error,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+              if (prWithDetails.updates.isNotEmpty) ...[
+                SectionHeader(text: 'History'),
+                ...prWithDetails.updates.map(
+                  (u) => Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: switch (u) {
+                              VoteUpdate() => Row(
+                                  children: [
+                                    if (u.content.voteIcon != null) ...[
+                                      u.content.voteIcon!,
+                                      const SizedBox(width: 10),
+                                    ],
+                                    _UserAvatar(update: u),
+                                    Expanded(child: Text('${u.author.displayName} ${u.content.voteDescription}')),
+                                  ],
+                                ),
+                              StatusUpdate() => Row(
+                                  children: [
+                                    _UserAvatar(update: u),
+                                    Expanded(
+                                      child: Text(
+                                        '${u.identity['displayName'] ?? u.author.displayName} ${u.content.statusUpdateDescription} the pull request',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              IterationUpdate() => _RefUpdateWidget(ctrl: ctrl, iteration: u),
+                              CommentUpdate() => _CommentWidget(ctrl: ctrl, comment: u),
+                              SystemUpdate() || _ => Row(
+                                  children: [
+                                    _UserAvatar(update: u),
+                                    Expanded(child: Text(u.content)),
+                                  ],
+                                )
+                            },
+                          ),
+                          const SizedBox(width: 10),
+                          Text(u.date.minutesAgo),
+                        ],
+                      ),
+                      const Divider(height: 30),
+                    ],
+                  ),
+                ),
+                Row(
+                  children: [
+                    MemberAvatar(userDescriptor: pr.createdBy.descriptor, radius: 20),
+                    const SizedBox(width: 10),
+                    Expanded(child: Text('${pr.createdBy.displayName} created the pull request')),
+                    Text(pr.creationDate.minutesAgo),
+                  ],
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
@@ -457,6 +464,27 @@ class _CommentWidget extends StatelessWidget {
                     ],
                   ),
                 ),
+              ),
+              DevOpsPopupMenu(
+                tooltip: 'pull request comment',
+                offset: const Offset(0, 20),
+                items: () => [
+                  PopupItem(
+                    onTap: () => ctrl.editComment(comment),
+                    text: 'Edit',
+                    icon: DevOpsIcons.edit,
+                  ),
+                  PopupItem(
+                    onTap: () => ctrl.addComment(threadId: comment.threadId, parentCommentId: comment.id),
+                    text: 'Reply',
+                    icon: DevOpsIcons.send,
+                  ),
+                  PopupItem(
+                    onTap: () => ctrl.deleteComment(comment),
+                    text: 'Delete',
+                    icon: DevOpsIcons.failed,
+                  ),
+                ],
               ),
             ],
           ),

@@ -153,10 +153,10 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
     final editorController = HtmlEditorController();
     final editorGlobalKey = GlobalKey<State>();
 
-    final hasConfirmed = await _showEditor(editorController, editorGlobalKey, title: 'Add comment');
+    final hasConfirmed = await showEditor(editorController, editorGlobalKey, title: 'Add comment');
     if (!hasConfirmed) return;
 
-    final comment = await _getTextFromEditor(editorController);
+    final comment = await getTextFromEditor(editorController);
     if (comment == null) return;
 
     final res = await apiService.addWorkItemComment(
@@ -206,7 +206,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
     final editorController = HtmlEditorController();
     final editorGlobalKey = GlobalKey<State>();
 
-    final hasConfirmed = await _showEditor(
+    final hasConfirmed = await showEditor(
       editorController,
       editorGlobalKey,
       initialText: update.text,
@@ -214,7 +214,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
     );
     if (!hasConfirmed) return;
 
-    final comment = await _getTextFromEditor(editorController);
+    final comment = await getTextFromEditor(editorController);
     if (comment == null) return;
 
     final res = await apiService.editWorkItemComment(projectName: args.project, update: update, text: comment);
@@ -224,76 +224,6 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
     }
 
     await init();
-  }
-
-  Future<bool> _showEditor(
-    HtmlEditorController controller,
-    GlobalKey<State<StatefulWidget>> globalKey, {
-    String? initialText,
-    required String title,
-  }) async {
-    var confirm = false;
-
-    final hasChanged = ValueNotifier<bool>(false);
-
-    await OverlayService.bottomsheet(
-      heightPercentage: .9,
-      isScrollControlled: true,
-      title: title,
-      topRight: ValueListenableBuilder<bool>(
-        valueListenable: hasChanged,
-        builder: (context, changed, __) => SizedBox(
-          width: 80,
-          height: 20,
-          child: !changed
-              ? Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: AppRouter.popRoute,
-                    child: Icon(Icons.close),
-                  ),
-                )
-              : TextButton(
-                  onPressed: () {
-                    confirm = true;
-                    AppRouter.popRoute();
-                  },
-                  style: ButtonStyle(padding: MaterialStatePropertyAll(EdgeInsets.zero)),
-                  child: Text(
-                    'Confirm',
-                    style: context.textTheme.bodyMedium!.copyWith(color: context.colorScheme.primary),
-                  ),
-                ),
-        ),
-      ),
-      builder: (context) => ListView(
-        children: [
-          DevOpsHtmlEditor(
-            autofocus: true,
-            editorController: controller,
-            editorGlobalKey: globalKey,
-            onKeyUp: (_) {
-              if (!hasChanged.value) hasChanged.value = true;
-            },
-            initialText: initialText,
-          ),
-          SizedBox(key: globalKey),
-        ],
-      ),
-    );
-
-    return confirm;
-  }
-
-  Future<String?> _getTextFromEditor(HtmlEditorController editorController) async {
-    final comment = await editorController.getText();
-
-    if (comment.trim().isEmpty) return null;
-
-    final trimmed = comment.trim().replaceAll(' ', '');
-    if (trimmed == '<br>' || trimmed == '<div><br></div>') return null;
-
-    return comment;
   }
 
   Future<void> addAttachment() async {

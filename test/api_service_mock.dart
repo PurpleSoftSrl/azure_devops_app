@@ -39,7 +39,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Map<String, List<AreaOrIteration>> get workItemAreas => {};
-  
+
   @override
   Map<String, List<AreaOrIteration>> get workItemIterations => {};
 
@@ -153,7 +153,7 @@ class AzureApiServiceMock implements AzureApiService {
   Future<TagsData?> getTags(List<Commit> commits) async {
     return null;
   }
-  
+
   @override
   Future<ApiResponse<List<Organization>>> getOrganizations() {
     throw UnimplementedError();
@@ -602,6 +602,39 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<String>> getUserToMention({required String email}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<bool>> addPullRequestComment({
+    required String projectName,
+    required String repositoryId,
+    required int pullRequestId,
+    required String text,
+    required int? threadId,
+    required int? parentCommentId,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<bool>> deletePullRequestComment({
+    required String projectName,
+    required String repositoryId,
+    required int pullRequestId,
+    required pr.CommentUpdate comment,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<bool>> editPullRequestComment({
+    required String projectName,
+    required String repositoryId,
+    required int pullRequestId,
+    required pr.CommentUpdate comment,
+    required String text,
+  }) {
     throw UnimplementedError();
   }
 }

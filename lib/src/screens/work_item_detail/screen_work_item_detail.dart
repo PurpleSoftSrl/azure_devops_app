@@ -256,7 +256,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
             );
           },
         ),
-        _AddCommentField(
+        AddCommentField(
           isVisible: ctrl.showCommentField,
           onTap: ctrl.addComment,
         ),

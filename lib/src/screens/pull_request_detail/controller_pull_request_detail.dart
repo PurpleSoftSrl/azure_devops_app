@@ -60,6 +60,9 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
 
   bool canBeReactivated = true;
 
+  final showCommentField = ValueNotifier<bool>(false);
+  final historyKey = GlobalKey();
+
   void dispose() {
     instance = null;
     _instances.remove(args.hashCode);
@@ -526,6 +529,96 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
       deleteSourceBranch: deleteSourceBranch,
       commitMessage: commitMessage
     );
+  }
+
+  void onHistoryVisibilityChanged(VisibilityInfo info) {
+    if (info.visibleFraction > 0 && !showCommentField.value) {
+      showCommentField.value = true;
+    } else if (instance != null && info.visibleFraction == 0 && showCommentField.value) {
+      showCommentField.value = false;
+    }
+  }
+
+  Future<void> addComment({int? threadId, int? parentCommentId}) async {
+    final editorController = HtmlEditorController();
+    final editorGlobalKey = GlobalKey<State>();
+
+    final hasConfirmed = await showEditor(editorController, editorGlobalKey, title: 'Add comment');
+    if (!hasConfirmed) return;
+
+    final comment = await getTextFromEditor(editorController);
+    if (comment == null) return;
+
+    final res = await apiService.addPullRequestComment(
+      projectName: args.project,
+      pullRequestId: args.id,
+      threadId: threadId,
+      text: comment,
+      parentCommentId: parentCommentId,
+      repositoryId: args.repository,
+    );
+
+    logAnalytics('add_pr_comment', {
+      'comment_length': comment.length,
+      'is_error': res.isError.toString(),
+    });
+
+    if (res.isError) {
+      return OverlayService.error('Error', description: 'Comment not added');
+    }
+
+    await init();
+  }
+
+  Future<void> editComment(CommentUpdate comment) async {
+    final editorController = HtmlEditorController();
+    final editorGlobalKey = GlobalKey<State>();
+
+    final hasConfirmed = await showEditor(
+      editorController,
+      editorGlobalKey,
+      initialText: comment.content,
+      title: 'Edit comment',
+    );
+    if (!hasConfirmed) return;
+
+    final text = await getTextFromEditor(editorController);
+    if (text == null) return;
+
+    final res = await apiService.editPullRequestComment(
+      projectName: args.project,
+      repositoryId: args.repository,
+      pullRequestId: args.id,
+      comment: comment,
+      text: text,
+    );
+
+    if (res.isError) {
+      return OverlayService.error('Error', description: 'Comment not edited');
+    }
+
+    await init();
+  }
+
+  Future<void> deleteComment(CommentUpdate comment) async {
+    final confirm = await OverlayService.confirm(
+      'Attention',
+      description: 'Do you really want to delete this comment?',
+    );
+    if (!confirm) return;
+
+    final res = await apiService.deletePullRequestComment(
+      projectName: args.project,
+      repositoryId: args.repository,
+      pullRequestId: args.id,
+      comment: comment,
+    );
+
+    if (res.isError) {
+      return OverlayService.error('Error', description: 'Comment not deleted');
+    }
+
+    await init();
   }
 }
 
