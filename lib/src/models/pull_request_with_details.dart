@@ -270,6 +270,7 @@ class PrComment {
     required this.publishedDate,
     required this.lastUpdatedDate,
     required this.commentType,
+    required this.isDeleted,
   });
 
   factory PrComment.fromJson(Map<String, dynamic> json) => PrComment(
@@ -280,6 +281,7 @@ class PrComment {
         publishedDate: DateTime.parse(json['publishedDate']!.toString()).toLocal(),
         lastUpdatedDate: DateTime.parse(json['lastUpdatedDate']!.toString()).toLocal(),
         commentType: json['commentType'] as String?,
+        isDeleted: json['isDeleted'] as bool? ?? false,
       );
 
   final int id;
@@ -289,6 +291,7 @@ class PrComment {
   final DateTime publishedDate;
   final DateTime lastUpdatedDate;
   final String? commentType;
+  final bool isDeleted;
 
   PrComment copyWith({String? content}) {
     return PrComment(
@@ -299,6 +302,7 @@ class PrComment {
       publishedDate: publishedDate,
       lastUpdatedDate: lastUpdatedDate,
       commentType: commentType,
+      isDeleted: isDeleted,
     );
   }
 }

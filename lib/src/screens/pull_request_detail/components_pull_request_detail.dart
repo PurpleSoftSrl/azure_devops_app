@@ -462,6 +462,21 @@ class _CommentWidget extends StatelessWidget {
     final isEdited = comment.publishedDate.isBefore(comment.lastUpdatedDate);
     final isReply = comment.parentCommentId > 0;
 
+    var commentText = '';
+    if (isEdited) {
+      commentText += comment.lastUpdatedDate.minutesAgo;
+    } else {
+      commentText += comment.publishedDate.minutesAgo;
+    }
+
+    if (isReply) commentText += ' replied';
+
+    if (comment.isDeleted) {
+      commentText += ' (deleted)';
+    } else if (isEdited) {
+      commentText += ' (edited)';
+    }
+
     return Container(
       width: double.maxFinite,
       padding: const EdgeInsets.all(8),
@@ -488,35 +503,35 @@ class _CommentWidget extends StatelessWidget {
                     children: [
                       TextSpan(text: comment.author.displayName),
                       TextSpan(
-                        text:
-                            '  ${(isEdited ? comment.publishedDate : comment.lastUpdatedDate).minutesAgo} ${isReply ? 'replied' : ''} ${isEdited ? '(edited)' : ''}',
+                        text: '  $commentText',
                         style: context.textTheme.labelSmall,
                       ),
                     ],
                   ),
                 ),
               ),
-              DevOpsPopupMenu(
-                tooltip: 'pull request comment',
-                offset: const Offset(0, 20),
-                items: () => [
-                  PopupItem(
-                    onTap: () => ctrl.editComment(comment, threadId: threadId),
-                    text: 'Edit',
-                    icon: DevOpsIcons.edit,
-                  ),
-                  PopupItem(
-                    onTap: () => ctrl.addComment(threadId: threadId, parentCommentId: comment.id),
-                    text: 'Reply',
-                    icon: DevOpsIcons.send,
-                  ),
-                  PopupItem(
-                    onTap: () => ctrl.deleteComment(comment, threadId: threadId),
-                    text: 'Delete',
-                    icon: DevOpsIcons.failed,
-                  ),
-                ],
-              ),
+              if (!comment.isDeleted)
+                DevOpsPopupMenu(
+                  tooltip: 'pull request comment',
+                  offset: const Offset(0, 20),
+                  items: () => [
+                    PopupItem(
+                      onTap: () => ctrl.editComment(comment, threadId: threadId),
+                      text: 'Edit',
+                      icon: DevOpsIcons.edit,
+                    ),
+                    PopupItem(
+                      onTap: () => ctrl.addComment(threadId: threadId, parentCommentId: comment.id),
+                      text: 'Reply',
+                      icon: DevOpsIcons.send,
+                    ),
+                    PopupItem(
+                      onTap: () => ctrl.deleteComment(comment, threadId: threadId),
+                      text: 'Delete',
+                      icon: DevOpsIcons.failed,
+                    ),
+                  ],
+                ),
             ],
           ),
           const SizedBox(height: 10),
