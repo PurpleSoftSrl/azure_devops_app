@@ -31,6 +31,7 @@ class _WorkItemsController with FilterMixin {
   final Project? project;
 
   final workItems = ValueNotifier<ApiResponse<List<WorkItem>?>?>(null);
+  List<WorkItem> allWorkItems = [];
 
   late WorkItemState statusFilter = WorkItemState.all;
   WorkItemType typeFilter = WorkItemType.all;
@@ -42,6 +43,8 @@ class _WorkItemsController with FilterMixin {
 
   late List<WorkItemType> allWorkItemTypes = [typeFilter];
   late List<WorkItemState> allWorkItemStates = [statusFilter];
+
+  final isSearching = ValueNotifier<bool>(false);
 
   void dispose() {
     instance = null;
@@ -180,6 +183,8 @@ class _WorkItemsController with FilterMixin {
       iteration: iterationFilter,
     );
     workItems.value = res;
+    allWorkItems = res.data ?? [];
+    _hideSearchField();
   }
 
   void resetFilters() {
@@ -238,5 +243,31 @@ class _WorkItemsController with FilterMixin {
 
   void toggleShowActiveIterations() {
     showActiveIterations.value = !showActiveIterations.value;
+  }
+
+  void showSearchField() {
+    isSearching.value = true;
+  }
+
+  /// Search currently filtered work items by id or title.
+  void _searchWorkItem(String query) {
+    final trimmedQuery = query.trim().toLowerCase();
+
+    final matchedItems = allWorkItems
+        .where(
+          (i) => i.id.toString().contains(trimmedQuery) || i.fields.systemTitle.toLowerCase().contains(trimmedQuery),
+        )
+        .toList();
+
+    workItems.value = workItems.value?.copyWith(data: matchedItems);
+  }
+
+  void resetSearch() {
+    _searchWorkItem('');
+    _hideSearchField();
+  }
+
+  void _hideSearchField() {
+    isSearching.value = false;
   }
 }

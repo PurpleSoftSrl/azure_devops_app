@@ -16,6 +16,7 @@ class DevOpsFormField extends StatelessWidget {
     this.enabled = true,
     this.fillColor,
     this.controller,
+    this.suffix,
   });
 
   final VoidCallback? onFieldSubmitted;
@@ -31,6 +32,7 @@ class DevOpsFormField extends StatelessWidget {
   final bool enabled;
   final Color? fillColor;
   final TextEditingController? controller;
+  final Widget? suffix;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +57,7 @@ class DevOpsFormField extends StatelessWidget {
         hintStyle: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSurface.withOpacity(.4)),
         fillColor: fillColor ?? context.colorScheme.surface,
         filled: true,
+        suffixIcon: suffix,
       ),
       onFieldSubmitted: onFieldSubmitted == null ? null : (_) => onFieldSubmitted!(),
     );

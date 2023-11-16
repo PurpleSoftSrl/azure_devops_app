@@ -15,13 +15,7 @@ class _WorkItemsScreen extends StatelessWidget {
       notifier: ctrl.workItems,
       showScrollbar: true,
       actions: [
-        IconButton(
-          onPressed: ctrl.createWorkItem,
-          icon: Icon(
-            DevOpsIcons.plus,
-            size: 24,
-          ),
-        ),
+        _Actions(ctrl: ctrl),
       ],
       onResetFilters: ctrl.resetFilters,
       onEmpty: 'No work items found',
