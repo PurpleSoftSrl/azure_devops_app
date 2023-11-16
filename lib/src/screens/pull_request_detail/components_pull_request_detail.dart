@@ -520,10 +520,8 @@ class _CommentWidget extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          MarkdownBody(
+          HtmlWidget(
             data: comment.content,
-            styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
-            onTapLink: ctrl.onTapMarkdownLink,
           ),
         ],
       ),

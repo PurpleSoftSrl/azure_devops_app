@@ -7,6 +7,7 @@ import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:azure_devops/src/models/commits_tags.dart';
 import 'package:azure_devops/src/models/file_diff.dart';
+import 'package:azure_devops/src/models/identity_response.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/processes.dart';
@@ -454,6 +455,11 @@ class AzureApiServiceMock implements AzureApiService {
     );
   }
 
+  @override
+  Future<ApiResponse<Identity?>> getIdentityFromGuid({required String guid}) async {
+    return ApiResponse.ok(null);
+  }
+  
   @override
   Future<ApiResponse<bool>> votePullRequest({
     required String projectName,

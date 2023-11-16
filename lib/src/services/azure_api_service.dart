@@ -14,6 +14,7 @@ import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:azure_devops/src/models/commits_tags.dart';
 import 'package:azure_devops/src/models/file_diff.dart';
+import 'package:azure_devops/src/models/identity_response.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/processes.dart';
@@ -244,6 +245,8 @@ abstract class AzureApiService {
     required String repositoryId,
     required int id,
   });
+
+  Future<ApiResponse<Identity?>> getIdentityFromGuid({required String guid});
 
   Future<ApiResponse<bool>> votePullRequest({
     required String projectName,
@@ -1241,16 +1244,27 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final otherUpdates =
         threads.where((t) => !['VoteUpdate', 'StatusUpdate', 'RefUpdate'].contains(t.properties?.type?.value));
 
-    final updates = [
-      for (final t in threads.where((t) => t.comments.any((c) => c.commentType == 'text')))
+    final threadUpdates = <ThreadUpdate>[];
+
+    final threadsWithComments = threads.where((t) => t.comments.any((c) => c.commentType == 'text'));
+
+    for (final t in threadsWithComments) {
+      final textComments = t.comments.where((c) => c.commentType == 'text');
+      final firstComment = textComments.first;
+      threadUpdates.add(
         ThreadUpdate(
           id: t.id,
-          date: t.comments.where((c) => c.commentType == 'text').first.publishedDate,
-          content: t.comments.where((c) => c.commentType == 'text').first.content,
-          author: t.comments.where((c) => c.commentType == 'text').first.author,
+          date: firstComment.publishedDate,
+          content: firstComment.content,
+          author: firstComment.author,
           identity: t.identities?.entries.firstOrNull?.value,
-          comments: t.comments.where((c) => c.commentType == 'text').toList(),
+          comments: textComments.toList(),
         ),
+      );
+    }
+
+    final updates = [
+      ...threadUpdates,
       ...iterations.map(
         (u) => IterationUpdate(
           date: u.createdDate,
@@ -1287,8 +1301,35 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     ]..sort((a, b) => b.date.compareTo(a.date));
 
     return ApiResponse.ok(
-      PullRequestWithDetails(pr: pr, changes: allChanges, updates: updates, conflicts: conflicts, policies: policies),
+      PullRequestWithDetails(
+        pr: pr,
+        changes: allChanges,
+        updates: updates,
+        conflicts: conflicts,
+        policies: policies,
+      ),
     );
+  }
+
+  @override
+  Future<ApiResponse<Identity?>> getIdentityFromGuid({required String guid}) async {
+    final identityRes = await _post(
+      '$_basePath/_apis/IdentityPicker/Identities?$_apiVersion-preview',
+      body: {
+        'query': guid,
+        'identityTypes': ['user'],
+        'operationScopes': ['ims', 'source'],
+        'queryTypeHint': 'uid',
+        'options': {'MinResults': 1, 'MaxResults': 1},
+        'properties': ['DisplayName', 'Mail'],
+      },
+    );
+
+    if (identityRes.isError) return ApiResponse.error(null);
+
+    final res = IdentityResponse.fromResponse(identityRes).firstOrNull;
+    final identity = res?.identities.firstOrNull?..guid = res?.queryToken;
+    return ApiResponse.ok(identity);
   }
 
   @override

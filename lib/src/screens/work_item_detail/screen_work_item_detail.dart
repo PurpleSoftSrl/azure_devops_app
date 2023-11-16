@@ -157,7 +157,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                       'Description:',
                       style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                     ),
-                    _HtmlWidget(
+                    HtmlWidget(
                       data: detail.fields.systemDescription!,
                       style: context.textTheme.titleSmall,
                     ),
@@ -170,7 +170,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                       'Repro Steps:',
                       style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                     ),
-                    _HtmlWidget(
+                    HtmlWidget(
                       data: detail.fields.reproSteps!,
                       style: context.textTheme.titleSmall,
                     ),
