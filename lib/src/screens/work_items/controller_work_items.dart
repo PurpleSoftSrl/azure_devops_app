@@ -45,6 +45,7 @@ class _WorkItemsController with FilterMixin {
   late List<WorkItemState> allWorkItemStates = [statusFilter];
 
   final isSearching = ValueNotifier<bool>(false);
+  String? _currentSearchQuery;
 
   void dispose() {
     instance = null;
@@ -182,9 +183,13 @@ class _WorkItemsController with FilterMixin {
       area: areaFilter,
       iteration: iterationFilter,
     );
-    workItems.value = res;
+
     allWorkItems = res.data ?? [];
-    _hideSearchField();
+    workItems.value = res;
+
+    if (_currentSearchQuery != null) {
+      _searchWorkItem(_currentSearchQuery!);
+    }
   }
 
   void resetFilters() {
@@ -195,6 +200,8 @@ class _WorkItemsController with FilterMixin {
     userFilter = userAll;
     areaFilter = null;
     iterationFilter = null;
+    _currentSearchQuery = null;
+    resetSearch();
 
     init();
   }
@@ -251,11 +258,13 @@ class _WorkItemsController with FilterMixin {
 
   /// Search currently filtered work items by id or title.
   void _searchWorkItem(String query) {
-    final trimmedQuery = query.trim().toLowerCase();
+    _currentSearchQuery = query.trim().toLowerCase();
 
     final matchedItems = allWorkItems
         .where(
-          (i) => i.id.toString().contains(trimmedQuery) || i.fields.systemTitle.toLowerCase().contains(trimmedQuery),
+          (i) =>
+              i.id.toString().contains(_currentSearchQuery!) ||
+              i.fields.systemTitle.toLowerCase().contains(_currentSearchQuery!),
         )
         .toList();
 
