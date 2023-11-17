@@ -32,8 +32,12 @@ class _ChooseProjectsScreen extends StatelessWidget {
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  SectionHeader.noMargin(text: 'Projects'),
+                  SectionHeader.noMargin(
+                    text: 'Projects',
+                    textHeight: 1,
+                  ),
                   ValueListenableBuilder<bool>(
                     valueListenable: ctrl.chooseAll,
                     builder: (_, chooseAll, __) => Row(

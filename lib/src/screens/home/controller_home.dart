@@ -13,6 +13,12 @@ class _HomeController with AppLogger {
   final StorageService storageService;
 
   final projects = ValueNotifier<ApiResponse<List<Project>>?>(null);
+  List<Project> allProjects = [];
+
+  final isSearchingProjects = ValueNotifier<bool>(false);
+
+  int _projectsCount = 0;
+  bool get hasManyProjects => _projectsCount > 10;
 
   void dispose() {
     instance = null;
@@ -20,7 +26,7 @@ class _HomeController with AppLogger {
 
   Future<void> init() async {
     final allProjectsRes = await apiService.getProjects();
-    final allProjects = allProjectsRes.data ?? [];
+    allProjects = allProjectsRes.data ?? [];
 
     // avoid resetting projects if response is error (and thus contains zero projects)
     if (allProjectsRes.isError) {
@@ -32,6 +38,10 @@ class _HomeController with AppLogger {
 
     final existentProjects = alreadyChosenProjects.where((p) => allProjects.map((e) => e.id!).contains(p.id));
     final sortedProjects = existentProjects.toList()..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!));
+
+    _projectsCount = existentProjects.length;
+
+    _hideSearchField();
 
     projects.value = ApiResponse.ok(sortedProjects);
 
@@ -104,5 +114,26 @@ class _HomeController with AppLogger {
     Timer(Duration(seconds: 5), () {
       if (apiService.user != null) logInfo('5 seconds session');
     });
+  }
+
+  void searchProjects(String query) {
+    final trimmedQuery = query.trim().toLowerCase();
+
+    final matchedProjects = allProjects.where((p) => p.name.toString().toLowerCase().contains(trimmedQuery)).toList();
+
+    projects.value = projects.value?.copyWith(data: matchedProjects);
+  }
+
+  void resetSearch() {
+    searchProjects('');
+    _hideSearchField();
+  }
+
+  void showSearchField() {
+    isSearchingProjects.value = true;
+  }
+
+  void _hideSearchField() {
+    isSearchingProjects.value = false;
   }
 }

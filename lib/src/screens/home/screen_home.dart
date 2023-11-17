@@ -56,10 +56,13 @@ class _HomeScreen extends StatelessWidget {
               ),
             ],
           ),
-          SectionHeader.withIcon(
-            text: 'Projects',
-            icon: DevOpsIcons.list,
-          ),
+          if (ctrl.hasManyProjects)
+            _ProjectsHeaderWithSearchField(ctrl: ctrl)
+          else
+            SectionHeader.withIcon(
+              text: 'Projects',
+              icon: DevOpsIcons.list,
+            ),
           if (projects.isEmpty)
             Text(
               'No project found',
