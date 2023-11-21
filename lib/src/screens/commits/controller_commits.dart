@@ -57,10 +57,12 @@ class _CommitsController with FilterMixin {
       ]),
     ]..removeWhere((data) => data == null || data.tags.isEmpty);
 
-    for (final commit in commits) {
-      final repoTags = allTags
-          .firstWhereOrNull((tags) => tags!.projectId == commit.projectId && tags.repositoryId == commit.repositoryId);
-      commit.tags = repoTags?.tags[commit.commitId];
+    if (allTags.isNotEmpty) {
+      for (final commit in commits) {
+        final repoTags =
+            allTags.firstWhereOrNull((t) => t!.projectId == commit.projectId && t.repositoryId == commit.repositoryId);
+        commit.tags = repoTags?.tags[commit.commitId];
+      }
     }
 
     recentCommits.value = res.copyWith(data: commits);

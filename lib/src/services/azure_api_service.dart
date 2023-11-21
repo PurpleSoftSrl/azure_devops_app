@@ -1693,6 +1693,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       },
     );
 
+    if (tagsRes.isError) return null;
+
     return TagsResponse.fromResponse(tagsRes)
       ?..projectId = commits.first.projectId
       ..repositoryId = commits.first.repositoryId;
