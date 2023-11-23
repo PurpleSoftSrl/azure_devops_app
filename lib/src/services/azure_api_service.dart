@@ -877,7 +877,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       ),
       ...updates.where((u) => u.hasSupportedChanges).map(
             (u) => SimpleItemUpdate(
-              updateDate: u.fields!.systemChangedDate!.newValue == null
+              updateDate: u.fields?.systemChangedDate?.newValue == null
                   ? u.revisedDate
                   : DateTime.parse(u.fields!.systemChangedDate!.newValue!),
               updatedBy: UpdateUser(
