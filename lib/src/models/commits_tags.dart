@@ -70,18 +70,15 @@ class Tagger {
     required this.name,
     required this.email,
     required this.date,
-    required this.imageUrl,
   });
 
   factory Tagger.fromJson(Map<String, dynamic> json) => Tagger(
-        name: json['name'] as String,
-        email: json['email'] as String,
-        date: DateTime.parse(json['date'] as String),
-        imageUrl: json['imageUrl'] as String,
+        name: json['name'] as String?,
+        email: json['email'] as String?,
+        date: json['date'] == null ? null : DateTime.parse(json['date'] as String),
       );
 
-  final String name;
-  final String email;
-  final DateTime date;
-  final String imageUrl;
+  final String? name;
+  final String? email;
+  final DateTime? date;
 }

@@ -115,7 +115,7 @@ class TagChip extends StatelessWidget {
       tooltip: tag.name,
       items: () => [
         PopupItem(
-          text: '${tag.comment ?? ''}\n${tag.tagger?.name}\n${tag.tagger?.date.toDate()}',
+          text: '${tag.comment ?? ''}\n${tag.tagger?.name}\n${tag.tagger?.date?.toDate()}',
           onTap: () {},
         ),
       ],
