@@ -17,25 +17,30 @@ class _PipelineDetailScreen extends StatelessWidget {
         title: 'Pipeline detail',
         notifier: ctrl.buildDetail,
         actions: [
-          DevOpsPopupMenu(
-            tooltip: 'Pipeline actions',
-            items: () => [
-              PopupItem(
-                onTap: ctrl.goToPreviousRuns,
-                text: 'Previous runs',
-                icon: DevOpsIcons.pipeline,
-              ),
-              PopupItem(
-                onTap: ctrl.getActionFromStatus,
-                text: ctrl.getActionTextFromStatus(),
-                icon: ctrl.getActionIconFromStatus(),
-              ),
-              PopupItem(
-                onTap: ctrl.shareBuild,
-                text: 'Share',
-                icon: DevOpsIcons.share,
-              ),
-            ],
+          ListenableBuilder(
+            listenable: ctrl.buildDetail,
+            builder: (_, __) => ctrl.buildDetail.value?.data?.pipeline == null
+                ? const SizedBox()
+                : DevOpsPopupMenu(
+                    tooltip: 'Pipeline actions',
+                    items: () => [
+                      PopupItem(
+                        onTap: ctrl.goToPreviousRuns,
+                        text: 'Previous runs',
+                        icon: DevOpsIcons.pipeline,
+                      ),
+                      PopupItem(
+                        onTap: ctrl.getActionFromStatus,
+                        text: ctrl.getActionTextFromStatus(),
+                        icon: ctrl.getActionIconFromStatus(),
+                      ),
+                      PopupItem(
+                        onTap: ctrl.shareBuild,
+                        text: 'Share',
+                        icon: DevOpsIcons.share,
+                      ),
+                    ],
+                  ),
           ),
           const SizedBox(
             width: 8,
