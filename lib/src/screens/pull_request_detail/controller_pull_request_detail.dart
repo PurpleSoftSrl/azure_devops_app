@@ -1,8 +1,6 @@
 part of pull_request_detail;
 
-typedef _ThreadCommentMention = ({int threadId, int commentId, String mentionGuid, String? displayName});
-
-class _PullRequestDetailController with ShareMixin, AppLogger {
+class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper {
   factory _PullRequestDetailController({
     required PullRequestDetailArgs args,
     required AzureApiService apiService,
@@ -65,8 +63,6 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
   final showCommentField = ValueNotifier<bool>(false);
   final historyKey = GlobalKey();
 
-  final _mentionRegExp = RegExp('@<[a-zA-Z0-9-]+>');
-
   void dispose() {
     instance = null;
     _instances.remove(args.hashCode);
@@ -100,10 +96,12 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
       canBeReactivated = await _checkIfCanBeReactivated(pr!);
     }
 
-    final mentionsToReplace = _getMentionsToReplace(data: res.data);
-    final mentionsWithNames = await _getIdentitiesFromGuids(mentionsToReplace);
-
-    final prAndThreads = _getReplacedPrAndThreads(data: res.data, mentionsWithNames: mentionsWithNames);
+    final prAndThreads = await getReplacedPrAndThreads(
+      basePath: apiService.basePath,
+      projectId: args.project,
+      data: res.data,
+      getIdentity: (mention) => apiService.getIdentityFromGuid(guid: mention),
+    );
 
     prDetail.value = res.copyWith(data: res.data?.copyWith(pr: prAndThreads.pr, updates: prAndThreads.updates));
   }
@@ -170,134 +168,6 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
       groupedConflictingFiles.putIfAbsent(directory, () => {diff});
       groupedConflictingFiles[directory]!.add(diff);
     }
-  }
-
-  /// Replaces work items links with valid markdown links in description and comments.
-  /// Also, replaces markdown mentions with html mentions with names.
-  ({PullRequest? pr, List<PullRequestUpdate> updates}) _getReplacedPrAndThreads({
-    PullRequestWithDetails? data,
-    required List<_ThreadCommentMention> mentionsWithNames,
-  }) {
-    final description = data?.pr.description ?? '';
-
-    PullRequest? pr;
-
-    if (description.isNotEmpty) {
-      final replacedDescription = _replaceWorkItemLinks(description);
-      pr = data!.pr.copyWith(description: replacedDescription);
-    }
-
-    final updates = <PullRequestUpdate>[];
-
-    for (final update in data?.updates ?? <PullRequestUpdate>[]) {
-      if (update is ThreadUpdate) {
-        final replacedComments = <PrComment>[];
-        for (final comment in update.comments) {
-          var replacedComment = _replaceWorkItemLinks(comment.content);
-
-          final mentions = mentionsWithNames.where((m) => m.threadId == update.id && m.commentId == comment.id);
-          for (final mention in mentions) {
-            replacedComment = _replaceMention(replacedComment, mention: mention);
-          }
-
-          replacedComments.add(comment.copyWith(content: replacedComment));
-        }
-        updates.add(update.copyWith(comments: replacedComments));
-      } else {
-        updates.add(update);
-      }
-    }
-
-    return (pr: pr, updates: updates);
-  }
-
-  String _replaceWorkItemLinks(String text) {
-    return text.splitMapJoin(
-      RegExp('#[0-9]+'),
-      onMatch: (p0) {
-        final item = p0.group(0);
-        if (item == null) return p0.input;
-
-        final itemId = item.substring(1);
-        return '[$item](workitems/$itemId)';
-      },
-    );
-  }
-
-  String _replaceMention(String text, {required _ThreadCommentMention mention}) {
-    if (mention.displayName == null) return text;
-
-    final guidIndex = text.indexOf(mention.mentionGuid);
-    final startIndex = guidIndex - 2;
-    final endIndex = guidIndex + mention.mentionGuid.length + 1;
-    return text.replaceRange(startIndex, endIndex, _getMentionHtml(mention.mentionGuid, mention.displayName!));
-  }
-
-  String _getMentionHtml(String guid, String name) => '<a href="#" data-vss-mention="version:2.0,$guid">@$name</a>';
-
-  List<_ThreadCommentMention> _getMentionsToReplace({PullRequestWithDetails? data}) {
-    if (data == null) return [];
-
-    final threads = data.updates.whereType<ThreadUpdate>().where((t) => t.comments.any((c) => c.commentType == 'text'));
-
-    if (threads.isEmpty) return [];
-
-    final mentions = <_ThreadCommentMention>[];
-
-    for (final thread in threads) {
-      for (final comment in thread.comments) {
-        final mentionGuids = _getMentionGuids(comment.content);
-        if (mentionGuids.isNotEmpty) {
-          for (final guid in mentionGuids) {
-            mentions.add(
-              (
-                threadId: thread.id,
-                commentId: comment.id,
-                mentionGuid: guid,
-                displayName: null,
-              ),
-            );
-          }
-        }
-      }
-    }
-
-    return mentions;
-  }
-
-  List<String> _getMentionGuids(String text) {
-    final allMatches = _mentionRegExp.allMatches(text);
-    if (allMatches.isEmpty) return [];
-
-    final res = <String>[];
-
-    for (final match in allMatches) {
-      res.add(text.substring(match.start + 2, match.end - 1).trim());
-    }
-
-    return res;
-  }
-
-  Future<List<_ThreadCommentMention>> _getIdentitiesFromGuids(List<_ThreadCommentMention> mentionsToReplace) async {
-    final distinctGuids = mentionsToReplace.map((m) => m.mentionGuid).toSet();
-
-    final res = await Future.wait([
-      for (final mention in distinctGuids) apiService.getIdentityFromGuid(guid: mention),
-    ]);
-
-    final identitites = res.where((r) => !r.isError && r.data != null).map((r) => r.data!);
-
-    return mentionsToReplace
-        .map(
-          (m) => (
-            threadId: m.threadId,
-            commentId: m.commentId,
-            mentionGuid: m.mentionGuid,
-            displayName:
-                identitites.firstWhereOrNull((i) => i.guid?.toLowerCase() == m.mentionGuid.toLowerCase())?.displayName
-          ),
-        )
-        .toList();
   }
 
   /// An abandoned PR can be reactivated only if sourceBranch has not been deleted
@@ -381,7 +251,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
     );
 
     await AppRouter.goToFileDiff(
-      (commit: commit, filePath: diff.path, isAdded: isAdded, isDeleted: isDeleted),
+      (commit: commit, filePath: diff.path, isAdded: isAdded, isDeleted: isDeleted, pullRequestId: args.id),
     );
   }
 
@@ -650,7 +520,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
     final comment = await getTextFromEditor(editorController);
     if (comment == null) return;
 
-    final newComment = _translateMentionsFromHtmlToMarkdown(comment);
+    final newComment = translateMentionsFromHtmlToMarkdown(comment);
 
     final res = await apiService.addPullRequestComment(
       projectName: args.project,
@@ -688,7 +558,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
     final text = await getTextFromEditor(editorController);
     if (text == null) return;
 
-    final newComment = _translateMentionsFromHtmlToMarkdown(text);
+    final newComment = translateMentionsFromHtmlToMarkdown(text);
 
     final res = await apiService.editPullRequestComment(
       projectName: args.project,
@@ -698,6 +568,11 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
       comment: comment,
       text: newComment,
     );
+
+    logAnalytics('edit_pr_comment', {
+      'comment_length': newComment.length,
+      'is_error': res.isError.toString(),
+    });
 
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not edited');
@@ -721,6 +596,10 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
       comment: comment,
     );
 
+    logAnalytics('delete_pr_comment', {
+      'is_error': res.isError.toString(),
+    });
+
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not deleted');
     }
@@ -728,26 +607,12 @@ class _PullRequestDetailController with ShareMixin, AppLogger {
     await init();
   }
 
-  String _translateMentionsFromHtmlToMarkdown(String comment) {
-    const mentionStr = '<a href="#" data-vss-mention="version:2.0,';
-    final mentionsCount = mentionStr.allMatches(comment).length;
-    var newComment = comment;
-
-    if (mentionsCount > 0) {
-      for (var i = 0; i < mentionsCount; i++) {
-        final mentionIndex = newComment.indexOf(mentionStr);
-        final mentionGuidIndex = mentionIndex + mentionStr.length;
-        final mentionGuidEndIndex = newComment.indexOf('"', mentionGuidIndex);
-        final mentionGuid = newComment.substring(mentionGuidIndex, mentionGuidEndIndex);
-        final mentionEndIndex = newComment.indexOf('</a>', mentionGuidEndIndex) + '</a>'.length;
-        newComment = newComment.replaceRange(mentionIndex, mentionEndIndex, '@<$mentionGuid>');
-      }
-    }
-
-    return newComment;
+  bool canEditPrComment(PrComment c) {
+    return apiService.user?.emailAddress == c.author.uniqueName;
   }
 }
 
+// TODO record
 class _RevWithDescriptor {
   _RevWithDescriptor(
     this.reviewer,

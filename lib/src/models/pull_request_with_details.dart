@@ -195,6 +195,7 @@ class Thread {
     required this.isDeleted,
     this.properties,
     this.identities,
+    this.threadContext,
   });
 
   factory Thread.fromJson(Map<String, dynamic> json) => Thread(
@@ -207,6 +208,9 @@ class Thread {
         isDeleted: json['isDeleted'] as bool,
         properties: json['properties'] == null ? null : Properties.fromJson(json['properties'] as Map<String, dynamic>),
         identities: json['identities'] == null ? null : json['identities'] as Map<String, dynamic>,
+        threadContext: json['threadContext'] == null
+            ? null
+            : ThreadContext.fromJson(json['threadContext'] as Map<String, dynamic>),
       );
 
   final int id;
@@ -216,6 +220,7 @@ class Thread {
   final bool isDeleted;
   final Properties? properties;
   final Map<String, dynamic>? identities;
+  final ThreadContext? threadContext;
 
   Thread copyWith({List<PrComment>? comments}) {
     return Thread(
@@ -340,6 +345,49 @@ class Conflict {
   final String conflictPath;
 }
 
+class ThreadContext {
+  ThreadContext({
+    required this.filePath,
+    required this.rightFileStart,
+    required this.rightFileEnd,
+    required this.leftFileStart,
+    required this.leftFileEnd,
+  });
+
+  factory ThreadContext.fromJson(Map<String, dynamic> json) => ThreadContext(
+        filePath: json['filePath'] as String,
+        rightFileStart:
+            json['rightFileStart'] == null ? null : RightFile.fromJson(json['rightFileStart'] as Map<String, dynamic>),
+        rightFileEnd:
+            json['rightFileEnd'] == null ? null : RightFile.fromJson(json['rightFileEnd'] as Map<String, dynamic>),
+        leftFileStart:
+            json['leftFileStart'] == null ? null : RightFile.fromJson(json['leftFileStart'] as Map<String, dynamic>),
+        leftFileEnd:
+            json['leftFileEnd'] == null ? null : RightFile.fromJson(json['leftFileEnd'] as Map<String, dynamic>),
+      );
+
+  final String filePath;
+  final RightFile? rightFileStart;
+  final RightFile? rightFileEnd;
+  final RightFile? leftFileStart;
+  final RightFile? leftFileEnd;
+}
+
+class RightFile {
+  RightFile({
+    required this.line,
+    required this.offset,
+  });
+
+  factory RightFile.fromJson(Map<String, dynamic> json) => RightFile(
+        line: json['line'] as int,
+        offset: json['offset'] as int,
+      );
+
+  final int line;
+  final int offset;
+}
+
 sealed class PullRequestUpdate {
   PullRequestUpdate({required this.date, required this.author, required this.identity, required this.content});
 
@@ -357,10 +405,12 @@ final class ThreadUpdate extends PullRequestUpdate {
     required super.content,
     required this.id,
     required this.comments,
+    this.threadContext,
   });
 
   final int id;
   final List<PrComment> comments;
+  final ThreadContext? threadContext;
 
   ThreadUpdate copyWith({String? content, List<PrComment>? comments}) => ThreadUpdate(
         id: id,
@@ -369,6 +419,7 @@ final class ThreadUpdate extends PullRequestUpdate {
         date: date,
         identity: identity,
         comments: comments ?? this.comments,
+        threadContext: threadContext,
       );
 }
 

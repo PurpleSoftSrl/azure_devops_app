@@ -108,6 +108,7 @@ class _FileDiff extends StatelessWidget {
                               (l) => _NotEditedLine(
                                 line: l,
                                 lineNumber: newLineNumber++,
+                                ctrl: ctrl,
                               ),
                             )
                           else
@@ -118,10 +119,12 @@ class _FileDiff extends StatelessWidget {
                                   _RemovedLines(
                                     lines: b.oLines,
                                     oldLineNumber: oldLineNumber,
+                                    ctrl: ctrl,
                                   ),
                                 _AddedLines(
                                   lines: b.mLines,
                                   newLineNumber: newLineNumber,
+                                  ctrl: ctrl,
                                 ),
                               ],
                             ),
@@ -207,25 +210,28 @@ class _FileDiffHeader extends StatelessWidget {
 }
 
 class _NotEditedLine extends StatelessWidget {
-  const _NotEditedLine({required this.line, required this.lineNumber});
+  const _NotEditedLine({required this.line, required this.lineNumber, required this.ctrl});
 
   final String line;
   final int lineNumber;
+  final _FileDiffController ctrl;
 
   @override
   Widget build(BuildContext context) {
     return _DiffLine(
       line: line,
       lineNumber: lineNumber,
+      ctrl: ctrl,
     );
   }
 }
 
 class _RemovedLines extends StatelessWidget {
-  const _RemovedLines({required this.lines, required this.oldLineNumber});
+  const _RemovedLines({required this.lines, required this.oldLineNumber, required this.ctrl});
 
   final List<String> lines;
   final int oldLineNumber;
+  final _FileDiffController ctrl;
 
   @override
   Widget build(BuildContext context) {
@@ -242,6 +248,7 @@ class _RemovedLines extends StatelessWidget {
               line: ol,
               lineNumber: lineNumber++,
               isRemoved: true,
+              ctrl: ctrl,
             ),
           ),
         ],
@@ -251,10 +258,11 @@ class _RemovedLines extends StatelessWidget {
 }
 
 class _AddedLines extends StatelessWidget {
-  const _AddedLines({required this.lines, required this.newLineNumber});
+  const _AddedLines({required this.lines, required this.newLineNumber, required this.ctrl});
 
   final List<String> lines;
   final int newLineNumber;
+  final _FileDiffController ctrl;
 
   @override
   Widget build(BuildContext context) {
@@ -271,6 +279,7 @@ class _AddedLines extends StatelessWidget {
               line: ml,
               lineNumber: lineNumber++,
               isAdded: true,
+              ctrl: ctrl,
             ),
           ),
         ],
@@ -285,24 +294,55 @@ class _DiffLine extends StatelessWidget {
     required this.line,
     this.isAdded = false,
     this.isRemoved = false,
+    required this.ctrl,
   });
 
   final int lineNumber;
   final String line;
   final bool isAdded;
   final bool isRemoved;
+  final _FileDiffController ctrl;
 
   @override
   Widget build(BuildContext context) {
+    final isRightFile = isAdded || !isRemoved;
+
+    final prThreadUpdate = ctrl.prThreads.firstWhereOrNull(
+      (t) => (isRightFile ? t.threadContext!.rightFileStart : t.threadContext!.leftFileStart)?.line == lineNumber,
+    );
+
+    final hasCommentOnThisLine = prThreadUpdate != null && prThreadUpdate.comments.isNotEmpty;
+
     return Row(
       children: [
-        SizedBox(
-          width: 30,
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              '$lineNumber',
-              style: context.textTheme.labelSmall!.copyWith(color: context.colorScheme.onSecondary),
+        GestureDetector(
+          onTap: hasCommentOnThisLine
+              ? null
+              : () => ctrl.addPrComment(
+                    lineNumber: lineNumber,
+                    line: line,
+                    isRightFile: isRightFile,
+                  ),
+          child: SizedBox(
+            width: 30,
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    '$lineNumber',
+                    style: context.textTheme.labelSmall!.copyWith(color: context.colorScheme.onSecondary),
+                  ),
+                ),
+                if (hasCommentOnThisLine)
+                  _PrThread(
+                    lineNumber: lineNumber,
+                    prThreadUpdate: prThreadUpdate,
+                    ctrl: ctrl,
+                    line: line,
+                    isRightFile: isRightFile,
+                  ),
+              ],
             ),
           ),
         ),
@@ -331,6 +371,77 @@ class _DiffLine extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _PrThread extends StatelessWidget {
+  const _PrThread({
+    required this.lineNumber,
+    required this.prThreadUpdate,
+    required this.ctrl,
+    required this.line,
+    required this.isRightFile,
+  });
+
+  final int lineNumber;
+  final ThreadUpdate prThreadUpdate;
+  final _FileDiffController ctrl;
+  final String line;
+  final bool isRightFile;
+
+  @override
+  Widget build(BuildContext context) {
+    return DevOpsPopupMenu(
+      tooltip: 'pr comment line $lineNumber',
+      offset: Offset.zero,
+      color: context.colorScheme.surface,
+      constraints: BoxConstraints(maxWidth: double.maxFinite),
+      items: () => [
+        PopupItem(
+          text: prThreadUpdate.content,
+          onTap: () {},
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: prThreadUpdate.comments
+                .map(
+                  (c) => Column(
+                    children: [
+                      PullRequestCommentCard(
+                        onEditComment: !ctrl.canEditPrComment(c)
+                            ? null
+                            : () => ctrl.editPrComment(
+                                  c,
+                                  threadId: prThreadUpdate.id,
+                                ),
+                        onAddComment: () => ctrl.addPrComment(
+                          threadId: prThreadUpdate.id,
+                          parentCommentId: c.id,
+                          lineNumber: lineNumber,
+                          line: line,
+                          isRightFile: isRightFile,
+                        ),
+                        onDeleteComment: !ctrl.canEditPrComment(c)
+                            ? null
+                            : () => ctrl.deletePrComment(c, threadId: prThreadUpdate.id),
+                        comment: c,
+                        threadId: prThreadUpdate.id,
+                        borderRadiusBottom: prThreadUpdate.comments.length < 2 || c == prThreadUpdate.comments.last,
+                        borderRadiusTop: prThreadUpdate.comments.length < 2 || c == prThreadUpdate.comments.first,
+                      ),
+                      if (c != prThreadUpdate.comments.last) const Divider(height: 10),
+                    ],
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ],
+      child: MemberAvatar(
+        tappable: false,
+        radius: 15,
+        userDescriptor: prThreadUpdate.author.descriptor,
+      ),
     );
   }
 }

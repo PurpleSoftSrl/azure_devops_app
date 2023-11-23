@@ -300,12 +300,19 @@ class _PullRequestOverview extends StatelessWidget {
                               ThreadUpdate() => Column(
                                   children: u.comments
                                       .map(
-                                        (c) => _CommentWidget(
-                                          ctrl: ctrl,
+                                        (c) => PullRequestCommentCard(
+                                          onEditComment: !ctrl.canEditPrComment(c)
+                                              ? null
+                                              : () => ctrl.editComment(c, threadId: u.id),
+                                          onAddComment: () => ctrl.addComment(threadId: u.id, parentCommentId: c.id),
+                                          onDeleteComment: !ctrl.canEditPrComment(c)
+                                              ? null
+                                              : () => ctrl.deleteComment(c, threadId: u.id),
                                           comment: c,
                                           threadId: u.id,
                                           borderRadiusBottom: u.comments.length < 2 || c == u.comments.last,
                                           borderRadiusTop: u.comments.length < 2 || c == u.comments.first,
+                                          threadContext: u.threadContext,
                                         ),
                                       )
                                       .toList(),
@@ -438,108 +445,6 @@ class _UserAvatar extends StatelessWidget {
           const SizedBox(width: 10),
         ],
       ],
-    );
-  }
-}
-
-class _CommentWidget extends StatelessWidget {
-  const _CommentWidget({
-    required this.ctrl,
-    required this.comment,
-    required this.threadId,
-    required this.borderRadiusBottom,
-    required this.borderRadiusTop,
-  });
-
-  final _PullRequestDetailController ctrl;
-  final int threadId;
-  final PrComment comment;
-  final bool borderRadiusTop;
-  final bool borderRadiusBottom;
-
-  @override
-  Widget build(BuildContext context) {
-    final isEdited = comment.publishedDate.isBefore(comment.lastUpdatedDate);
-    final isReply = comment.parentCommentId > 0;
-
-    var commentText = '';
-    if (isEdited) {
-      commentText += comment.lastUpdatedDate.minutesAgo;
-    } else {
-      commentText += comment.publishedDate.minutesAgo;
-    }
-
-    if (isReply) commentText += ' replied';
-
-    if (comment.isDeleted) {
-      commentText += ' (deleted)';
-    } else if (isEdited) {
-      commentText += ' (edited)';
-    }
-
-    return Container(
-      width: double.maxFinite,
-      padding: const EdgeInsets.all(8),
-      margin: EdgeInsets.only(top: !borderRadiusTop ? 1 : 0),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(borderRadiusBottom ? AppTheme.radius : 0),
-          bottomRight: Radius.circular(borderRadiusBottom ? AppTheme.radius : 0),
-          topLeft: Radius.circular(borderRadiusTop ? AppTheme.radius : 0),
-          topRight: Radius.circular(borderRadiusTop ? AppTheme.radius : 0),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              MemberAvatar(userDescriptor: comment.author.descriptor, radius: 20),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(text: comment.author.displayName),
-                      TextSpan(
-                        text: '  $commentText',
-                        style: context.textTheme.labelSmall,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if (!comment.isDeleted)
-                DevOpsPopupMenu(
-                  tooltip: 'pull request comment',
-                  offset: const Offset(0, 20),
-                  items: () => [
-                    PopupItem(
-                      onTap: () => ctrl.editComment(comment, threadId: threadId),
-                      text: 'Edit',
-                      icon: DevOpsIcons.edit,
-                    ),
-                    PopupItem(
-                      onTap: () => ctrl.addComment(threadId: threadId, parentCommentId: comment.id),
-                      text: 'Reply',
-                      icon: DevOpsIcons.send,
-                    ),
-                    PopupItem(
-                      onTap: () => ctrl.deleteComment(comment, threadId: threadId),
-                      text: 'Delete',
-                      icon: DevOpsIcons.failed,
-                    ),
-                  ],
-                ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          HtmlWidget(
-            data: comment.content,
-          ),
-        ],
-      ),
     );
   }
 }

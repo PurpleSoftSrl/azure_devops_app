@@ -1,6 +1,6 @@
 part of file_diff;
 
-class _FileDiffController with ShareMixin {
+class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
   factory _FileDiffController({required AzureApiService apiService, required FileDiffArgs args}) {
     return instance ??= _FileDiffController._(apiService, args);
   }
@@ -14,14 +14,13 @@ class _FileDiffController with ShareMixin {
 
   final diff = ValueNotifier<ApiResponse<Diff?>?>(null);
 
-  String get diffUrl =>
-      '${apiService.basePath}/${args.commit.projectName}/_git/${args.commit.repositoryName}/commit/${args.commit.commitId}';
-
   /// Used to calculate text width to avoid layout issues.
   int diffMaxLength = -1;
 
   String? imageDiffContent;
   String? previousImageDiffContent;
+
+  List<ThreadUpdate> prThreads = [];
 
   bool get isImageDiff => imageDiffContent != null || previousImageDiffContent != null;
 
@@ -80,7 +79,37 @@ class _FileDiffController with ShareMixin {
       }
     }
 
+    if (args.pullRequestId != null) {
+      await _getPullRequestComments();
+    }
+
     diff.value = res;
+  }
+
+  Future<void> _getPullRequestComments() async {
+    // TODO apiService.getFilePullRequestComments
+    final res = await apiService.getPullRequest(
+      projectName: args.commit.projectName,
+      repositoryId: args.commit.repositoryId,
+      id: args.pullRequestId!,
+    );
+
+    final prAndThreads = await getReplacedPrAndThreads(
+      basePath: apiService.basePath,
+      projectId: args.commit.projectId,
+      data: res.data,
+      getIdentity: (mention) => apiService.getIdentityFromGuid(guid: mention),
+    );
+
+    prThreads = prAndThreads.updates
+        .whereType<ThreadUpdate>()
+        .where(
+          (t) =>
+              t.threadContext != null &&
+              t.threadContext!.filePath == args.filePath &&
+              t.comments.any((c) => c.commentType == 'text'),
+        )
+        .toList();
   }
 
   bool isNotRealChange(Block block) {
@@ -88,6 +117,12 @@ class _FileDiffController with ShareMixin {
   }
 
   void shareDiff() {
+    final baseUrl = '${apiService.basePath}/${args.commit.projectName}/_git/${args.commit.repositoryName}';
+
+    final diffUrl = args.pullRequestId != null
+        ? '$baseUrl/pullrequest/${args.pullRequestId}?_a=files&path=${args.filePath}'
+        : '$baseUrl/commit/${args.commit.commitId}';
+
     shareUrl(diffUrl);
   }
 
@@ -101,5 +136,129 @@ class _FileDiffController with ShareMixin {
         .size
         .width
         .toInt();
+  }
+
+  Future<void> addPrComment({
+    int? threadId,
+    int? parentCommentId,
+    required int lineNumber,
+    required String line,
+    required bool isRightFile,
+  }) async {
+    final editorController = HtmlEditorController();
+    final editorGlobalKey = GlobalKey<State>();
+
+    final hasConfirmed = await showEditor(
+      editorController,
+      editorGlobalKey,
+      title: 'Add comment',
+    );
+    if (!hasConfirmed) return;
+
+    final comment = await getTextFromEditor(editorController);
+    if (comment == null) return;
+
+    final newComment = translateMentionsFromHtmlToMarkdown(comment);
+
+    final res = await apiService.addPullRequestComment(
+      projectName: args.commit.projectName,
+      repositoryId: args.commit.repositoryId,
+      pullRequestId: args.pullRequestId!,
+      threadId: threadId,
+      text: newComment,
+      parentCommentId: parentCommentId,
+      filePath: args.filePath,
+      lineNumber: lineNumber,
+      lineLength: line.length + 1,
+      isRightFile: isRightFile,
+    );
+
+    logAnalytics('add_pr_comment_from_file_diff', {
+      'comment_length': comment.length,
+      'is_error': res.isError.toString(),
+    });
+
+    if (res.isError) {
+      return OverlayService.error('Error', description: 'Comment not added');
+    }
+
+    final isReply = threadId != null;
+
+    if (isReply) {
+      // close popup menu
+      AppRouter.pop();
+    }
+
+    await init();
+  }
+
+  Future<void> editPrComment(PrComment comment, {required int threadId}) async {
+    final editorController = HtmlEditorController();
+    final editorGlobalKey = GlobalKey<State>();
+
+    final hasConfirmed = await showEditor(
+      editorController,
+      editorGlobalKey,
+      initialText: comment.content,
+      title: 'Edit comment',
+    );
+    if (!hasConfirmed) return;
+
+    final text = await getTextFromEditor(editorController);
+    if (text == null) return;
+
+    final newComment = translateMentionsFromHtmlToMarkdown(text);
+
+    final res = await apiService.editPullRequestComment(
+      projectName: args.commit.projectName,
+      repositoryId: args.commit.repositoryId,
+      pullRequestId: args.pullRequestId!,
+      threadId: threadId,
+      comment: comment,
+      text: newComment,
+    );
+
+    logAnalytics('edit_pr_comment_from_file_diff', {
+      'comment_length': newComment.length,
+      'is_error': res.isError.toString(),
+    });
+
+    if (res.isError) {
+      return OverlayService.error('Error', description: 'Comment not edited');
+    }
+
+    AppRouter.pop();
+    await init();
+  }
+
+  Future<void> deletePrComment(PrComment comment, {required int threadId}) async {
+    final confirm = await OverlayService.confirm(
+      'Attention',
+      description: 'Do you really want to delete this comment?',
+    );
+    if (!confirm) return;
+
+    final res = await apiService.deletePullRequestComment(
+      projectName: args.commit.projectName,
+      repositoryId: args.commit.repositoryId,
+      pullRequestId: args.pullRequestId!,
+      threadId: threadId,
+      comment: comment,
+    );
+
+    logAnalytics('delete_pr_comment_from_file_diff', {
+      'is_error': res.isError.toString(),
+    });
+
+    if (res.isError) {
+      return OverlayService.error('Error', description: 'Comment not deleted');
+    }
+
+    AppRouter.pop();
+    await init();
+  }
+
+  bool canEditPrComment(PrComment c) {
+    return apiService.user?.emailAddress == c.author.uniqueName;
   }
 }

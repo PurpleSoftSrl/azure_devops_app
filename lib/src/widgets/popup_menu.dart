@@ -3,12 +3,21 @@ import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:flutter/material.dart';
 
 class DevOpsPopupMenu extends StatelessWidget {
-  const DevOpsPopupMenu({required this.tooltip, required this.items, this.offset = const Offset(0, 40), this.child});
+  const DevOpsPopupMenu({
+    required this.tooltip,
+    required this.items,
+    this.offset = const Offset(0, 40),
+    this.child,
+    this.color,
+    this.constraints,
+  });
 
   final String tooltip;
   final List<PopupItem> Function() items;
   final Offset offset;
   final Widget? child;
+  final Color? color;
+  final BoxConstraints? constraints;
 
   List<PopupMenuEntry<void>> _getEffectiveItems(BuildContext context) {
     final builtItems = items();
@@ -20,16 +29,17 @@ class DevOpsPopupMenu extends StatelessWidget {
           onTap: item.onTap,
           padding: const EdgeInsets.symmetric(horizontal: 10),
           height: 30,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                item.text,
-                style: context.textTheme.titleSmall,
+          child: item.child ??
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    item.text,
+                    style: context.textTheme.titleSmall,
+                  ),
+                  Icon(item.icon),
+                ],
               ),
-              Icon(item.icon),
-            ],
-          ),
         ),
       );
 
@@ -48,6 +58,8 @@ class DevOpsPopupMenu extends StatelessWidget {
       shadowColor: Colors.black,
       tooltip: tooltip,
       offset: offset,
+      color: color,
+      constraints: constraints,
       shape: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
@@ -62,9 +74,11 @@ class PopupItem {
     required this.text,
     this.icon,
     required this.onTap,
+    this.child,
   });
 
   final String text;
   final IconData? icon;
   final VoidCallback onTap;
+  final Widget? child;
 }

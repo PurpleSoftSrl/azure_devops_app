@@ -273,6 +273,10 @@ abstract class AzureApiService {
     required String text,
     required int? threadId,
     required int? parentCommentId,
+    String? filePath,
+    int? lineNumber,
+    int? lineLength,
+    bool isRightFile,
   });
 
   Future<ApiResponse<bool>> editPullRequestComment({
@@ -1259,6 +1263,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
           author: firstComment.author,
           identity: t.identities?.entries.firstOrNull?.value,
           comments: textComments.toList(),
+          threadContext: t.threadContext,
         ),
       );
     }
@@ -1413,6 +1418,10 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     required int pullRequestId,
     required String text,
     required int? parentCommentId,
+    String? filePath,
+    int? lineNumber,
+    int? lineLength,
+    bool isRightFile = false,
   }) async {
     final threadsPath = '$_basePath/_apis/git/repositories/$repositoryId/pullRequests/$pullRequestId/threads';
 
@@ -1424,11 +1433,20 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       if (parentCommentId != null) 'parentCommentId': parentCommentId,
     };
 
+    final fileStart = isRightFile ? 'rightFileStart' : 'leftFileStart';
+    final fileEnd = isRightFile ? 'rightFileEnd' : 'leftFileEnd';
+
     final createRes = await _post(
       prPath,
       body: threadId == null
           ? {
               'comments': [commentBody],
+              if (filePath != null)
+                'threadContext': {
+                  'filePath': filePath,
+                  fileStart: {'line': lineNumber, 'offset': 1},
+                  fileEnd: {'line': lineNumber, 'offset': lineLength},
+                },
             }
           : commentBody,
     );

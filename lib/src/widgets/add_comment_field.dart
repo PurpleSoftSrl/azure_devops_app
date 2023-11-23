@@ -170,3 +170,22 @@ Future<String?> getTextFromEditor(HtmlEditorController editorController) async {
 
   return comment;
 }
+
+String translateMentionsFromHtmlToMarkdown(String comment) {
+  const mentionStr = '<a href="#" data-vss-mention="version:2.0,';
+  final mentionsCount = mentionStr.allMatches(comment).length;
+  var newComment = comment;
+
+  if (mentionsCount > 0) {
+    for (var i = 0; i < mentionsCount; i++) {
+      final mentionIndex = newComment.indexOf(mentionStr);
+      final mentionGuidIndex = mentionIndex + mentionStr.length;
+      final mentionGuidEndIndex = newComment.indexOf('"', mentionGuidIndex);
+      final mentionGuid = newComment.substring(mentionGuidIndex, mentionGuidEndIndex);
+      final mentionEndIndex = newComment.indexOf('</a>', mentionGuidEndIndex) + '</a>'.length;
+      newComment = newComment.replaceRange(mentionIndex, mentionEndIndex, '@<$mentionGuid>');
+    }
+  }
+
+  return newComment;
+}

@@ -115,6 +115,7 @@ class _CommitDetailController with ShareMixin {
         filePath: diff.path,
         isAdded: isAdded,
         isDeleted: isDeleted,
+        pullRequestId: null,
       ),
     );
   }

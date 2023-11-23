@@ -23,6 +23,9 @@ class HtmlWidget extends StatelessWidget {
     final effectiveStyle = style ?? defaultTextStyle;
     final htmlTextStyle = Style.fromTextStyle(effectiveStyle).copyWith(margin: Margins.zero, padding: padding);
 
+    // workaround to avoid layout error (https://github.com/flutter/flutter/issues/135912)
+    RenderObject.debugCheckingIntrinsics = true;
+
     return Html(
       data: data,
       style: {

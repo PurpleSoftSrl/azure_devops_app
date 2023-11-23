@@ -30,7 +30,7 @@ class AzureApiServiceMock implements AzureApiService {
   String get accessToken => throw UnimplementedError();
 
   @override
-  String get basePath => throw UnimplementedError();
+  String get basePath => 'https://dev.azure.com/organization';
 
   @override
   List<GraphUser> get allUsers => [];
@@ -619,6 +619,10 @@ class AzureApiServiceMock implements AzureApiService {
     required String text,
     required int? threadId,
     required int? parentCommentId,
+    String? filePath,
+    int? lineNumber,
+    int? lineLength,
+    bool isRightFile = false,
   }) {
     throw UnimplementedError();
   }

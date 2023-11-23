@@ -29,7 +29,7 @@ typedef WorkItemDetailArgs = ({String project, int id});
 typedef CreateOrEditWorkItemArgs = ({String? project, int? id});
 typedef PullRequestDetailArgs = ({String project, String repository, int id});
 typedef CommitDetailArgs = ({String project, String repository, String commitId});
-typedef FileDiffArgs = ({Commit commit, String filePath, bool isAdded, bool isDeleted});
+typedef FileDiffArgs = ({Commit commit, String filePath, bool isAdded, bool isDeleted, int? pullRequestId});
 typedef PipelineLogsArgs = ({String project, int pipelineId, String taskId, String parentTaskId, int logId});
 typedef PipelinesArgs = ({Project? project, int? definition});
 
