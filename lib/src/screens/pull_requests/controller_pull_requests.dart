@@ -34,6 +34,8 @@ class _PullRequestsController with FilterMixin {
 
   PullRequestState statusFilter = PullRequestState.all;
 
+  late GraphUser reviewerFilter = userAll;
+
   void dispose() {
     instance = null;
     _instances.remove(project.hashCode);
@@ -68,6 +70,14 @@ class _PullRequestsController with FilterMixin {
     _getData();
   }
 
+  void filterByReviewer(GraphUser u) {
+    if (u.mailAddress == reviewerFilter.mailAddress) return;
+
+    pullRequests.value = null;
+    reviewerFilter = u;
+    _getData();
+  }
+
   void filterByProject(Project proj) {
     if (proj.id == projectFilter.id) return;
 
@@ -81,6 +91,7 @@ class _PullRequestsController with FilterMixin {
       filter: statusFilter,
       creator: userFilter.displayName == userAll.displayName ? null : userFilter,
       project: projectFilter.name == projectAll.name ? null : projectFilter,
+      reviewer: reviewerFilter.displayName == userAll.displayName ? null : reviewerFilter,
     );
     pullRequests.value = res..data?.sort((a, b) => (b.creationDate).compareTo(a.creationDate));
   }
@@ -90,6 +101,7 @@ class _PullRequestsController with FilterMixin {
     projectFilter = projectAll;
     statusFilter = PullRequestState.all;
     userFilter = userAll;
+    reviewerFilter = userAll;
 
     init();
   }

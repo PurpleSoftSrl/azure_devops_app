@@ -162,6 +162,7 @@ abstract class AzureApiService {
     required PullRequestState filter,
     GraphUser? creator,
     Project? project,
+    GraphUser? reviewer,
   });
 
   Future<ApiResponse<List<GitRepository>>> getProjectRepositories({required String projectName});
@@ -1132,6 +1133,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     required PullRequestState filter,
     GraphUser? creator,
     Project? project,
+    GraphUser? reviewer,
   }) async {
     var creatorFilter = '';
     if (creator != null) {
@@ -1146,12 +1148,18 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       creatorFilter = '&searchCriteria.creatorId=${member.id}';
     }
 
+    var reviewerFilter = '';
+    if (reviewer != null) {
+      final reviewerIdentity = await getUserToMention(email: reviewer.mailAddress!);
+      reviewerFilter = '&searchCriteria.reviewerId=${reviewerIdentity.data}';
+    }
+
     final projectsToSearch = project != null ? [project] : (_chosenProjects ?? _projects);
 
     final allProjectPrs = await Future.wait([
       for (final project in projectsToSearch)
         _get(
-          '$_basePath/${project.name}/_apis/git/pullrequests?$_apiVersion&searchCriteria.status=${filter.name}$creatorFilter',
+          '$_basePath/${project.name}/_apis/git/pullrequests?$_apiVersion&searchCriteria.status=${filter.name}$creatorFilter$reviewerFilter',
         ),
     ]);
 

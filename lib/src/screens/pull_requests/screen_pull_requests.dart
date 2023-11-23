@@ -48,6 +48,15 @@ class _PullRequestsScreen extends StatelessWidget {
             isDefaultFilter: ctrl.userFilter == ctrl.userAll,
             widgetBuilder: (u) => UserFilterWidget(user: u),
           ),
+          FilterMenu<GraphUser>(
+            title: 'Assigned to',
+            values: ctrl.getSortedUsers(ctrl.apiService),
+            currentFilter: ctrl.reviewerFilter,
+            onSelected: ctrl.filterByReviewer,
+            formatLabel: (u) => u.displayName!,
+            isDefaultFilter: ctrl.reviewerFilter == ctrl.userAll,
+            widgetBuilder: (u) => UserFilterWidget(user: u),
+          ),
         ],
       ),
       builder: (prs) => Column(

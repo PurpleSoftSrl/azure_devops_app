@@ -186,6 +186,7 @@ class AzureApiServiceMock implements AzureApiService {
     required PullRequestState filter,
     GraphUser? creator,
     Project? project,
+    GraphUser? reviewer,
   }) async {
     final emptyPullRequest = PullRequest.empty();
     final firstItem = emptyPullRequest.copyWith(
