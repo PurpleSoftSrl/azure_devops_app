@@ -81,7 +81,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     final revs = <_RevWithDescriptor>[];
     for (final r in pr?.reviewers ?? <Reviewer>[]) {
       final descriptor = await _getReviewerDescriptor(r);
-      if (descriptor != null) revs.add(_RevWithDescriptor(r, descriptor));
+      if (descriptor != null) revs.add((reviewer: r, descriptor: descriptor));
     }
 
     reviewers = [...revs];
@@ -633,26 +633,4 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   }
 }
 
-// TODO record
-class _RevWithDescriptor {
-  _RevWithDescriptor(
-    this.reviewer,
-    this.descriptor,
-  );
-
-  final Reviewer reviewer;
-  final String descriptor;
-
-  @override
-  String toString() => 'RevWithDescriptor(reviewer: $reviewer, descriptor: $descriptor)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is _RevWithDescriptor && other.reviewer == reviewer && other.descriptor == descriptor;
-  }
-
-  @override
-  int get hashCode => reviewer.hashCode ^ descriptor.hashCode;
-}
+typedef _RevWithDescriptor = ({Reviewer reviewer, String descriptor});

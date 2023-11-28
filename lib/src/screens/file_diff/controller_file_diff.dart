@@ -87,7 +87,6 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
   }
 
   Future<void> _getPullRequestComments() async {
-    // TODO apiService.getFilePullRequestComments
     final res = await apiService.getPullRequest(
       projectName: args.commit.projectName,
       repositoryId: args.commit.repositoryId,
