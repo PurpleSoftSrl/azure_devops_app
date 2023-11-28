@@ -260,4 +260,19 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
   bool canEditPrComment(PrComment c) {
     return apiService.user?.emailAddress == c.author.uniqueName;
   }
+
+  Future<void> setStatus(ThreadUpdate thread, ThreadStatus s) async {
+    final res = await apiService.editPullRequestThreadStatus(
+      projectName: args.commit.projectId,
+      repositoryId: args.commit.repositoryId,
+      pullRequestId: args.pullRequestId!,
+      threadId: thread.id,
+      status: s,
+    );
+
+    if (!(res.data ?? false)) return OverlayService.snackbar('Status not updated', isError: true);
+
+    AppRouter.pop();
+    await init();
+  }
 }

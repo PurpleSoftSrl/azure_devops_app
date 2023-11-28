@@ -460,7 +460,7 @@ class AzureApiServiceMock implements AzureApiService {
   Future<ApiResponse<Identity?>> getIdentityFromGuid({required String guid}) async {
     return ApiResponse.ok(null);
   }
-  
+
   @override
   Future<ApiResponse<bool>> votePullRequest({
     required String projectName,
@@ -609,6 +609,17 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<String>> getUserToMention({required String email}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<bool>> editPullRequestThreadStatus({
+    required String projectName,
+    required String repositoryId,
+    required int pullRequestId,
+    required int threadId,
+    required pr.ThreadStatus status,
+  }) {
     throw UnimplementedError();
   }
 

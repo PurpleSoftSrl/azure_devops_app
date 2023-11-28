@@ -631,6 +631,20 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   bool canEditPrComment(PrComment c) {
     return apiService.user?.emailAddress == c.author.uniqueName;
   }
+
+  Future<void> setStatus(ThreadUpdate thread, ThreadStatus s) async {
+    final res = await apiService.editPullRequestThreadStatus(
+      projectName: args.project,
+      repositoryId: args.repository,
+      pullRequestId: args.id,
+      threadId: thread.id,
+      status: s,
+    );
+
+    if (!(res.data ?? false)) return OverlayService.snackbar('Status not updated', isError: true);
+
+    await init();
+  }
 }
 
 typedef _RevWithDescriptor = ({Reviewer reviewer, String descriptor});

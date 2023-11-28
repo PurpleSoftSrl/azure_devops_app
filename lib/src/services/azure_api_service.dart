@@ -267,6 +267,14 @@ abstract class AzureApiService {
     PullRequestCompletionOptions? completionOptions,
   });
 
+  Future<ApiResponse<bool>> editPullRequestThreadStatus({
+    required String projectName,
+    required String repositoryId,
+    required int pullRequestId,
+    required int threadId,
+    required ThreadStatus status,
+  });
+
   Future<ApiResponse<bool>> addPullRequestComment({
     required String projectName,
     required String repositoryId,
@@ -1272,6 +1280,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
           identity: t.identities?.entries.firstOrNull?.value,
           comments: textComments.toList(),
           threadContext: t.threadContext,
+          status: t.status,
         ),
       );
     }
@@ -1414,6 +1423,24 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       },
     );
     if (editRes.isError) return ApiResponse.error(editRes);
+
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> editPullRequestThreadStatus({
+    required String projectName,
+    required String repositoryId,
+    required int threadId,
+    required int pullRequestId,
+    required ThreadStatus status,
+  }) async {
+    final res = await _patch(
+      '$_basePath/_apis/git/repositories/$repositoryId/pullRequests/$pullRequestId/threads/$threadId?$_apiVersion',
+      body: {'status': status.intValue},
+    );
+
+    if (res.isError) return ApiResponse.error(res);
 
     return ApiResponse.ok(true);
   }

@@ -428,6 +428,8 @@ class _PrThread extends StatelessWidget {
                         threadId: prThreadUpdate.id,
                         borderRadiusBottom: prThreadUpdate.comments.length < 2 || c == prThreadUpdate.comments.last,
                         borderRadiusTop: prThreadUpdate.comments.length < 2 || c == prThreadUpdate.comments.first,
+                        status: c == prThreadUpdate.comments.first ? prThreadUpdate.status : null,
+                        onSetStatus: (s) => ctrl.setStatus(prThreadUpdate, s),
                       ),
                       if (c != prThreadUpdate.comments.last) const Divider(height: 10),
                     ],

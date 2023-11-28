@@ -316,6 +316,8 @@ class _PullRequestOverview extends StatelessWidget {
                                           onGoToFileDiff: () => ctrl.goToFileDiff(
                                             filePath: u.threadContext?.filePath,
                                           ),
+                                          status: c == u.comments.first ? u.status : null,
+                                          onSetStatus: (s) => ctrl.setStatus(u, s),
                                         ),
                                       )
                                       .toList(),

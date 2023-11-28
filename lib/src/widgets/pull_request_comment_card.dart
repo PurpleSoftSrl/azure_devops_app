@@ -19,6 +19,8 @@ class PullRequestCommentCard extends StatelessWidget {
     required this.onDeleteComment,
     this.threadContext,
     this.onGoToFileDiff,
+    this.status,
+    required this.onSetStatus,
   });
 
   final int threadId;
@@ -28,8 +30,10 @@ class PullRequestCommentCard extends StatelessWidget {
   final Future<void> Function()? onEditComment;
   final Future<void> Function() onAddComment;
   final Future<void> Function()? onDeleteComment;
-  final ThreadContext? threadContext;
   final Future<void> Function()? onGoToFileDiff;
+  final ThreadContext? threadContext;
+  final ThreadStatus? status;
+  final Future<void> Function(ThreadStatus)? onSetStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +120,31 @@ class PullRequestCommentCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (status != null) ...[
+                  DevOpsPopupMenu(
+                    tooltip: 'pull request status',
+                    offset: const Offset(0, 20),
+                    items: () => ThreadStatus.values
+                        .where((s) => s != status && s != ThreadStatus.unknown && s != ThreadStatus.byDesign)
+                        .map(
+                          (s) => PopupItem(
+                            text: s.description,
+                            onTap: () => onSetStatus?.call(s),
+                          ),
+                        )
+                        .toList(),
+                    child: Text(
+                      status!.description,
+                      style: context.textTheme.bodySmall!.copyWith(
+                        decoration: TextDecoration.underline,
+                        color: context.colorScheme.onPrimary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                ],
                 if (!comment.isDeleted)
                   DevOpsPopupMenu(
                     tooltip: 'pull request comment',

@@ -196,6 +196,7 @@ class Thread {
     this.properties,
     this.identities,
     this.threadContext,
+    this.status,
   });
 
   factory Thread.fromJson(Map<String, dynamic> json) => Thread(
@@ -211,6 +212,7 @@ class Thread {
         threadContext: json['threadContext'] == null
             ? null
             : ThreadContext.fromJson(json['threadContext'] as Map<String, dynamic>),
+        status: ThreadStatus.fromString(json['status'] as String?),
       );
 
   final int id;
@@ -221,6 +223,7 @@ class Thread {
   final Properties? properties;
   final Map<String, dynamic>? identities;
   final ThreadContext? threadContext;
+  final ThreadStatus? status;
 
   Thread copyWith({List<PrComment>? comments}) {
     return Thread(
@@ -388,6 +391,40 @@ class RightFile {
   final int offset;
 }
 
+enum ThreadStatus {
+  active('Active', 1),
+  byDesign('By design', 6),
+  closed('Closed', 4),
+  fixed('Resolved', 2),
+  pending('Pending', 6),
+  unknown('Unknown', 6),
+  wontFix("Wont't fix", 3);
+
+  const ThreadStatus(this.description, this.intValue);
+
+  final String description;
+  final int intValue;
+
+  static ThreadStatus fromString(String? str) {
+    switch (str) {
+      case 'active':
+        return ThreadStatus.active;
+      case 'byDesign':
+        return ThreadStatus.byDesign;
+      case 'closed':
+        return ThreadStatus.closed;
+      case 'fixed':
+        return ThreadStatus.fixed;
+      case 'pending':
+        return ThreadStatus.pending;
+      case 'wontFix':
+        return ThreadStatus.wontFix;
+      default:
+        return ThreadStatus.unknown;
+    }
+  }
+}
+
 sealed class PullRequestUpdate {
   PullRequestUpdate({required this.date, required this.author, required this.identity, required this.content});
 
@@ -406,11 +443,13 @@ final class ThreadUpdate extends PullRequestUpdate {
     required this.id,
     required this.comments,
     this.threadContext,
+    this.status,
   });
 
   final int id;
   final List<PrComment> comments;
   final ThreadContext? threadContext;
+  final ThreadStatus? status;
 
   ThreadUpdate copyWith({String? content, List<PrComment>? comments}) => ThreadUpdate(
         id: id,
@@ -420,6 +459,7 @@ final class ThreadUpdate extends PullRequestUpdate {
         identity: identity,
         comments: comments ?? this.comments,
         threadContext: threadContext,
+        status: status,
       );
 }
 
