@@ -313,6 +313,9 @@ class _PullRequestOverview extends StatelessWidget {
                                           borderRadiusBottom: u.comments.length < 2 || c == u.comments.last,
                                           borderRadiusTop: u.comments.length < 2 || c == u.comments.first,
                                           threadContext: u.threadContext,
+                                          onGoToFileDiff: () => ctrl.goToFileDiff(
+                                            filePath: u.threadContext?.filePath,
+                                          ),
                                         ),
                                       )
                                       .toList(),
@@ -407,18 +410,18 @@ class _PullRequestCommits extends StatelessWidget {
       visible: visiblePage == 2,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ...commits.map(
-            (commit) => CommitListTile(
-              onTap: () => ctrl.goToCommitDetail(commit.commitId!),
-              commit: commit.copyWith(
-                remoteUrl:
-                    '${ctrl.apiService.basePath}/${prWithDetails.pr.repository.project.name}/_git/${prWithDetails.pr.repository.name}/commit/${commit.commitId}',
+        children: commits
+            .map(
+              (commit) => CommitListTile(
+                onTap: () => ctrl.goToCommitDetail(commit.commitId!),
+                commit: commit.copyWith(
+                  remoteUrl:
+                      '${ctrl.apiService.basePath}/${prWithDetails.pr.repository.project.name}/_git/${prWithDetails.pr.repository.name}/commit/${commit.commitId}',
+                ),
+                isLast: commit == commits.last,
               ),
-              isLast: commit == commits.last,
-            ),
-          ),
-        ],
+            )
+            .toList(),
       ),
     );
   }

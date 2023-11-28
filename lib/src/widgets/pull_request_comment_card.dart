@@ -18,6 +18,7 @@ class PullRequestCommentCard extends StatelessWidget {
     required this.onAddComment,
     required this.onDeleteComment,
     this.threadContext,
+    this.onGoToFileDiff,
   });
 
   final int threadId;
@@ -28,6 +29,7 @@ class PullRequestCommentCard extends StatelessWidget {
   final Future<void> Function() onAddComment;
   final Future<void> Function()? onDeleteComment;
   final ThreadContext? threadContext;
+  final Future<void> Function()? onGoToFileDiff;
 
   @override
   Widget build(BuildContext context) {
@@ -54,95 +56,98 @@ class PullRequestCommentCard extends StatelessWidget {
       lineNumber = (threadContext!.leftFileStart ?? threadContext!.rightFileStart)?.line.toString();
     }
 
-    return Container(
-      width: double.maxFinite,
-      padding: const EdgeInsets.all(8),
-      margin: EdgeInsets.only(top: !borderRadiusTop ? 1 : 0),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(borderRadiusBottom ? AppTheme.radius : 0),
-          bottomRight: Radius.circular(borderRadiusBottom ? AppTheme.radius : 0),
-          topLeft: Radius.circular(borderRadiusTop ? AppTheme.radius : 0),
-          topRight: Radius.circular(borderRadiusTop ? AppTheme.radius : 0),
+    return GestureDetector(
+      onTap: threadContext == null ? null : () => onGoToFileDiff?.call(),
+      child: Container(
+        width: double.maxFinite,
+        padding: const EdgeInsets.all(8),
+        margin: EdgeInsets.only(top: !borderRadiusTop ? 1 : 0),
+        decoration: BoxDecoration(
+          color: context.colorScheme.surface,
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(borderRadiusBottom ? AppTheme.radius : 0),
+            bottomRight: Radius.circular(borderRadiusBottom ? AppTheme.radius : 0),
+            topLeft: Radius.circular(borderRadiusTop ? AppTheme.radius : 0),
+            topRight: Radius.circular(borderRadiusTop ? AppTheme.radius : 0),
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (threadContext != null) ...[
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (threadContext != null) ...[
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      threadContext!.filePath,
+                      style: context.textTheme.labelSmall,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  if (lineNumber != null)
+                    Text(
+                      '(line $lineNumber)',
+                      style: context.textTheme.labelSmall,
+                    ),
+                ],
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+            ],
             Row(
               children: [
-                Flexible(
-                  child: Text(
-                    threadContext!.filePath,
-                    style: context.textTheme.labelSmall,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                MemberAvatar(userDescriptor: comment.author.descriptor, radius: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(text: comment.author.displayName),
+                        TextSpan(
+                          text: '  $commentText',
+                          style: context.textTheme.labelSmall,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(
-                  width: 5,
-                ),
-                if (lineNumber != null)
-                  Text(
-                    '(line $lineNumber)',
-                    style: context.textTheme.labelSmall,
+                if (!comment.isDeleted)
+                  DevOpsPopupMenu(
+                    tooltip: 'pull request comment',
+                    offset: const Offset(0, 20),
+                    items: () => [
+                      if (onEditComment != null)
+                        PopupItem(
+                          onTap: onEditComment!,
+                          text: 'Edit',
+                          icon: DevOpsIcons.edit,
+                        ),
+                      PopupItem(
+                        onTap: onAddComment,
+                        text: 'Reply',
+                        icon: DevOpsIcons.send,
+                      ),
+                      if (onDeleteComment != null)
+                        PopupItem(
+                          onTap: onDeleteComment!,
+                          text: 'Delete',
+                          icon: DevOpsIcons.failed,
+                        ),
+                    ],
                   ),
               ],
             ),
-            const SizedBox(
-              height: 8,
+            const SizedBox(height: 10),
+            HtmlWidget(
+              data: comment.content,
             ),
           ],
-          Row(
-            children: [
-              MemberAvatar(userDescriptor: comment.author.descriptor, radius: 20),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(text: comment.author.displayName),
-                      TextSpan(
-                        text: '  $commentText',
-                        style: context.textTheme.labelSmall,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if (!comment.isDeleted)
-                DevOpsPopupMenu(
-                  tooltip: 'pull request comment',
-                  offset: const Offset(0, 20),
-                  items: () => [
-                    if (onEditComment != null)
-                      PopupItem(
-                        onTap: onEditComment!,
-                        text: 'Edit',
-                        icon: DevOpsIcons.edit,
-                      ),
-                    PopupItem(
-                      onTap: onAddComment,
-                      text: 'Reply',
-                      icon: DevOpsIcons.send,
-                    ),
-                    if (onDeleteComment != null)
-                      PopupItem(
-                        onTap: onDeleteComment!,
-                        text: 'Delete',
-                        icon: DevOpsIcons.failed,
-                      ),
-                  ],
-                ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          HtmlWidget(
-            data: comment.content,
-          ),
-        ],
+        ),
       ),
     );
   }

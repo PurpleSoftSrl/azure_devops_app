@@ -78,6 +78,7 @@ class AppTheme {
     final textTheme = _getTextTheme(colorScheme.brightness);
 
     return ThemeData(
+      useMaterial3: false,
       fontFamily: defaultFont,
       textTheme: textTheme,
       primaryTextTheme: textTheme,

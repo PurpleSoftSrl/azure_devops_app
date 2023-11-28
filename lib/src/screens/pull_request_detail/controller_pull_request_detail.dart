@@ -242,16 +242,37 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     if (await canLaunchUrlString(href!)) await launchUrlString(href);
   }
 
-  Future<void> goToFileDiff({required ChangedFileDiff diff, bool isAdded = false, bool isDeleted = false}) async {
+  Future<void> goToFileDiff({
+    ChangedFileDiff? diff,
+    bool isAdded = false,
+    bool isDeleted = false,
+    String? filePath,
+  }) async {
+    final commits = prDetail.value!.data!.updates.whereType<IterationUpdate>().expand((u) => u.commits);
+    final latestCommit = commits.isEmpty ? null : commits.first;
+    final secondLatestCommit = commits.length < 2 ? null : commits.skip(1).first;
+
+    final commitId = diff?.commitId ?? latestCommit?.commitId;
+    final parent = diff?.parentCommitId ?? latestCommit?.parents?.firstOrNull ?? secondLatestCommit?.commitId;
+
+    final basePath = '${apiService.basePath}/${args.project}';
+    final repository = args.repository;
+
     final commit = c.Commit(
-      commitId: diff.commitId,
-      parents: [diff.parentCommitId],
-      remoteUrl: '${apiService.basePath}/${args.project}/_git/${args.repository}/commit/${diff.commitId}',
-      url: '${apiService.basePath}/${args.project}/_apis/git/repositories/${args.repository}/commits/${diff.commitId}',
+      commitId: commitId,
+      parents: parent != null ? [parent] : null,
+      remoteUrl: '$basePath/_git/$repository/commit/$commitId',
+      url: '$basePath/_apis/git/repositories/$repository/commits/$commitId',
     );
 
     await AppRouter.goToFileDiff(
-      (commit: commit, filePath: diff.path, isAdded: isAdded, isDeleted: isDeleted, pullRequestId: args.id),
+      (
+        commit: commit,
+        filePath: diff?.path ?? filePath!,
+        isAdded: isAdded,
+        isDeleted: isDeleted,
+        pullRequestId: args.id
+      ),
     );
   }
 

@@ -316,7 +316,7 @@ class _DiffLine extends StatelessWidget {
     return Row(
       children: [
         GestureDetector(
-          onTap: hasCommentOnThisLine
+          onTap: hasCommentOnThisLine || ctrl.args.pullRequestId == null
               ? null
               : () => ctrl.addPrComment(
                     lineNumber: lineNumber,
