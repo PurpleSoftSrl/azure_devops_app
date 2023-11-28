@@ -150,7 +150,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
     final hasConfirmed = await showEditor(
       editorController,
       editorGlobalKey,
-      title: 'Add comment',
+      title: 'Add comment on line $lineNumber',
     );
     if (!hasConfirmed) return;
 

@@ -313,19 +313,20 @@ class _DiffLine extends StatelessWidget {
 
     final hasCommentOnThisLine = prThreadUpdate != null && prThreadUpdate.comments.isNotEmpty;
 
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: hasCommentOnThisLine || ctrl.args.pullRequestId == null
-              ? null
-              : () => ctrl.addPrComment(
-                    lineNumber: lineNumber,
-                    line: line,
-                    isRightFile: isRightFile,
-                  ),
-          child: SizedBox(
+    return GestureDetector(
+      onTap: hasCommentOnThisLine || ctrl.args.pullRequestId == null
+          ? null
+          : () => ctrl.addPrComment(
+                lineNumber: lineNumber,
+                line: line,
+                isRightFile: isRightFile,
+              ),
+      child: Row(
+        children: [
+          SizedBox(
             width: 30,
             child: Stack(
+              alignment: Alignment.centerRight,
               children: [
                 Align(
                   alignment: Alignment.centerRight,
@@ -345,32 +346,30 @@ class _DiffLine extends StatelessWidget {
               ],
             ),
           ),
-        ),
-        if (isAdded || isRemoved) ...[
-          const SizedBox(
-            width: 5,
-          ),
-          SizedBox(
-            width: 10,
-            child: Icon(
-              isAdded ? DevOpsIcons.plus : Icons.remove,
-              size: 12,
+          if (isAdded || isRemoved) ...[
+            const SizedBox(
+              width: 5,
             ),
+            SizedBox(
+              width: 10,
+              child: Icon(
+                isAdded ? DevOpsIcons.plus : Icons.remove,
+                size: 12,
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+          ] else
+            const SizedBox(
+              width: 25,
+            ),
+          Text(
+            line,
+            style: context.textTheme.labelLarge,
           ),
-          const SizedBox(
-            width: 10,
-          ),
-        ] else
-          const SizedBox(
-            width: 25,
-          ),
-        Text(
-          line,
-          style: context.textTheme.bodySmall!.copyWith(
-            fontWeight: FontWeight.normal,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -441,7 +440,7 @@ class _PrThread extends StatelessWidget {
       ],
       child: MemberAvatar(
         tappable: false,
-        radius: 15,
+        radius: 20,
         userDescriptor: prThreadUpdate.author.descriptor,
       ),
     );
