@@ -45,7 +45,7 @@ class RulesChecker {
     final makeReadOnlyActions = rules.where((r) => r.action == ActionType.makeReadOnly).toList();
     if (makeReadOnlyActions.isEmpty) return false;
 
-    return _checkIfMatchesRule(rules);
+    return _checkIfMatchesRule(makeReadOnlyActions);
   }
 
   /// Checks whether this field should be required according to the rules.
@@ -56,7 +56,7 @@ class RulesChecker {
     final makeRequiredActions = rules.where((r) => r.action == ActionType.makeRequired).toList();
     if (makeRequiredActions.isEmpty) return false;
 
-    return _checkIfMatchesRule(rules);
+    return _checkIfMatchesRule(makeRequiredActions);
   }
 
   /// Checks if any of the [rules] should be applied
