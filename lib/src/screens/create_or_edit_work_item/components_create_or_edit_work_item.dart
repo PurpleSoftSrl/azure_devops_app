@@ -92,7 +92,7 @@ class _SelectionFormField extends StatelessWidget {
         validator: (s) => ctrl.fieldValidator(s, field),
         formFieldKey: formField?.formFieldKey,
         controller: formField?.controller,
-        suffixIcon: field.readOnly
+        suffix: field.readOnly
             ? null
             : DevOpsPopupMenu(
                 menuKey: formField?.popupMenuKey,

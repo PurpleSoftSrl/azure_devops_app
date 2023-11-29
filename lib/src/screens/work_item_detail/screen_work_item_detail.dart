@@ -206,7 +206,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                                           .copyWith(color: context.colorScheme.onSecondary),
                                     ),
                                   if (field.type == 'html')
-                                    _HtmlWidget(
+                                    HtmlWidget(
                                       data: textToShow.toString(),
                                       style: context.textTheme.titleSmall,
                                     )

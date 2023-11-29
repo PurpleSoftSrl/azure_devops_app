@@ -17,7 +17,6 @@ class DevOpsFormField extends StatelessWidget {
     this.fillColor,
     this.controller,
     this.validator,
-    this.suffixIcon,
     this.suffix,
     this.readOnly = false,
     this.onTap,
@@ -38,7 +37,6 @@ class DevOpsFormField extends StatelessWidget {
   final TextEditingController? controller;
   final Widget? suffix;
   final String? Function(String?)? validator;
-  final Widget? suffixIcon; // TODO check suffixIcon
   final bool readOnly;
   final VoidCallback? onTap;
 
