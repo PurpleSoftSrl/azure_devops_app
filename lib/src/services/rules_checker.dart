@@ -6,7 +6,7 @@ import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 
-typedef RulesResult = ({bool readOnly, bool required});
+typedef RulesResult = ({bool readOnly, bool required, bool makeEmpty});
 
 /// Work items rules checker.
 ///
@@ -33,8 +33,9 @@ class RulesChecker {
   RulesResult checkRules(WorkItemField field) {
     final readOnly = _checkIfIsReadOnly(field);
     final required = _checkIfIsRequired(field);
+    final makeEmpty = _checkIfShouldBeEmpty(field);
     assert(!readOnly || !required, 'A field cannot be both readOnly and required. Field: ${field.referenceName}');
-    return (readOnly: readOnly, required: required);
+    return (readOnly: readOnly, required: required, makeEmpty: makeEmpty);
   }
 
   /// Checks whether this field should be read-only according to the rules.
@@ -57,6 +58,17 @@ class RulesChecker {
     if (makeRequiredActions.isEmpty) return false;
 
     return _checkIfMatchesRule(makeRequiredActions);
+  }
+
+  /// Checks whether this field should be made empty according to the rules.
+  bool _checkIfShouldBeEmpty(WorkItemField field) {
+    final rules = allRules[field.referenceName] ?? [];
+    if (rules.isEmpty) return false;
+
+    final makeEmptyActions = rules.where((r) => r.action == ActionType.setValueToEmpty).toList();
+    if (makeEmptyActions.isEmpty) return false;
+
+    return _checkIfMatchesRule(makeEmptyActions);
   }
 
   /// Checks if any of the [rules] should be applied

@@ -64,6 +64,7 @@ class Action {
 enum ActionType {
   makeReadOnly,
   makeRequired,
+  setValueToEmpty,
   notSupported;
 
   static ActionType fromString(String str) {
@@ -72,6 +73,8 @@ enum ActionType {
         return ActionType.makeReadOnly;
       case 'makeRequired':
         return ActionType.makeRequired;
+      case 'setValueToEmpty':
+        return ActionType.setValueToEmpty;
       default:
         return ActionType.notSupported;
     }

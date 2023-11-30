@@ -485,7 +485,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       for (final field in entry.value) {
         final rules = checker.checkRules(field);
         field
-          ..readOnly = rules.readOnly
+          ..readOnly = rules.readOnly || rules.makeEmpty
           ..required = rules.required;
 
         final refName = field.referenceName;
@@ -498,6 +498,12 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
             formFields[refName]!.text = text;
             formFields[refName]!.controller.text = text.formatted;
           }
+        }
+
+        if (formFields[refName] != null && rules.makeEmpty) {
+          // make field value empty
+          formFields[refName]!.text = '';
+          formFields[refName]!.controller.text = '';
         }
       }
     }
