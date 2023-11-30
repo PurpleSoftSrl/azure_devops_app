@@ -59,6 +59,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   /// Used to compare current fields values to initial ones for rules validation
   Map<String, DynamicFieldData> _initialFormFields = {};
 
+  // Used to show loader while api call to get fields is in progress because it can be slow
+  final isGettingFields = ValueNotifier<bool>(false);
+
   void dispose() {
     instance = null;
   }
@@ -410,10 +413,14 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     final projectName = editingWorkItem?.fields.systemTeamProject ?? newWorkItemProject.name!;
 
+    isGettingFields.value = true;
+
     final res = await apiService.getWorkItemTypeFields(
       projectName: projectName,
       workItemName: newWorkItemType.name,
     );
+
+    isGettingFields.value = false;
 
     if (res.isError) {
       OverlayService.snackbar('Could not get fields for type ${newWorkItemType.name}', isError: true);

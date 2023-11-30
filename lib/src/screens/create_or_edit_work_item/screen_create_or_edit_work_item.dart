@@ -200,33 +200,42 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          if (ctrl.fieldsToShow.isEmpty)
-            SizedBox(
-              height: 100,
-              child: const Center(child: CircularProgressIndicator()),
-            )
-          else
-            for (final entry in ctrl.fieldsToShow.entries)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (entry.value.isNotEmpty && (entry.value.length > 1 || entry.value.single.name != entry.key))
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12, bottom: 8),
-                      child: Text(
-                        entry.key,
-                        style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  for (final field in entry.value)
-                    switch (field.type) {
-                      'html' => _HtmlFormField(field: field, ctrl: ctrl),
-                      'dateTime' => _DateFormField(field: field, ctrl: ctrl),
-                      _ when field.hasMeaningfulAllowedValues => _SelectionFormField(ctrl: ctrl, field: field),
-                      _ => _DefaultFormField(ctrl: ctrl, field: field),
-                    },
-                ],
-              ),
+          ValueListenableBuilder(
+            valueListenable: ctrl.isGettingFields,
+            builder: (context, isGettingFields, _) => isGettingFields
+                ? SizedBox(
+                    height: 100,
+                    child: const Center(child: CircularProgressIndicator()),
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (final entry in ctrl.fieldsToShow.entries)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (entry.value.isNotEmpty &&
+                                (entry.value.length > 1 || entry.value.single.name != entry.key))
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12, bottom: 8),
+                                child: Text(
+                                  entry.key,
+                                  style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            for (final field in entry.value)
+                              switch (field.type) {
+                                'html' => _HtmlFormField(field: field, ctrl: ctrl),
+                                'dateTime' => _DateFormField(field: field, ctrl: ctrl),
+                                _ when field.hasMeaningfulAllowedValues =>
+                                  _SelectionFormField(ctrl: ctrl, field: field),
+                                _ => _DefaultFormField(ctrl: ctrl, field: field),
+                              },
+                          ],
+                        ),
+                    ],
+                  ),
+          ),
         ],
       ),
     );
