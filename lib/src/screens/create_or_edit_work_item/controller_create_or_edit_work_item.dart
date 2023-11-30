@@ -220,8 +220,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   void _refreshPage() {
-    final data = hasChanged.value?.data ?? false;
-    hasChanged.value = ApiResponse.ok(!data);
+    hasChanged.value = hasChanged.value?.copyWith() ?? ApiResponse.ok(false);
   }
 
   Future<void> confirm() async {
