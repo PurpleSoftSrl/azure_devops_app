@@ -8,47 +8,26 @@ class _Actions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Flexible(
-      child: ValueListenableBuilder(
-        valueListenable: ctrl.isSearching,
-        builder: (context, isSearching, __) => AnimatedSwitcher(
-          duration: Duration(milliseconds: 250),
-          reverseDuration: Duration(milliseconds: 250),
-          child: isSearching
-              ? Padding(
-                  padding: const EdgeInsets.only(left: 56, right: 16),
-                  child: DevOpsFormField(
-                    autofocus: true,
-                    onChanged: ctrl._searchWorkItem,
-                    hint: 'Search by id or title',
-                    maxLines: 1,
-                    suffix: GestureDetector(
-                      onTap: ctrl.resetSearch,
-                      child: Icon(
-                        Icons.close,
-                        color: context.colorScheme.onBackground,
-                      ),
-                    ),
-                  ),
-                )
-              : Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      onPressed: ctrl.showSearchField,
-                      icon: Icon(
-                        Icons.search,
-                        size: 24,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: ctrl.createWorkItem,
-                      icon: Icon(
-                        DevOpsIcons.plus,
-                        size: 24,
-                      ),
-                    ),
-                  ],
-                ),
+      child: DevOpsAnimatedSearchField(
+        isSearching: ctrl.isSearching,
+        onChanged: ctrl._searchWorkItem,
+        onResetSearch: ctrl.resetSearch,
+        hint: 'Search by id or title',
+        margin: const EdgeInsets.only(left: 56, right: 16),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SearchButton(
+              isSearching: ctrl.isSearching,
+            ),
+            IconButton(
+              onPressed: ctrl.createWorkItem,
+              icon: Icon(
+                DevOpsIcons.plus,
+                size: 24,
+              ),
+            ),
+          ],
         ),
       ),
     );

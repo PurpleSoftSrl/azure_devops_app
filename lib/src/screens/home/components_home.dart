@@ -58,51 +58,25 @@ class _ProjectsHeaderWithSearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO extract component. Duplicate code in work items search field
-    return ValueListenableBuilder(
-      valueListenable: ctrl.isSearchingProjects,
-      builder: (context, isSearching, __) => SizedBox(
-        height: 70,
-        child: AnimatedSwitcher(
-          duration: Duration(milliseconds: 250),
-          reverseDuration: Duration(milliseconds: 250),
-          child: isSearching
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: DevOpsFormField(
-                    autofocus: true,
-                    onChanged: ctrl.searchProjects,
-                    hint: 'Search by name',
-                    maxLines: 1,
-                    suffix: GestureDetector(
-                      onTap: ctrl.resetSearch,
-                      child: Icon(
-                        Icons.close,
-                        color: context.colorScheme.onBackground,
-                      ),
-                    ),
-                  ),
-                )
-              : Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Flexible(
-                      child: SectionHeader.withIcon(
-                        text: 'Projects',
-                        icon: DevOpsIcons.list,
-                        textHeight: 1,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: ctrl.showSearchField,
-                      icon: Icon(
-                        Icons.search,
-                        size: 24,
-                      ),
-                    ),
-                  ],
-                ),
-        ),
+    return DevOpsAnimatedSearchField(
+      isSearching: ctrl.isSearchingProjects,
+      onChanged: ctrl.searchProjects,
+      onResetSearch: ctrl.resetSearch,
+      hint: 'Search by name',
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Flexible(
+            child: SectionHeader.withIcon(
+              text: 'Projects',
+              icon: DevOpsIcons.list,
+              textHeight: 1,
+            ),
+          ),
+          SearchButton(
+            isSearching: ctrl.isSearchingProjects,
+          ),
+        ],
       ),
     );
   }
