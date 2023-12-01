@@ -57,8 +57,6 @@ abstract class AzureApiService {
 
   String get organization;
 
-  String get accessToken;
-
   UserMe? get user;
 
   Map<String, String>? get headers;
@@ -72,9 +70,6 @@ abstract class AzureApiService {
 
   /// Work item states for each work item type for each project
   Map<String, Map<String, List<WorkItemState>>> get workItemStates;
-
-  /// Work item fields for each work item type for each project
-  Map<String, Map<String, WorkItemFieldsWithRules>> get workItemFields;
 
   /// Work item area paths for each project
   Map<String, List<AreaOrIteration>> get workItemAreas;
@@ -344,8 +339,6 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   String get organization => _organization;
   String _organization = '';
 
-  @override
-  String get accessToken => _accessToken;
   String _accessToken = '';
 
   @override
@@ -389,8 +382,6 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   Map<String, Map<String, List<WorkItemState>>> get workItemStates => _workItemStates;
   final Map<String, Map<String, List<WorkItemState>>> _workItemStates = {};
 
-  @override
-  Map<String, Map<String, WorkItemFieldsWithRules>> get workItemFields => _workItemFields;
   final Map<String, Map<String, WorkItemFieldsWithRules>> _workItemFields = {};
 
   @override

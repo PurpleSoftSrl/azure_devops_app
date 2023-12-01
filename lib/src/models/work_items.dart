@@ -197,6 +197,8 @@ class ItemFields {
   final DateTime? microsoftVstsCommonResolvedDate;
   final String? systemHistory;
   final String? systemTags;
+
+  /// Used to show work item fields dynamically to support all processes
   final Map<String, dynamic> jsonFields;
 
   @override

@@ -60,8 +60,4 @@ class WorkItemField {
   String toString() {
     return 'WorkItemField(referenceName: $referenceName, name: $name, required: $required, defaultValue: $defaultValue)';
   }
-
-  String toStringShort() {
-    return 'WorkItemField(name: $name, required: $required, defaultValue: $defaultValue)';
-  }
 }

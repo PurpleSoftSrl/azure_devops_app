@@ -563,8 +563,6 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     formFields[fieldRefName]?.popupMenuKey?.currentState?.showButtonMenu();
   }
 
-  // TODO handle rules on fields outside form (title, areaId, maybe iterationId and maybe assignedTo)
-
   String getFieldName(WorkItemField field) {
     final fieldName = field.name;
     final isReadOnly = field.readOnly;

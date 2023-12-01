@@ -28,9 +28,6 @@ import 'package:azure_devops/src/services/storage_service.dart';
 
 class AzureApiServiceMock implements AzureApiService {
   @override
-  String get accessToken => throw UnimplementedError();
-
-  @override
   String get basePath => 'https://dev.azure.com/organization';
 
   @override
@@ -38,9 +35,6 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Map<String, List<WorkItemType>> get workItemTypes => {};
-
-  @override
-  Map<String, Map<String, WorkItemFieldsWithRules>> get workItemFields => {};
 
   @override
   Map<String, List<AreaOrIteration>> get workItemAreas => {};
