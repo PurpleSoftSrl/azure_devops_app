@@ -12,6 +12,8 @@ typedef RulesResult = ({bool readOnly, bool required, bool makeEmpty});
 ///
 /// A rule can have a maximum of 2 conditions, and if they're all true, then
 /// the actions (maximum 10) will be applied.
+///
+/// Supported actions are: `makeReadOnly`, `makeRequired` and `setValueToEmpty`.
 class RulesChecker {
   RulesChecker({
     required this.allRules,
@@ -29,7 +31,7 @@ class RulesChecker {
   final WorkItemState? initialState;
   final WorkItemState? state;
 
-  /// Checks if `readOnly` or `required` actions should be applied to [field].
+  /// Checks if `readOnly`, `required` or `setValueToEmpty` actions should be applied to [field].
   RulesResult checkRules(WorkItemField field) {
     final readOnly = _checkIfIsReadOnly(field);
     final required = _checkIfIsRequired(field);
