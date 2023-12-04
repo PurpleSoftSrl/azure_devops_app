@@ -50,6 +50,9 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                   formatLabel: (p) => p.name!,
                   isDefaultFilter: ctrl.newWorkItemProject == ctrl.projectAll,
                   widgetBuilder: (p) => ProjectFilterWidget(project: p),
+                  onSearchChanged: ctrl.hasManyProjects(ctrl.storageService)
+                      ? (s) => ctrl.searchProject(s, ctrl.storageService)
+                      : null,
                 ),
               ],
             ),

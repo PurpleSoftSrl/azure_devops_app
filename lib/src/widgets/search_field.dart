@@ -45,15 +45,19 @@ class DevOpsAnimatedSearchField extends StatelessWidget {
 }
 
 class DevOpsSearchField extends StatelessWidget {
-  const DevOpsSearchField({
+  DevOpsSearchField({
     required this.onChanged,
     required this.onResetSearch,
     required this.hint,
+    this.initialValue,
   });
 
   final void Function(String) onChanged;
   final void Function() onResetSearch;
   final String hint;
+  final String? initialValue;
+
+  final controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +66,12 @@ class DevOpsSearchField extends StatelessWidget {
       onChanged: onChanged,
       hint: hint,
       maxLines: 1,
+      controller: controller..text = initialValue ?? '',
       suffix: GestureDetector(
-        onTap: onResetSearch,
+        onTap: () {
+          controller.clear();
+          onResetSearch();
+        },
         child: Icon(
           Icons.close,
           color: context.colorScheme.onBackground,

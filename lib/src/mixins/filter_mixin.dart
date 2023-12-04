@@ -28,7 +28,15 @@ mixin FilterMixin {
     ];
   }
 
+  bool hasManyProjects(StorageService storageService) => storageService.getChosenProjects().length > 10;
+
   List<Project> getProjects(StorageService storageService) {
     return [projectAll, ...storageService.getChosenProjects()];
+  }
+
+  List<Project> searchProject(String query, StorageService storageService) {
+    final loweredQuery = query.toLowerCase().trim();
+    final projects = getProjects(storageService);
+    return projects.where((p) => p.name != null && p.name!.toLowerCase().contains(loweredQuery)).toList();
   }
 }

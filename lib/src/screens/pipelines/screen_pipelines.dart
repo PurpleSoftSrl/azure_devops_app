@@ -32,6 +32,9 @@ class _PipelinesScreen extends StatelessWidget {
                 formatLabel: (p) => p.name!,
                 isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
                 widgetBuilder: (p) => ProjectFilterWidget(project: p),
+                onSearchChanged: ctrl.hasManyProjects(ctrl.storageService)
+                    ? (s) => ctrl.searchProject(s, ctrl.storageService)
+                    : null,
               ),
             FilterMenu<PipelineResult>(
               title: 'Result',

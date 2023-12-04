@@ -8,6 +8,7 @@ import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
 import 'package:azure_devops/src/widgets/popup_menu.dart';
+import 'package:azure_devops/src/widgets/search_field.dart';
 import 'package:azure_devops/src/widgets/work_item_type_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -64,6 +65,7 @@ class FilterMenu<T> extends StatelessWidget {
     required this.widgetBuilder,
     this.child,
     this.body,
+    this.onSearchChanged,
   });
 
   const FilterMenu.custom({
@@ -75,7 +77,8 @@ class FilterMenu<T> extends StatelessWidget {
     this.child,
   })  : widgetBuilder = null,
         values = const [],
-        onSelected = null;
+        onSelected = null,
+        onSearchChanged = null;
 
   final void Function(T)? onSelected;
   final List<T> values;
@@ -86,6 +89,7 @@ class FilterMenu<T> extends StatelessWidget {
   final bool isDefaultFilter;
   final Widget? child;
   final Widget? body;
+  final List<T> Function(String)? onSearchChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -122,6 +126,8 @@ class FilterMenu<T> extends StatelessWidget {
       widgetBuilder: widgetBuilder,
       currentFilter: currentFilter,
       customBody: body,
+      onSearchChanged: onSearchChanged,
+      isDefaultFilter: isDefaultFilter,
       child: child ?? chip,
     );
   }
@@ -137,6 +143,8 @@ class _FilterBottomsheet<T> extends StatelessWidget {
     required this.currentFilter,
     required this.child,
     this.customBody,
+    this.onSearchChanged,
+    required this.isDefaultFilter,
   });
 
   final String title;
@@ -147,6 +155,8 @@ class _FilterBottomsheet<T> extends StatelessWidget {
   final T currentFilter;
   final Widget child;
   final Widget? customBody;
+  final List<T> Function(String)? onSearchChanged;
+  final bool isDefaultFilter;
 
   @override
   Widget build(BuildContext context) {
@@ -154,6 +164,15 @@ class _FilterBottomsheet<T> extends StatelessWidget {
     return InkWell(
       key: ValueKey(title),
       onTap: () {
+        final allValues = [...values];
+        final visibleValues = ValueNotifier([...values]);
+        final isSearchable = onSearchChanged != null;
+
+        if (isSearchable && !isDefaultFilter) {
+          final query = formatLabel?.call(currentFilter) ?? '';
+          visibleValues.value = onSearchChanged!.call(query);
+        }
+
         OverlayService.bottomsheet(
           isScrollControlled: true,
           spaceUnderTitle: false,
@@ -161,42 +180,64 @@ class _FilterBottomsheet<T> extends StatelessWidget {
           builder: (context) =>
               customBody ??
               ListView(
-                children: values
-                    .map(
-                      (v) => InkWell(
-                        key: ValueKey(formatLabel?.call(v) ?? v.toString()),
-                        onTap: () {
-                          onSelected!(v);
-                          AppRouter.popRoute();
+                children: [
+                  if (isSearchable)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: DevOpsSearchField(
+                        onChanged: (s) {
+                          visibleValues.value = onSearchChanged!.call(s);
                         },
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  height: imageSize,
-                                  width: imageSize,
-                                  child: widgetBuilder?.call(v),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Text(formatLabel?.call(v) ?? v.toString()),
-                                if (currentFilter == v) ...[
-                                  const Spacer(),
-                                  Icon(DevOpsIcons.success),
-                                ],
-                              ],
-                            ),
-                            if (v != values.last)
-                              const Divider(
-                                height: 20,
-                              ),
-                          ],
-                        ),
+                        onResetSearch: () {
+                          visibleValues.value = allValues;
+                        },
+                        hint: 'Search',
+                        initialValue: isDefaultFilter ? null : formatLabel?.call(currentFilter),
                       ),
-                    )
-                    .toList(),
+                    ),
+                  ValueListenableBuilder(
+                    valueListenable: visibleValues,
+                    builder: (context, visibleValues, __) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: visibleValues
+                          .map(
+                            (v) => InkWell(
+                              key: ValueKey(formatLabel?.call(v) ?? v.toString()),
+                              onTap: () {
+                                onSelected!(v);
+                                AppRouter.popRoute();
+                              },
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        height: imageSize,
+                                        width: imageSize,
+                                        child: widgetBuilder?.call(v),
+                                      ),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      Text(formatLabel?.call(v) ?? v.toString()),
+                                      if (currentFilter == v) ...[
+                                        const Spacer(),
+                                        Icon(DevOpsIcons.success),
+                                      ],
+                                    ],
+                                  ),
+                                  if (v != values.last)
+                                    const Divider(
+                                      height: 20,
+                                    ),
+                                ],
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ],
               ),
         );
       },
