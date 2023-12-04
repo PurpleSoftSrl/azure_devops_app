@@ -4,37 +4,38 @@ class _CommitsController with FilterMixin {
   factory _CommitsController({
     required AzureApiService apiService,
     required StorageService storageService,
-    Project? project,
+    CommitsArgs? args,
   }) {
     // handle page already in memory with a different project filter
-    if (_instances[project.hashCode] != null) {
-      return _instances[project.hashCode]!;
+    if (_instances[args] != null) {
+      return _instances[args]!;
     }
 
-    if (instance != null && project?.id != instance!.project?.id) {
-      instance = _CommitsController._(apiService, storageService, project);
+    if (instance != null && args != instance!.args) {
+      instance = _CommitsController._(apiService, storageService, args);
     }
 
-    instance ??= _CommitsController._(apiService, storageService, project);
-    return _instances.putIfAbsent(project.hashCode, () => instance!);
+    instance ??= _CommitsController._(apiService, storageService, args);
+    return _instances.putIfAbsent(args, () => instance!);
   }
 
-  _CommitsController._(this.apiService, this.storageService, this.project) {
-    projectFilter = project ?? projectAll;
+  _CommitsController._(this.apiService, this.storageService, this.args) {
+    projectFilter = args?.project ?? projectAll;
+    userFilter = args?.author ?? userAll;
   }
 
   static _CommitsController? instance;
-  static final Map<int, _CommitsController> _instances = {};
+  static final Map<CommitsArgs?, _CommitsController> _instances = {};
 
   final AzureApiService apiService;
   final StorageService storageService;
-  final Project? project;
+  final CommitsArgs? args;
 
   final recentCommits = ValueNotifier<ApiResponse<List<Commit>?>?>(null);
 
   void dispose() {
     instance = null;
-    _instances.remove(project.hashCode);
+    _instances.remove(args);
   }
 
   Future<void> init() async {

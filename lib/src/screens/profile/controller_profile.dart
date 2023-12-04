@@ -38,6 +38,7 @@ class _ProfileController with FilterMixin {
 
   Future<void> init() async {
     gitUsername = apiService.user?.emailAddress ?? '';
+    myWorkItems.clear();
 
     final commits = await _getData();
 
@@ -87,6 +88,8 @@ class _ProfileController with FilterMixin {
 
   void goToCommits(Commit commit) {
     final project = getProjects(storageService).firstWhereOrNull((p) => p.id == commit.projectId);
-    AppRouter.goToCommits(project: project);
+
+    final me = apiService.allUsers.firstWhereOrNull((u) => u.mailAddress == apiService.user?.emailAddress);
+    AppRouter.goToCommits(project: project, author: me);
   }
 }

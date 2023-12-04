@@ -55,22 +55,44 @@ class _ProfileScreen extends StatelessWidget {
                     const SizedBox(
                       height: 6,
                     ),
-                    ...ctrl.todaysCommitsPerRepo.entries.map(
-                      (p) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ...p.value.entries.map(
-                            (e) => InkWell(
-                              onTap: () => ctrl.goToCommits(e.value.first),
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
-                                child: Text('${e.key} ${e.value.length}'),
-                              ),
-                            ),
+                    ...ctrl.todaysCommitsPerRepo.entries
+                        .sortedBy<num>((e) => e.value.values.expand((e1) => e1).length)
+                        .reversed
+                        .map(
+                          (p) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: p.value.entries
+                                .sortedBy<num>((e) => e.value.length)
+                                .map(
+                                  (e) => InkWell(
+                                    onTap: () => ctrl.goToCommits(e.value.first),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(bottom: 4),
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: '${e.value.length}',
+                                              style: context.textTheme.bodyMedium!
+                                                  .copyWith(decoration: TextDecoration.underline),
+                                            ),
+                                            TextSpan(
+                                              text: ' in ',
+                                              style:
+                                                  context.textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w200),
+                                            ),
+                                            TextSpan(
+                                              text: e.key,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
                   ],
                   if (ctrl.myWorkItems.isNotEmpty) ...[
                     if (ctrl.todaysCommitsPerRepo.isNotEmpty)
@@ -90,7 +112,23 @@ class _ProfileScreen extends StatelessWidget {
                         onTap: () => ctrl.goToWorkItemDetail(item),
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 4),
-                          child: Text('#${item.id} ${item.fields.systemTeamProject} (${item.fields.systemState})'),
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: '#${item.id}',
+                                  style: context.textTheme.bodyMedium!.copyWith(decoration: TextDecoration.underline),
+                                ),
+                                TextSpan(
+                                  text: ' in ',
+                                  style: context.textTheme.titleSmall!.copyWith(fontWeight: FontWeight.w200),
+                                ),
+                                TextSpan(
+                                  text: '${item.fields.systemTeamProject} (${item.fields.systemState})',
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),

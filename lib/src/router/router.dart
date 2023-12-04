@@ -1,5 +1,6 @@
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/project.dart';
+import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/screens/choose_projects/base_choose_projects.dart';
 import 'package:azure_devops/src/screens/commit_detail/base_commit_detail.dart';
 import 'package:azure_devops/src/screens/commits/base_commits.dart';
@@ -28,6 +29,7 @@ import 'package:flutter/material.dart';
 typedef WorkItemDetailArgs = ({String project, int id});
 typedef CreateOrEditWorkItemArgs = ({String? project, int? id});
 typedef PullRequestDetailArgs = ({String project, String repository, int id});
+typedef CommitsArgs = ({Project? project, GraphUser? author});
 typedef CommitDetailArgs = ({String project, String repository, String commitId});
 typedef FileDiffArgs = ({Commit commit, String filePath, bool isAdded, bool isDeleted, int? pullRequestId});
 typedef PipelineLogsArgs = ({String project, int pipelineId, String taskId, String parentTaskId, int logId});
@@ -141,9 +143,10 @@ class AppRouter {
 
   static PipelineLogsArgs getPipelineLogsArgs(BuildContext context) => _getArgs(context);
 
-  static Future<void> goToCommits({Project? project}) => _goTo(_commits, args: project);
+  static Future<void> goToCommits({Project? project, GraphUser? author}) =>
+      _goTo(_commits, args: (project: project, author: author));
 
-  static Project? getCommitsArgs(BuildContext context) => _getArgs(context);
+  static CommitsArgs? getCommitsArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToCommitDetail({
     required String project,

@@ -113,6 +113,7 @@ class _LoginScreen extends StatelessWidget {
               builder: (_, link) => InkWell(
                 onTap: link,
                 child: Text.rich(
+                  textAlign: TextAlign.center,
                   TextSpan(
                     children: [
                       TextSpan(
@@ -141,6 +142,7 @@ class _LoginScreen extends StatelessWidget {
               builder: (_, link) => InkWell(
                 onTap: () => ctrl.openPurplesoftWebsite(link),
                 child: Text.rich(
+                  textAlign: TextAlign.center,
                   TextSpan(
                     children: [
                       TextSpan(
