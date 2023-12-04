@@ -26,7 +26,7 @@ class _ProjectDetailController {
 
   final project = ValueNotifier<ApiResponse<ProjectDetail?>?>(null);
 
-  List<TeamMember> members = <TeamMember>[];
+  List<TeamWithMembers> teamsWithMembers = <TeamWithMembers>[];
   List<GitRepository> repos = <GitRepository>[];
   List<LanguageBreakdown> languages = <LanguageBreakdown>[];
 
@@ -43,7 +43,7 @@ class _ProjectDetailController {
   Future<void> init() async {
     final allRes = await Future.wait<ApiResponse>([
       _getLangs(),
-      _getMembers(),
+      _getTeams(),
       _getRepos(),
     ]);
 
@@ -74,9 +74,9 @@ class _ProjectDetailController {
     return langs;
   }
 
-  Future<ApiResponse<List<TeamMember>>> _getMembers() async {
+  Future<ApiResponse<List<TeamWithMembers>>> _getTeams() async {
     final membersRes = await apiService.getProjectTeams(projectId: projectName);
-    members = membersRes.data ?? [];
+    teamsWithMembers = membersRes.data ?? [];
     return membersRes;
   }
 

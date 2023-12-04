@@ -46,39 +46,62 @@ class _ProjectDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
             ],
-            if (ctrl.members.isNotEmpty) ...[
+            if (ctrl.teamsWithMembers.isNotEmpty) ...[
+              for (final team in ctrl.teamsWithMembers)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SectionHeader.noMargin(
+                      text: team.team.name ?? '-',
+                      icon: DevOpsIcons.users,
+                    ),
+                    if (team.team.description?.isNotEmpty ?? false) ...[
+                      Text(
+                        team.team.description ?? '',
+                        style: context.textTheme.labelMedium,
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                    ],
+                    Wrap(
+                      children: team.members
+                          .map(
+                            (m) => Container(
+                              width: parameters.memberAvatarSize + 15,
+                              margin: const EdgeInsets.only(right: 12, bottom: 12),
+                              child: Column(
+                                children: [
+                                  MemberAvatar(
+                                    userDescriptor: m.identity!.descriptor,
+                                    radius: parameters.memberAvatarSize,
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    m.identity!.displayName!.split(' ').first,
+                                    style: context.textTheme.labelSmall,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                    if (team != ctrl.teamsWithMembers.last)
+                      const SizedBox(
+                        height: 16,
+                      ),
+                  ],
+                ),
+            ] else
               SectionHeader.noMargin(
                 text: project.defaultTeam!.name,
                 icon: DevOpsIcons.users,
               ),
-              Wrap(
-                children: ctrl.members
-                    .map(
-                      (m) => Container(
-                        width: parameters.memberAvatarSize + 15,
-                        margin: const EdgeInsets.only(right: 12, bottom: 12),
-                        child: Column(
-                          children: [
-                            MemberAvatar(
-                              userDescriptor: m.identity!.descriptor,
-                              radius: parameters.memberAvatarSize,
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              m.identity!.displayName!.split(' ').first,
-                              style: context.textTheme.labelSmall,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-            ],
             if (ctrl.meaningfulLanguages.isNotEmpty) ...[
               SectionHeader.withIcon(
                 text: 'Languages',

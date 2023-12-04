@@ -18,7 +18,7 @@ import 'package:azure_devops/src/models/pull_request_with_details.dart' as pr;
 import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
-import 'package:azure_devops/src/models/team_member.dart';
+import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/work_item_fields.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
@@ -164,7 +164,7 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<TeamMember>>> getProjectTeams({required String projectId}) {
+  Future<ApiResponse<List<TeamWithMembers>>> getProjectTeams({required String projectId}) {
     throw UnimplementedError();
   }
 

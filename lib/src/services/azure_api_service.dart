@@ -255,7 +255,7 @@ abstract class AzureApiService {
 
   Future<ApiResponse<String>> getUserToMention({required String email});
 
-  Future<ApiResponse<List<TeamMember>>> getProjectTeams({required String projectId});
+  Future<ApiResponse<List<TeamWithMembers>>> getProjectTeams({required String projectId});
 
   Future<ApiResponse<PullRequestWithDetails>> getPullRequest({
     required String projectName,
@@ -1333,21 +1333,25 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<TeamMember>>> getProjectTeams({required String projectId}) async {
-    final teamsRes = await _get('$_basePath/_apis/teams?$_apiVersion-preview');
+  Future<ApiResponse<List<TeamWithMembers>>> getProjectTeams({required String projectId}) async {
+    final teamsRes = await _get('$_basePath/_apis/projects/$projectId/teams?$_apiVersion-preview');
     if (teamsRes.isError) return ApiResponse.error(teamsRes);
 
     final teams = GetTeamsResponse.fromResponse(teamsRes);
-    final team = teams.firstWhereOrNull((t) => t!.projectId == projectId || t.projectName == projectId);
 
-    if (team == null) {
-      return ApiResponse.error(teamsRes);
+    if (teams.isEmpty) return ApiResponse.error(teamsRes);
+
+    final teamsWithMembers = <TeamWithMembers>[];
+
+    for (final team in teams) {
+      final membersRes = await _get('$_basePath/_apis/projects/$projectId/teams/${team!.id}/members?$_apiVersion');
+      if (membersRes.isError) return ApiResponse.error(membersRes);
+
+      final members = GetTeamMembersResponse.fromResponse(membersRes)!;
+      teamsWithMembers.add((team: team, members: members));
     }
 
-    final membersRes = await _get('$_basePath/_apis/projects/$projectId/teams/${team.id}/members?$_apiVersion');
-    if (membersRes.isError) return ApiResponse.error(membersRes);
-
-    return ApiResponse.ok(GetTeamMembersResponse.fromResponse(membersRes));
+    return ApiResponse.ok(teamsWithMembers);
   }
 
   @override

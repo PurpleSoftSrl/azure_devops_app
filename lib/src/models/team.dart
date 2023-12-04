@@ -2,7 +2,10 @@
 
 import 'dart:convert';
 
+import 'package:azure_devops/src/models/team_member.dart';
 import 'package:http/http.dart';
+
+typedef TeamWithMembers = ({_Team team, List<TeamMember> members});
 
 class GetTeamsResponse {
   GetTeamsResponse({
