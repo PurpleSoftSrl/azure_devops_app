@@ -1,7 +1,5 @@
 part of work_item_detail;
 
-
-
 class _History extends StatelessWidget {
   const _History({required this.updates, required this.ctrl});
 
@@ -16,29 +14,6 @@ class _History extends StatelessWidget {
             (update) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    MemberAvatar(userDescriptor: update.updatedBy.descriptor, radius: 15),
-                    const SizedBox(width: 10),
-                    Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(text: update.updatedBy.displayName),
-                          if (update is CommentItemUpdate)
-                            TextSpan(
-                              text: '  commented ${update.isEdited ? '(edited)' : ''}',
-                              style: context.textTheme.labelSmall,
-                            ),
-                        ],
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(update.updateDate.minutesAgo),
-                  ],
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
                 switch (update) {
                   SimpleItemUpdate() => _SimpleUpdateWidget(ctrl: ctrl, update: update),
                   CommentItemUpdate() => _CommentWidget(ctrl: ctrl, update: update),
@@ -71,6 +46,21 @@ class _SimpleUpdateWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            children: [
+              MemberAvatar(userDescriptor: update.updatedBy.descriptor, radius: 15),
+              const SizedBox(width: 10),
+              Text(
+                update.updatedBy.displayName,
+                style: context.textTheme.titleSmall,
+              ),
+              const Spacer(),
+              Text(update.updateDate.minutesAgo),
+            ],
+          ),
+          const SizedBox(
+            height: 5,
+          ),
           if (update.isFirst)
             Text(
               'Created work item',
@@ -130,42 +120,67 @@ class _CommentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Align(
-          alignment: Alignment.centerRight,
-          child: DevOpsPopupMenu(
-            tooltip: 'work item comment',
-            offset: const Offset(0, 20),
-            items: () => [
-              PopupItem(
-                onTap: () => ctrl.deleteWorkItemComment(update),
-                text: 'Delete',
-                icon: DevOpsIcons.failed,
-              ),
-              PopupItem(
-                onTap: () => ctrl.editWorkItemComment(update),
-                text: 'Edit',
-                icon: DevOpsIcons.edit,
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 5),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(AppTheme.radius),
-            child: ColoredBox(
-              color: context.colorScheme.surface,
-              child: HtmlWidget(
-                data: update.text,
-                padding: const EdgeInsets.all(3),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppTheme.radius),
+      child: ColoredBox(
+        color: context.colorScheme.surface,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+              child: Row(
+                children: [
+                  MemberAvatar(userDescriptor: update.updatedBy.descriptor, radius: 15),
+                  const SizedBox(width: 10),
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(text: update.updatedBy.displayName),
+                        TextSpan(
+                          text: '  ${update.isEdited ? '(edited)' : ''}',
+                          style: context.textTheme.labelSmall,
+                        ),
+                        TextSpan(
+                          text: '  ${update.updateDate.minutesAgo}',
+                          style: context.textTheme.labelSmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                  DevOpsPopupMenu(
+                    tooltip: 'work item comment',
+                    offset: const Offset(0, 20),
+                    items: () => [
+                      PopupItem(
+                        onTap: () => ctrl.deleteWorkItemComment(update),
+                        text: 'Delete',
+                        icon: DevOpsIcons.failed,
+                      ),
+                      PopupItem(
+                        onTap: () => ctrl.editWorkItemComment(update),
+                        text: 'Edit',
+                        icon: DevOpsIcons.edit,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ),
+            const SizedBox(
+              height: 5,
+            ),
+            HtmlWidget(
+              data: update.text,
+              padding: const EdgeInsets.all(3),
+            ),
+            const SizedBox(
+              height: 4,
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
