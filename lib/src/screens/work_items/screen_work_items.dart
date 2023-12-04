@@ -60,10 +60,11 @@ class _WorkItemsScreen extends StatelessWidget {
               title: 'Assigned to',
               values: ctrl.getAssignees(),
               onSelected: ctrl.filterByUser,
-              formatLabel: (u) => u.displayName ?? '',
+              formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.apiService),
               isDefaultFilter: ctrl.userFilter == ctrl.userAll,
               currentFilter: ctrl.userFilter,
               widgetBuilder: (u) => UserFilterWidget(user: u),
+              onSearchChanged: ctrl.hasManyUsers(ctrl.apiService) ? ctrl.searchAssignee : null,
             ),
             if (areasToShow.isNotEmpty)
               FilterMenu<AreaOrIteration?>.custom(

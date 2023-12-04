@@ -41,7 +41,7 @@ class GraphUser {
     this.directoryAlias,
   });
 
-  factory GraphUser.all() => GraphUser(displayName: 'All');
+  factory GraphUser.all() => GraphUser(displayName: 'All', mailAddress: 'all');
 
   factory GraphUser.fromJson(Map<String, dynamic> json) => GraphUser(
         subjectKind: json['subjectKind'] as String?,
@@ -80,35 +80,12 @@ class GraphUser {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is GraphUser &&
-        other.subjectKind == subjectKind &&
-        other.domain == domain &&
-        other.principalName == principalName &&
-        other.mailAddress == mailAddress &&
-        other.origin == origin &&
-        other.originId == originId &&
-        other.displayName == displayName &&
-        other.links == links &&
-        other.url == url &&
-        other.descriptor == descriptor &&
-        other.metaType == metaType &&
-        other.directoryAlias == directoryAlias;
+    return other is GraphUser && other.mailAddress == mailAddress;
   }
 
   @override
   int get hashCode {
-    return subjectKind.hashCode ^
-        domain.hashCode ^
-        principalName.hashCode ^
-        mailAddress.hashCode ^
-        origin.hashCode ^
-        originId.hashCode ^
-        displayName.hashCode ^
-        links.hashCode ^
-        url.hashCode ^
-        descriptor.hashCode ^
-        metaType.hashCode ^
-        directoryAlias.hashCode;
+    return mailAddress.hashCode;
   }
 
   GraphUser copyWith({String? displayName}) {

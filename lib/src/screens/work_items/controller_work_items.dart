@@ -220,7 +220,7 @@ class _WorkItemsController with FilterMixin {
 
   List<GraphUser> getAssignees() {
     final users = getSortedUsers(apiService);
-    final unassigned = GraphUser(displayName: 'Unassigned');
+    final unassigned = GraphUser(displayName: 'Unassigned', mailAddress: 'unassigned');
     return users..insert(1, unassigned);
   }
 
@@ -285,5 +285,11 @@ class _WorkItemsController with FilterMixin {
 
   void _hideSearchField() {
     isSearching.value = false;
+  }
+
+  List<GraphUser> searchAssignee(String query) {
+    final loweredQuery = query.toLowerCase().trim();
+    final users = getAssignees();
+    return users.where((u) => u.displayName != null && u.displayName!.toLowerCase().contains(loweredQuery)).toList();
   }
 }

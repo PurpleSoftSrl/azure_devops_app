@@ -143,9 +143,10 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
                 values: getSortedUsers(apiService).whereNot((u) => u.displayName == userAll.displayName).toList(),
                 currentFilter: userAll,
                 onSelected: (u) => _addMention(u, apiService),
-                formatLabel: (u) => u.displayName!,
+                formatLabel: (u) => getFormattedUser(u, apiService),
                 isDefaultFilter: true,
                 widgetBuilder: (u) => UserFilterWidget(user: u),
+                onSearchChanged: hasManyUsers(apiService) ? (s) => searchUser(s, apiService) : null,
                 child: Text(
                   '@',
                   style: context.textTheme.headlineSmall,

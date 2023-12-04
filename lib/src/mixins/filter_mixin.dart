@@ -11,9 +11,12 @@ mixin FilterMixin {
   final userAll = GraphUser.all();
   late GraphUser userFilter = userAll;
 
+  bool hasManyUsers(AzureApiService apiService) => getSortedUsers(apiService, withUserAll: false).length > 10;
+
   List<GraphUser> getSortedUsers(AzureApiService apiService, {bool withUserAll = true}) {
     final users = apiService.allUsers
         .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
+        .toSet()
         .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
         .toList();
 
@@ -26,6 +29,24 @@ mixin FilterMixin {
       if (me != null) me.copyWith(displayName: '${me.displayName} (me)'),
       ...otherUsers,
     ];
+  }
+
+  List<GraphUser> searchUser(String query, AzureApiService apiService) {
+    final loweredQuery = query.toLowerCase().trim();
+    final users = getSortedUsers(apiService, withUserAll: false);
+    return users.where((u) => u.displayName != null && u.displayName!.toLowerCase().contains(loweredQuery)).toList();
+  }
+
+  String getFormattedUser(GraphUser user, AzureApiService apiService) {
+    final users = getSortedUsers(apiService);
+    final hasHomonyms = users
+            .where((u) => user.displayName != null && u.displayName?.toLowerCase() == user.displayName?.toLowerCase())
+            .length >
+        1;
+
+    if (hasHomonyms) return user.mailAddress ?? '';
+
+    return user.displayName ?? '';
   }
 
   bool hasManyProjects(StorageService storageService) => storageService.getChosenProjects().length > 10;

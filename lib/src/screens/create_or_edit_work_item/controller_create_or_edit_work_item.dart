@@ -597,6 +597,12 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     return allStates.where((state) => currentTransitionableStates.contains(state.name)).toList();
   }
+
+  List<GraphUser> searchAssignee(String query) {
+    final loweredQuery = query.toLowerCase().trim();
+    final users = getAssignees();
+    return users.where((u) => u.displayName != null && u.displayName!.toLowerCase().contains(loweredQuery)).toList();
+  }
 }
 
 extension on WorkItemField {
