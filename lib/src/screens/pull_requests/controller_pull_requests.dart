@@ -31,10 +31,14 @@ class _PullRequestsController with FilterMixin {
   final Project? project;
 
   final pullRequests = ValueNotifier<ApiResponse<List<PullRequest>?>?>(null);
+  List<PullRequest> allPullRequests = [];
 
   PullRequestState statusFilter = PullRequestState.all;
 
   late GraphUser reviewerFilter = userAll;
+
+  final isSearching = ValueNotifier<bool>(false);
+  String? _currentSearchQuery;
 
   void dispose() {
     instance = null;
@@ -93,7 +97,13 @@ class _PullRequestsController with FilterMixin {
       project: projectFilter.name == projectAll.name ? null : projectFilter,
       reviewer: reviewerFilter.displayName == userAll.displayName ? null : reviewerFilter,
     );
+
     pullRequests.value = res..data?.sort((a, b) => (b.creationDate).compareTo(a.creationDate));
+    allPullRequests = pullRequests.value?.data ?? [];
+
+    if (_currentSearchQuery != null) {
+      searchPullRequests(_currentSearchQuery!);
+    }
   }
 
   void resetFilters() {
@@ -104,5 +114,24 @@ class _PullRequestsController with FilterMixin {
     reviewerFilter = userAll;
 
     init();
+  }
+
+  void searchPullRequests(String query) {
+    _currentSearchQuery = query.trim().toLowerCase();
+
+    final matchedItems = allPullRequests
+        .where(
+          (i) =>
+              i.pullRequestId.toString().contains(_currentSearchQuery!) ||
+              i.title.toLowerCase().contains(_currentSearchQuery!),
+        )
+        .toList();
+
+    pullRequests.value = pullRequests.value?.copyWith(data: matchedItems);
+  }
+
+  void resetSearch() {
+    searchPullRequests('');
+    isSearching.value = false;
   }
 }

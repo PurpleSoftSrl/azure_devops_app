@@ -67,6 +67,7 @@ class DevOpsSearchField extends StatelessWidget {
       hint: hint,
       maxLines: 1,
       controller: controller..text = initialValue ?? '',
+      validator: (_) => null,
       suffix: GestureDetector(
         onTap: () {
           controller.clear();

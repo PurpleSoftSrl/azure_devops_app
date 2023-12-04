@@ -16,6 +16,18 @@ class _PullRequestsScreen extends StatelessWidget {
       showScrollbar: true,
       onResetFilters: ctrl.resetFilters,
       onEmpty: 'No pull requests found',
+      actions: [
+        Flexible(
+          child: DevOpsAnimatedSearchField(
+            isSearching: ctrl.isSearching,
+            onChanged: ctrl.searchPullRequests,
+            onResetSearch: ctrl.resetSearch,
+            hint: 'Search by id or title',
+            margin: const EdgeInsets.only(left: 56, right: 16),
+            child: SearchButton(isSearching: ctrl.isSearching),
+          ),
+        ),
+      ],
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: [
