@@ -20,15 +20,13 @@ import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/team_member.dart';
 import 'package:azure_devops/src/models/user.dart';
+import 'package:azure_devops/src/models/work_item_fields.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 
 class AzureApiServiceMock implements AzureApiService {
-  @override
-  String get accessToken => throw UnimplementedError();
-
   @override
   String get basePath => 'https://dev.azure.com/organization';
 
@@ -285,6 +283,14 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
+  Future<ApiResponse<WorkItemFieldsWithRules>> getWorkItemTypeFields({
+    required String projectName,
+    required String workItemName,
+  }) async {
+    return ApiResponse.ok(WorkItemFieldsWithRules(fields: {}, rules: {}, transitions: {}));
+  }
+
+  @override
   Map<String, String>? get headers => {};
 
   @override
@@ -513,6 +519,7 @@ class AzureApiServiceMock implements AzureApiService {
     required String description,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    required Map<String, String> formFields,
   }) {
     throw UnimplementedError();
   }
@@ -525,9 +532,10 @@ class AzureApiServiceMock implements AzureApiService {
     GraphUser? assignedTo,
     String? title,
     String? description,
-    String? status,
+    String? state,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    required Map<String, String> formFields,
   }) {
     throw UnimplementedError();
   }

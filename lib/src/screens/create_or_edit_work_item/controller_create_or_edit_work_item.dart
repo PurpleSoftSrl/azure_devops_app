@@ -21,16 +21,15 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   final hasChanged = ValueNotifier<ApiResponse<bool>?>(null);
 
-  final editorController = HtmlEditorController();
-
-  // Used to ensure editor is visible when keyboard is opened
-  final editorGlobalKey = GlobalKey<State>();
-
   final titleFieldKey = GlobalKey<FormFieldState<dynamic>>();
 
   List<WorkItemType> allWorkItemTypes = [WorkItemType.all];
   Map<String, List<WorkItemType>> allProjectsWorkItemTypes = {};
   List<WorkItemState> allWorkItemStates = [WorkItemState.all];
+
+  LabeledWorkItemFields fieldsToShow = {};
+  WorkItemTypeRules allRules = {};
+  Map<String, List<String>> allTransitions = {};
 
   late List<WorkItemType> projectWorkItemTypes = allWorkItemTypes;
 
@@ -42,14 +41,26 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   late WorkItemType newWorkItemType = allWorkItemTypes.first;
   late Project newWorkItemProject = getProjects(storageService).firstWhereOrNull((p) => p.id != '-1') ?? projectAll;
 
-  // used only in edit mode
-  WorkItemState? newWorkItemStatus;
+  // Used only in edit mode
+  WorkItemState? newWorkItemState;
+
+  /// Used to compare current state to initial one for rules validation
+  WorkItemState? _initialWorkItemState;
 
   AreaOrIteration? newWorkItemArea;
   AreaOrIteration? newWorkItemIteration;
 
   bool get isEditing => args.id != null;
   WorkItem? editingWorkItem;
+
+  /// Data used to read/write each field. The keys are fields' reference names.
+  final formFields = <String, DynamicFieldData>{};
+
+  /// Used to compare current fields values to initial ones for rules validation
+  Map<String, DynamicFieldData> _initialFormFields = {};
+
+  // Used to show loader while api call to get fields is in progress because it can be slow
+  final isGettingFields = ValueNotifier<bool>(false);
 
   void dispose() {
     instance = null;
@@ -83,59 +94,71 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       }
     }
 
+    if (newWorkItemType != WorkItemType.all) await _getTypeFormFields();
+
     _refreshPage();
   }
 
   void _setFields(WorkItem item) {
     editingWorkItem = item;
     final fields = item.fields;
-    projectWorkItemTypes = apiService.workItemTypes[fields.systemTeamProject] ?? <WorkItemType>[];
-    allWorkItemStates = apiService.workItemStates[fields.systemTeamProject]?[fields.systemWorkItemType] ?? [];
+    final project = fields.systemTeamProject;
+    final workItemType = fields.systemWorkItemType;
+
+    projectWorkItemTypes = apiService.workItemTypes[project] ?? <WorkItemType>[];
+    allWorkItemStates = _getTransitionableStates(project: project, workItemType: workItemType);
 
     newWorkItemTitle = fields.systemTitle;
     newWorkItemDescription = fields.systemDescription ?? '';
+
     if (fields.systemAssignedTo != null) {
       newWorkItemAssignedTo =
           getSortedUsers(apiService).firstWhereOrNull((u) => u.mailAddress == fields.systemAssignedTo?.uniqueName) ??
               unassigned;
     }
-    newWorkItemType = projectWorkItemTypes.firstWhereOrNull((t) => t.name == fields.systemWorkItemType) ??
+
+    newWorkItemType = projectWorkItemTypes.firstWhereOrNull((t) => t.name == workItemType) ??
         WorkItemType(
-          name: fields.systemWorkItemType,
-          referenceName: fields.systemWorkItemType,
+          name: workItemType,
+          referenceName: workItemType,
           isDisabled: false,
           icon: '',
           states: [],
         );
-    newWorkItemStatus = apiService.workItemStates[fields.systemTeamProject]?[fields.systemWorkItemType]
-            ?.firstWhereOrNull((s) => s.name == fields.systemState) ??
-        WorkItemState(
-          id: '',
-          name: fields.systemState,
-          color: 'FFFFFF',
-        );
+
+    _initialWorkItemState = newWorkItemState =
+        apiService.workItemStates[project]?[workItemType]?.firstWhereOrNull((s) => s.name == fields.systemState) ??
+            WorkItemState(
+              id: '',
+              name: fields.systemState,
+              color: 'FFFFFF',
+            );
 
     newWorkItemArea = AreaOrIteration.onlyPath(path: fields.systemAreaPath);
     newWorkItemIteration = AreaOrIteration.onlyPath(path: fields.systemIterationPath);
   }
 
-  void setType(WorkItemType type) {
+  Future<void> setType(WorkItemType type) async {
     if (type == newWorkItemType) return;
 
     newWorkItemType = type;
 
     if (isEditing) {
-      allWorkItemStates =
-          apiService.workItemStates[editingWorkItem!.fields.systemTeamProject]![newWorkItemType.name] ?? [];
-      if (!allWorkItemStates.contains(newWorkItemStatus)) {
+      final project = editingWorkItem!.fields.systemTeamProject;
+      final workItemType = newWorkItemType.name;
+      allWorkItemStates = _getTransitionableStates(project: project, workItemType: workItemType);
+      if (!allWorkItemStates.contains(newWorkItemState)) {
         // change status if new type doesn't support current status
-        newWorkItemStatus = allWorkItemStates.firstOrNull ?? newWorkItemStatus;
+        newWorkItemState = allWorkItemStates.firstOrNull ?? newWorkItemState;
       }
     }
+
+    await _getTypeFormFields();
+
     _setHasChanged();
   }
 
-  void setProject(Project project) {
+  Future<void> setProject(Project project) async {
     if (project == newWorkItemProject) return;
 
     newWorkItemProject = project;
@@ -148,6 +171,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
         newWorkItemType = projectWorkItemTypes.first;
       }
     }
+
+    await _getTypeFormFields();
 
     _setHasChanged();
   }
@@ -174,10 +199,15 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   void setState(WorkItemState state) {
-    if (state == newWorkItemStatus) return;
+    if (state == newWorkItemState) return;
 
-    newWorkItemStatus = state;
+    newWorkItemState = state;
     _setHasChanged();
+
+    allWorkItemStates = _getTransitionableStates(project: args.project!, workItemType: newWorkItemType.name);
+
+    _checkRules();
+    _refreshPage();
   }
 
   void onTitleChanged(String value) {
@@ -194,9 +224,34 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   Future<void> confirm() async {
-    if (!titleFieldKey.currentState!.validate()) return;
+    if (!titleFieldKey.currentState!.validate()) {
+      _showFormValidationError('Title');
+      return;
+    }
 
-    newWorkItemDescription = await editorController.getText();
+    for (final key in formFields.entries) {
+      final state = key.value.formFieldKey.currentState;
+      if (state == null) continue;
+
+      if (!state.validate()) {
+        final field = fieldsToShow.values.expand((f) => f).firstWhereOrNull((f) => f.referenceName == key.key);
+        _showFormValidationError(field?.name ?? key.key);
+        return;
+      }
+    }
+
+    final htmlFieldsToShow = fieldsToShow.values.expand((f) => f).where((f) => f.type == 'html');
+    for (final field in htmlFieldsToShow) {
+      final formField = formFields[field.referenceName];
+      final text = await formField?.editorController?.getText() ?? '';
+
+      if (field.required && text.isEmpty) {
+        _showFormValidationError(field.name);
+        return;
+      }
+
+      formField?.text = text;
+    }
 
     final errorMessage = _checkRequiredFields();
     if (errorMessage != null) return OverlayService.snackbar(errorMessage, isError: true);
@@ -215,7 +270,22 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       final isInherited = ![null, 'system'].contains(newWorkItemType.customization);
       var description = 'Work item not ${isEditing ? 'edited' : 'created'}.';
       if (isInherited) {
-        description += '\nInherited processes are not fully supported yet.';
+        final responseBody = res.errorResponse?.body ?? '';
+
+        if (responseBody.isEmpty) {
+          description += '\nInherited processes are not fully supported yet.';
+        } else {
+          final apiErrorMessage = jsonDecode(responseBody) as Map<String, dynamic>;
+          final msg = apiErrorMessage['customProperties']['ErrorMessage'] as String? ?? '';
+          final firstMsg = msg.substring(msg.indexOf(':') + 1).split('.').first;
+
+          description += '\n$firstMsg';
+          if (msg.contains('ReadOnly')) {
+            description += ', the field is read-only.';
+          } else if (msg.contains('Required')) {
+            description += ', the field is required.';
+          }
+        }
       }
       return OverlayService.error(
         'Error',
@@ -226,7 +296,34 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     OverlayService.snackbar('Changes saved');
     hasChanged.value = ApiResponse.ok(false);
 
-    if (!isEditing) AppRouter.pop();
+    if (!isEditing) {
+      AppRouter.pop();
+    } else {
+      _resetInitialStateAndFormFields();
+    }
+  }
+
+  void _showFormValidationError(String fieldName) {
+    OverlayService.snackbar("Field '$fieldName' is required", isError: true);
+  }
+
+  /// When the user navigates to this page, and after each confirmed change,
+  /// we have to reset [_initialWorkItemState] and [_initialFormFields] to restart rules validation from current state.
+  void _resetInitialStateAndFormFields() {
+    _initialWorkItemState = newWorkItemState;
+
+    _initialFormFields = {
+      for (final field in formFields.entries)
+        field.key: DynamicFieldData(required: field.value.required)
+          ..controller = field.value.controller
+          ..text = field.value.controller.text.formatted
+          ..editorController = field.value.editorController
+          ..editorGlobalKey = field.value.editorGlobalKey
+          ..editorInitialText = field.value.editorInitialText
+          ..formFieldKey = field.value.formFieldKey
+          ..popupMenuKey = field.value.popupMenuKey
+          ..text = field.value.text,
+    };
   }
 
   String? _checkRequiredFields() {
@@ -255,9 +352,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       title: newWorkItemTitle,
       assignedTo: assignedTo,
       description: newWorkItemDescription,
-      status: newWorkItemStatus?.name,
+      state: newWorkItemState?.name,
       area: newWorkItemArea,
       iteration: newWorkItemIteration,
+      formFields: {for (final field in formFields.entries) field.key: field.value.text},
     );
     return res;
   }
@@ -271,26 +369,12 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       description: newWorkItemDescription,
       area: newWorkItemArea,
       iteration: newWorkItemIteration,
+      formFields: {for (final field in formFields.entries) field.key: field.value.text},
     );
     return res;
   }
 
-  /// Resets editor's height and scrolls the page to make it fully visible.
-  /// The delay is to wait for the keyboard to show.
-  void ensureEditorIsVisible() {
-    Timer(Duration(milliseconds: 500), () {
-      editorController.resetHeight();
-      final ctx = editorGlobalKey.currentContext;
-      if (ctx == null) return;
-
-      Scrollable.of(ctx).position.ensureVisible(
-            ctx.findRenderObject()!,
-            duration: Duration(milliseconds: 250),
-          );
-    });
-  }
-
-  Future<void> addMention(GraphUser u) async {
+  Future<void> addMention(GraphUser u, String fieldRefName) async {
     final res = await apiService.getUserToMention(email: u.mailAddress!);
     if (res.isError || res.data == null) {
       return OverlayService.snackbar('Could not find user', isError: true);
@@ -299,7 +383,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     // remove `(me)` from user name if it's me
     final name = u.mailAddress == apiService.user!.emailAddress ? apiService.user!.displayName : u.displayName;
     final mention = '<a href="#" data-vss-mention="version:2.0,${res.data}">@$name</a>';
-    editorController.insertHtml(mention);
+    formFields[fieldRefName]?.editorController?.insertHtml(mention);
   }
 
   List<GraphUser> getAssignees() {
@@ -316,4 +400,199 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     final areas = apiService.workItemIterations;
     return areas[isEditing ? editingWorkItem!.fields.systemTeamProject : newWorkItemProject.name!] ?? [];
   }
+
+  /// Gets all the fields for the selected work item type.
+  Future<void> _getTypeFormFields() async {
+    // refresh UI without any html editor and wait a bit to make the editors reinitialize correctly
+    fieldsToShow = {};
+    _refreshPage();
+    await Future<void>.delayed(Duration(milliseconds: 50));
+
+    formFields.clear();
+
+    final projectName = editingWorkItem?.fields.systemTeamProject ?? newWorkItemProject.name!;
+
+    isGettingFields.value = true;
+
+    final res = await apiService.getWorkItemTypeFields(
+      projectName: projectName,
+      workItemName: newWorkItemType.name,
+    );
+
+    isGettingFields.value = false;
+
+    if (res.isError) {
+      OverlayService.snackbar('Could not get fields for type ${newWorkItemType.name}', isError: true);
+      return;
+    }
+
+    fieldsToShow = res.data?.fields ?? <String, Set<WorkItemField>>{};
+    allRules = res.data?.rules ?? {};
+    allTransitions = res.data?.transitions ?? {};
+
+    allWorkItemStates = _getTransitionableStates(project: projectName, workItemType: newWorkItemType.name);
+
+    for (final entry in fieldsToShow.entries) {
+      for (final field in entry.value) {
+        final refName = field.referenceName;
+        formFields[refName] = DynamicFieldData(required: field.required);
+
+        if (!field.readOnly && field.defaultValue != null) {
+          formFields[refName]!.controller.text = field.defaultValue!;
+          formFields[refName]!.text = field.defaultValue!;
+        }
+
+        if (isEditing) {
+          final text = editingWorkItem!.fields.jsonFields[refName]?.toString() ?? field.defaultValue ?? '';
+          onFieldChanged(text, refName);
+        }
+      }
+    }
+
+    final htmlFieldsToShow = fieldsToShow.values.expand((f) => f).where((f) => f.type == 'html');
+    for (final field in htmlFieldsToShow) {
+      final formField = formFields[field.referenceName];
+      formField?.editorGlobalKey = GlobalKey<State>();
+      formField?.editorController = HtmlEditorController();
+
+      if (isEditing) {
+        formField?.editorInitialText =
+            editingWorkItem!.fields.jsonFields[field.referenceName]?.toString() ?? field.defaultValue ?? '';
+      }
+    }
+
+    final selectableFieldsToShow = fieldsToShow.values.expand((f) => f).where((f) => f.hasMeaningfulAllowedValues);
+    for (final field in selectableFieldsToShow) {
+      final formField = formFields[field.referenceName];
+      formField?.popupMenuKey = GlobalKey<PopupMenuButtonState<dynamic>>();
+    }
+
+    _resetInitialStateAndFormFields();
+    _checkRules();
+  }
+
+  void _checkRules() {
+    final checker = RulesChecker(
+      allRules: allRules,
+      initialFormFields: _initialFormFields,
+      formFields: formFields,
+      isEditing: isEditing,
+      initialState: _initialWorkItemState,
+      state: newWorkItemState,
+    );
+
+    for (final entry in fieldsToShow.entries) {
+      for (final field in entry.value) {
+        final rules = checker.checkRules(field);
+        field
+          ..readOnly = rules.readOnly || rules.makeEmpty
+          ..required = rules.required;
+
+        final refName = field.referenceName;
+
+        if (formFields[refName] != null && field.readOnly) {
+          // reset field to previous value if it's editing mode, otherwise set it to empty string
+          final initialValue = _initialFormFields[refName];
+          if (initialValue != null) {
+            final text = isEditing ? initialValue.text : '';
+            formFields[refName]!.text = text;
+            formFields[refName]!.controller.text = text.formatted;
+          }
+        }
+
+        if (formFields[refName] != null && rules.makeEmpty) {
+          // make field value empty
+          formFields[refName]!.text = '';
+          formFields[refName]!.controller.text = '';
+        }
+      }
+    }
+  }
+
+  void onFieldChanged(String str, String fieldRefName) {
+    final formField = formFields[fieldRefName];
+    formField?.text = str;
+    formField?.controller.text = str.formatted;
+
+    _setHasChanged();
+
+    _checkRules();
+    _refreshPage();
+  }
+
+  String? fieldValidator(String? str, WorkItemField field) {
+    if (str == null) return null;
+    if (field.type == null) return null;
+
+    if (str.isEmpty && !field.required) return null;
+
+    if (str.isEmpty) return 'Fill this field';
+
+    switch (field.type) {
+      case 'double':
+      case 'integer':
+        return num.tryParse(str) != null ? null : 'Must be a number';
+      default:
+        return null;
+    }
+  }
+
+  Future<void> setDateField(String fieldRefName) async {
+    final date = await showDatePicker(
+      context: AppRouter.rootNavigator!.context,
+      initialDate: DateTime.tryParse(formFields[fieldRefName]?.text ?? '')?.toLocal() ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now().add(Duration(days: 365)),
+    );
+
+    if (date == null) return;
+
+    final dateMinutes = date.timeZoneOffset.inMinutes.abs() % 60;
+    final dateHours = date.timeZoneOffset.inHours;
+    final datePrefix = dateHours.isNegative ? '-' : '+';
+
+    final dateText =
+        '${date.toIso8601String()}$datePrefix${dateHours.abs().toString().padLeft(2, '0')}:${dateMinutes.toString().padLeft(2, '0')}';
+
+    onFieldChanged(dateText, fieldRefName);
+
+    _setHasChanged();
+  }
+
+  void showPopupMenu(String fieldRefName) {
+    formFields[fieldRefName]?.popupMenuKey?.currentState?.showButtonMenu();
+  }
+
+  String getFieldName(WorkItemField field) {
+    final fieldName = field.name;
+    final isReadOnly = field.readOnly;
+
+    if (isReadOnly) {
+      return '$fieldName (read-only)';
+    }
+
+    final isRequired = field.required;
+
+    if (isRequired) {
+      return '$fieldName *';
+    }
+
+    return fieldName;
+  }
+
+  List<WorkItemState> _getTransitionableStates({required String project, required String workItemType}) {
+    final allStates = apiService.workItemStates[project]?[workItemType] ?? [];
+
+    if (newWorkItemState == null) return allStates;
+
+    final currentTransitionableStates = allTransitions[newWorkItemState!.name] ?? [];
+
+    if (currentTransitionableStates.isEmpty) return allStates;
+
+    return allStates.where((state) => currentTransitionableStates.contains(state.name)).toList();
+  }
+}
+
+extension on WorkItemField {
+  bool get hasMeaningfulAllowedValues => allowedValues.where((v) => v != '<None>').isNotEmpty;
 }

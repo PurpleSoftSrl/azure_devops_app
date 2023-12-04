@@ -10,6 +10,7 @@ class DevOpsPopupMenu extends StatelessWidget {
     this.child,
     this.color,
     this.constraints,
+    this.menuKey,
   });
 
   final String tooltip;
@@ -18,6 +19,7 @@ class DevOpsPopupMenu extends StatelessWidget {
   final Widget? child;
   final Color? color;
   final BoxConstraints? constraints;
+  final Key? menuKey;
 
   List<PopupMenuEntry<void>> _getEffectiveItems(BuildContext context) {
     final builtItems = items();
@@ -52,7 +54,7 @@ class DevOpsPopupMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<void>(
-      key: ValueKey('Popup menu $tooltip'),
+      key: menuKey ?? ValueKey('Popup menu $tooltip'),
       itemBuilder: _getEffectiveItems,
       elevation: 5,
       shadowColor: Colors.black,

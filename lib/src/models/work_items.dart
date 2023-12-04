@@ -125,6 +125,7 @@ class ItemFields {
     this.microsoftVstsCommonResolvedDate,
     this.systemHistory,
     this.systemTags,
+    this.jsonFields = const {},
   });
 
   factory ItemFields.fromJson(Map<String, dynamic> json) => ItemFields(
@@ -169,6 +170,7 @@ class ItemFields {
             : DateTime.parse(json['Microsoft.VSTS.Common.ResolvedDate']!.toString()).toLocal(),
         systemHistory: json['System.History'] as String?,
         systemTags: json['System.Tags'] as String?,
+        jsonFields: json,
       );
 
   final String systemTeamProject;
@@ -195,6 +197,9 @@ class ItemFields {
   final DateTime? microsoftVstsCommonResolvedDate;
   final String? systemHistory;
   final String? systemTags;
+
+  /// Used to show work item fields dynamically to support all processes
+  final Map<String, dynamic> jsonFields;
 
   @override
   String toString() {

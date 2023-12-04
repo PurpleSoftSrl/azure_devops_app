@@ -97,7 +97,7 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 FilterMenu<WorkItemState>(
                   title: 'Status',
                   values: ctrl.allWorkItemStates,
-                  currentFilter: ctrl.newWorkItemStatus!,
+                  currentFilter: ctrl.newWorkItemState!,
                   formatLabel: (t) => t.name,
                   onSelected: ctrl.setState,
                   isDefaultFilter: false,
@@ -118,14 +118,16 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
-              FilterMenu<GraphUser>(
-                title: 'Assigned to',
-                values: ctrl.getAssignees(),
-                currentFilter: ctrl.newWorkItemAssignedTo,
-                onSelected: ctrl.setAssignee,
-                formatLabel: (u) => u.displayName!,
-                isDefaultFilter: ctrl.newWorkItemAssignedTo.displayName == 'Unassigned',
-                widgetBuilder: (u) => UserFilterWidget(user: u),
+              Flexible(
+                child: FilterMenu<GraphUser>(
+                  title: 'Assigned to',
+                  values: ctrl.getAssignees(),
+                  currentFilter: ctrl.newWorkItemAssignedTo,
+                  onSelected: ctrl.setAssignee,
+                  formatLabel: (u) => u.displayName!,
+                  isDefaultFilter: ctrl.newWorkItemAssignedTo.displayName == 'Unassigned',
+                  widgetBuilder: (u) => UserFilterWidget(user: u),
+                ),
               ),
             ],
           ),
@@ -142,16 +144,18 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 const SizedBox(
                   width: 10,
                 ),
-                FilterMenu<AreaOrIteration?>.custom(
-                  title: 'Area',
-                  formatLabel: (u) => u?.escapedAreaPath ?? '-',
-                  isDefaultFilter: ctrl.newWorkItemArea == null,
-                  currentFilter: ctrl.newWorkItemArea,
-                  body: AreaFilterBody(
+                Flexible(
+                  child: FilterMenu<AreaOrIteration?>.custom(
+                    title: 'Area',
+                    formatLabel: (u) => u?.escapedAreaPath ?? '-',
+                    isDefaultFilter: ctrl.newWorkItemArea == null,
                     currentFilter: ctrl.newWorkItemArea,
-                    areasToShow: ctrl.getAreasToShow(),
-                    onTap: ctrl.setArea,
-                    showAllFilter: false,
+                    body: AreaFilterBody(
+                      currentFilter: ctrl.newWorkItemArea,
+                      areasToShow: ctrl.getAreasToShow(),
+                      onTap: ctrl.setArea,
+                      showAllFilter: false,
+                    ),
                   ),
                 ),
               ],
@@ -169,16 +173,18 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 const SizedBox(
                   width: 10,
                 ),
-                FilterMenu<AreaOrIteration?>.custom(
-                  title: 'Iteration',
-                  formatLabel: (u) => u?.escapedIterationPath ?? '-',
-                  isDefaultFilter: ctrl.newWorkItemIteration == null,
-                  currentFilter: ctrl.newWorkItemIteration,
-                  body: AreaFilterBody(
+                Flexible(
+                  child: FilterMenu<AreaOrIteration?>.custom(
+                    title: 'Iteration',
+                    formatLabel: (u) => u?.escapedIterationPath ?? '-',
+                    isDefaultFilter: ctrl.newWorkItemIteration == null,
                     currentFilter: ctrl.newWorkItemIteration,
-                    areasToShow: ctrl.getIterationsToShow(),
-                    onTap: ctrl.setIteration,
-                    showAllFilter: false,
+                    body: AreaFilterBody(
+                      currentFilter: ctrl.newWorkItemIteration,
+                      areasToShow: ctrl.getIterationsToShow(),
+                      onTap: ctrl.setIteration,
+                      showAllFilter: false,
+                    ),
                   ),
                 ),
               ],
@@ -197,22 +203,41 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          Text(
-            'Description',
-            style: context.textTheme.labelSmall!.copyWith(height: 1, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          DevOpsHtmlEditor(
-            editorController: ctrl.editorController,
-            editorGlobalKey: ctrl.editorGlobalKey,
-            initialText: ctrl.newWorkItemDescription,
-            onKeyUp: (_) => ctrl._setHasChanged(),
-          ),
-          SizedBox(
-            key: ctrl.editorGlobalKey,
-            height: 0,
+          ValueListenableBuilder(
+            valueListenable: ctrl.isGettingFields,
+            builder: (context, isGettingFields, _) => isGettingFields
+                ? SizedBox(
+                    height: 100,
+                    child: const Center(child: CircularProgressIndicator()),
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (final entry in ctrl.fieldsToShow.entries)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (entry.value.isNotEmpty &&
+                                (entry.value.length > 1 || entry.value.single.name != entry.key))
+                              Padding(
+                                padding: const EdgeInsets.only(top: 12, bottom: 8),
+                                child: Text(
+                                  entry.key,
+                                  style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            for (final field in entry.value)
+                              switch (field.type) {
+                                'html' => _HtmlFormField(field: field, ctrl: ctrl),
+                                'dateTime' => _DateFormField(field: field, ctrl: ctrl),
+                                _ when field.hasMeaningfulAllowedValues =>
+                                  _SelectionFormField(ctrl: ctrl, field: field),
+                                _ => _DefaultFormField(ctrl: ctrl, field: field),
+                              },
+                          ],
+                        ),
+                    ],
+                  ),
           ),
         ],
       ),

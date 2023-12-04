@@ -145,40 +145,14 @@ class _WorkItemDetailScreen extends StatelessWidget {
                     height: 20,
                   ),
                   Text(
-                    'Title:',
+                    'Title',
                     style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                   ),
                   Text(detail.fields.systemTitle),
-                  if (detail.fields.systemDescription != null) ...[
+                  if (detail.fields.systemAssignedTo != null) ...[
                     const SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      'Description:',
-                      style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                    ),
-                    HtmlWidget(
-                      data: detail.fields.systemDescription!,
-                      style: context.textTheme.titleSmall,
-                    ),
-                  ],
-                  if (detail.fields.reproSteps != null) ...[
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      'Repro Steps:',
-                      style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                    ),
-                    HtmlWidget(
-                      data: detail.fields.reproSteps!,
-                      style: context.textTheme.titleSmall,
-                    ),
-                  ],
-                  const Divider(
-                    height: 40,
-                  ),
-                  if (detail.fields.systemAssignedTo != null)
                     Row(
                       children: [
                         TextTitleDescription(
@@ -194,8 +168,58 @@ class _WorkItemDetailScreen extends StatelessWidget {
                         ),
                       ],
                     ),
+                  ],
+                  for (final entry in ctrl.fieldsToShow.entries)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (ctrl.shouldShowGroupLabel(group: entry.key)) ...[
+                          Padding(
+                            padding: const EdgeInsets.only(top: 24),
+                            child: Text(
+                              entry.key,
+                              style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          const Divider(),
+                        ],
+                        for (final field in entry.value)
+                          Builder(
+                            builder: (context) {
+                              final textToShow = detail.fields.jsonFields[field.referenceName] ?? field.defaultValue;
+                              if (textToShow == null || textToShow.toString().isEmpty) {
+                                return const SizedBox();
+                              }
+
+                              final shouldShowFieldName = entry.value.length > 1 || field.name != entry.key;
+
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    height: 4,
+                                  ),
+                                  if (shouldShowFieldName)
+                                    Text(
+                                      field.name,
+                                      style: context.textTheme.titleSmall!
+                                          .copyWith(color: context.colorScheme.onSecondary),
+                                    ),
+                                  if (field.type == 'html')
+                                    HtmlWidget(
+                                      data: textToShow.toString(),
+                                      style: context.textTheme.titleSmall,
+                                    )
+                                  else
+                                    Text(textToShow!.toString().formatted),
+                                ],
+                              );
+                            },
+                          ),
+                      ],
+                    ),
                   const SizedBox(
-                    height: 20,
+                    height: 40,
                   ),
                   TextTitleDescription(
                     title: 'Created at: ',

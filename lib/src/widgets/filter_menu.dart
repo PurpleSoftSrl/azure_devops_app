@@ -102,9 +102,13 @@ class FilterMenu<T> extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              isDefaultFilter ? title : (formatLabel?.call(currentFilter!) ?? currentFilter.toString()),
-              style: context.textTheme.bodySmall!.copyWith(color: context.colorScheme.onBackground, height: 1),
+            Flexible(
+              child: Text(
+                isDefaultFilter ? title : (formatLabel?.call(currentFilter!) ?? currentFilter.toString()),
+                style: context.textTheme.bodySmall!.copyWith(color: context.colorScheme.onBackground, height: 1),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             const SizedBox(
               width: 4,

@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 extension PurpleDateTime on DateTime {
   String toSimpleDate() => '${DateFormat.yMd().format(this)} ${DateFormat.Hm().format(this)}';
 
-  String toDate() => DateFormat.yMd().format(this);
+  String toDate() => DateFormat.yMd().format(toLocal());
 
   String get minutesAgo {
     final now = DateTime.now();
