@@ -44,8 +44,8 @@ class DevOpsAnimatedSearchField extends StatelessWidget {
   }
 }
 
-class DevOpsSearchField extends StatelessWidget {
-  DevOpsSearchField({
+class DevOpsSearchField extends StatefulWidget {
+  const DevOpsSearchField({
     required this.onChanged,
     required this.onResetSearch,
     required this.hint,
@@ -57,21 +57,29 @@ class DevOpsSearchField extends StatelessWidget {
   final String hint;
   final String? initialValue;
 
-  final controller = TextEditingController();
+  @override
+  State<DevOpsSearchField> createState() => _DevOpsSearchFieldState();
+}
+
+class _DevOpsSearchFieldState extends State<DevOpsSearchField> {
+  late final controller = TextEditingController(text: widget.initialValue);
 
   @override
   Widget build(BuildContext context) {
     return DevOpsFormField(
       autofocus: true,
-      onChanged: onChanged,
-      hint: hint,
+      onChanged: (s) {
+        widget.onChanged.call(s);
+        controller.text = s;
+      },
+      hint: widget.hint,
       maxLines: 1,
-      controller: controller..text = initialValue ?? '',
+      controller: controller,
       validator: (_) => null,
       suffix: GestureDetector(
         onTap: () {
           controller.clear();
-          onResetSearch();
+          widget.onResetSearch();
         },
         child: Icon(
           Icons.close,
