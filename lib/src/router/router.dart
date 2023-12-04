@@ -27,7 +27,7 @@ import 'package:azure_devops/src/widgets/error_page.dart';
 import 'package:flutter/material.dart';
 
 typedef WorkItemDetailArgs = ({String project, int id});
-typedef CreateOrEditWorkItemArgs = ({String? project, int? id});
+typedef CreateOrEditWorkItemArgs = ({String? project, int? id, String? area, String? iteration});
 typedef PullRequestDetailArgs = ({String project, String repository, int id});
 typedef CommitsArgs = ({Project? project, GraphUser? author});
 typedef CommitDetailArgs = ({String project, String repository, String commitId});
@@ -174,8 +174,8 @@ class AppRouter {
 
   static WorkItemDetailArgs getWorkItemDetailArgs(BuildContext context) => _getArgs(context);
 
-  static Future<void> goToCreateOrEditWorkItem({String? project, int? id}) =>
-      _goTo<CreateOrEditWorkItemArgs>(_createOrEditWorkItem, args: (project: project, id: id));
+  static Future<void> goToCreateOrEditWorkItem({CreateOrEditWorkItemArgs? args}) =>
+      _goTo<CreateOrEditWorkItemArgs>(_createOrEditWorkItem, args: args);
 
   static CreateOrEditWorkItemArgs getCreateOrEditWorkItemArgs(BuildContext context) => _getArgs(context);
 

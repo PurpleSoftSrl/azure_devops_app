@@ -11,7 +11,13 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     return instance ??= _CreateOrEditWorkItemController._(apiService, args, storageService);
   }
 
-  _CreateOrEditWorkItemController._(this.apiService, this.args, this.storageService);
+  _CreateOrEditWorkItemController._(this.apiService, this.args, this.storageService) {
+    if (args.project != null) {
+      newWorkItemProject = getProjects(storageService).firstWhereOrNull((p) => p.name == args.project) ?? projectAll;
+    }
+    if (args.area != null) newWorkItemArea = AreaOrIteration.onlyPath(path: args.area!);
+    if (args.iteration != null) newWorkItemIteration = AreaOrIteration.onlyPath(path: args.iteration!);
+  }
 
   static _CreateOrEditWorkItemController? instance;
 
@@ -39,7 +45,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   final unassigned = GraphUser(displayName: 'Unassigned');
   late GraphUser newWorkItemAssignedTo = unassigned;
   late WorkItemType newWorkItemType = allWorkItemTypes.first;
-  late Project newWorkItemProject = getProjects(storageService).firstWhereOrNull((p) => p.id != '-1') ?? projectAll;
+  late Project newWorkItemProject = projectAll;
 
   // Used only in edit mode
   WorkItemState? newWorkItemState;
