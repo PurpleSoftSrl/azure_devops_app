@@ -98,7 +98,7 @@ abstract class AzureApiService {
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
     Project? project,
     WorkItemType? type,
-    WorkItemState? status,
+    Set<WorkItemState>? states,
     GraphUser? assignedTo,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
@@ -734,7 +734,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
     Project? project,
     WorkItemType? type,
-    WorkItemState? status,
+    Set<WorkItemState>? states,
     GraphUser? assignedTo,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
@@ -766,7 +766,26 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     if (type != null) query.add(" [System.WorkItemType] = '${type.name}' ");
 
-    if (status != null) query.add(" [System.State] = '${status.name}' ");
+    if (states != null) {
+      final statesList = states.toList();
+      var statesQuery = '';
+
+      if (statesList.length == 1) {
+        query.add(" [System.State] = '${statesList.first.name}' ");
+      } else {
+        for (var i = 0; i < statesList.length; i++) {
+          if (i == 0) {
+            statesQuery += " ( [System.State] = '${statesList[i].name}' OR ";
+          } else if (i == states.length - 1) {
+            statesQuery += " [System.State] = '${statesList[i].name}' ) ";
+          } else {
+            statesQuery += " [System.State] = '${statesList[i].name}' OR ";
+          }
+        }
+
+        query.add(statesQuery);
+      }
+    }
 
     if (assignedTo != null) query.add(" [System.AssignedTo] = '${assignedTo.mailAddress}' ");
 

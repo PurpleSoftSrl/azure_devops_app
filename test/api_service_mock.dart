@@ -242,7 +242,7 @@ class AzureApiServiceMock implements AzureApiService {
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
     Project? project,
     WorkItemType? type,
-    WorkItemState? status,
+    Set<WorkItemState>? states,
     GraphUser? assignedTo,
     AreaOrIteration? area,
     AreaOrIteration? iteration,

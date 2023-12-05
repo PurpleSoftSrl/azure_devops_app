@@ -33,7 +33,7 @@ class _WorkItemsController with FilterMixin {
   final workItems = ValueNotifier<ApiResponse<List<WorkItem>?>?>(null);
   List<WorkItem> allWorkItems = [];
 
-  late WorkItemState statusFilter = WorkItemState.all;
+  late Set<WorkItemState> statesFilter = {};
   WorkItemType typeFilter = WorkItemType.all;
   AreaOrIteration? areaFilter;
   AreaOrIteration? iterationFilter;
@@ -42,10 +42,12 @@ class _WorkItemsController with FilterMixin {
   final showActiveIterations = ValueNotifier<bool>(false);
 
   late List<WorkItemType> allWorkItemTypes = [typeFilter];
-  late List<WorkItemState> allWorkItemStates = [statusFilter];
+  late List<WorkItemState> allWorkItemStates = statesFilter.toList();
 
   final isSearching = ValueNotifier<bool>(false);
   String? _currentSearchQuery;
+
+  bool get isDefaultStateFilter => statesFilter.isEmpty;
 
   void dispose() {
     instance = null;
@@ -54,7 +56,7 @@ class _WorkItemsController with FilterMixin {
 
   Future<void> init() async {
     allWorkItemTypes = [typeFilter];
-    allWorkItemStates = [statusFilter];
+    allWorkItemStates = statesFilter.toList();
 
     final types = await apiService.getWorkItemTypes();
     if (!types.isError) {
@@ -129,11 +131,11 @@ class _WorkItemsController with FilterMixin {
     return flattened;
   }
 
-  void filterByStatus(WorkItemState state) {
-    if (state == statusFilter) return;
+  void filterByStates(Set<WorkItemState> states) {
+    if (states == statesFilter) return;
 
     workItems.value = null;
-    statusFilter = state;
+    statesFilter = states;
     _getData();
   }
 
@@ -178,7 +180,7 @@ class _WorkItemsController with FilterMixin {
     final res = await apiService.getWorkItems(
       project: projectFilter == projectAll ? null : projectFilter,
       type: typeFilter == WorkItemType.all ? null : typeFilter,
-      status: statusFilter == WorkItemState.all ? null : statusFilter,
+      states: isDefaultStateFilter ? null : statesFilter,
       assignedTo: assignedTo,
       area: areaFilter,
       iteration: iterationFilter,
@@ -194,7 +196,7 @@ class _WorkItemsController with FilterMixin {
 
   void resetFilters() {
     workItems.value = null;
-    statusFilter = WorkItemState.all;
+    statesFilter.clear();
     typeFilter = WorkItemType.all;
     projectFilter = projectAll;
     userFilter = userAll;

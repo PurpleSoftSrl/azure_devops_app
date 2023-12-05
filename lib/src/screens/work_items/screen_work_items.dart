@@ -37,13 +37,13 @@ class _WorkItemsScreen extends StatelessWidget {
               onSearchChanged:
                   ctrl.hasManyProjects(ctrl.storageService) ? (s) => ctrl.searchProject(s, ctrl.storageService) : null,
             ),
-            FilterMenu<WorkItemState>(
-              title: 'Status',
+            FilterMenu<WorkItemState>.multiple(
+              title: 'States',
               values: ctrl.allWorkItemStates,
               formatLabel: (t) => t.name,
-              currentFilter: ctrl.statusFilter,
-              onSelected: ctrl.filterByStatus,
-              isDefaultFilter: ctrl.statusFilter == WorkItemState.all,
+              currentFilters: ctrl.statesFilter,
+              onSelectedMultiple: ctrl.filterByStates,
+              isDefaultFilter: ctrl.isDefaultStateFilter,
               widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
             ),
             WorkItemTypeFilterMenu(
