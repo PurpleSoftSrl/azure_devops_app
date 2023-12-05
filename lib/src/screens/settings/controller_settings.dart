@@ -120,4 +120,29 @@ class _SettingsController with ShareMixin, AppLogger {
 
     return selectedOrg;
   }
+
+  Future<void> showChangelog() async {
+    final str = await rootBundle.loadString('CHANGELOG.md');
+
+    await OverlayService.bottomsheet(
+      title: 'CHANGELOG',
+      isScrollControlled: true,
+      heightPercentage: .9,
+      builder: (context) => SingleChildScrollView(
+        child: MarkdownBody(
+          data: str,
+          shrinkWrap: false,
+          styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
+          paddingBuilders: {
+            'h2': _H2PaddingBuilder(),
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _H2PaddingBuilder extends MarkdownPaddingBuilder {
+  @override
+  EdgeInsets getPadding() => const EdgeInsets.only(top: 16);
 }

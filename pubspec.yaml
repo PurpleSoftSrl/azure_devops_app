@@ -58,6 +58,7 @@ flutter:
     - assets/illustrations/
     - assets/fonts/
     - assets/logos/
+    - CHANGELOG.md
 
   fonts:
     - family: DevOpsIcons

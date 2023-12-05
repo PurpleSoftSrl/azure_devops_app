@@ -161,6 +161,19 @@ class _SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(
+            height: 20,
+          ),
+          NavigationButton(
+            onTap: ctrl.showChangelog,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text('Changelog'),
+                Icon(Icons.history),
+              ],
+            ),
+          ),
           SectionHeader(
             text: 'App settings',
           ),
