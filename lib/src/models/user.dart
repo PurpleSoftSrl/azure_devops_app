@@ -88,12 +88,12 @@ class GraphUser {
     return mailAddress.hashCode;
   }
 
-  GraphUser copyWith({String? displayName}) {
+  GraphUser copyWith({String? displayName, String? mailAddress}) {
     return GraphUser(
       subjectKind: subjectKind,
       domain: domain,
       principalName: principalName,
-      mailAddress: mailAddress,
+      mailAddress: mailAddress ?? this.mailAddress,
       origin: origin,
       originId: originId,
       displayName: displayName ?? this.displayName,

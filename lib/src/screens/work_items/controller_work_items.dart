@@ -147,11 +147,11 @@ class _WorkItemsController with FilterMixin {
     _getData();
   }
 
-  void filterByUser(GraphUser user) {
-    if (user == userFilter) return;
+  void filterByUsers(Set<GraphUser> users) {
+    if (users == usersFilter) return;
 
     workItems.value = null;
-    userFilter = user;
+    usersFilter = users;
     _getData();
   }
 
@@ -172,16 +172,13 @@ class _WorkItemsController with FilterMixin {
   }
 
   Future<void> _getData() async {
-    var assignedTo = userFilter == userAll ? null : userFilter;
-    if (userFilter.displayName == 'Unassigned') {
-      assignedTo = GraphUser(mailAddress: '');
-    }
+    final assignedTo = usersFilter.isEmpty ? null : usersFilter;
 
     final res = await apiService.getWorkItems(
       project: projectFilter == projectAll ? null : projectFilter,
       types: typesFilter.isEmpty ? null : typesFilter,
       states: isDefaultStateFilter ? null : statesFilter,
-      assignedTo: assignedTo,
+      assignedTo: assignedTo?.map((u) => u.displayName == 'Unassigned' ? u.copyWith(mailAddress: '') : u).toSet(),
       area: areaFilter,
       iteration: iterationFilter,
     );
@@ -199,7 +196,7 @@ class _WorkItemsController with FilterMixin {
     statesFilter.clear();
     typesFilter.clear();
     projectFilter = projectAll;
-    userFilter = userAll;
+    usersFilter.clear();
     areaFilter = null;
     iterationFilter = null;
     _currentSearchQuery = null;
@@ -221,9 +218,9 @@ class _WorkItemsController with FilterMixin {
   }
 
   List<GraphUser> getAssignees() {
-    final users = getSortedUsers(apiService);
+    final users = getSortedUsers(apiService, withUserAll: false);
     final unassigned = GraphUser(displayName: 'Unassigned', mailAddress: 'unassigned');
-    return users..insert(1, unassigned);
+    return users..insert(0, unassigned);
   }
 
   /// If user has selected a project show only areas of the selected project,

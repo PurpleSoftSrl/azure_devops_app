@@ -95,8 +95,8 @@ class FilterMenu<T> extends StatelessWidget {
     required this.onSelectedMultiple,
     required this.values,
     required this.widgetBuilder,
+    this.onSearchChanged,
   })  : onSelected = null,
-        onSearchChanged = null,
         currentFilter = null,
         _isMultiple = true;
 
@@ -213,8 +213,8 @@ class _FilterBottomsheet<T> extends StatelessWidget {
         final visibleValues = ValueNotifier([...values]);
         final isSearchable = onSearchChanged != null;
 
-        if (isSearchable && !isDefaultFilter) {
-          final query = formatLabel?.call(isMultiple ? currentFilters!.first : currentFilter!) ?? '';
+        if (isSearchable && !isDefaultFilter && !isMultiple) {
+          final query = formatLabel?.call(currentFilter!) ?? '';
           visibleValues.value = onSearchChanged!.call(query);
         }
 
@@ -261,9 +261,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                           visibleValues.value = allValues;
                         },
                         hint: 'Search',
-                        initialValue: isDefaultFilter
-                            ? null
-                            : formatLabel?.call(isMultiple ? currentFilters!.first : currentFilter!),
+                        initialValue: isDefaultFilter || isMultiple ? null : formatLabel?.call(currentFilter!),
                       ),
                     ),
                   ValueListenableBuilder<Set<T>>(

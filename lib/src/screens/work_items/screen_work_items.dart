@@ -56,13 +56,13 @@ class _WorkItemsScreen extends StatelessWidget {
               isDefaultFilter: ctrl.typesFilter.isEmpty,
               widgetBuilder: (t) => WorkItemTypeFilter(type: t),
             ),
-            FilterMenu<GraphUser>(
+            FilterMenu<GraphUser>.multiple(
               title: 'Assigned to',
               values: ctrl.getAssignees(),
-              onSelected: ctrl.filterByUser,
+              onSelectedMultiple: ctrl.filterByUsers,
               formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.apiService),
-              isDefaultFilter: ctrl.userFilter == ctrl.userAll,
-              currentFilter: ctrl.userFilter,
+              isDefaultFilter: ctrl.usersFilter.isEmpty,
+              currentFilters: ctrl.usersFilter,
               widgetBuilder: (u) => UserFilterWidget(user: u),
               onSearchChanged: ctrl.hasManyUsers(ctrl.apiService) ? ctrl.searchAssignee : null,
             ),

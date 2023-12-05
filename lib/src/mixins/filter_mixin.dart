@@ -10,6 +10,7 @@ mixin FilterMixin {
 
   final userAll = GraphUser.all();
   late GraphUser userFilter = userAll;
+  Set<GraphUser> usersFilter = {};
 
   bool hasManyUsers(AzureApiService apiService) => getSortedUsers(apiService, withUserAll: false).length > 10;
 

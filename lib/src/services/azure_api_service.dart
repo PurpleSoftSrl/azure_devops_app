@@ -99,7 +99,7 @@ abstract class AzureApiService {
     Project? project,
     Set<WorkItemType>? types,
     Set<WorkItemState>? states,
-    GraphUser? assignedTo,
+    Set<GraphUser>? assignedTo,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
   });
@@ -735,7 +735,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     Project? project,
     Set<WorkItemType>? types,
     Set<WorkItemState>? states,
-    GraphUser? assignedTo,
+    Set<GraphUser>? assignedTo,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
   }) async {
@@ -808,7 +808,28 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       }
     }
 
-    if (assignedTo != null) query.add(" [System.AssignedTo] = '${assignedTo.mailAddress}' ");
+    if (assignedTo != null) {
+      final assignedToList = assignedTo.toList();
+      var assignedToQuery = '';
+
+      const systemAssignedTo = '[System.AssignedTo]';
+
+      if (assignedToList.length == 1) {
+        query.add(" $systemAssignedTo = '${assignedToList.first.mailAddress}' ");
+      } else {
+        for (var i = 0; i < assignedToList.length; i++) {
+          if (i == 0) {
+            assignedToQuery += " ( $systemAssignedTo = '${assignedToList[i].mailAddress}' OR ";
+          } else if (i == assignedTo.length - 1) {
+            assignedToQuery += " $systemAssignedTo = '${assignedToList[i].mailAddress}' ) ";
+          } else {
+            assignedToQuery += " $systemAssignedTo = '${assignedToList[i].mailAddress}' OR ";
+          }
+        }
+
+        query.add(assignedToQuery);
+      }
+    }
 
     if (area != null) {
       query.add(" [System.AreaPath] = '${area.escapedAreaPath}' ");

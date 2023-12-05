@@ -243,7 +243,7 @@ class AzureApiServiceMock implements AzureApiService {
     Project? project,
     Set<WorkItemType>? types,
     Set<WorkItemState>? states,
-    GraphUser? assignedTo,
+    Set<GraphUser>? assignedTo,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
   }) async {
