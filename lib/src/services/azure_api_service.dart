@@ -765,70 +765,19 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     }
 
     if (types != null) {
-      final typesList = types.toList();
-      var typesQuery = '';
-
-      const systemType = '[System.WorkItemType]';
-
-      if (typesList.length == 1) {
-        query.add(" $systemType = '${typesList.first.name}' ");
-      } else {
-        for (var i = 0; i < typesList.length; i++) {
-          if (i == 0) {
-            typesQuery += " ( $systemType = '${typesList[i].name}' OR ";
-          } else if (i == types.length - 1) {
-            typesQuery += " $systemType = '${typesList[i].name}' ) ";
-          } else {
-            typesQuery += " $systemType = '${typesList[i].name}' OR ";
-          }
-        }
-
-        query.add(typesQuery);
-      }
+      final typesQuery = _getMultipleFilter('[System.WorkItemType]', types.toList(), (t) => t.name);
+      query.add(typesQuery);
     }
 
     if (states != null) {
-      final statesList = states.toList();
-      var statesQuery = '';
-
-      if (statesList.length == 1) {
-        query.add(" [System.State] = '${statesList.first.name}' ");
-      } else {
-        for (var i = 0; i < statesList.length; i++) {
-          if (i == 0) {
-            statesQuery += " ( [System.State] = '${statesList[i].name}' OR ";
-          } else if (i == states.length - 1) {
-            statesQuery += " [System.State] = '${statesList[i].name}' ) ";
-          } else {
-            statesQuery += " [System.State] = '${statesList[i].name}' OR ";
-          }
-        }
-
-        query.add(statesQuery);
-      }
+      final statesQuery = _getMultipleFilter('[System.State]', states.toList(), (s) => s.name);
+      query.add(statesQuery);
     }
 
     if (assignedTo != null) {
-      final assignedToList = assignedTo.toList();
-      var assignedToQuery = '';
-
-      const systemAssignedTo = '[System.AssignedTo]';
-
-      if (assignedToList.length == 1) {
-        query.add(" $systemAssignedTo = '${assignedToList.first.mailAddress}' ");
-      } else {
-        for (var i = 0; i < assignedToList.length; i++) {
-          if (i == 0) {
-            assignedToQuery += " ( $systemAssignedTo = '${assignedToList[i].mailAddress}' OR ";
-          } else if (i == assignedTo.length - 1) {
-            assignedToQuery += " $systemAssignedTo = '${assignedToList[i].mailAddress}' ) ";
-          } else {
-            assignedToQuery += " $systemAssignedTo = '${assignedToList[i].mailAddress}' OR ";
-          }
-        }
-
-        query.add(assignedToQuery);
-      }
+      final assignedToQuery =
+          _getMultipleFilter('[System.AssignedTo]', assignedTo.toList(), (s) => s.mailAddress ?? '');
+      query.add(assignedToQuery);
     }
 
     if (area != null) {
@@ -861,6 +810,26 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (allWorkItemsRes.isError) return ApiResponse.error(allWorkItemsRes);
 
     return ApiResponse.ok(GetWorkItemsResponse.fromResponse(allWorkItemsRes));
+  }
+
+  String _getMultipleFilter<T>(String variable, Iterable<T> filters, String Function(T) label) {
+    var query = '';
+
+    final filterList = filters.toList();
+
+    if (filterList.length == 1) return " $variable = '${label(filterList.first)}' ";
+
+    for (var i = 0; i < filterList.length; i++) {
+      if (i == 0) {
+        query += " ( $variable = '${label(filterList[i])}' OR ";
+      } else if (i == filterList.length - 1) {
+        query += " $variable = '${label(filterList[i])}' ) ";
+      } else {
+        query += " $variable = '${label(filterList[i])}' OR ";
+      }
+    }
+
+    return query;
   }
 
   @override
