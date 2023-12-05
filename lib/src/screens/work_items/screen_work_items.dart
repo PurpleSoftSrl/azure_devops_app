@@ -46,14 +46,14 @@ class _WorkItemsScreen extends StatelessWidget {
               isDefaultFilter: ctrl.isDefaultStateFilter,
               widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
             ),
-            WorkItemTypeFilterMenu(
-              title: 'Type',
+            WorkItemTypeFilterMenu.multiple(
+              title: 'Types',
               values: ctrl.allWorkItemTypes,
               formatLabel: (t) =>
                   [null, 'system'].contains(t.customization) ? t.name : '${t.name} (${t.customization})',
-              currentFilter: ctrl.typeFilter,
-              onSelected: ctrl.filterByType,
-              isDefaultFilter: ctrl.typeFilter.name == 'All',
+              currentFilters: ctrl.typesFilter,
+              onSelectedMultiple: ctrl.filterByTypes,
+              isDefaultFilter: ctrl.typesFilter.isEmpty,
               widgetBuilder: (t) => WorkItemTypeFilter(type: t),
             ),
             FilterMenu<GraphUser>(

@@ -33,15 +33,15 @@ class _WorkItemsController with FilterMixin {
   final workItems = ValueNotifier<ApiResponse<List<WorkItem>?>?>(null);
   List<WorkItem> allWorkItems = [];
 
-  late Set<WorkItemState> statesFilter = {};
-  WorkItemType typeFilter = WorkItemType.all;
+  Set<WorkItemState> statesFilter = {};
+  Set<WorkItemType> typesFilter = {};
   AreaOrIteration? areaFilter;
   AreaOrIteration? iterationFilter;
 
   /// Used to show only active iterations in iteration filter
   final showActiveIterations = ValueNotifier<bool>(false);
 
-  late List<WorkItemType> allWorkItemTypes = [typeFilter];
+  late List<WorkItemType> allWorkItemTypes = [];
   late List<WorkItemState> allWorkItemStates = statesFilter.toList();
 
   final isSearching = ValueNotifier<bool>(false);
@@ -55,7 +55,7 @@ class _WorkItemsController with FilterMixin {
   }
 
   Future<void> init() async {
-    allWorkItemTypes = [typeFilter];
+    allWorkItemTypes = [];
     allWorkItemStates = statesFilter.toList();
 
     final types = await apiService.getWorkItemTypes();
@@ -139,11 +139,11 @@ class _WorkItemsController with FilterMixin {
     _getData();
   }
 
-  void filterByType(WorkItemType type) {
-    if (type.name == typeFilter.name) return;
+  void filterByTypes(Set<WorkItemType> types) {
+    if (types == typesFilter) return;
 
     workItems.value = null;
-    typeFilter = type;
+    typesFilter = types;
     _getData();
   }
 
@@ -179,7 +179,7 @@ class _WorkItemsController with FilterMixin {
 
     final res = await apiService.getWorkItems(
       project: projectFilter == projectAll ? null : projectFilter,
-      type: typeFilter == WorkItemType.all ? null : typeFilter,
+      types: typesFilter.isEmpty ? null : typesFilter,
       states: isDefaultStateFilter ? null : statesFilter,
       assignedTo: assignedTo,
       area: areaFilter,
@@ -197,7 +197,7 @@ class _WorkItemsController with FilterMixin {
   void resetFilters() {
     workItems.value = null;
     statesFilter.clear();
-    typeFilter = WorkItemType.all;
+    typesFilter.clear();
     projectFilter = projectAll;
     userFilter = userAll;
     areaFilter = null;

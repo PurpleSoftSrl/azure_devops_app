@@ -97,7 +97,7 @@ abstract class AzureApiService {
 
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
     Project? project,
-    WorkItemType? type,
+    Set<WorkItemType>? types,
     Set<WorkItemState>? states,
     GraphUser? assignedTo,
     AreaOrIteration? area,
@@ -733,7 +733,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   @override
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
     Project? project,
-    WorkItemType? type,
+    Set<WorkItemType>? types,
     Set<WorkItemState>? states,
     GraphUser? assignedTo,
     AreaOrIteration? area,
@@ -764,7 +764,28 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       }
     }
 
-    if (type != null) query.add(" [System.WorkItemType] = '${type.name}' ");
+    if (types != null) {
+      final typesList = types.toList();
+      var typesQuery = '';
+
+      const systemType = '[System.WorkItemType]';
+
+      if (typesList.length == 1) {
+        query.add(" $systemType = '${typesList.first.name}' ");
+      } else {
+        for (var i = 0; i < typesList.length; i++) {
+          if (i == 0) {
+            typesQuery += " ( $systemType = '${typesList[i].name}' OR ";
+          } else if (i == types.length - 1) {
+            typesQuery += " $systemType = '${typesList[i].name}' ) ";
+          } else {
+            typesQuery += " $systemType = '${typesList[i].name}' OR ";
+          }
+        }
+
+        query.add(typesQuery);
+      }
+    }
 
     if (states != null) {
       final statesList = states.toList();

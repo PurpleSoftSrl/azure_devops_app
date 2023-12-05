@@ -120,7 +120,7 @@ class FilterMenu<T> extends StatelessWidget {
     final chipLabel = switch (isDefaultFilter) {
       true => title,
       false when _isMultiple => currentFilters!.length > 1
-          ? currentFilters!.length.toString()
+          ? '$title - ${currentFilters!.length}'
           : formatLabel?.call(currentFilters!.single) ?? currentFilters!.single.toString(),
       _ => formatLabel?.call(currentFilter!) ?? currentFilter.toString(),
     };
@@ -451,6 +451,18 @@ class WorkItemTypeFilterMenu extends FilterMenu<WorkItemType> {
     required super.widgetBuilder,
     super.formatLabel,
   }) : super(
+          values: values.where((t) => !typesToSkip.contains(t.name)).toList(),
+        );
+
+  WorkItemTypeFilterMenu.multiple({
+    required super.title,
+    required List<WorkItemType> values,
+    required super.currentFilters,
+    required super.onSelectedMultiple,
+    required super.isDefaultFilter,
+    required super.widgetBuilder,
+    super.formatLabel,
+  }) : super.multiple(
           values: values.where((t) => !typesToSkip.contains(t.name)).toList(),
         );
 
