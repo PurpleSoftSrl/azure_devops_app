@@ -21,7 +21,7 @@ class _CommitsScreen extends StatelessWidget {
         filters: [
           FilterMenu<Project>.multiple(
             title: 'Projects',
-            values: ctrl.getProjects(ctrl.storageService),
+            values: ctrl.getProjects(ctrl.storageService, withProjectAll: false),
             currentFilters: ctrl.projectsFilter,
             onSelectedMultiple: ctrl.filterByProjects,
             formatLabel: (p) => p.name!,

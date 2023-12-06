@@ -53,8 +53,8 @@ mixin FilterMixin {
 
   bool hasManyProjects(StorageService storageService) => storageService.getChosenProjects().length > 10;
 
-  List<Project> getProjects(StorageService storageService) {
-    return [projectAll, ...storageService.getChosenProjects()];
+  List<Project> getProjects(StorageService storageService, {bool withProjectAll = true}) {
+    return [if (withProjectAll) projectAll, ...storageService.getChosenProjects()];
   }
 
   List<Project> searchProject(String query, StorageService storageService) {
