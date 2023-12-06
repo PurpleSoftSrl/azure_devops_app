@@ -127,7 +127,7 @@ class AzureApiServiceMock implements AzureApiService {
     int? definition,
     PipelineResult result = PipelineResult.all,
     PipelineStatus status = PipelineStatus.all,
-    String? triggeredBy,
+    Set<String>? triggeredBy,
   }) async {
     final emptyPipe = Pipeline.empty();
     final firstPipe = emptyPipe

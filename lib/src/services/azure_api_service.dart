@@ -232,7 +232,7 @@ abstract class AzureApiService {
     int? definition,
     PipelineResult result,
     PipelineStatus status,
-    String? triggeredBy,
+    Set<String>? triggeredBy,
   });
 
   Future<ApiResponse<PipelineWithTimeline>> getPipeline({required String projectName, required int id});
@@ -1780,22 +1780,27 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     int? definition,
     PipelineResult result = PipelineResult.all,
     PipelineStatus status = PipelineStatus.all,
-    String? triggeredBy,
+    Set<String>? triggeredBy,
   }) async {
     const orderSearch = '&queryOrder=queueTimeDescending';
     final resultSearch = '&resultFilter=${result.stringValue}';
     final statusSearch = result != PipelineResult.all ? '' : '&statusFilter=${status.stringValue}';
-    final triggeredBySearch = triggeredBy == null ? '' : '&requestedFor=$triggeredBy';
 
     final definitionSearch = definition == null ? '' : '&definitions=$definition';
 
-    final queryParams = '$_apiVersion$orderSearch$resultSearch$statusSearch$triggeredBySearch$definitionSearch';
-
     final projectsToSearch = (definition != null || projects != null) ? projects! : (_chosenProjects ?? _projects);
 
-    final allProjectPipelines = await Future.wait([
-      for (final project in projectsToSearch) _get('$_basePath/${project.name}/_apis/build/builds?$queryParams'),
-    ]);
+    final allProjectPipelines = <Response>[];
+
+    for (final author in triggeredBy ?? {''}) {
+      final triggeredBySearch = author.isEmpty ? '' : '&requestedFor=$author';
+      final queryParams = '$_apiVersion$orderSearch$resultSearch$statusSearch$triggeredBySearch$definitionSearch';
+      allProjectPipelines.addAll(
+        await Future.wait([
+          for (final project in projectsToSearch) _get('$_basePath/${project.name}/_apis/build/builds?$queryParams'),
+        ]),
+      );
+    }
 
     var isAllError = true;
 
