@@ -229,14 +229,17 @@ class _WorkItemsController with FilterMixin {
   /// and don't show areas that are identical to the project (projects with default area only).
   Iterable<AreaOrIteration> getAreasToShow() {
     final hasProjectFilter = projectsFilter.isNotEmpty;
+
+    bool hasRealChildren(List<AreaOrIteration>? as) =>
+        as != null && (as.length > 1 || (as.first.children?.isNotEmpty ?? false));
+
     final areas = apiService.workItemAreas;
-    final projectAreas = hasProjectFilter ? projectsFilter.map((p) => areas[p.name!]).expand((a) => a!).toList() : null;
 
-    final areasToShow = (projectAreas != null ? [projectAreas] : areas.values)
-        .where((p) => p.length > 1 || (p.first.children?.isNotEmpty ?? false))
-        .expand((a) => a);
+    if (hasProjectFilter) {
+      return projectsFilter.map((p) => areas[p.name!]).where(hasRealChildren).expand((a) => a!);
+    }
 
-    return areasToShow;
+    return areas.values.where(hasRealChildren).expand((a) => a);
   }
 
   // If user has selected an area show only iterations of the project which the area belongs to,
