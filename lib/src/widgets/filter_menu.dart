@@ -275,6 +275,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 16),
                             child: DevOpsSearchField(
+                              autofocus: false,
                               onChanged: (s) {
                                 visibleValues.value = onSearchChanged!.call(s);
                               },
