@@ -44,7 +44,7 @@ class _CommitsController with FilterMixin {
 
   Future<void> _getData() async {
     final res = await apiService.getRecentCommits(
-      project: projectFilter.name == projectAll.name ? null : projectFilter,
+      projects: projectsFilter.isEmpty ? null : projectsFilter,
       author: userFilter.displayName == userAll.displayName ? null : userFilter.mailAddress,
     );
     var commits = (res.data ?? [])..sort((a, b) => b.author!.date!.compareTo(a.author!.date!));
@@ -77,11 +77,11 @@ class _CommitsController with FilterMixin {
     );
   }
 
-  void filterByProject(Project proj) {
-    if (proj.id == projectFilter.id) return;
+  void filterByProjects(Set<Project> projects) {
+    if (projects == projectsFilter) return;
 
     recentCommits.value = null;
-    projectFilter = proj.name! == projectAll.name ? projectAll : proj;
+    projectsFilter = projects;
     _getData();
   }
 
@@ -95,7 +95,7 @@ class _CommitsController with FilterMixin {
 
   void resetFilters() {
     recentCommits.value = null;
-    projectFilter = projectAll;
+    projectsFilter.clear();
     userFilter = userAll;
     init();
   }

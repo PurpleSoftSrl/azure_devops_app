@@ -86,7 +86,7 @@ class _WorkItemsController with FilterMixin {
     if (projects == projectsFilter) return;
 
     workItems.value = null;
-    projectsFilter = projects.isEmpty ? {} : projects;
+    projectsFilter = projects;
 
     for (final project in projectsFilter) {
       final projectAreas = apiService.workItemAreas[project.name!];

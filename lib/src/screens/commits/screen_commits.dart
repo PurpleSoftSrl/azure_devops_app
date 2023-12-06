@@ -19,13 +19,13 @@ class _CommitsScreen extends StatelessWidget {
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: [
-          FilterMenu<Project>(
-            title: 'Project',
+          FilterMenu<Project>.multiple(
+            title: 'Projects',
             values: ctrl.getProjects(ctrl.storageService),
-            currentFilter: ctrl.projectFilter,
-            onSelected: ctrl.filterByProject,
+            currentFilters: ctrl.projectsFilter,
+            onSelectedMultiple: ctrl.filterByProjects,
             formatLabel: (p) => p.name!,
-            isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
+            isDefaultFilter: ctrl.projectsFilter.isEmpty,
             widgetBuilder: (p) => ProjectFilterWidget(project: p),
             onSearchChanged:
                 ctrl.hasManyProjects(ctrl.storageService) ? (s) => ctrl.searchProject(s, ctrl.storageService) : null,

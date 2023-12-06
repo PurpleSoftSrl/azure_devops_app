@@ -206,7 +206,7 @@ abstract class AzureApiService {
     bool previousChange,
   });
 
-  Future<ApiResponse<List<Commit>>> getRecentCommits({Project? project, String? author, int? maxCount});
+  Future<ApiResponse<List<Commit>>> getRecentCommits({Set<Project>? projects, String? author, int? maxCount});
 
   Future<TagsData?> getTags(List<Commit> commits);
 
@@ -1834,8 +1834,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<Commit>>> getRecentCommits({Project? project, String? author, int? maxCount}) async {
-    final projectsToSearch = project != null ? [project] : (_chosenProjects ?? _projects);
+  Future<ApiResponse<List<Commit>>> getRecentCommits({Set<Project>? projects, String? author, int? maxCount}) async {
+    final projectsToSearch = projects ?? (_chosenProjects ?? _projects);
 
     final allProjectRepos = await Future.wait([
       for (final project in projectsToSearch) _get('$_basePath/${project.name}/_apis/git/repositories?$_apiVersion'),

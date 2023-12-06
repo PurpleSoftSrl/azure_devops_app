@@ -140,7 +140,7 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<Commit>>> getRecentCommits({Project? project, String? author, int? maxCount}) async {
+  Future<ApiResponse<List<Commit>>> getRecentCommits({Set<Project>? projects, String? author, int? maxCount}) async {
     final emptyCommit = Commit.empty();
     final firstCommit = emptyCommit.copyWithDateAndAuthorName(DateTime(2000, 2, 3), 'Test User 1');
     final secondCommit = emptyCommit.copyWithDateAndAuthorName(DateTime(2000, 2, 5), 'Test User 2');
