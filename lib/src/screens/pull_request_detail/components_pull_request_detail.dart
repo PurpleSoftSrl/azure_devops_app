@@ -16,7 +16,7 @@ class _PullRequestActions extends StatelessWidget {
           text: 'Share',
           icon: DevOpsIcons.share,
         ),
-        if (prStatus != PullRequestState.completed) ...[
+        if (prStatus != PullRequestStatus.completed) ...[
           PopupItem(
             onTap: ctrl.approve,
             text: 'Approve',
@@ -44,13 +44,13 @@ class _PullRequestActions extends StatelessWidget {
             text: 'Publish',
             icon: DevOpsIcons.send,
           )
-        else if (prStatus != PullRequestState.completed)
+        else if (prStatus != PullRequestStatus.completed)
           PopupItem(
             onTap: ctrl.markAsDraft,
             text: 'Mark as draft',
             icon: DevOpsIcons.draft,
           ),
-        if (prStatus == PullRequestState.active) ...[
+        if (prStatus == PullRequestStatus.active) ...[
           if (ctrl.hasAutoCompleteOn)
             PopupItem(
               onTap: () => ctrl.setAutocomplete(autocomplete: false),
@@ -75,7 +75,7 @@ class _PullRequestActions extends StatelessWidget {
             icon: DevOpsIcons.trash,
           ),
         ],
-        if (prStatus == PullRequestState.abandoned && ctrl.canBeReactivated)
+        if (prStatus == PullRequestStatus.abandoned && ctrl.canBeReactivated)
           PopupItem(
             onTap: ctrl.reactivate,
             text: 'Reactivate',
@@ -148,7 +148,7 @@ class _PullRequestOverview extends StatelessWidget {
                     style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                   ),
                   Text(
-                    pr.isDraft && pr.status != PullRequestState.abandoned ? 'Draft' : pr.status.toString(),
+                    pr.isDraft && pr.status != PullRequestStatus.abandoned ? 'Draft' : pr.status.toString(),
                     style: context.textTheme.titleSmall!.copyWith(color: pr.status.color),
                   ),
                 ],

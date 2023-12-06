@@ -185,7 +185,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
-    required PullRequestState filter,
+    required PullRequestStatus status,
     GraphUser? creator,
     Set<Project>? projects,
     GraphUser? reviewer,
@@ -428,7 +428,7 @@ class AzureApiServiceMock implements AzureApiService {
       pr.PullRequestWithDetails(
         pr: PullRequest(
           pullRequestId: 1234,
-          status: PullRequestState.active,
+          status: PullRequestStatus.active,
           creationDate: DateTime.now(),
           title: 'Test pull request title',
           sourceRefName: 'dev',
@@ -486,7 +486,7 @@ class AzureApiServiceMock implements AzureApiService {
     required String projectName,
     required String repositoryId,
     required int id,
-    PullRequestState? status,
+    PullRequestStatus? status,
     bool? isDraft,
     String? commitId,
     bool? autocomplete,

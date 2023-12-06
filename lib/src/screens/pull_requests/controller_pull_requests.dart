@@ -33,7 +33,7 @@ class _PullRequestsController with FilterMixin {
   final pullRequests = ValueNotifier<ApiResponse<List<PullRequest>?>?>(null);
   List<PullRequest> allPullRequests = [];
 
-  PullRequestState statusFilter = PullRequestState.all;
+  PullRequestStatus statusFilter = PullRequestStatus.all;
 
   late GraphUser reviewerFilter = userAll;
 
@@ -58,7 +58,7 @@ class _PullRequestsController with FilterMixin {
     await init();
   }
 
-  void filterByStatus(PullRequestState state) {
+  void filterByStatus(PullRequestStatus state) {
     if (state == statusFilter) return;
 
     pullRequests.value = null;
@@ -92,7 +92,7 @@ class _PullRequestsController with FilterMixin {
 
   Future<void> _getData() async {
     final res = await apiService.getPullRequests(
-      filter: statusFilter,
+      status: statusFilter,
       creator: userFilter.displayName == userAll.displayName ? null : userFilter,
       projects: projectsFilter.isEmpty ? null : projectsFilter,
       reviewer: reviewerFilter.displayName == userAll.displayName ? null : reviewerFilter,
@@ -109,7 +109,7 @@ class _PullRequestsController with FilterMixin {
   void resetFilters() {
     pullRequests.value = null;
     projectsFilter.clear();
-    statusFilter = PullRequestState.all;
+    statusFilter = PullRequestStatus.all;
     userFilter = userAll;
     reviewerFilter = userAll;
 

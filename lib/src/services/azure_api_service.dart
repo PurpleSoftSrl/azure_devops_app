@@ -175,7 +175,7 @@ abstract class AzureApiService {
   Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id, required String type});
 
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
-    required PullRequestState filter,
+    required PullRequestStatus status,
     GraphUser? creator,
     Set<Project>? projects,
     GraphUser? reviewer,
@@ -280,7 +280,7 @@ abstract class AzureApiService {
     required String projectName,
     required String repositoryId,
     required int id,
-    PullRequestState? status,
+    PullRequestStatus? status,
     bool? isDraft,
     String? commitId,
     bool? autocomplete,
@@ -1296,7 +1296,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   @override
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
-    required PullRequestState filter,
+    required PullRequestStatus status,
     GraphUser? creator,
     Set<Project>? projects,
     GraphUser? reviewer,
@@ -1325,7 +1325,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final allProjectPrs = await Future.wait([
       for (final project in projectsToSearch)
         _get(
-          '$_basePath/${project.name}/_apis/git/pullrequests?$_apiVersion&searchCriteria.status=${filter.name}$creatorFilter$reviewerFilter',
+          '$_basePath/${project.name}/_apis/git/pullrequests?$_apiVersion&searchCriteria.status=${status.name}$creatorFilter$reviewerFilter',
         ),
     ]);
 
@@ -1545,7 +1545,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     required String projectName,
     required String repositoryId,
     required int id,
-    PullRequestState? status,
+    PullRequestStatus? status,
     bool? isDraft,
     String? commitId,
     bool? autocomplete,
@@ -1570,12 +1570,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       body: {
         if (isDraft != null) 'isDraft': isDraft,
         if (status != null) 'status': status.name,
-        if (status == PullRequestState.completed) 'lastMergeSourceCommit': {'commitId': commitId},
+        if (status == PullRequestStatus.completed) 'lastMergeSourceCommit': {'commitId': commitId},
         if (autocomplete != null)
           'autoCompleteSetBy': {
             'id': autocomplete ? reviewerId : '00000000-0000-0000-0000-000000000000',
           },
-        if (status == PullRequestState.completed || isSettingAutocomplete)
+        if (status == PullRequestStatus.completed || isSettingAutocomplete)
           'completionOptions': {
             'deleteSourceBranch': completionOptions!.deleteSourceBranch,
             'mergeCommitMessage': completionOptions.commitMessage,

@@ -68,33 +68,33 @@ extension PullRequestStringExt on String {
     final status = split(' ').lastOrNull;
     if (status == null) return this;
 
-    final parsedStatus = PullRequestState.fromString(status.toLowerCase());
+    final parsedStatus = PullRequestStatus.fromString(status.toLowerCase());
 
     switch (parsedStatus) {
-      case PullRequestState.abandoned:
+      case PullRequestStatus.abandoned:
         return 'abandoned';
-      case PullRequestState.active:
+      case PullRequestStatus.active:
         return 'reactivated';
-      case PullRequestState.completed:
+      case PullRequestStatus.completed:
         return 'completed';
-      case PullRequestState.notSet:
-      case PullRequestState.all:
+      case PullRequestStatus.notSet:
+      case PullRequestStatus.all:
         return '';
     }
   }
 }
 
-extension PullRequestStateExt on PullRequestState {
+extension PullRequestStatusExt on PullRequestStatus {
   String toVerb() {
     switch (this) {
-      case PullRequestState.abandoned:
+      case PullRequestStatus.abandoned:
         return 'abandon';
-      case PullRequestState.active:
+      case PullRequestStatus.active:
         return 'reactivate';
-      case PullRequestState.completed:
+      case PullRequestStatus.completed:
         return 'complete';
-      case PullRequestState.notSet:
-      case PullRequestState.all:
+      case PullRequestStatus.notSet:
+      case PullRequestStatus.all:
         return '';
     }
   }

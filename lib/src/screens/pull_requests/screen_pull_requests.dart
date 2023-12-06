@@ -42,12 +42,12 @@ class _PullRequestsScreen extends StatelessWidget {
             onSearchChanged:
                 ctrl.hasManyProjects(ctrl.storageService) ? (s) => ctrl.searchProject(s, ctrl.storageService) : null,
           ),
-          FilterMenu<PullRequestState>(
+          FilterMenu<PullRequestStatus>(
             title: 'Status',
-            values: PullRequestState.values.where((s) => s != PullRequestState.notSet).toList(),
+            values: PullRequestStatus.values.where((s) => s != PullRequestStatus.notSet).toList(),
             currentFilter: ctrl.statusFilter,
             onSelected: ctrl.filterByStatus,
-            isDefaultFilter: ctrl.statusFilter == PullRequestState.all,
+            isDefaultFilter: ctrl.statusFilter == PullRequestStatus.all,
             widgetBuilder: (s) => Padding(
               padding: const EdgeInsets.all(8),
               child: CircleAvatar(backgroundColor: s.color),

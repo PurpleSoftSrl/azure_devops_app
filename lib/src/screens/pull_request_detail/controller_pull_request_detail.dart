@@ -92,7 +92,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     final conflicts = res.data?.conflicts ?? <Conflict>[];
     if (conflicts.isNotEmpty) _getConflictingFiles(conflicts);
 
-    if (pr?.status == PullRequestState.abandoned) {
+    if (pr?.status == PullRequestStatus.abandoned) {
       canBeReactivated = await _checkIfCanBeReactivated(pr!);
     }
 
@@ -305,15 +305,15 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   }
 
   Future<void> complete() async {
-    return _editPr(status: PullRequestState.completed);
+    return _editPr(status: PullRequestStatus.completed);
   }
 
   Future<void> abandon() async {
-    return _editPr(status: PullRequestState.abandoned);
+    return _editPr(status: PullRequestStatus.abandoned);
   }
 
   Future<void> reactivate() async {
-    return _editPr(status: PullRequestState.active);
+    return _editPr(status: PullRequestStatus.active);
   }
 
   Future<void> _votePr({required int vote}) async {
@@ -349,7 +349,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     await init();
   }
 
-  Future<void> _editPr({PullRequestState? status, bool? isDraft, bool? autocomplete}) async {
+  Future<void> _editPr({PullRequestStatus? status, bool? isDraft, bool? autocomplete}) async {
     var confirmMessage = '';
     if (status != null) {
       confirmMessage = '${status.toVerb()} the pull request';
@@ -364,7 +364,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
     PullRequestCompletionOptions? completionOptions;
 
-    if (status == PullRequestState.completed || (autocomplete ?? false)) {
+    if (status == PullRequestStatus.completed || (autocomplete ?? false)) {
       completionOptions = await _getCompletionOptions();
       if (completionOptions == null) return;
     }
