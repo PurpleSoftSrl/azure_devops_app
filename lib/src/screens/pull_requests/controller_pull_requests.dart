@@ -82,11 +82,11 @@ class _PullRequestsController with FilterMixin {
     _getData();
   }
 
-  void filterByProject(Project proj) {
-    if (proj.id == projectFilter.id) return;
+  void filterByProjects(Set<Project> projects) {
+    if (projects == projectsFilter) return;
 
     pullRequests.value = null;
-    projectFilter = proj.name! == projectAll.name ? projectAll : proj;
+    projectsFilter = projects;
     _getData();
   }
 
@@ -94,7 +94,7 @@ class _PullRequestsController with FilterMixin {
     final res = await apiService.getPullRequests(
       filter: statusFilter,
       creator: userFilter.displayName == userAll.displayName ? null : userFilter,
-      project: projectFilter.name == projectAll.name ? null : projectFilter,
+      projects: projectsFilter.isEmpty ? null : projectsFilter,
       reviewer: reviewerFilter.displayName == userAll.displayName ? null : reviewerFilter,
     );
 
@@ -108,7 +108,7 @@ class _PullRequestsController with FilterMixin {
 
   void resetFilters() {
     pullRequests.value = null;
-    projectFilter = projectAll;
+    projectsFilter.clear();
     statusFilter = PullRequestState.all;
     userFilter = userAll;
     reviewerFilter = userAll;

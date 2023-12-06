@@ -177,7 +177,7 @@ abstract class AzureApiService {
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
     required PullRequestState filter,
     GraphUser? creator,
-    Project? project,
+    Set<Project>? projects,
     GraphUser? reviewer,
   });
 
@@ -1298,7 +1298,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
     required PullRequestState filter,
     GraphUser? creator,
-    Project? project,
+    Set<Project>? projects,
     GraphUser? reviewer,
   }) async {
     var creatorFilter = '';
@@ -1320,7 +1320,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       reviewerFilter = '&searchCriteria.reviewerId=${reviewerIdentity.data}';
     }
 
-    final projectsToSearch = project != null ? [project] : (_chosenProjects ?? _projects);
+    final projectsToSearch = projects ?? (_chosenProjects ?? _projects);
 
     final allProjectPrs = await Future.wait([
       for (final project in projectsToSearch)
