@@ -448,9 +448,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
           formFields[refName]!.text = field.defaultValue!;
         }
 
-        if (isEditing) {
+        if (!field.readOnly && isEditing) {
           final text = editingWorkItem!.fields.jsonFields[refName]?.toString() ?? field.defaultValue ?? '';
-          onFieldChanged(text, refName);
+          onFieldChanged(text, refName, checkRules: false);
         }
       }
     }
@@ -515,14 +515,15 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     }
   }
 
-  void onFieldChanged(String str, String fieldRefName) {
+  void onFieldChanged(String str, String fieldRefName, {bool checkRules = true}) {
     final formField = formFields[fieldRefName];
     formField?.text = str;
     formField?.controller.text = str.formatted;
 
     _setHasChanged();
 
-    _checkRules();
+    if (checkRules) _checkRules();
+
     _refreshPage();
   }
 
