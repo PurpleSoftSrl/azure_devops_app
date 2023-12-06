@@ -226,7 +226,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
           name: 'filter_$title',
           builder: (context) =>
               customBody ??
-              ListView(
+              Column(
                 children: [
                   if (isMultiple)
                     Padding(
@@ -250,76 +250,82 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                         ),
                       ),
                     ),
-                  if (isSearchable)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: DevOpsSearchField(
-                        onChanged: (s) {
-                          visibleValues.value = onSearchChanged!.call(s);
-                        },
-                        onResetSearch: () {
-                          visibleValues.value = allValues;
-                        },
-                        hint: 'Search',
-                        initialValue: isDefaultFilter || isMultiple ? null : formatLabel?.call(currentFilter!),
-                      ),
-                    ),
-                  ValueListenableBuilder<Set<T>>(
-                    valueListenable: selectedValues,
-                    builder: (_, selectedVals, __) => ValueListenableBuilder(
-                      valueListenable: visibleValues,
-                      builder: (context, visibleValues, __) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: visibleValues
-                            .map(
-                              (v) => InkWell(
-                                key: ValueKey(formatLabel?.call(v) ?? v.toString()),
-                                onTap: () {
-                                  onSelected!(v);
-                                  AppRouter.popRoute();
-                                },
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          height: imageSize,
-                                          width: imageSize,
-                                          child: widgetBuilder?.call(v),
-                                        ),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        Text(formatLabel?.call(v) ?? v.toString()),
-                                        if (isMultiple) ...[
-                                          const Spacer(),
-                                          Checkbox(
-                                            value: selectedVals.contains(v),
-                                            onChanged: (_) {
-                                              if (selectedVals.contains(v)) {
-                                                selectedValues.value.remove(v);
-                                              } else {
-                                                selectedValues.value.add(v);
-                                              }
-                                              selectedValues.value = {...selectedValues.value};
-                                            },
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        if (isSearchable)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: DevOpsSearchField(
+                              onChanged: (s) {
+                                visibleValues.value = onSearchChanged!.call(s);
+                              },
+                              onResetSearch: () {
+                                visibleValues.value = allValues;
+                              },
+                              hint: 'Search',
+                              initialValue: isDefaultFilter || isMultiple ? null : formatLabel?.call(currentFilter!),
+                            ),
+                          ),
+                        ValueListenableBuilder<Set<T>>(
+                          valueListenable: selectedValues,
+                          builder: (_, selectedVals, __) => ValueListenableBuilder(
+                            valueListenable: visibleValues,
+                            builder: (context, visibleValues, __) => Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: visibleValues
+                                  .map(
+                                    (v) => InkWell(
+                                      key: ValueKey(formatLabel?.call(v) ?? v.toString()),
+                                      onTap: () {
+                                        onSelected!(v);
+                                        AppRouter.popRoute();
+                                      },
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                height: imageSize,
+                                                width: imageSize,
+                                                child: widgetBuilder?.call(v),
+                                              ),
+                                              const SizedBox(
+                                                width: 20,
+                                              ),
+                                              Text(formatLabel?.call(v) ?? v.toString()),
+                                              if (isMultiple) ...[
+                                                const Spacer(),
+                                                Checkbox(
+                                                  value: selectedVals.contains(v),
+                                                  onChanged: (_) {
+                                                    if (selectedVals.contains(v)) {
+                                                      selectedValues.value.remove(v);
+                                                    } else {
+                                                      selectedValues.value.add(v);
+                                                    }
+                                                    selectedValues.value = {...selectedValues.value};
+                                                  },
+                                                ),
+                                              ] else if (currentFilter == v) ...[
+                                                const Spacer(),
+                                                Icon(DevOpsIcons.success),
+                                              ],
+                                            ],
                                           ),
-                                        ] else if (currentFilter == v) ...[
-                                          const Spacer(),
-                                          Icon(DevOpsIcons.success),
+                                          if (v != values.last)
+                                            const Divider(
+                                              height: 20,
+                                            ),
                                         ],
-                                      ],
-                                    ),
-                                    if (v != values.last)
-                                      const Divider(
-                                        height: 20,
                                       ),
-                                  ],
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
