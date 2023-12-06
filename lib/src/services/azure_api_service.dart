@@ -1307,10 +1307,10 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
         final creatorSearch = "&\$filter=name eq '${creator.mailAddress}'";
         final entitlementRes =
             await _get('https://vsaex.dev.azure.com/$_organization/_apis/userentitlements?$_apiVersion$creatorSearch');
-        if (entitlementRes.isError) return ApiResponse.error(entitlementRes);
+        if (entitlementRes.isError) continue;
 
         final member = GetUserEntitlementsResponse.fromResponse(entitlementRes).firstOrNull;
-        if (member == null) return ApiResponse.error(null);
+        if (member == null) continue;
 
         creatorsFilter.add('&searchCriteria.creatorId=${member.id}');
       }
@@ -1320,6 +1320,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (reviewers != null) {
       for (final reviewer in reviewers) {
         final reviewerIdentity = await getUserToMention(email: reviewer.mailAddress!);
+        if (reviewerIdentity.data == null) continue;
+
         reviewersFilter.add('&searchCriteria.reviewerId=${reviewerIdentity.data}');
       }
     }
@@ -1328,11 +1330,14 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final allProjectPrs = <Response>[];
 
+    final hasCreators = creatorsFilter.whereNot((c) => c.isEmpty).isNotEmpty;
+    final hasReviewers = reviewersFilter.whereNot((r) => r.isEmpty).isNotEmpty;
+
     for (final creator in creatorsFilter) {
-      if (creatorsFilter.whereNot((c) => c.isEmpty).isNotEmpty && creator.isEmpty) continue;
+      if (hasCreators && creator.isEmpty) continue;
 
       for (final reviewer in reviewersFilter) {
-        if (reviewersFilter.whereNot((r) => r.isEmpty).isNotEmpty && reviewer.isEmpty) continue;
+        if (hasReviewers && reviewer.isEmpty) continue;
 
         allProjectPrs.addAll(
           await Future.wait([
