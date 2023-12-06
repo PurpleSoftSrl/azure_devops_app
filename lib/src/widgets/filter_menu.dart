@@ -218,7 +218,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
           visibleValues.value = onSearchChanged!.call(query);
         }
 
-        final selectedValues = ValueNotifier(isMultiple ? {...currentFilters!} : {currentFilter!});
+        final selectedValues = ValueNotifier(isMultiple ? {...currentFilters!} : <T>{});
 
         OverlayService.bottomsheet(
           isScrollControlled: true,

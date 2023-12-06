@@ -96,7 +96,7 @@ abstract class AzureApiService {
   Future<ApiResponse<ProjectDetail>> getProject({required String projectName});
 
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
-    Project? project,
+    Set<Project>? projects,
     Set<WorkItemType>? types,
     Set<WorkItemState>? states,
     Set<GraphUser>? assignedTo,
@@ -732,7 +732,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   @override
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
-    Project? project,
+    Set<Project>? projects,
     Set<WorkItemType>? types,
     Set<WorkItemState>? states,
     Set<GraphUser>? assignedTo,
@@ -740,29 +740,13 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     AreaOrIteration? iteration,
   }) async {
     final query = <String>[];
-    if (project != null) {
-      query.add(" [System.TeamProject] = '${project.name}' ");
-    } else {
-      final projectsToSearch = (_chosenProjects ?? _projects).toList();
 
-      if (projectsToSearch.length == 1) {
-        query.add(" [System.TeamProject] = '${projectsToSearch.first.name}' ");
-      } else {
-        var projectsQuery = '';
-
-        for (var i = 0; i < projectsToSearch.length; i++) {
-          if (i == 0) {
-            projectsQuery += " ( [System.TeamProject] = '${projectsToSearch[i].name}' OR ";
-          } else if (i == projectsToSearch.length - 1) {
-            projectsQuery += " [System.TeamProject] = '${projectsToSearch[i].name}' ) ";
-          } else {
-            projectsQuery += " [System.TeamProject] = '${projectsToSearch[i].name}' OR ";
-          }
-        }
-
-        query.add(projectsQuery);
-      }
-    }
+    final typesQuery = _getMultipleFilter(
+      '[System.TeamProject]',
+      projects ?? (_chosenProjects ?? _projects),
+      (t) => t.name ?? '',
+    );
+    query.add(typesQuery);
 
     if (types != null) {
       final typesQuery = _getMultipleFilter('[System.WorkItemType]', types.toList(), (t) => t.name);

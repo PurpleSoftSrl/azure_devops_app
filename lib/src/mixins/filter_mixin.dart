@@ -7,6 +7,7 @@ import 'package:collection/collection.dart';
 mixin FilterMixin {
   final projectAll = Project.all();
   late Project projectFilter = projectAll;
+  Set<Project> projectsFilter = {};
 
   final userAll = GraphUser.all();
   late GraphUser userFilter = userAll;

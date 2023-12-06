@@ -82,20 +82,22 @@ class _WorkItemsController with FilterMixin {
     await _getData();
   }
 
-  void filterByProject(Project proj) {
-    if (proj.id == projectFilter.id) return;
+  void filterByProjects(Set<Project> projects) {
+    if (projects == projectsFilter) return;
 
     workItems.value = null;
-    projectFilter = proj.name == projectAll.name ? projectAll : proj;
+    projectsFilter = projects.isEmpty ? {} : projects;
 
-    final projectAreas = apiService.workItemAreas[projectFilter.name!];
-    if (projectAreas != null && projectAreas.isNotEmpty) {
-      _resetAreaFilterIfNecessary(projectAreas);
-    }
+    for (final project in projectsFilter) {
+      final projectAreas = apiService.workItemAreas[project.name!];
+      if (projectAreas != null && projectAreas.isNotEmpty) {
+        _resetAreaFilterIfNecessary(projectAreas);
+      }
 
-    final projectIterations = apiService.workItemIterations[projectFilter.name!];
-    if (projectIterations != null && projectIterations.isNotEmpty) {
-      _resetIterationFilterIfNecessary(projectIterations);
+      final projectIterations = apiService.workItemIterations[project.name!];
+      if (projectIterations != null && projectIterations.isNotEmpty) {
+        _resetIterationFilterIfNecessary(projectIterations);
+      }
     }
 
     _getData();
@@ -175,7 +177,7 @@ class _WorkItemsController with FilterMixin {
     final assignedTo = usersFilter.isEmpty ? null : usersFilter;
 
     final res = await apiService.getWorkItems(
-      project: projectFilter == projectAll ? null : projectFilter,
+      projects: projectsFilter.isEmpty ? null : projectsFilter,
       types: typesFilter.isEmpty ? null : typesFilter,
       states: isDefaultStateFilter ? null : statesFilter,
       assignedTo: assignedTo?.map((u) => u.displayName == 'Unassigned' ? u.copyWith(mailAddress: '') : u).toSet(),
@@ -195,7 +197,7 @@ class _WorkItemsController with FilterMixin {
     workItems.value = null;
     statesFilter.clear();
     typesFilter.clear();
-    projectFilter = projectAll;
+    projectsFilter.clear();
     usersFilter.clear();
     areaFilter = null;
     iterationFilter = null;
@@ -224,11 +226,11 @@ class _WorkItemsController with FilterMixin {
   }
 
   /// If user has selected a project show only areas of the selected project,
-  /// and don't show areas that are identical to the project (projects with default area only)
+  /// and don't show areas that are identical to the project (projects with default area only).
   Iterable<AreaOrIteration> getAreasToShow() {
-    final hasProjectFilter = projectFilter != projectAll;
+    final hasProjectFilter = projectsFilter.isNotEmpty;
     final areas = apiService.workItemAreas;
-    final projectAreas = hasProjectFilter ? areas[projectFilter.name!] : null;
+    final projectAreas = hasProjectFilter ? projectsFilter.map((p) => areas[p.name!]).expand((a) => a!).toList() : null;
 
     final areasToShow = (projectAreas != null ? [projectAreas] : areas.values)
         .where((p) => p.length > 1 || (p.first.children?.isNotEmpty ?? false))
@@ -237,21 +239,20 @@ class _WorkItemsController with FilterMixin {
     return areasToShow;
   }
 
-  // If user has selected a project show only iterations of the selected project,
-  // otherwise if user has selected an area show only iterations of the project which the area belongs to,
-  // otherwise show all iterations
+  // If user has selected an area show only iterations of the project which the area belongs to,
+  // otherwise if user has selected a project show only iterations of the selected project,
+  // otherwise show all iterations.
   Iterable<AreaOrIteration> getIterationsToShow() {
     final iterations = apiService.workItemIterations;
 
-    final hasProjectFilter = projectFilter != projectAll;
-    final projectIterations = hasProjectFilter ? iterations[projectFilter.name!] : null;
+    final hasProjectFilter = projectsFilter.isNotEmpty;
+    final projectIterations =
+        hasProjectFilter ? projectsFilter.map((p) => iterations[p.name!]).expand((i) => i!) : null;
 
     final hasAreaFilter = areaFilter != null;
     final areaProjectIterations = hasAreaFilter ? iterations[areaFilter?.projectName] : null;
 
-    final iterationsToShow = projectIterations ?? areaProjectIterations ?? iterations.values.expand((a) => a);
-
-    return iterationsToShow;
+    return areaProjectIterations ?? projectIterations ?? iterations.values.expand((a) => a);
   }
 
   void toggleShowActiveIterations() {

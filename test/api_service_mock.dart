@@ -240,7 +240,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
-    Project? project,
+    Set<Project>? projects,
     Set<WorkItemType>? types,
     Set<WorkItemState>? states,
     Set<GraphUser>? assignedTo,
