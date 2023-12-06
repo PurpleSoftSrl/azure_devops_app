@@ -186,9 +186,9 @@ class AzureApiServiceMock implements AzureApiService {
   @override
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
     required PullRequestStatus status,
-    GraphUser? creator,
+    Set<GraphUser>? creators,
     Set<Project>? projects,
-    GraphUser? reviewer,
+    Set<GraphUser>? reviewers,
   }) async {
     final emptyPullRequest = PullRequest.empty();
     final firstItem = emptyPullRequest.copyWith(

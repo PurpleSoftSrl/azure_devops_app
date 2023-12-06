@@ -176,9 +176,9 @@ abstract class AzureApiService {
 
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
     required PullRequestStatus status,
-    GraphUser? creator,
+    Set<GraphUser>? creators,
     Set<Project>? projects,
-    GraphUser? reviewer,
+    Set<GraphUser>? reviewers,
   });
 
   Future<ApiResponse<List<GitRepository>>> getProjectRepositories({required String projectName});
@@ -1297,37 +1297,53 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   @override
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
     required PullRequestStatus status,
-    GraphUser? creator,
+    Set<GraphUser>? creators,
     Set<Project>? projects,
-    GraphUser? reviewer,
+    Set<GraphUser>? reviewers,
   }) async {
-    var creatorFilter = '';
-    if (creator != null) {
-      final creatorSearch = "&\$filter=name eq '${creator.mailAddress}'";
-      final entitlementRes =
-          await _get('https://vsaex.dev.azure.com/$_organization/_apis/userentitlements?$_apiVersion$creatorSearch');
-      if (entitlementRes.isError) return ApiResponse.error(entitlementRes);
+    final creatorsFilter = <String>[''];
+    if (creators != null) {
+      for (final creator in creators) {
+        final creatorSearch = "&\$filter=name eq '${creator.mailAddress}'";
+        final entitlementRes =
+            await _get('https://vsaex.dev.azure.com/$_organization/_apis/userentitlements?$_apiVersion$creatorSearch');
+        if (entitlementRes.isError) return ApiResponse.error(entitlementRes);
 
-      final member = GetUserEntitlementsResponse.fromResponse(entitlementRes).firstOrNull;
-      if (member == null) return ApiResponse.error(null);
+        final member = GetUserEntitlementsResponse.fromResponse(entitlementRes).firstOrNull;
+        if (member == null) return ApiResponse.error(null);
 
-      creatorFilter = '&searchCriteria.creatorId=${member.id}';
+        creatorsFilter.add('&searchCriteria.creatorId=${member.id}');
+      }
     }
 
-    var reviewerFilter = '';
-    if (reviewer != null) {
-      final reviewerIdentity = await getUserToMention(email: reviewer.mailAddress!);
-      reviewerFilter = '&searchCriteria.reviewerId=${reviewerIdentity.data}';
+    final reviewersFilter = <String>[''];
+    if (reviewers != null) {
+      for (final reviewer in reviewers) {
+        final reviewerIdentity = await getUserToMention(email: reviewer.mailAddress!);
+        reviewersFilter.add('&searchCriteria.reviewerId=${reviewerIdentity.data}');
+      }
     }
 
     final projectsToSearch = projects ?? (_chosenProjects ?? _projects);
 
-    final allProjectPrs = await Future.wait([
-      for (final project in projectsToSearch)
-        _get(
-          '$_basePath/${project.name}/_apis/git/pullrequests?$_apiVersion&searchCriteria.status=${status.name}$creatorFilter$reviewerFilter',
-        ),
-    ]);
+    final allProjectPrs = <Response>[];
+
+    for (final creator in creatorsFilter) {
+      if (creatorsFilter.whereNot((c) => c.isEmpty).isNotEmpty && creator.isEmpty) continue;
+
+      for (final reviewer in reviewersFilter) {
+        if (reviewersFilter.whereNot((r) => r.isEmpty).isNotEmpty && reviewer.isEmpty) continue;
+
+        allProjectPrs.addAll(
+          await Future.wait([
+            for (final project in projectsToSearch)
+              _get(
+                '$_basePath/${project.name}/_apis/git/pullrequests?$_apiVersion&searchCriteria.status=${status.name}$creator$reviewer',
+              ),
+          ]),
+        );
+      }
+    }
 
     var isAllError = true;
 

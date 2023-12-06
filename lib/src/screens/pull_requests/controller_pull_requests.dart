@@ -35,7 +35,7 @@ class _PullRequestsController with FilterMixin {
 
   PullRequestStatus statusFilter = PullRequestStatus.all;
 
-  late GraphUser reviewerFilter = userAll;
+  Set<GraphUser> reviewersFilter = {};
 
   final isSearching = ValueNotifier<bool>(false);
   String? _currentSearchQuery;
@@ -66,19 +66,19 @@ class _PullRequestsController with FilterMixin {
     _getData();
   }
 
-  void filterByUser(GraphUser u) {
-    if (u.mailAddress == userFilter.mailAddress) return;
+  void filterByUsers(Set<GraphUser> users) {
+    if (users == usersFilter) return;
 
     pullRequests.value = null;
-    userFilter = u;
+    usersFilter = users;
     _getData();
   }
 
-  void filterByReviewer(GraphUser u) {
-    if (u.mailAddress == reviewerFilter.mailAddress) return;
+  void filterByReviewers(Set<GraphUser> users) {
+    if (users == reviewersFilter) return;
 
     pullRequests.value = null;
-    reviewerFilter = u;
+    reviewersFilter = users;
     _getData();
   }
 
@@ -93,9 +93,9 @@ class _PullRequestsController with FilterMixin {
   Future<void> _getData() async {
     final res = await apiService.getPullRequests(
       status: statusFilter,
-      creator: userFilter.displayName == userAll.displayName ? null : userFilter,
+      creators: usersFilter.isEmpty ? null : usersFilter,
       projects: projectsFilter.isEmpty ? null : projectsFilter,
-      reviewer: reviewerFilter.displayName == userAll.displayName ? null : reviewerFilter,
+      reviewers: reviewersFilter.isEmpty ? null : reviewersFilter,
     );
 
     pullRequests.value = res..data?.sort((a, b) => (b.creationDate).compareTo(a.creationDate));
@@ -110,8 +110,8 @@ class _PullRequestsController with FilterMixin {
     pullRequests.value = null;
     projectsFilter.clear();
     statusFilter = PullRequestStatus.all;
-    userFilter = userAll;
-    reviewerFilter = userAll;
+    usersFilter.clear();
+    reviewersFilter.clear();
 
     init();
   }
