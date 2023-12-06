@@ -224,6 +224,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
           isScrollControlled: true,
           spaceUnderTitle: false,
           name: 'filter_$title',
+          heightPercentage: isSearchable ? .9 : .8,
           builder: (context) =>
               customBody ??
               Column(
@@ -231,23 +232,40 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                   if (isMultiple)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16),
-                      child: Align(
-                        alignment: Alignment.topRight,
-                        child: SizedBox(
-                          width: 100,
-                          height: 30,
-                          child: TextButton(
-                            style: Theme.of(context).textButtonTheme.style!.copyWith(
-                                  backgroundColor: MaterialStatePropertyAll(context.colorScheme.primary),
-                                  padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                                ),
-                            onPressed: () {
-                              onSelectedMultiple?.call(selectedValues.value);
-                              AppRouter.popRoute();
-                            },
-                            child: Text('Confirm'),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text('Toggle all'),
+                          ValueListenableBuilder<Set<T>>(
+                            valueListenable: selectedValues,
+                            builder: (_, selectedVals, __) => Checkbox(
+                              value: selectedVals.length >= values.length,
+                              onChanged: (_) {
+                                if (selectedVals.length >= values.length) {
+                                  selectedValues.value = {};
+                                } else {
+                                  selectedValues.value = {...values};
+                                }
+                              },
+                            ),
                           ),
-                        ),
+                          const Spacer(),
+                          SizedBox(
+                            width: 100,
+                            height: 30,
+                            child: TextButton(
+                              style: Theme.of(context).textButtonTheme.style!.copyWith(
+                                    backgroundColor: MaterialStatePropertyAll(context.colorScheme.primary),
+                                    padding: MaterialStatePropertyAll(EdgeInsets.zero),
+                                  ),
+                              onPressed: () {
+                                onSelectedMultiple?.call(selectedValues.value);
+                                AppRouter.popRoute();
+                              },
+                              child: Text('Confirm'),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   Expanded(
