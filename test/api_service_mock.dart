@@ -123,7 +123,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<List<Pipeline>>> getRecentPipelines({
-    Project? project,
+    Set<Project>? projects,
     int? definition,
     PipelineResult result = PipelineResult.all,
     PipelineStatus status = PipelineStatus.all,

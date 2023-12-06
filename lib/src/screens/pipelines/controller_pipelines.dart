@@ -79,7 +79,7 @@ class _PipelinesController with FilterMixin {
     final now = DateTime.now();
 
     final res = await apiService.getRecentPipelines(
-      project: projectFilter.name == projectAll.name ? null : projectFilter,
+      projects: projectsFilter.isEmpty ? null : projectsFilter,
       definition: args?.definition,
       result: resultFilter,
       status: statusFilter,
@@ -107,11 +107,11 @@ class _PipelinesController with FilterMixin {
     await init();
   }
 
-  void filterByProject(Project proj) {
-    if (proj.id == projectFilter.id) return;
+  void filterByProjects(Set<Project> projects) {
+    if (projects == projectsFilter) return;
 
     pipelines.value = null;
-    projectFilter = proj.name! == projectAll.name ? projectAll : proj;
+    projectsFilter = projects;
     _getData();
   }
 
@@ -145,7 +145,7 @@ class _PipelinesController with FilterMixin {
     statusFilter = PipelineStatus.all;
     userFilter = userAll;
 
-    if (args?.definition == null) projectFilter = projectAll;
+    if (args?.definition == null) projectsFilter.clear();
 
     init();
   }
