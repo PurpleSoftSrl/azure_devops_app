@@ -206,7 +206,11 @@ abstract class AzureApiService {
     bool previousChange,
   });
 
-  Future<ApiResponse<List<Commit>>> getRecentCommits({Set<Project>? projects, String? author, int? maxCount});
+  Future<ApiResponse<List<Commit>>> getRecentCommits({
+    Set<Project>? projects,
+    Set<String>? authors,
+    int? maxCount,
+  });
 
   Future<TagsData?> getTags(List<Commit> commits);
 
@@ -1834,7 +1838,11 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<Commit>>> getRecentCommits({Set<Project>? projects, String? author, int? maxCount}) async {
+  Future<ApiResponse<List<Commit>>> getRecentCommits({
+    Set<Project>? projects,
+    Set<String>? authors,
+    int? maxCount,
+  }) async {
     final projectsToSearch = projects ?? (_chosenProjects ?? _projects);
 
     final allProjectRepos = await Future.wait([
@@ -1852,22 +1860,25 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final repos =
         allProjectRepos.where((r) => !r.isError).map(GetRepositoriesResponse.fromResponse).expand((r) => r).toList();
 
-    final authorSearch = author != null ? '&searchCriteria.author=$author' : '';
     final topSearch = maxCount != null ? '&searchCriteria.\$top=$maxCount' : '';
 
     final allProjectCommits = <Response>[];
 
-    // get commits in slices to avoid 'too many open files' error happening on iOS
-    final slices = repos.slices(50);
-    for (final slice in slices) {
-      allProjectCommits.addAll(
-        await Future.wait([
-          for (final repo in slice)
-            _get(
-              '$_basePath/${repo.project!.name}/_apis/git/repositories/${repo.name}/commits?$_apiVersion$authorSearch$topSearch',
-            ),
-        ]),
-      );
+    for (final author in authors ?? {''}) {
+      final authorSearch = author.isNotEmpty ? '&searchCriteria.author=$author' : '';
+
+      // get commits in slices to avoid 'too many open files' error happening on iOS
+      final slices = repos.slices(50);
+      for (final slice in slices) {
+        allProjectCommits.addAll(
+          await Future.wait([
+            for (final repo in slice)
+              _get(
+                '$_basePath/${repo.project!.name}/_apis/git/repositories/${repo.name}/commits?$_apiVersion$authorSearch$topSearch',
+              ),
+          ]),
+        );
+      }
     }
 
     var isAllCommitsError = true;

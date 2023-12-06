@@ -64,7 +64,7 @@ class _ProfileController with FilterMixin {
   }
 
   Future<ApiResponse<List<Commit>>> _getData() async {
-    return apiService.getRecentCommits(author: gitUsername);
+    return apiService.getRecentCommits(authors: {gitUsername});
   }
 
   String getCommitsSummary() {

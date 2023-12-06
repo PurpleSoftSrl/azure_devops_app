@@ -45,7 +45,7 @@ class _MemberDetailController {
 
     user.value = userRes;
 
-    final res = await apiService.getRecentCommits(author: user.value!.data!.mailAddress, maxCount: 20);
+    final res = await apiService.getRecentCommits(authors: {user.value!.data!.mailAddress ?? ''}, maxCount: 20);
     res.data?.sort((a, b) => b.author!.date!.compareTo(a.author!.date!));
 
     final commits = res.data?.take(10);

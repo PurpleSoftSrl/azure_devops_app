@@ -30,13 +30,13 @@ class _CommitsScreen extends StatelessWidget {
             onSearchChanged:
                 ctrl.hasManyProjects(ctrl.storageService) ? (s) => ctrl.searchProject(s, ctrl.storageService) : null,
           ),
-          FilterMenu<GraphUser>(
-            title: 'Author',
-            values: ctrl.getSortedUsers(ctrl.apiService),
-            currentFilter: ctrl.userFilter,
-            onSelected: ctrl.filterByUser,
+          FilterMenu<GraphUser>.multiple(
+            title: 'Authors',
+            values: ctrl.getSortedUsers(ctrl.apiService, withUserAll: false),
+            currentFilters: ctrl.usersFilter,
+            onSelectedMultiple: ctrl.filterByUsers,
             formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.apiService),
-            isDefaultFilter: ctrl.userFilter == ctrl.userAll,
+            isDefaultFilter: ctrl.usersFilter.isEmpty,
             widgetBuilder: (u) => UserFilterWidget(user: u),
             onSearchChanged: ctrl.hasManyUsers(ctrl.apiService) ? (s) => ctrl.searchUser(s, ctrl.apiService) : null,
           ),
