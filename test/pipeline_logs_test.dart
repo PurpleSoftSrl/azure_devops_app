@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'api_service_mock.dart';
 
+/// depends on [AzureApiServiceMock.getPipelineTaskLogs]
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 

@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'api_service_mock.dart';
 
-/// Api [AzureApiServiceMock.getUserFromDescriptor]
+/// depends on [AzureApiServiceMock.getUserFromDescriptor]
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
