@@ -9,7 +9,7 @@ import 'api_service_mock.dart';
 /// Mock pipeline is taken from [AzureApiServiceMock.getPipeline]
 void main() {
   setUp(() => VisibilityDetectorController.instance.updateInterval = Duration.zero);
-  
+
   testWidgets(
     'Pipeline detail page shows all the details',
     (t) async {

@@ -20,7 +20,7 @@ mixin PullRequestHelper {
   }) async {
     _basePath = basePath;
     _projectId = projectId;
-    
+
     final mentionsToReplace = _getMentionsToReplace(data: data);
     final mentionsWithNames = await _getIdentitiesFromGuids(mentionsToReplace, getIdentity);
 

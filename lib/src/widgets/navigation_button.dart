@@ -42,7 +42,7 @@ class NavigationButton extends StatelessWidget {
         child: button,
       );
     }
-    
+
     return button;
   }
 }

@@ -9,7 +9,7 @@ import 'api_service_mock.dart';
 
 void main() {
   setUp(() => VisibilityDetectorController.instance.updateInterval = Duration.zero);
-  
+
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets(

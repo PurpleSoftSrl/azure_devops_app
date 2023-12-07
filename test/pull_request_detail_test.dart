@@ -10,7 +10,7 @@ import 'api_service_mock.dart';
 /// Mock pull request is taken from [AzureApiServiceMock.getPullRequest]
 void main() {
   setUp(() => VisibilityDetectorController.instance.updateInterval = Duration.zero);
-  
+
   testWidgets(
     'Pull request detail page shows all the details',
     (t) async {
