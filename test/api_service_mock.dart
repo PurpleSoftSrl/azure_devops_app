@@ -528,9 +528,8 @@ class AzureApiServiceMock implements AzureApiService {
   @override
   Future<ApiResponse<List<LanguageBreakdown>>> getProjectLanguages({
     required String projectName,
-  }) async {
-    final lang1 = LanguageBreakdown(name: 'en-EN');
-    return ApiResponse.ok([lang1]);
+  }){
+    throw UnimplementedError();
   }
 
   @override
