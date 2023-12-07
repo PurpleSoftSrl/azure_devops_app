@@ -30,7 +30,6 @@ void main() {
     await t.pumpWidget(detailPage);
     await t.pumpAndSettle();
 
-    final target = find.text('path');
-    expect(target, findsOneWidget);
+    expect(find.text('body test', findRichText: true), findsOneWidget);
   });
 }
