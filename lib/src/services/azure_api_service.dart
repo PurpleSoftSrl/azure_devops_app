@@ -978,7 +978,9 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final mappedRules = <String, List<WorkItemRule>>{};
 
     for (final r in rules.where((r) => r.conditions.isNotEmpty)) {
-      final conditions = r.conditions;
+      final conditions = r.conditions.where((c) => c.field.isNotEmpty).toList();
+      if (conditions.isEmpty) continue;
+
       final actions = r.actions;
 
       final isVisibleField = actions.any((a) => fieldNames.contains(a.targetField));

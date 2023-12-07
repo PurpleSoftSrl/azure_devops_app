@@ -89,7 +89,7 @@ class Condition {
 
   factory Condition.fromJson(Map<String, dynamic> json) => Condition(
         conditionType: ConditionType.fromString(json['conditionType'] as String? ?? ''),
-        field: json['field'] as String,
+        field: json['field'] as String? ?? '',
         value: json['value'] as String?,
       );
 
