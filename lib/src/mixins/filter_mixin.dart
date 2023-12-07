@@ -9,9 +9,13 @@ mixin FilterMixin {
   late Project projectFilter = projectAll;
   Set<Project> projectsFilter = {};
 
+  bool get isDefaultProjectsFilter => projectsFilter.isEmpty;
+
   final userAll = GraphUser.all();
   late GraphUser userFilter = userAll;
   Set<GraphUser> usersFilter = {};
+
+  bool get isDefaultUsersFilter => usersFilter.isEmpty;
 
   bool hasManyUsers(AzureApiService apiService) => getSortedUsers(apiService, withUserAll: false).length > 10;
 

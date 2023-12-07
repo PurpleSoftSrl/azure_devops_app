@@ -174,10 +174,10 @@ class _WorkItemsController with FilterMixin {
   }
 
   Future<void> _getData() async {
-    final assignedTo = usersFilter.isEmpty ? null : usersFilter;
+    final assignedTo = isDefaultUsersFilter ? null : usersFilter;
 
     final res = await apiService.getWorkItems(
-      projects: projectsFilter.isEmpty ? null : projectsFilter,
+      projects: isDefaultProjectsFilter ? null : projectsFilter,
       types: typesFilter.isEmpty ? null : typesFilter,
       states: isDefaultStateFilter ? null : statesFilter,
       assignedTo: assignedTo?.map((u) => u.displayName == 'Unassigned' ? u.copyWith(mailAddress: '') : u).toSet(),

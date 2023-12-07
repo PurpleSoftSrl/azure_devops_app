@@ -37,7 +37,7 @@ class _PullRequestsScreen extends StatelessWidget {
             currentFilters: ctrl.projectsFilter,
             onSelectedMultiple: ctrl.filterByProjects,
             formatLabel: (p) => p.name!,
-            isDefaultFilter: ctrl.projectsFilter.isEmpty,
+            isDefaultFilter: ctrl.isDefaultProjectsFilter,
             widgetBuilder: (p) => ProjectFilterWidget(project: p),
             onSearchChanged:
                 ctrl.hasManyProjects(ctrl.storageService) ? (s) => ctrl.searchProject(s, ctrl.storageService) : null,
@@ -59,7 +59,7 @@ class _PullRequestsScreen extends StatelessWidget {
             currentFilters: ctrl.usersFilter,
             onSelectedMultiple: ctrl.filterByUsers,
             formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.apiService),
-            isDefaultFilter: ctrl.usersFilter.isEmpty,
+            isDefaultFilter: ctrl.isDefaultUsersFilter,
             widgetBuilder: (u) => UserFilterWidget(user: u),
             onSearchChanged: ctrl.hasManyUsers(ctrl.apiService) ? (s) => ctrl.searchUser(s, ctrl.apiService) : null,
           ),

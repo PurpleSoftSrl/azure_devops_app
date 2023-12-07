@@ -93,8 +93,8 @@ class _PullRequestsController with FilterMixin {
   Future<void> _getData() async {
     final res = await apiService.getPullRequests(
       status: statusFilter,
-      creators: usersFilter.isEmpty ? null : usersFilter,
-      projects: projectsFilter.isEmpty ? null : projectsFilter,
+      creators: isDefaultUsersFilter ? null : usersFilter,
+      projects: isDefaultProjectsFilter ? null : projectsFilter,
       reviewers: reviewersFilter.isEmpty ? null : reviewersFilter,
     );
 

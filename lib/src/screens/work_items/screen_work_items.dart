@@ -32,7 +32,7 @@ class _WorkItemsScreen extends StatelessWidget {
               currentFilters: ctrl.projectsFilter,
               onSelectedMultiple: ctrl.filterByProjects,
               formatLabel: (p) => p.name!,
-              isDefaultFilter: ctrl.projectsFilter.isEmpty,
+              isDefaultFilter: ctrl.isDefaultProjectsFilter,
               widgetBuilder: (p) => ProjectFilterWidget(project: p),
               onSearchChanged:
                   ctrl.hasManyProjects(ctrl.storageService) ? (s) => ctrl.searchProject(s, ctrl.storageService) : null,
@@ -61,7 +61,7 @@ class _WorkItemsScreen extends StatelessWidget {
               values: ctrl.getAssignees(),
               onSelectedMultiple: ctrl.filterByUsers,
               formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.apiService),
-              isDefaultFilter: ctrl.usersFilter.isEmpty,
+              isDefaultFilter: ctrl.isDefaultUsersFilter,
               currentFilters: ctrl.usersFilter,
               widgetBuilder: (u) => UserFilterWidget(user: u),
               onSearchChanged: ctrl.hasManyUsers(ctrl.apiService) ? ctrl.searchAssignee : null,

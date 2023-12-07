@@ -44,8 +44,8 @@ class _CommitsController with FilterMixin {
 
   Future<void> _getData() async {
     final res = await apiService.getRecentCommits(
-      projects: projectsFilter.isEmpty ? null : projectsFilter,
-      authors: usersFilter.isEmpty ? null : usersFilter.map((u) => u.mailAddress ?? '').toSet(),
+      projects: isDefaultProjectsFilter ? null : projectsFilter,
+      authors: isDefaultUsersFilter ? null : usersFilter.map((u) => u.mailAddress ?? '').toSet(),
     );
     var commits = (res.data ?? [])..sort((a, b) => b.author!.date!.compareTo(a.author!.date!));
 

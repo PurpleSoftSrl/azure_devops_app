@@ -79,11 +79,11 @@ class _PipelinesController with FilterMixin {
     final now = DateTime.now();
 
     final res = await apiService.getRecentPipelines(
-      projects: projectsFilter.isEmpty ? null : projectsFilter,
+      projects: isDefaultProjectsFilter ? null : projectsFilter,
       definition: args?.definition,
       result: resultFilter,
       status: statusFilter,
-      triggeredBy: usersFilter.isEmpty ? null : usersFilter.map((u) => u.mailAddress ?? '').toSet(),
+      triggeredBy: isDefaultUsersFilter ? null : usersFilter.map((u) => u.mailAddress ?? '').toSet(),
     );
 
     var pipes = res.data ?? [];
