@@ -13,19 +13,15 @@ class GetTeamsResponse {
     required this.count,
   });
 
-  factory GetTeamsResponse.fromJson(Map<String, dynamic> json) =>
-      GetTeamsResponse(
+  factory GetTeamsResponse.fromJson(Map<String, dynamic> json) => GetTeamsResponse(
         teams: json['value'] == null
             ? []
-            : List<Team?>.from((json['value'] as List<dynamic>)
-                .map((x) => Team.fromJson(x as Map<String, dynamic>)),),
+            : List<Team?>.from((json['value'] as List<dynamic>).map((x) => Team.fromJson(x as Map<String, dynamic>))),
         count: json['count'] as int?,
       );
 
   static List<Team?> fromResponse(Response res) =>
-      GetTeamsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>)
-          .teams ??
-      [];
+      GetTeamsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).teams ?? [];
 
   final List<Team?>? teams;
   final int? count;

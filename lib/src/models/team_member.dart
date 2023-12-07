@@ -10,21 +10,18 @@ class GetTeamMembersResponse {
     required this.count,
   });
 
-  factory GetTeamMembersResponse.fromJson(Map<String, dynamic> json) =>
-      GetTeamMembersResponse(
+  factory GetTeamMembersResponse.fromJson(Map<String, dynamic> json) => GetTeamMembersResponse(
         members: json['value'] == null
             ? []
             : List<TeamMember>.from(
-                (json['value'] as List<dynamic>)
-                    .map((x) => TeamMember.fromJson(x as Map<String, dynamic>)),
+                (json['value'] as List<dynamic>).map((x) => TeamMember.fromJson(x as Map<String, dynamic>)),
               ),
         count: json['count'] as int?,
       );
 
-  static List<TeamMember>? fromResponse(Response res) =>
-      GetTeamMembersResponse.fromJson(
-              jsonDecode(res.body) as Map<String, dynamic>,)
-          .members;
+  static List<TeamMember>? fromResponse(Response res) => GetTeamMembersResponse.fromJson(
+        jsonDecode(res.body) as Map<String, dynamic>,
+      ).members;
 
   final List<TeamMember>? members;
   final int? count;
@@ -45,16 +42,13 @@ class TeamMember {
   final Identity? identity;
 
   @override
-  String toString() =>
-      'TeamMember(isTeamAdmin: $isTeamAdmin, identity: $identity)';
+  String toString() => 'TeamMember(isTeamAdmin: $isTeamAdmin, identity: $identity)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is TeamMember &&
-        other.isTeamAdmin == isTeamAdmin &&
-        other.identity == identity;
+    return other is TeamMember && other.isTeamAdmin == isTeamAdmin && other.identity == identity;
   }
 
   @override
@@ -103,10 +97,6 @@ class Identity {
 
   @override
   int get hashCode {
-    return displayName.hashCode ^
-        id.hashCode ^
-        uniqueName.hashCode ^
-        imageUrl.hashCode ^
-        descriptor.hashCode;
+    return displayName.hashCode ^ id.hashCode ^ uniqueName.hashCode ^ imageUrl.hashCode ^ descriptor.hashCode;
   }
 }

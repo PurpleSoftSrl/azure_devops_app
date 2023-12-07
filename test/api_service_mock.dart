@@ -163,10 +163,9 @@ class AzureApiServiceMock implements AzureApiService {
   Future<ApiResponse<List<GitRepository>>> getProjectRepositories({required String projectName}) async {
     return ApiResponse.ok(<GitRepository>[]);
   }
-  
 
   @override
-  Future<ApiResponse<List<TeamWithMembers>>> getProjectTeams({required String projectId})async {
+  Future<ApiResponse<List<TeamWithMembers>>> getProjectTeams({required String projectId}) async {
     final team = Team(
       id: 'team id',
       name: 'team name',
