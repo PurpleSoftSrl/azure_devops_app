@@ -583,16 +583,28 @@ class AzureApiServiceMock implements AzureApiService {
     required String repoName,
     required String path,
     String? branch,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    final item1 = RepoItem(
+      objectId: 'item 1 ID',
+      commitId: '111111',
+      path: 'item 1',
+      url: '',
+    );
+    final item2 = RepoItem(
+      objectId: 'item 2 ID',
+      commitId: '222222',
+      path: 'item 2',
+      url: '',
+    );
+    return ApiResponse.ok([item1, item2]);
   }
 
   @override
   Future<ApiResponse<List<Branch>>> getRepositoryBranches({
     required String projectName,
     required String repoName,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    return ApiResponse.ok(<Branch>[]);
   }
 
   @override
