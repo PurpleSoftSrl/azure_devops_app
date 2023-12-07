@@ -10,17 +10,21 @@ class GetTeamMembersResponse {
     required this.count,
   });
 
-  factory GetTeamMembersResponse.fromJson(Map<String, dynamic> json) => GetTeamMembersResponse(
+  factory GetTeamMembersResponse.fromJson(Map<String, dynamic> json) =>
+      GetTeamMembersResponse(
         members: json['value'] == null
             ? []
             : List<TeamMember>.from(
-                (json['value'] as List<dynamic>).map((x) => TeamMember.fromJson(x as Map<String, dynamic>)),
+                (json['value'] as List<dynamic>)
+                    .map((x) => TeamMember.fromJson(x as Map<String, dynamic>)),
               ),
         count: json['count'] as int?,
       );
 
   static List<TeamMember>? fromResponse(Response res) =>
-      GetTeamMembersResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).members;
+      GetTeamMembersResponse.fromJson(
+              jsonDecode(res.body) as Map<String, dynamic>)
+          .members;
 
   final List<TeamMember>? members;
   final int? count;
@@ -34,28 +38,31 @@ class TeamMember {
 
   factory TeamMember.fromJson(Map<String, dynamic> json) => TeamMember(
         isTeamAdmin: json['isTeamAdmin'] as bool?,
-        identity: _Identity.fromJson(json['identity'] as Map<String, dynamic>),
+        identity: Identity.fromJson(json['identity'] as Map<String, dynamic>),
       );
 
   final bool? isTeamAdmin;
-  final _Identity? identity;
+  final Identity? identity;
 
   @override
-  String toString() => 'TeamMember(isTeamAdmin: $isTeamAdmin, identity: $identity)';
+  String toString() =>
+      'TeamMember(isTeamAdmin: $isTeamAdmin, identity: $identity)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is TeamMember && other.isTeamAdmin == isTeamAdmin && other.identity == identity;
+    return other is TeamMember &&
+        other.isTeamAdmin == isTeamAdmin &&
+        other.identity == identity;
   }
 
   @override
   int get hashCode => isTeamAdmin.hashCode ^ identity.hashCode;
 }
 
-class _Identity {
-  _Identity({
+class Identity {
+  Identity({
     required this.displayName,
     required this.id,
     required this.uniqueName,
@@ -63,7 +70,7 @@ class _Identity {
     required this.descriptor,
   });
 
-  factory _Identity.fromJson(Map<String, dynamic> json) => _Identity(
+  factory Identity.fromJson(Map<String, dynamic> json) => Identity(
         displayName: json['displayName'] as String?,
         id: json['id'] as String?,
         uniqueName: json['uniqueName'] as String?,
@@ -86,7 +93,7 @@ class _Identity {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is _Identity &&
+    return other is Identity &&
         other.displayName == displayName &&
         other.id == id &&
         other.uniqueName == uniqueName &&
@@ -96,6 +103,10 @@ class _Identity {
 
   @override
   int get hashCode {
-    return displayName.hashCode ^ id.hashCode ^ uniqueName.hashCode ^ imageUrl.hashCode ^ descriptor.hashCode;
+    return displayName.hashCode ^
+        id.hashCode ^
+        uniqueName.hashCode ^
+        imageUrl.hashCode ^
+        descriptor.hashCode;
   }
 }

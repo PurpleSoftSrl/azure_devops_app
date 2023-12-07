@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:azure_devops/src/models/team_member.dart';
 import 'package:http/http.dart';
 
-typedef TeamWithMembers = ({_Team team, List<TeamMember> members});
+typedef TeamWithMembers = ({Team team, List<TeamMember> members});
 
 class GetTeamsResponse {
   GetTeamsResponse({
@@ -13,22 +13,26 @@ class GetTeamsResponse {
     required this.count,
   });
 
-  factory GetTeamsResponse.fromJson(Map<String, dynamic> json) => GetTeamsResponse(
+  factory GetTeamsResponse.fromJson(Map<String, dynamic> json) =>
+      GetTeamsResponse(
         teams: json['value'] == null
             ? []
-            : List<_Team?>.from((json['value'] as List<dynamic>).map((x) => _Team.fromJson(x as Map<String, dynamic>))),
+            : List<Team?>.from((json['value'] as List<dynamic>)
+                .map((x) => Team.fromJson(x as Map<String, dynamic>))),
         count: json['count'] as int?,
       );
 
-  static List<_Team?> fromResponse(Response res) =>
-      GetTeamsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).teams ?? [];
+  static List<Team?> fromResponse(Response res) =>
+      GetTeamsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>)
+          .teams ??
+      [];
 
-  final List<_Team?>? teams;
+  final List<Team?>? teams;
   final int? count;
 }
 
-class _Team {
-  _Team({
+class Team {
+  Team({
     required this.id,
     required this.name,
     required this.description,
@@ -36,7 +40,7 @@ class _Team {
     required this.projectId,
   });
 
-  factory _Team.fromJson(Map<String, dynamic> json) => _Team(
+  factory Team.fromJson(Map<String, dynamic> json) => Team(
         id: json['id'] as String?,
         name: json['name'] as String?,
         description: json['description'] as String?,
