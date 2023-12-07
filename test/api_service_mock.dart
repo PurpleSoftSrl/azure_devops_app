@@ -274,7 +274,7 @@ class AzureApiServiceMock implements AzureApiService {
   @override
   Future<ApiResponse<GraphUser>> getUserFromEmail(
       {required String email,}) async {
-    return ApiResponse.ok(GraphUser(mailAddress: null));
+    return ApiResponse.ok(GraphUser());
   }
 
   @override
