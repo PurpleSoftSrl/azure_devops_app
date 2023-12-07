@@ -1,0 +1,21 @@
+name: Analyze code and run tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  build:
+    name: Analyze, format and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.9'
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: dart format --set-exit-if-changed -l 120 .
+      - run: flutter test
+      - run: flutter build appbundle
