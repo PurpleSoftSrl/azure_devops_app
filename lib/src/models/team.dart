@@ -18,7 +18,7 @@ class GetTeamsResponse {
         teams: json['value'] == null
             ? []
             : List<Team?>.from((json['value'] as List<dynamic>)
-                .map((x) => Team.fromJson(x as Map<String, dynamic>))),
+                .map((x) => Team.fromJson(x as Map<String, dynamic>)),),
         count: json['count'] as int?,
       );
 

@@ -23,7 +23,7 @@ class GetTeamMembersResponse {
 
   static List<TeamMember>? fromResponse(Response res) =>
       GetTeamMembersResponse.fromJson(
-              jsonDecode(res.body) as Map<String, dynamic>)
+              jsonDecode(res.body) as Map<String, dynamic>,)
           .members;
 
   final List<TeamMember>? members;
