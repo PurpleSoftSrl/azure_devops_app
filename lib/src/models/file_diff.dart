@@ -150,9 +150,7 @@ class _ModifiedFileClass {
     required this.gitObjectType,
     this.commitId,
     required this.serverItem,
-    required this.version,
     required this.contentMetadata,
-    required this.versionDescription,
   });
 
   factory _ModifiedFileClass.fromJson(Map<String, dynamic> json) => _ModifiedFileClass(
@@ -160,18 +158,14 @@ class _ModifiedFileClass {
         gitObjectType: json['gitObjectType'] as int,
         commitId: json['commitId'] as String?,
         serverItem: json['serverItem'] as String,
-        version: json['version'] as String,
         contentMetadata: _ContentMetadata.fromJson(json['contentMetadata'] as Map<String, dynamic>),
-        versionDescription: json['versionDescription'] as String,
       );
 
   final _ObjectId objectId;
   final int gitObjectType;
   final String? commitId;
   final String serverItem;
-  final String version;
   final _ContentMetadata contentMetadata;
-  final String versionDescription;
 }
 
 class _ContentMetadata {
