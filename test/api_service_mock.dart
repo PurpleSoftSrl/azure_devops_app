@@ -234,8 +234,17 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<GraphUser>> getUserFromDescriptor({required String descriptor}) {
-    throw UnimplementedError();
+  Future<ApiResponse<GraphUser>> getUserFromDescriptor({required String descriptor}) async {
+    return ApiResponse.ok(
+      GraphUser(
+        displayName: 'name test',
+        mailAddress: 'mail test',
+        descriptor: 'descriptor test',
+        subjectKind: 'user',
+        metaType: 'member',
+        domain: 'domain',
+      ),
+    );
   }
 
   @override
@@ -497,7 +506,9 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<LanguageBreakdown>>> getProjectLanguages({required String projectName}) {
+  Future<ApiResponse<List<LanguageBreakdown>>> getProjectLanguages({
+    required String projectName,
+  }) {
     throw UnimplementedError();
   }
 
@@ -506,8 +517,8 @@ class AzureApiServiceMock implements AzureApiService {
     required String projectName,
     required int pipelineId,
     required int logId,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    return ApiResponse.ok('log test');
   }
 
   @override
