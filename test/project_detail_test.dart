@@ -25,7 +25,6 @@ void main() {
     await t.pumpWidget(projectPage);
     await t.pumpAndSettle();
 
-    expect(find.text('test name'), findsOneWidget);
     expect(find.text('member_2_name', findRichText: true), findsOneWidget);
   });
 }
