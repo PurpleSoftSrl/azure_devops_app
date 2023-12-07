@@ -248,8 +248,17 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<GraphUser>> getUserFromDescriptor(
-      {required String descriptor}) {
-    throw UnimplementedError();
+      {required String descriptor}) async {
+    return ApiResponse.ok(
+      GraphUser(
+        displayName: 'name test',
+        mailAddress: 'mail test',
+        descriptor: 'descriptor test',
+        subjectKind: 'user',
+        metaType: 'member',
+        domain: 'domain',
+      ),
+    );
   }
 
   @override

@@ -1,30 +1,30 @@
-import 'package:azure_devops/src/screens/project_detail/base_project_detail.dart';
+import 'package:azure_devops/src/screens/member_detail/base_member_detail.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'api_service_mock.dart';
 
+/// Api [AzureApiServiceMock.getUserFromDescriptor]
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('project detail page test', (t) async {
-    final projectPage = AzureApiServiceInherited(
+  testWidgets('member detail page test', (t) async {
+    final memberPage = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),
       child: MaterialApp(
         onGenerateRoute: (_) => MaterialPageRoute(
-          builder: (_) => ProjectDetailPage(),
+          builder: (_) => MemberDetailPage(),
           settings: RouteSettings(
-            arguments: 'test name',
+            arguments: '',
           ),
         ),
       ),
     );
 
-    await t.pumpWidget(projectPage);
+    await t.pumpWidget(memberPage);
     await t.pumpAndSettle();
 
-    expect(find.text('test name'), findsOneWidget);
-    expect(find.text('member_2_name', findRichText: true), findsOneWidget);
+    expect(find.text('Name:  name test', findRichText: true), findsWidgets);
   });
 }
