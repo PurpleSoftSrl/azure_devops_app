@@ -512,7 +512,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       _isLoggingError = true;
       Timer(Duration(seconds: 2), () => _isLoggingError = false);
 
-      final title = '${res.statusCode} ${res.reasonPhrase}';
+      final title = '${res.statusCode} ${res.reasonPhrase} $url';
 
       Sentry.captureEvent(
         SentryEvent(
