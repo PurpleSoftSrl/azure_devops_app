@@ -5,11 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'api_service_mock.dart';
 
-/// depends on [AzureApiServiceMock.getPipelineTaskLogs]
+/// Mock log is taken from [AzureApiServiceMock.getPipelineTaskLogs]
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('pipeline logs page test', (t) async {
+  testWidgets('Pipeline logs page shows all logs', (t) async {
     final pipelineLogsPage = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),
       child: MaterialApp(

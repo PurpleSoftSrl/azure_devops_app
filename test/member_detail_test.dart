@@ -5,11 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'api_service_mock.dart';
 
-/// depends on [AzureApiServiceMock.getUserFromDescriptor]
+/// Mock member is taken from [AzureApiServiceMock.getUserFromDescriptor]
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('member detail page test', (t) async {
+  testWidgets('Member detail page shows all details', (t) async {
     final memberPage = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),
       child: MaterialApp(
