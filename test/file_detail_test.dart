@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'api_service_mock.dart';
 
-/// Mock file is taken from
+/// Mock file is taken from [AzureApiServiceMock.getFileDetail]
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 

@@ -603,8 +603,10 @@ class AzureApiServiceMock implements AzureApiService {
     String? branch,
     String? commitId,
     bool previousChange = false,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    return ApiResponse.ok(
+      FileDetailResponse(content: 'body test', isBinary: false),
+    );
   }
 
   @override
