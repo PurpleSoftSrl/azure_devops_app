@@ -8,82 +8,86 @@ class _ChooseProjectsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        AppPage<List<Project>?>(
-          init: ctrl.init,
-          dispose: ctrl.dispose,
-          title: 'Choose projects',
-          notifier: ctrl.chosenProjects,
-          safeAreaBottom: false,
-          showScrollbar: true,
-          builder: (projects) => Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  'You will see only info related to the projects that you choose.\nYou can change your choice any time from the settings.',
-                  style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary, height: 1.6),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  SectionHeader.noMargin(
-                    text: 'Projects',
-                    textHeight: 1,
+    return WillPopScope(
+      onWillPop: ctrl.onWillPop,
+      child: Stack(
+        children: [
+          AppPage<List<Project>?>(
+            init: ctrl.init,
+            dispose: ctrl.dispose,
+            title: 'Choose projects',
+            notifier: ctrl.chosenProjects,
+            safeAreaBottom: false,
+            showScrollbar: true,
+            showBackButton: false,
+            builder: (projects) => Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    'You will see only info related to the projects that you choose.\nYou can change your choice any time from the settings.',
+                    style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary, height: 1.6),
+                    textAlign: TextAlign.center,
                   ),
-                  ValueListenableBuilder<bool>(
-                    valueListenable: ctrl.chooseAll,
-                    builder: (_, chooseAll, __) => Row(
-                      children: [
-                        Text(
-                          chooseAll ? 'Unselect all' : 'Select all',
-                          style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                        ),
-                        Checkbox(
-                          value: chooseAll,
-                          onChanged: (_) => ctrl.toggleChooseAll(),
-                        ),
-                      ],
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    SectionHeader.noMargin(
+                      text: 'Projects',
+                      textHeight: 1,
                     ),
-                  ),
-                ],
-              ),
-              ...ctrl.allProjects.map(
-                (p) => CheckboxListTile(
-                  title: Text(p.name!),
-                  value: projects!.contains(p),
-                  onChanged: (_) => ctrl.toggleChosenProject(p),
-                  contentPadding: EdgeInsets.only(right: 4),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: ctrl.chooseAll,
+                      builder: (_, chooseAll, __) => Row(
+                        children: [
+                          Text(
+                            chooseAll ? 'Unselect all' : 'Select all',
+                            style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                          ),
+                          Checkbox(
+                            value: chooseAll,
+                            onChanged: (_) => ctrl.toggleChooseAll(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(
-                height: 100,
-              ),
-            ],
-          ),
-        ),
-        Positioned(
-          bottom: max(MediaQuery.of(context).padding.bottom, 24),
-          right: 0,
-          left: 0,
-          child: ValueListenableBuilder<ApiResponse<List<Project>?>?>(
-            valueListenable: ctrl.chosenProjects,
-            builder: (_, projects, __) => projects?.data == null || projects!.data!.isEmpty
-                ? const SizedBox()
-                : LoadingButton(
-                    onPressed: ctrl.goToHome,
-                    text: 'Confirm',
+                ...ctrl.allProjects.map(
+                  (p) => CheckboxListTile(
+                    title: Text(p.name!),
+                    value: projects!.contains(p),
+                    onChanged: (_) => ctrl.toggleChosenProject(p),
+                    contentPadding: EdgeInsets.only(right: 4),
                   ),
+                ),
+                const SizedBox(
+                  height: 100,
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+          Positioned(
+            bottom: max(MediaQuery.of(context).padding.bottom, 24),
+            right: 0,
+            left: 0,
+            child: ValueListenableBuilder<ApiResponse<List<Project>?>?>(
+              valueListenable: ctrl.chosenProjects,
+              builder: (_, projects, __) => projects?.data == null || projects!.data!.isEmpty
+                  ? const SizedBox()
+                  : LoadingButton(
+                      onPressed: ctrl.goToHome,
+                      text: 'Confirm',
+                    ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

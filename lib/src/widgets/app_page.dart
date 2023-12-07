@@ -25,6 +25,7 @@ class AppPage<T extends Object?> extends StatefulWidget {
     this.showScrollbar = false,
     this.onResetFilters,
     this.fixedAppBar = false,
+    this.showBackButton = true,
   }) : _isEmpty = false;
 
   const AppPage.empty({
@@ -44,6 +45,7 @@ class AppPage<T extends Object?> extends StatefulWidget {
         showScrollbar = false,
         fixedAppBar = false,
         onResetFilters = null,
+        showBackButton = true,
         _isEmpty = true;
 
   final Widget Function(T) builder;
@@ -61,6 +63,7 @@ class AppPage<T extends Object?> extends StatefulWidget {
   final bool showScrollbar;
   final VoidCallback? onResetFilters;
   final bool fixedAppBar;
+  final bool showBackButton;
 
   final bool _isEmpty;
 
@@ -227,6 +230,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
                         pinned: widget.fixedAppBar,
                         actions: actions,
                         expandedHeight: 50,
+                        automaticallyImplyLeading: widget.showBackButton,
                         bottom: widget.header == null
                             ? null
                             : _Header(
@@ -297,7 +301,6 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
     );
   }
 }
-
 
 class _Header extends StatefulWidget implements PreferredSizeWidget {
   const _Header({required this.child});

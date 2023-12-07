@@ -24,6 +24,9 @@ class _ChooseProjectsController {
 
   final _initiallyChosenProjects = <Project>[];
 
+  /// Projects already in local storage
+  Iterable<Project> alreadyChosenProjects = [];
+
   void dispose() {
     instance = null;
   }
@@ -39,7 +42,7 @@ class _ChooseProjectsController {
     final projectsRes = await apiService.getProjects();
     final projects = projectsRes.data ?? <Project>[];
 
-    final alreadyChosenProjects =
+    alreadyChosenProjects =
         storageService.getChosenProjects().where((p) => projects.map((p1) => p1.id!).contains(p.id));
 
     // sort projects by last change date, already chosen projects go first.
@@ -164,4 +167,7 @@ class _ChooseProjectsController {
     );
     return selectedOrg;
   }
+
+  /// Prevents user from going back without having selected any project after clear cache
+  Future<bool> onWillPop() async => alreadyChosenProjects.isNotEmpty;
 }
