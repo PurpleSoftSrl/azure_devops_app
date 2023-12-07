@@ -27,7 +27,7 @@ import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/team.dart';
-import 'package:azure_devops/src/models/team_member.dart';
+import 'package:azure_devops/src/models/team_member.dart' as t;
 import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/user_entitlements.dart';
@@ -1347,7 +1347,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       final membersRes = await _get('$_basePath/_apis/projects/$projectId/teams/${team!.id}/members?$_apiVersion');
       if (membersRes.isError) return ApiResponse.error(membersRes);
 
-      final members = GetTeamMembersResponse.fromResponse(membersRes)!;
+      final members = t.GetTeamMembersResponse.fromResponse(membersRes)!;
       teamsWithMembers.add((team: team, members: members));
     }
 
