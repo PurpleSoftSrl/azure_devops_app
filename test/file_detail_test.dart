@@ -10,7 +10,7 @@ import 'api_service_mock.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('file detail page test', (t) async {
+  testWidgets('File detail page showing correcly file content', (t) async {
     final detailPage = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),
       child: MaterialApp(

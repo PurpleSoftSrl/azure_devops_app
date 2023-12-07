@@ -3,13 +3,13 @@ import 'package:azure_devops/src/screens/repository_detail/base_repository_detai
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'api_service_mock.dart';
 
+/// Mock repository items are taken from [AzureApiServiceMock.getRepositoryItems]
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('repository detail page test', (t) async {
+  testWidgets('Repository detail page showing all items', (t) async {
     final repoDetailPage = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),
       child: MaterialApp(
