@@ -48,7 +48,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<Pipeline>> cancelPipeline(
-      {required int buildId, required String projectId}) {
+      {required int buildId, required String projectId,}) {
     throw UnimplementedError();
   }
 
@@ -148,14 +148,14 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<List<Commit>>> getRecentCommits(
-      {Project? project, String? author, int? maxCount}) async {
+      {Project? project, String? author, int? maxCount,}) async {
     final emptyCommit = Commit.empty();
     final firstCommit = emptyCommit.copyWithDateAndAuthorName(
-        DateTime(2000, 2, 3), 'Test User 1');
+        DateTime(2000, 2, 3), 'Test User 1',);
     final secondCommit = emptyCommit.copyWithDateAndAuthorName(
-        DateTime(2000, 2, 5), 'Test User 2');
+        DateTime(2000, 2, 5), 'Test User 2',);
     final thirdCommit = emptyCommit.copyWithDateAndAuthorName(
-        DateTime(2000, 2, 4), 'Test User 3');
+        DateTime(2000, 2, 4), 'Test User 3',);
     return ApiResponse.ok([firstCommit, secondCommit, thirdCommit]);
   }
 
@@ -171,13 +171,13 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<List<GitRepository>>> getProjectRepositories(
-      {required String projectName}) async {
+      {required String projectName,}) async {
     return ApiResponse.ok(<GitRepository>[]);
   }
 
   @override
   Future<ApiResponse<List<TeamWithMembers>>> getProjectTeams(
-      {required String projectId}) async {
+      {required String projectId,}) async {
     final team = Team(
       id: 'team id',
       name: 'team name',
@@ -273,7 +273,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<GraphUser>> getUserFromEmail(
-      {required String email}) async {
+      {required String email,}) async {
     return ApiResponse.ok(GraphUser(mailAddress: null));
   }
 
@@ -281,7 +281,6 @@ class AzureApiServiceMock implements AzureApiService {
   Future<ApiResponse<GraphUser>> getUserFromDescriptor({
     required String descriptor,
   }) async {
-    throw UnimplementedError();
     return ApiResponse.ok(
       GraphUser(
         displayName: 'name test',
@@ -335,7 +334,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<Map<String, List<WorkItemType>>>> getWorkItemTypes(
-      {bool force = false}) async {
+      {bool force = false,}) async {
     return ApiResponse.ok(<String, List<WorkItemType>>{});
   }
 
@@ -345,7 +344,7 @@ class AzureApiServiceMock implements AzureApiService {
     required String workItemName,
   }) async {
     return ApiResponse.ok(
-        WorkItemFieldsWithRules(fields: {}, rules: {}, transitions: {}));
+        WorkItemFieldsWithRules(fields: {}, rules: {}, transitions: {}),);
   }
 
   @override
@@ -463,7 +462,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<PipelineWithTimeline>> getPipeline(
-      {required String projectName, required int id}) async {
+      {required String projectName, required int id,}) async {
     return ApiResponse.ok(
       PipelineWithTimeline(
         pipeline: Pipeline(
@@ -475,7 +474,7 @@ class AzureApiServiceMock implements AzureApiService {
               PipelineRepository(id: '', type: '', name: 'test_repo', url: ''),
           requestedFor: LastChangedBy(displayName: 'Test User'),
           triggerInfo: TriggerInfo(
-              ciMessage: 'Test commit message', ciSourceSha: '123456789'),
+              ciMessage: 'Test commit message', ciSourceSha: '123456789',),
           sourceBranch: 'refs/heads/test_branch',
         ),
         timeline: [],
@@ -533,7 +532,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<Identity?>> getIdentityFromGuid(
-      {required String guid}) async {
+      {required String guid,}) async {
     return ApiResponse.ok(null);
   }
 
@@ -563,7 +562,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<ProjectDetail>> getProject(
-      {required String projectName}) async {
+      {required String projectName,}) async {
     final data = ProjectDetail(
       project: Project(
         id: 'project id',
@@ -577,7 +576,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<List<LanguageBreakdown>>> getProjectLanguages(
-      {required String projectName}) async {
+      {required String projectName,}) async {
     final lang1 = LanguageBreakdown(name: 'en-EN');
     return ApiResponse.ok([lang1]);
   }
@@ -623,7 +622,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<bool>> addWorkItemComment(
-      {required String projectName, required int id, required String text}) {
+      {required String projectName, required int id, required String text,}) {
     throw UnimplementedError();
   }
 
@@ -656,7 +655,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<bool>> deleteWorkItem(
-      {required String projectName, required int id, required String type}) {
+      {required String projectName, required int id, required String type,}) {
     throw UnimplementedError();
   }
 
@@ -706,7 +705,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<GraphUser>> getUserFromDisplayName(
-      {required String name}) {
+      {required String name,}) {
     throw UnimplementedError();
   }
 
