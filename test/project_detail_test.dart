@@ -5,10 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'api_service_mock.dart';
 
+/// Mock details taken from [AzureApiServiceMock.getProjectTeams]
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('project detail page test', (t) async {
+  testWidgets("Project detail page shows all project's informations", (t) async {
     final projectPage = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),
       child: MaterialApp(
