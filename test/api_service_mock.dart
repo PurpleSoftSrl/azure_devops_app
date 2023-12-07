@@ -506,10 +506,10 @@ class AzureApiServiceMock implements AzureApiService {
     required String projectName,
     required int pipelineId,
     required int logId,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    return ApiResponse.ok('log test');
   }
-
+  
   @override
   Future<ApiResponse<WorkItem>> createWorkItem({
     required String projectName,
