@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/screens/repository_detail/base_repository_detail.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
