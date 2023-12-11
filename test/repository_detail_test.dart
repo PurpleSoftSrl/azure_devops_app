@@ -24,7 +24,7 @@ void main() {
         ),
       ),
     );
-    
+
     await t.pumpWidget(repoDetailPage);
     await t.pump();
 
