@@ -1,4 +1,4 @@
-## 2.0.2 - 2023-12-11
+## 2.0.1 - 2023-12-11
 - rules_checker: handle disallowed states
 - handle work item rule condition with null field
 - fix github workflow
