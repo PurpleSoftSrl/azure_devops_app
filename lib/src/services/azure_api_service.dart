@@ -46,7 +46,7 @@ import 'package:http/http.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:xml/xml.dart';
 
-typedef WorkItemRule = ({ActionType action, List<Condition> conditions});
+typedef WorkItemRule = ({Action action, List<Condition> conditions});
 
 typedef WorkItemTypeRules = Map<String, List<WorkItemRule>>;
 
@@ -986,10 +986,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       final isVisibleField = actions.any((a) => fieldNames.contains(a.targetField));
       final isSupportedAction = actions.any((a) => !_fieldNamesToSkip.contains(a.targetField));
 
+      final isStateRule = actions.any((a) => 'System.State' == a.targetField);
+
       for (final action in actions) {
-        if (isVisibleField && isSupportedAction) {
+        if (isStateRule || (isVisibleField && isSupportedAction)) {
           mappedRules.putIfAbsent(action.targetField, () => []);
-          mappedRules[action.targetField]!.add((action: action.actionType, conditions: conditions));
+          mappedRules[action.targetField]!.add((action: action, conditions: conditions));
         }
       }
     }

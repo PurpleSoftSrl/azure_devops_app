@@ -14,7 +14,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeRequired,
+              action: ActionCreator.fromActionType(ActionType.makeRequired),
               conditions: [ConditionCreator.onCreate()],
             ),
           ],
@@ -36,7 +36,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeReadOnly,
+              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
               conditions: [ConditionCreator.onCreate()],
             ),
           ],
@@ -58,7 +58,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.setValueToEmpty,
+              action: ActionCreator.fromActionType(ActionType.setValueToEmpty),
               conditions: [ConditionCreator.onCreate()],
             ),
           ],
@@ -83,13 +83,13 @@ void main() {
         allRules: {
           requiredFieldName: [
             (
-              action: ActionType.makeRequired,
+              action: ActionCreator.fromActionType(ActionType.makeRequired),
               conditions: [ConditionCreator.onCreate()],
             ),
           ],
           readOnlyFieldName: [
             (
-              action: ActionType.makeReadOnly,
+              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
               conditions: [ConditionCreator.onCreate()],
             ),
           ],
@@ -120,11 +120,11 @@ void main() {
         allRules: {
           requiredFieldName: [
             (
-              action: ActionType.makeRequired,
+              action: ActionCreator.fromActionType(ActionType.makeRequired),
               conditions: [ConditionCreator.onCreate()],
             ),
             (
-              action: ActionType.makeReadOnly,
+              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
               conditions: [ConditionCreator.onCreate()],
             ),
           ],
@@ -151,7 +151,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeRequired,
+              action: ActionCreator.fromActionType(ActionType.makeRequired),
               conditions: [ConditionCreator.onStateChanged()],
             ),
           ],
@@ -176,7 +176,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeReadOnly,
+              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
               conditions: [ConditionCreator.onStateChanged()],
             ),
           ],
@@ -201,7 +201,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.setValueToEmpty,
+              action: ActionCreator.fromActionType(ActionType.setValueToEmpty),
               conditions: [ConditionCreator.onStateChanged()],
             ),
           ],
@@ -227,7 +227,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeRequired,
+              action: ActionCreator.fromActionType(ActionType.makeRequired),
               conditions: [ConditionCreator.onStateNotChanged()],
             ),
           ],
@@ -251,7 +251,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeReadOnly,
+              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
               conditions: [ConditionCreator.onStateNotChanged()],
             ),
           ],
@@ -275,7 +275,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.setValueToEmpty,
+              action: ActionCreator.fromActionType(ActionType.setValueToEmpty),
               conditions: [ConditionCreator.onStateNotChanged()],
             ),
           ],
@@ -302,7 +302,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeRequired,
+              action: ActionCreator.fromActionType(ActionType.makeRequired),
               conditions: [ConditionCreator.onStateChangedFrom(previousState)],
             ),
           ],
@@ -327,7 +327,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeReadOnly,
+              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
               conditions: [ConditionCreator.onStateChangedFrom(previousState)],
             ),
           ],
@@ -352,7 +352,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.setValueToEmpty,
+              action: ActionCreator.fromActionType(ActionType.setValueToEmpty),
               conditions: [ConditionCreator.onStateChangedFrom(previousState)],
             ),
           ],
@@ -379,7 +379,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeRequired,
+              action: ActionCreator.fromActionType(ActionType.makeRequired),
               conditions: [ConditionCreator.onStateChangedTo(currentState)],
             ),
           ],
@@ -404,7 +404,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeReadOnly,
+              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
               conditions: [ConditionCreator.onStateChangedTo(currentState)],
             ),
           ],
@@ -429,7 +429,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.setValueToEmpty,
+              action: ActionCreator.fromActionType(ActionType.setValueToEmpty),
               conditions: [ConditionCreator.onStateChangedTo(currentState)],
             ),
           ],
@@ -456,7 +456,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeRequired,
+              action: ActionCreator.fromActionType(ActionType.makeRequired),
               conditions: [ConditionCreator.onStateIsNot(stateToCheck)],
             ),
           ],
@@ -481,7 +481,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeReadOnly,
+              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
               conditions: [ConditionCreator.onStateIsNot(stateToCheck)],
             ),
           ],
@@ -506,7 +506,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.setValueToEmpty,
+              action: ActionCreator.fromActionType(ActionType.setValueToEmpty),
               conditions: [ConditionCreator.onStateIsNot(stateToCheck)],
             ),
           ],
@@ -533,7 +533,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeRequired,
+              action: ActionCreator.fromActionType(ActionType.makeRequired),
               conditions: [ConditionCreator.onFieldValueIs(fieldNameWithValue, value)],
             ),
           ],
@@ -561,7 +561,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeReadOnly,
+              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
               conditions: [ConditionCreator.onFieldValueIs(fieldNameWithValue, value)],
             ),
           ],
@@ -589,7 +589,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.setValueToEmpty,
+              action: ActionCreator.fromActionType(ActionType.setValueToEmpty),
               conditions: [ConditionCreator.onFieldValueIs(fieldNameWithValue, value)],
             ),
           ],
@@ -620,7 +620,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeRequired,
+              action: ActionCreator.fromActionType(ActionType.makeRequired),
               conditions: [ConditionCreator.onFieldValueIsNot(fieldNameWithValue, initialValue)],
             ),
           ],
@@ -649,7 +649,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeReadOnly,
+              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
               conditions: [ConditionCreator.onFieldValueIsNot(fieldNameWithValue, initialValue)],
             ),
           ],
@@ -678,7 +678,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.setValueToEmpty,
+              action: ActionCreator.fromActionType(ActionType.setValueToEmpty),
               conditions: [ConditionCreator.onFieldValueIsNot(fieldNameWithValue, initialValue)],
             ),
           ],
@@ -707,7 +707,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeRequired,
+              action: ActionCreator.fromActionType(ActionType.makeRequired),
               conditions: [ConditionCreator.onFieldValueChanged(changedFieldName)],
             ),
           ],
@@ -734,7 +734,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeReadOnly,
+              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
               conditions: [ConditionCreator.onFieldValueChanged(changedFieldName)],
             ),
           ],
@@ -761,7 +761,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.setValueToEmpty,
+              action: ActionCreator.fromActionType(ActionType.setValueToEmpty),
               conditions: [ConditionCreator.onFieldValueChanged(changedFieldName)],
             ),
           ],
@@ -791,7 +791,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeRequired,
+              action: ActionCreator.fromActionType(ActionType.makeRequired),
               conditions: [ConditionCreator.onFieldValueNotChanged(notChangedFieldName)],
             ),
           ],
@@ -819,7 +819,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.makeReadOnly,
+              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
               conditions: [ConditionCreator.onFieldValueNotChanged(notChangedFieldName)],
             ),
           ],
@@ -847,7 +847,7 @@ void main() {
         allRules: {
           _fieldNameToCheck: [
             (
-              action: ActionType.setValueToEmpty,
+              action: ActionCreator.fromActionType(ActionType.setValueToEmpty),
               conditions: [ConditionCreator.onFieldValueNotChanged(notChangedFieldName)],
             ),
           ],
@@ -916,4 +916,8 @@ class ConditionCreator {
 
   static Condition onFieldValueNotChanged(String fieldName) =>
       Condition(conditionType: ConditionType.whenNotChanged, field: fieldName, value: null);
+}
+
+class ActionCreator {
+  static Action fromActionType(ActionType actionType) => Action(actionType: actionType, targetField: '');
 }

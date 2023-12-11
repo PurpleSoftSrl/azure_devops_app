@@ -73,7 +73,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   Future<void> init() async {
-    if (args.id != null) {
+    if (isEditing) {
       // edit existent work item
       final res = await apiService.getWorkItemDetail(projectName: args.project!, workItemId: args.id!);
       if (!res.isError) {
@@ -85,19 +85,6 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     if (!types.isError) {
       allWorkItemTypes.addAll(types.data!.values.expand((ts) => ts).toSet());
       allProjectsWorkItemTypes = types.data!;
-
-      if (!isEditing) {
-        final allStatesToAdd = <WorkItemState>{};
-
-        for (final entry in apiService.workItemStates.values) {
-          final states = entry.values.expand((v) => v);
-          allStatesToAdd.addAll(states);
-        }
-
-        final sortedStates = allStatesToAdd.sorted((a, b) => a.name.compareTo(b.name));
-
-        allWorkItemStates.addAll(sortedStates);
-      }
     }
 
     if (newWorkItemType != WorkItemType.all) await _getTypeFormFields();
@@ -330,6 +317,13 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
           ..popupMenuKey = field.value.popupMenuKey
           ..text = field.value.text,
     };
+
+    if (isEditing) {
+      allWorkItemStates =
+          _getTransitionableStates(project: newWorkItemProject.name!, workItemType: newWorkItemType.name);
+    }
+
+    _checkRules();
   }
 
   String? _checkRequiredFields() {
@@ -512,6 +506,12 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
           formFields[refName]!.controller.text = '';
         }
       }
+    }
+
+    final disallowedStates = checker.getDisallowedStates();
+
+    if (disallowedStates.isNotEmpty) {
+      allWorkItemStates.removeWhere((s) => disallowedStates.contains(s.name));
     }
   }
 

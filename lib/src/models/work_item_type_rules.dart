@@ -46,15 +46,18 @@ class Action {
   Action({
     required this.actionType,
     required this.targetField,
+    this.value,
   });
 
   factory Action.fromJson(Map<String, dynamic> json) => Action(
         actionType: ActionType.fromString(json['actionType']?.toString() ?? ''),
         targetField: json['targetField'] as String,
+        value: json['value'] as String?,
       );
 
   final ActionType actionType;
   final String targetField;
+  final String? value;
 
   @override
   String toString() => 'Action(actionType: $actionType, targetField: $targetField)';
@@ -64,6 +67,7 @@ enum ActionType {
   makeReadOnly,
   makeRequired,
   setValueToEmpty,
+  disallowValue,
   notSupported;
 
   static ActionType fromString(String str) {
@@ -74,6 +78,8 @@ enum ActionType {
         return ActionType.makeRequired;
       case 'setValueToEmpty':
         return ActionType.setValueToEmpty;
+      case 'disallowValue':
+        return ActionType.disallowValue;
       default:
         return ActionType.notSupported;
     }

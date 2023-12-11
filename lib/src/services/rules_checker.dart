@@ -40,12 +40,19 @@ class RulesChecker {
     return (readOnly: readOnly, required: required, makeEmpty: makeEmpty);
   }
 
+  /// Returns the list of states that are disallowed according to the rules.
+  /// This handles the 'Restrict the transition to state' rule.
+  List<String> getDisallowedStates() {
+    final field = WorkItemField(referenceName: 'System.State', name: 'State');
+    return _getDisallowedStates(field);
+  }
+
   /// Checks whether this field should be read-only according to the rules.
   bool _checkIfIsReadOnly(WorkItemField field) {
     final rules = allRules[field.referenceName] ?? [];
     if (rules.isEmpty) return false;
 
-    final makeReadOnlyActions = rules.where((r) => r.action == ActionType.makeReadOnly).toList();
+    final makeReadOnlyActions = rules.where((r) => r.action.actionType == ActionType.makeReadOnly).toList();
     if (makeReadOnlyActions.isEmpty) return false;
 
     return _checkIfMatchesRule(makeReadOnlyActions);
@@ -56,7 +63,7 @@ class RulesChecker {
     final rules = allRules[field.referenceName] ?? [];
     if (rules.isEmpty) return false;
 
-    final makeRequiredActions = rules.where((r) => r.action == ActionType.makeRequired).toList();
+    final makeRequiredActions = rules.where((r) => r.action.actionType == ActionType.makeRequired).toList();
     if (makeRequiredActions.isEmpty) return false;
 
     return _checkIfMatchesRule(makeRequiredActions);
@@ -67,15 +74,33 @@ class RulesChecker {
     final rules = allRules[field.referenceName] ?? [];
     if (rules.isEmpty) return false;
 
-    final makeEmptyActions = rules.where((r) => r.action == ActionType.setValueToEmpty).toList();
+    final makeEmptyActions = rules.where((r) => r.action.actionType == ActionType.setValueToEmpty).toList();
     if (makeEmptyActions.isEmpty) return false;
 
     return _checkIfMatchesRule(makeEmptyActions);
   }
 
+  List<String> _getDisallowedStates(WorkItemField field) {
+    final rules = allRules[field.referenceName] ?? [];
+    if (rules.isEmpty) return [];
+
+    final disallowValueActions = rules.where((r) => r.action.actionType == ActionType.disallowValue).toList();
+    if (disallowValueActions.isEmpty) return [];
+
+    final disallowedStates = <String>[];
+
+    for (final action in disallowValueActions) {
+      final match = _checkIfMatchesRule([action]);
+      final targetState = action.action.value;
+      if (match && targetState != null) disallowedStates.add(targetState);
+    }
+
+    return disallowedStates;
+  }
+
   /// Checks if any of the [rules] should be applied
   bool _checkIfMatchesRule(List<WorkItemRule> rules) {
-    var isReadOnly = false;
+    var matched = false;
 
     for (final rule in rules) {
       final conditions = rule.conditions;
@@ -83,17 +108,17 @@ class RulesChecker {
 
       if (conditions.length == 1) {
         final cond = conditions.single;
-        isReadOnly |= _checkSingleRule(cond);
+        matched |= _checkSingleRule(cond);
         continue;
       }
 
       // we have 2 conditions
       final firstCond = conditions.first;
       final secondCond = conditions.last;
-      isReadOnly |= _checkSingleRule(firstCond) && _checkSingleRule(secondCond);
+      matched |= _checkSingleRule(firstCond) && _checkSingleRule(secondCond);
     }
 
-    return isReadOnly;
+    return matched;
   }
 
   bool _checkSingleRule(Condition cond) {
