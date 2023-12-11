@@ -1,3 +1,16 @@
+## 2.0.2 - 2023-12-11
+- rules_checker: handle disallowed states
+- handle work item rule condition with null field
+- fix github workflow
+- format files
+- add github workflow
+- Pipeline logs page and member detail page tests (#16)
+- sentry: improve error logging
+- choose_projects: make sure that there are selected projects before popping page
+- fix file_diff deserialization error
+- fix set work item default value if field is read-only in edit mode
+- settings: show changelog
+
 ## 2.0.0 - 2023-12-05
 - filters: add user search field in users filters
 - projects: show all teams in a project
@@ -431,4 +444,4 @@
 
 ## 1.0.0
 - First release
-- Initial commit  
+- Initial commit
