@@ -19,6 +19,7 @@ import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/team.dart';
+import 'package:azure_devops/src/models/team_member.dart' as t;
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/work_item_fields.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
@@ -159,13 +160,43 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<GitRepository>>> getProjectRepositories({required String projectName}) {
-    throw UnimplementedError();
+  Future<ApiResponse<List<GitRepository>>> getProjectRepositories({required String projectName}) async {
+    return ApiResponse.ok(<GitRepository>[]);
   }
 
   @override
-  Future<ApiResponse<List<TeamWithMembers>>> getProjectTeams({required String projectId}) {
-    throw UnimplementedError();
+  Future<ApiResponse<List<TeamWithMembers>>> getProjectTeams({required String projectId}) async {
+    final team = Team(
+      id: 'team id',
+      name: 'team name',
+      description: 'team description',
+      projectName: 'team projectName',
+      projectId: projectId,
+    );
+    final member1 = t.TeamMember(
+      isTeamAdmin: false,
+      identity: t.Identity(
+        displayName: 'member_1_name',
+        id: 'member 1 id',
+        uniqueName: 'aabbcc',
+        imageUrl: null,
+        descriptor: '',
+      ),
+    );
+    final member2 = t.TeamMember(
+      isTeamAdmin: true,
+      identity: t.Identity(
+        displayName: 'member_2_name',
+        id: 'member 2 id',
+        uniqueName: 'ddeeff',
+        imageUrl: null,
+        descriptor: null,
+      ),
+    );
+    final x = [member1, member2];
+    final teamsWithMembers1 = <TeamWithMembers>[(members: x, team: team)];
+
+    return ApiResponse.ok(teamsWithMembers1);
   }
 
   @override
@@ -501,15 +532,21 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<ProjectDetail>> getProject({required String projectName}) {
-    throw UnimplementedError();
+  Future<ApiResponse<ProjectDetail>> getProject({required String projectName}) async {
+    final data = ProjectDetail(
+      project: Project(
+        id: 'project id',
+        name: 'project name',
+        description: 'description',
+        url: '',
+      ),
+    );
+    return ApiResponse.ok(data);
   }
 
   @override
-  Future<ApiResponse<List<LanguageBreakdown>>> getProjectLanguages({
-    required String projectName,
-  }) {
-    throw UnimplementedError();
+  Future<ApiResponse<List<LanguageBreakdown>>> getProjectLanguages({required String projectName}) async {
+    return ApiResponse.ok([LanguageBreakdown(name: 'en-EN')]);
   }
 
   @override

@@ -27,7 +27,7 @@ import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/team.dart';
-import 'package:azure_devops/src/models/team_member.dart';
+import 'package:azure_devops/src/models/team_member.dart' show GetTeamMembersResponse;
 import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/user_entitlements.dart';
