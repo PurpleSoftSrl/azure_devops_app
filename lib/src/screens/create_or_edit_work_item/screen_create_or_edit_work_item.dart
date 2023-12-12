@@ -60,30 +60,32 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
               height: 10,
             ),
           ],
-          Row(
-            children: [
-              Text(
-                'Type:',
-                style: style,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              WorkItemTypeFilterMenu(
-                title: 'Type',
-                values: ctrl.projectWorkItemTypes,
-                currentFilter: ctrl.newWorkItemType,
-                formatLabel: (t) =>
-                    [null, 'system'].contains(t.customization) ? t.name : '${t.name} (${t.customization})',
-                onSelected: ctrl.setType,
-                isDefaultFilter: ctrl.newWorkItemType == WorkItemType.all,
-                widgetBuilder: (t) => WorkItemTypeFilter(type: t),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
+          if (ctrl.newWorkItemProject != ctrl.projectAll) ...[
+            Row(
+              children: [
+                Text(
+                  'Type:',
+                  style: style,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                WorkItemTypeFilterMenu(
+                  title: 'Type',
+                  values: ctrl.projectWorkItemTypes,
+                  currentFilter: ctrl.newWorkItemType,
+                  formatLabel: (t) =>
+                      [null, 'system'].contains(t.customization) ? t.name : '${t.name} (${t.customization})',
+                  onSelected: ctrl.setType,
+                  isDefaultFilter: ctrl.newWorkItemType == WorkItemType.all,
+                  widgetBuilder: (t) => WorkItemTypeFilter(type: t),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+          ],
           if (ctrl.isEditing) ...[
             Row(
               children: [
