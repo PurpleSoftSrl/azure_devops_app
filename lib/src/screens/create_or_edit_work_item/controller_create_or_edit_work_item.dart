@@ -89,6 +89,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     if (newWorkItemType != WorkItemType.all) await _getTypeFormFields();
 
+    if (args.project != null) {
+      await setProject(newWorkItemProject, force: true);
+    }
+
     _refreshPage();
   }
 
@@ -151,8 +155,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     _setHasChanged();
   }
 
-  Future<void> setProject(Project project) async {
-    if (project == newWorkItemProject) return;
+  Future<void> setProject(Project project, {bool force = false}) async {
+    if (project == newWorkItemProject && !force) return;
 
     newWorkItemProject = project;
 
@@ -165,7 +169,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       }
     }
 
-    await _getTypeFormFields();
+    if (newWorkItemType != WorkItemType.all) await _getTypeFormFields();
 
     _setHasChanged();
   }
