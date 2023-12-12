@@ -14,6 +14,11 @@ class _StatsChip extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: Chip(
+        // padding: EdgeInsets.only(left: 10, right: 10),
+        // labelPadding: EdgeInsets.zero,
+        // shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
+        // side: BorderSide(color: Colors.transparent),
+        // backgroundColor: Colors.grey.shade300, TODO remove
         label: Text.rich(
           TextSpan(
             children: [
