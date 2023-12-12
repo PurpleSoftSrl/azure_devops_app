@@ -35,7 +35,7 @@ const _darkColorScheme = ColorScheme(
   error: Colors.red,
   onError: Color(0xFFF3F3F4),
   brightness: Brightness.dark,
-  tertiaryContainer: Color.fromRGBO(58, 58, 58, 1),
+  tertiaryContainer: Color.fromRGBO(73, 73, 73, 1),
 );
 
 class AppTheme {
