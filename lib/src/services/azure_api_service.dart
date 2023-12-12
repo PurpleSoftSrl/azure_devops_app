@@ -929,7 +929,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
       if (isInheritedType) {
         // inherited types have a different name format
-        refName = '${projectProcess.name}.${workItemName.replaceAll(' ', '')}';
+        refName = '${projectProcess.name.replaceAll(' ', '')}.${workItemName.replaceAll(' ', '')}';
       }
     }
 
