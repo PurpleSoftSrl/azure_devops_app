@@ -1,3 +1,11 @@
+## 2.0.2 - 2023-12-12
+- fix wrong work item types shown when project already selected 
+- handle inherited processes with spaces in the name 
+- Project detail test (#18) 
+- Fixed splash screen (#19) 
+- File detail page and Repository detail page tests implementation (#17) 
+- fix changelog 
+
 ## 2.0.1 - 2023-12-11
 - rules_checker: handle disallowed states
 - handle work item rule condition with null field
