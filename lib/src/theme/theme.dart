@@ -18,6 +18,7 @@ const _lightColorScheme = ColorScheme(
   error: Colors.red,
   onError: Color(0xFFF3F3F4),
   onSurface: Color.fromRGBO(154, 154, 154, 1),
+  tertiaryContainer: Color.fromRGBO(220, 220, 220, 1),
 );
 
 const _darkColorScheme = ColorScheme(
@@ -34,6 +35,7 @@ const _darkColorScheme = ColorScheme(
   error: Colors.red,
   onError: Color(0xFFF3F3F4),
   brightness: Brightness.dark,
+  tertiaryContainer: Color.fromRGBO(58, 58, 58, 1),
 );
 
 class AppTheme {
@@ -195,7 +197,7 @@ class AppTheme {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
       side: BorderSide(color: Colors.transparent),
       labelStyle: textTheme.labelSmall!.copyWith(color: colorScheme.onBackground),
-      backgroundColor: Colors.grey.shade300,
+      backgroundColor: colorScheme.tertiaryContainer,
     );
   }
 
