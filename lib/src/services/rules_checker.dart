@@ -153,12 +153,12 @@ class RulesChecker {
     }
 
     if (cond.isFieldValueEquals(formFields)) {
-      // rule on field value equals
+      // rule on field value equals (also on field value is not defined)
       return true;
     }
 
     if (cond.isFieldValueNotEquals(formFields)) {
-      // rule on field value not equals
+      // rule on field value not equals (also on field value is defined)
       return true;
     }
 

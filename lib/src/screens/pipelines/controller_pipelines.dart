@@ -79,11 +79,11 @@ class _PipelinesController with FilterMixin {
     final now = DateTime.now();
 
     final res = await apiService.getRecentPipelines(
-      project: projectFilter.name == projectAll.name ? null : projectFilter,
+      projects: isDefaultProjectsFilter ? null : projectsFilter,
       definition: args?.definition,
       result: resultFilter,
       status: statusFilter,
-      triggeredBy: userFilter.displayName == userAll.displayName ? null : userFilter.mailAddress,
+      triggeredBy: isDefaultUsersFilter ? null : usersFilter.map((u) => u.mailAddress ?? '').toSet(),
     );
 
     var pipes = res.data ?? [];
@@ -107,11 +107,11 @@ class _PipelinesController with FilterMixin {
     await init();
   }
 
-  void filterByProject(Project proj) {
-    if (proj.id == projectFilter.id) return;
+  void filterByProjects(Set<Project> projects) {
+    if (projects == projectsFilter) return;
 
     pipelines.value = null;
-    projectFilter = proj.name! == projectAll.name ? projectAll : proj;
+    projectsFilter = projects;
     _getData();
   }
 
@@ -131,11 +131,11 @@ class _PipelinesController with FilterMixin {
     _getData();
   }
 
-  void filterByUser(GraphUser u) {
-    if (u.mailAddress == userFilter.mailAddress) return;
+  void filterByUsers(Set<GraphUser> users) {
+    if (users == usersFilter) return;
 
     pipelines.value = null;
-    userFilter = u;
+    usersFilter = users;
     _getData();
   }
 
@@ -143,9 +143,9 @@ class _PipelinesController with FilterMixin {
     pipelines.value = null;
     resultFilter = PipelineResult.all;
     statusFilter = PipelineStatus.all;
-    userFilter = userAll;
+    usersFilter.clear();
 
-    if (args?.definition == null) projectFilter = projectAll;
+    if (args?.definition == null) projectsFilter.clear();
 
     init();
   }

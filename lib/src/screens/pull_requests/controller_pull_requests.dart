@@ -33,9 +33,9 @@ class _PullRequestsController with FilterMixin {
   final pullRequests = ValueNotifier<ApiResponse<List<PullRequest>?>?>(null);
   List<PullRequest> allPullRequests = [];
 
-  PullRequestState statusFilter = PullRequestState.all;
+  PullRequestStatus statusFilter = PullRequestStatus.all;
 
-  late GraphUser reviewerFilter = userAll;
+  Set<GraphUser> reviewersFilter = {};
 
   final isSearching = ValueNotifier<bool>(false);
   String? _currentSearchQuery;
@@ -58,7 +58,7 @@ class _PullRequestsController with FilterMixin {
     await init();
   }
 
-  void filterByStatus(PullRequestState state) {
+  void filterByStatus(PullRequestStatus state) {
     if (state == statusFilter) return;
 
     pullRequests.value = null;
@@ -66,36 +66,36 @@ class _PullRequestsController with FilterMixin {
     _getData();
   }
 
-  void filterByUser(GraphUser u) {
-    if (u.mailAddress == userFilter.mailAddress) return;
+  void filterByUsers(Set<GraphUser> users) {
+    if (users == usersFilter) return;
 
     pullRequests.value = null;
-    userFilter = u;
+    usersFilter = users;
     _getData();
   }
 
-  void filterByReviewer(GraphUser u) {
-    if (u.mailAddress == reviewerFilter.mailAddress) return;
+  void filterByReviewers(Set<GraphUser> users) {
+    if (users == reviewersFilter) return;
 
     pullRequests.value = null;
-    reviewerFilter = u;
+    reviewersFilter = users;
     _getData();
   }
 
-  void filterByProject(Project proj) {
-    if (proj.id == projectFilter.id) return;
+  void filterByProjects(Set<Project> projects) {
+    if (projects == projectsFilter) return;
 
     pullRequests.value = null;
-    projectFilter = proj.name! == projectAll.name ? projectAll : proj;
+    projectsFilter = projects;
     _getData();
   }
 
   Future<void> _getData() async {
     final res = await apiService.getPullRequests(
-      filter: statusFilter,
-      creator: userFilter.displayName == userAll.displayName ? null : userFilter,
-      project: projectFilter.name == projectAll.name ? null : projectFilter,
-      reviewer: reviewerFilter.displayName == userAll.displayName ? null : reviewerFilter,
+      status: statusFilter,
+      creators: isDefaultUsersFilter ? null : usersFilter,
+      projects: isDefaultProjectsFilter ? null : projectsFilter,
+      reviewers: reviewersFilter.isEmpty ? null : reviewersFilter,
     );
 
     pullRequests.value = res..data?.sort((a, b) => (b.creationDate).compareTo(a.creationDate));
@@ -108,10 +108,10 @@ class _PullRequestsController with FilterMixin {
 
   void resetFilters() {
     pullRequests.value = null;
-    projectFilter = projectAll;
-    statusFilter = PullRequestState.all;
-    userFilter = userAll;
-    reviewerFilter = userAll;
+    projectsFilter.clear();
+    statusFilter = PullRequestStatus.all;
+    usersFilter.clear();
+    reviewersFilter.clear();
 
     init();
   }

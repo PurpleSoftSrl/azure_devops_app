@@ -7,9 +7,15 @@ import 'package:collection/collection.dart';
 mixin FilterMixin {
   final projectAll = Project.all();
   late Project projectFilter = projectAll;
+  Set<Project> projectsFilter = {};
+
+  bool get isDefaultProjectsFilter => projectsFilter.isEmpty;
 
   final userAll = GraphUser.all();
   late GraphUser userFilter = userAll;
+  Set<GraphUser> usersFilter = {};
+
+  bool get isDefaultUsersFilter => usersFilter.isEmpty;
 
   bool hasManyUsers(AzureApiService apiService) => getSortedUsers(apiService, withUserAll: false).length > 10;
 
@@ -51,8 +57,8 @@ mixin FilterMixin {
 
   bool hasManyProjects(StorageService storageService) => storageService.getChosenProjects().length > 10;
 
-  List<Project> getProjects(StorageService storageService) {
-    return [projectAll, ...storageService.getChosenProjects()];
+  List<Project> getProjects(StorageService storageService, {bool withProjectAll = true}) {
+    return [if (withProjectAll) projectAll, ...storageService.getChosenProjects()];
   }
 
   List<Project> searchProject(String query, StorageService storageService) {

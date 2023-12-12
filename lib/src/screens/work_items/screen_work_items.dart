@@ -26,43 +26,43 @@ class _WorkItemsScreen extends StatelessWidget {
         return FiltersRow(
           resetFilters: ctrl.resetFilters,
           filters: [
-            FilterMenu<Project>(
-              title: 'Project',
-              values: ctrl.getProjects(ctrl.storageService),
-              currentFilter: ctrl.projectFilter,
-              onSelected: ctrl.filterByProject,
+            FilterMenu<Project>.multiple(
+              title: 'Projects',
+              values: ctrl.getProjects(ctrl.storageService, withProjectAll: false),
+              currentFilters: ctrl.projectsFilter,
+              onSelectedMultiple: ctrl.filterByProjects,
               formatLabel: (p) => p.name!,
-              isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
+              isDefaultFilter: ctrl.isDefaultProjectsFilter,
               widgetBuilder: (p) => ProjectFilterWidget(project: p),
               onSearchChanged:
                   ctrl.hasManyProjects(ctrl.storageService) ? (s) => ctrl.searchProject(s, ctrl.storageService) : null,
             ),
-            FilterMenu<WorkItemState>(
-              title: 'Status',
+            FilterMenu<WorkItemState>.multiple(
+              title: 'States',
               values: ctrl.allWorkItemStates,
               formatLabel: (t) => t.name,
-              currentFilter: ctrl.statusFilter,
-              onSelected: ctrl.filterByStatus,
-              isDefaultFilter: ctrl.statusFilter == WorkItemState.all,
+              currentFilters: ctrl.statesFilter,
+              onSelectedMultiple: ctrl.filterByStates,
+              isDefaultFilter: ctrl.isDefaultStateFilter,
               widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
             ),
-            WorkItemTypeFilterMenu(
-              title: 'Type',
+            WorkItemTypeFilterMenu.multiple(
+              title: 'Types',
               values: ctrl.allWorkItemTypes,
               formatLabel: (t) =>
                   [null, 'system'].contains(t.customization) ? t.name : '${t.name} (${t.customization})',
-              currentFilter: ctrl.typeFilter,
-              onSelected: ctrl.filterByType,
-              isDefaultFilter: ctrl.typeFilter.name == 'All',
+              currentFilters: ctrl.typesFilter,
+              onSelectedMultiple: ctrl.filterByTypes,
+              isDefaultFilter: ctrl.typesFilter.isEmpty,
               widgetBuilder: (t) => WorkItemTypeFilter(type: t),
             ),
-            FilterMenu<GraphUser>(
+            FilterMenu<GraphUser>.multiple(
               title: 'Assigned to',
               values: ctrl.getAssignees(),
-              onSelected: ctrl.filterByUser,
+              onSelectedMultiple: ctrl.filterByUsers,
               formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.apiService),
-              isDefaultFilter: ctrl.userFilter == ctrl.userAll,
-              currentFilter: ctrl.userFilter,
+              isDefaultFilter: ctrl.isDefaultUsersFilter,
+              currentFilters: ctrl.usersFilter,
               widgetBuilder: (u) => UserFilterWidget(user: u),
               onSearchChanged: ctrl.hasManyUsers(ctrl.apiService) ? ctrl.searchAssignee : null,
             ),

@@ -124,11 +124,11 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<List<Pipeline>>> getRecentPipelines({
-    Project? project,
+    Set<Project>? projects,
     int? definition,
     PipelineResult result = PipelineResult.all,
     PipelineStatus status = PipelineStatus.all,
-    String? triggeredBy,
+    Set<String>? triggeredBy,
   }) async {
     final emptyPipe = Pipeline.empty();
     final firstPipe = emptyPipe
@@ -141,7 +141,11 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<Commit>>> getRecentCommits({Project? project, String? author, int? maxCount}) async {
+  Future<ApiResponse<List<Commit>>> getRecentCommits({
+    Set<Project>? projects,
+    Set<String>? authors,
+    int? maxCount,
+  }) async {
     final emptyCommit = Commit.empty();
     final firstCommit = emptyCommit.copyWithDateAndAuthorName(DateTime(2000, 2, 3), 'Test User 1');
     final secondCommit = emptyCommit.copyWithDateAndAuthorName(DateTime(2000, 2, 5), 'Test User 2');
@@ -212,10 +216,10 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
-    required PullRequestState filter,
-    GraphUser? creator,
-    Project? project,
-    GraphUser? reviewer,
+    required PullRequestStatus status,
+    Set<GraphUser>? creators,
+    Set<Project>? projects,
+    Set<GraphUser>? reviewers,
   }) async {
     final emptyPullRequest = PullRequest.empty();
     final firstItem = emptyPullRequest.copyWith(
@@ -280,10 +284,10 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
-    Project? project,
-    WorkItemType? type,
-    WorkItemState? status,
-    GraphUser? assignedTo,
+    Set<Project>? projects,
+    Set<WorkItemType>? types,
+    Set<WorkItemState>? states,
+    Set<GraphUser>? assignedTo,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
   }) async {
@@ -464,7 +468,7 @@ class AzureApiServiceMock implements AzureApiService {
       pr.PullRequestWithDetails(
         pr: PullRequest(
           pullRequestId: 1234,
-          status: PullRequestState.active,
+          status: PullRequestStatus.active,
           creationDate: DateTime.now(),
           title: 'Test pull request title',
           sourceRefName: 'dev',
@@ -522,7 +526,7 @@ class AzureApiServiceMock implements AzureApiService {
     required String projectName,
     required String repositoryId,
     required int id,
-    PullRequestState? status,
+    PullRequestStatus? status,
     bool? isDraft,
     String? commitId,
     bool? autocomplete,

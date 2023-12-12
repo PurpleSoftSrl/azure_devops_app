@@ -24,13 +24,13 @@ class _PipelinesScreen extends StatelessWidget {
           resetFilters: ctrl.resetFilters,
           filters: [
             if (ctrl.args?.definition == null)
-              FilterMenu<Project>(
-                title: 'Project',
-                values: ctrl.getProjects(ctrl.storageService),
-                currentFilter: ctrl.projectFilter,
-                onSelected: ctrl.filterByProject,
+              FilterMenu<Project>.multiple(
+                title: 'Projects',
+                values: ctrl.getProjects(ctrl.storageService, withProjectAll: false),
+                currentFilters: ctrl.projectsFilter,
+                onSelectedMultiple: ctrl.filterByProjects,
                 formatLabel: (p) => p.name!,
-                isDefaultFilter: ctrl.projectFilter == ctrl.projectAll,
+                isDefaultFilter: ctrl.isDefaultProjectsFilter,
                 widgetBuilder: (p) => ProjectFilterWidget(project: p),
                 onSearchChanged: ctrl.hasManyProjects(ctrl.storageService)
                     ? (s) => ctrl.searchProject(s, ctrl.storageService)
@@ -53,13 +53,13 @@ class _PipelinesScreen extends StatelessWidget {
                 isDefaultFilter: ctrl.statusFilter == PipelineStatus.all,
                 widgetBuilder: (s) => s.icon,
               ),
-            FilterMenu<GraphUser>(
+            FilterMenu<GraphUser>.multiple(
               title: 'Triggered by',
-              values: ctrl.getSortedUsers(ctrl.apiService),
-              currentFilter: ctrl.userFilter,
-              onSelected: ctrl.filterByUser,
+              values: ctrl.getSortedUsers(ctrl.apiService, withUserAll: false),
+              currentFilters: ctrl.usersFilter,
+              onSelectedMultiple: ctrl.filterByUsers,
               formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.apiService),
-              isDefaultFilter: ctrl.userFilter == ctrl.userAll,
+              isDefaultFilter: ctrl.isDefaultUsersFilter,
               widgetBuilder: (u) => UserFilterWidget(user: u),
               onSearchChanged: ctrl.hasManyUsers(ctrl.apiService) ? (s) => ctrl.searchUser(s, ctrl.apiService) : null,
             ),

@@ -50,12 +50,14 @@ class DevOpsSearchField extends StatefulWidget {
     required this.onResetSearch,
     required this.hint,
     this.initialValue,
+    this.autofocus = true,
   });
 
   final void Function(String) onChanged;
   final void Function() onResetSearch;
   final String hint;
   final String? initialValue;
+  final bool autofocus;
 
   @override
   State<DevOpsSearchField> createState() => _DevOpsSearchFieldState();
@@ -67,7 +69,7 @@ class _DevOpsSearchFieldState extends State<DevOpsSearchField> {
   @override
   Widget build(BuildContext context) {
     return DevOpsFormField(
-      autofocus: true,
+      autofocus: widget.autofocus,
       onChanged: (s) {
         widget.onChanged.call(s);
         controller.text = s;

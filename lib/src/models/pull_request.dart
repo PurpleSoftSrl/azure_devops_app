@@ -52,7 +52,7 @@ class PullRequest {
         repository: Repository.fromJson(json['repository'] as Map<String, dynamic>),
         pullRequestId: json['pullRequestId'] as int,
         codeReviewId: json['codeReviewId'] as int,
-        status: PullRequestState.fromString(json['status'] as String),
+        status: PullRequestStatus.fromString(json['status'] as String),
         createdBy: CreatedBy.fromJson(json['createdBy'] as Map<String, dynamic>),
         creationDate: DateTime.parse(json['creationDate']!.toString()).toLocal(),
         title: json['title'] as String,
@@ -76,7 +76,7 @@ class PullRequest {
   final Repository repository;
   final int pullRequestId;
   final int codeReviewId;
-  final PullRequestState status;
+  final PullRequestStatus status;
   final CreatedBy createdBy;
   final DateTime creationDate;
   final String title;
@@ -106,7 +106,7 @@ class PullRequest {
         ),
         pullRequestId: -1,
         codeReviewId: -1,
-        status: PullRequestState.notSet,
+        status: PullRequestStatus.notSet,
         createdBy: CreatedBy(
           displayName: '',
           url: '',
@@ -180,7 +180,7 @@ class PullRequest {
   PullRequest copyWith({
     Repository? repository,
     int? pullRequestId,
-    PullRequestState? status,
+    PullRequestStatus? status,
     CreatedBy? createdBy,
     DateTime? creationDate,
     String? title,
@@ -339,55 +339,55 @@ class RepositoryProject {
   }
 }
 
-enum PullRequestState {
+enum PullRequestStatus {
   all,
   abandoned,
   active,
   completed,
   notSet;
 
-  static PullRequestState fromString(String str) {
+  static PullRequestStatus fromString(String str) {
     switch (str) {
       case 'abandoned':
-        return PullRequestState.abandoned;
+        return PullRequestStatus.abandoned;
       case 'active':
-        return PullRequestState.active;
+        return PullRequestStatus.active;
       case 'completed':
-        return PullRequestState.completed;
+        return PullRequestStatus.completed;
       case 'notSet':
-        return PullRequestState.notSet;
+        return PullRequestStatus.notSet;
       case 'all':
-        return PullRequestState.all;
+        return PullRequestStatus.all;
       default:
-        return PullRequestState.all;
+        return PullRequestStatus.all;
     }
   }
 
   @override
   String toString() {
     switch (this) {
-      case PullRequestState.abandoned:
+      case PullRequestStatus.abandoned:
         return 'Abandoned';
-      case PullRequestState.active:
+      case PullRequestStatus.active:
         return 'Active';
-      case PullRequestState.completed:
+      case PullRequestStatus.completed:
         return 'Completed';
-      case PullRequestState.notSet:
+      case PullRequestStatus.notSet:
         return 'None';
-      case PullRequestState.all:
+      case PullRequestStatus.all:
         return 'All';
     }
   }
 
   Icon get icon {
     switch (this) {
-      case PullRequestState.abandoned:
+      case PullRequestStatus.abandoned:
         return Icon(Icons.circle, color: color, size: 15);
-      case PullRequestState.active:
+      case PullRequestStatus.active:
         return Icon(Icons.circle, color: color, size: 15);
-      case PullRequestState.completed:
+      case PullRequestStatus.completed:
         return Icon(Icons.circle, color: color, size: 15);
-      case PullRequestState.notSet:
+      case PullRequestStatus.notSet:
         return Icon(Icons.circle, color: color, size: 15);
       default:
         return Icon(Icons.circle, color: color, size: 15);
@@ -396,13 +396,13 @@ enum PullRequestState {
 
   Color get color {
     switch (this) {
-      case PullRequestState.abandoned:
+      case PullRequestStatus.abandoned:
         return Color.fromRGBO(178, 178, 178, 1);
-      case PullRequestState.active:
+      case PullRequestStatus.active:
         return Color.fromRGBO(52, 120, 198, 1);
-      case PullRequestState.completed:
+      case PullRequestStatus.completed:
         return Color.fromRGBO(82, 152, 66, 1);
-      case PullRequestState.notSet:
+      case PullRequestStatus.notSet:
         return Colors.transparent;
       default:
         return Colors.transparent;

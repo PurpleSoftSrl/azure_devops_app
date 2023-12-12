@@ -96,10 +96,10 @@ abstract class AzureApiService {
   Future<ApiResponse<ProjectDetail>> getProject({required String projectName});
 
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
-    Project? project,
-    WorkItemType? type,
-    WorkItemState? status,
-    GraphUser? assignedTo,
+    Set<Project>? projects,
+    Set<WorkItemType>? types,
+    Set<WorkItemState>? states,
+    Set<GraphUser>? assignedTo,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
   });
@@ -175,10 +175,10 @@ abstract class AzureApiService {
   Future<ApiResponse<bool>> deleteWorkItem({required String projectName, required int id, required String type});
 
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
-    required PullRequestState filter,
-    GraphUser? creator,
-    Project? project,
-    GraphUser? reviewer,
+    required PullRequestStatus status,
+    Set<GraphUser>? creators,
+    Set<Project>? projects,
+    Set<GraphUser>? reviewers,
   });
 
   Future<ApiResponse<List<GitRepository>>> getProjectRepositories({required String projectName});
@@ -206,7 +206,11 @@ abstract class AzureApiService {
     bool previousChange,
   });
 
-  Future<ApiResponse<List<Commit>>> getRecentCommits({Project? project, String? author, int? maxCount});
+  Future<ApiResponse<List<Commit>>> getRecentCommits({
+    Set<Project>? projects,
+    Set<String>? authors,
+    int? maxCount,
+  });
 
   Future<TagsData?> getTags(List<Commit> commits);
 
@@ -224,11 +228,11 @@ abstract class AzureApiService {
   });
 
   Future<ApiResponse<List<Pipeline>>> getRecentPipelines({
-    Project? project,
+    Set<Project>? projects,
     int? definition,
     PipelineResult result,
     PipelineStatus status,
-    String? triggeredBy,
+    Set<String>? triggeredBy,
   });
 
   Future<ApiResponse<PipelineWithTimeline>> getPipeline({required String projectName, required int id});
@@ -276,7 +280,7 @@ abstract class AzureApiService {
     required String projectName,
     required String repositoryId,
     required int id,
-    PullRequestState? status,
+    PullRequestStatus? status,
     bool? isDraft,
     String? commitId,
     bool? autocomplete,
@@ -732,43 +736,37 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   @override
   Future<ApiResponse<List<WorkItem>>> getWorkItems({
-    Project? project,
-    WorkItemType? type,
-    WorkItemState? status,
-    GraphUser? assignedTo,
+    Set<Project>? projects,
+    Set<WorkItemType>? types,
+    Set<WorkItemState>? states,
+    Set<GraphUser>? assignedTo,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
   }) async {
     final query = <String>[];
-    if (project != null) {
-      query.add(" [System.TeamProject] = '${project.name}' ");
-    } else {
-      final projectsToSearch = (_chosenProjects ?? _projects).toList();
 
-      if (projectsToSearch.length == 1) {
-        query.add(" [System.TeamProject] = '${projectsToSearch.first.name}' ");
-      } else {
-        var projectsQuery = '';
+    final typesQuery = _getMultipleFilter(
+      '[System.TeamProject]',
+      projects ?? (_chosenProjects ?? _projects),
+      (t) => t.name ?? '',
+    );
+    query.add(typesQuery);
 
-        for (var i = 0; i < projectsToSearch.length; i++) {
-          if (i == 0) {
-            projectsQuery += " ( [System.TeamProject] = '${projectsToSearch[i].name}' OR ";
-          } else if (i == projectsToSearch.length - 1) {
-            projectsQuery += " [System.TeamProject] = '${projectsToSearch[i].name}' ) ";
-          } else {
-            projectsQuery += " [System.TeamProject] = '${projectsToSearch[i].name}' OR ";
-          }
-        }
-
-        query.add(projectsQuery);
-      }
+    if (types != null) {
+      final typesQuery = _getMultipleFilter('[System.WorkItemType]', types.toList(), (t) => t.name);
+      query.add(typesQuery);
     }
 
-    if (type != null) query.add(" [System.WorkItemType] = '${type.name}' ");
+    if (states != null) {
+      final statesQuery = _getMultipleFilter('[System.State]', states.toList(), (s) => s.name);
+      query.add(statesQuery);
+    }
 
-    if (status != null) query.add(" [System.State] = '${status.name}' ");
-
-    if (assignedTo != null) query.add(" [System.AssignedTo] = '${assignedTo.mailAddress}' ");
+    if (assignedTo != null) {
+      final assignedToQuery =
+          _getMultipleFilter('[System.AssignedTo]', assignedTo.toList(), (s) => s.mailAddress ?? '');
+      query.add(assignedToQuery);
+    }
 
     if (area != null) {
       query.add(" [System.AreaPath] = '${area.escapedAreaPath}' ");
@@ -800,6 +798,26 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (allWorkItemsRes.isError) return ApiResponse.error(allWorkItemsRes);
 
     return ApiResponse.ok(GetWorkItemsResponse.fromResponse(allWorkItemsRes));
+  }
+
+  String _getMultipleFilter<T>(String variable, Iterable<T> filters, String Function(T) label) {
+    var query = '';
+
+    final filterList = filters.toList();
+
+    if (filterList.length == 1) return " $variable = '${label(filterList.first)}' ";
+
+    for (var i = 0; i < filterList.length; i++) {
+      if (i == 0) {
+        query += " ( $variable = '${label(filterList[i])}' OR ";
+      } else if (i == filterList.length - 1) {
+        query += " $variable = '${label(filterList[i])}' ) ";
+      } else {
+        query += " $variable = '${label(filterList[i])}' OR ";
+      }
+    }
+
+    return query;
   }
 
   @override
@@ -1282,38 +1300,59 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   @override
   Future<ApiResponse<List<PullRequest>>> getPullRequests({
-    required PullRequestState filter,
-    GraphUser? creator,
-    Project? project,
-    GraphUser? reviewer,
+    required PullRequestStatus status,
+    Set<GraphUser>? creators,
+    Set<Project>? projects,
+    Set<GraphUser>? reviewers,
   }) async {
-    var creatorFilter = '';
-    if (creator != null) {
-      final creatorSearch = "&\$filter=name eq '${creator.mailAddress}'";
-      final entitlementRes =
-          await _get('https://vsaex.dev.azure.com/$_organization/_apis/userentitlements?$_apiVersion$creatorSearch');
-      if (entitlementRes.isError) return ApiResponse.error(entitlementRes);
+    final creatorsFilter = <String>[''];
+    if (creators != null) {
+      for (final creator in creators) {
+        final creatorSearch = "&\$filter=name eq '${creator.mailAddress}'";
+        final entitlementRes =
+            await _get('https://vsaex.dev.azure.com/$_organization/_apis/userentitlements?$_apiVersion$creatorSearch');
+        if (entitlementRes.isError) continue;
 
-      final member = GetUserEntitlementsResponse.fromResponse(entitlementRes).firstOrNull;
-      if (member == null) return ApiResponse.error(null);
+        final member = GetUserEntitlementsResponse.fromResponse(entitlementRes).firstOrNull;
+        if (member == null) continue;
 
-      creatorFilter = '&searchCriteria.creatorId=${member.id}';
+        creatorsFilter.add('&searchCriteria.creatorId=${member.id}');
+      }
     }
 
-    var reviewerFilter = '';
-    if (reviewer != null) {
-      final reviewerIdentity = await getUserToMention(email: reviewer.mailAddress!);
-      reviewerFilter = '&searchCriteria.reviewerId=${reviewerIdentity.data}';
+    final reviewersFilter = <String>[''];
+    if (reviewers != null) {
+      for (final reviewer in reviewers) {
+        final reviewerIdentity = await getUserToMention(email: reviewer.mailAddress!);
+        if (reviewerIdentity.data == null) continue;
+
+        reviewersFilter.add('&searchCriteria.reviewerId=${reviewerIdentity.data}');
+      }
     }
 
-    final projectsToSearch = project != null ? [project] : (_chosenProjects ?? _projects);
+    final projectsToSearch = projects ?? (_chosenProjects ?? _projects);
 
-    final allProjectPrs = await Future.wait([
-      for (final project in projectsToSearch)
-        _get(
-          '$_basePath/${project.name}/_apis/git/pullrequests?$_apiVersion&searchCriteria.status=${filter.name}$creatorFilter$reviewerFilter',
-        ),
-    ]);
+    final allProjectPrs = <Response>[];
+
+    final hasCreators = creatorsFilter.whereNot((c) => c.isEmpty).isNotEmpty;
+    final hasReviewers = reviewersFilter.whereNot((r) => r.isEmpty).isNotEmpty;
+
+    for (final creator in creatorsFilter) {
+      if (hasCreators && creator.isEmpty) continue;
+
+      for (final reviewer in reviewersFilter) {
+        if (hasReviewers && reviewer.isEmpty) continue;
+
+        allProjectPrs.addAll(
+          await Future.wait([
+            for (final project in projectsToSearch)
+              _get(
+                '$_basePath/${project.name}/_apis/git/pullrequests?$_apiVersion&searchCriteria.status=${status.name}$creator$reviewer',
+              ),
+          ]),
+        );
+      }
+    }
 
     var isAllError = true;
 
@@ -1531,7 +1570,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     required String projectName,
     required String repositoryId,
     required int id,
-    PullRequestState? status,
+    PullRequestStatus? status,
     bool? isDraft,
     String? commitId,
     bool? autocomplete,
@@ -1556,12 +1595,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       body: {
         if (isDraft != null) 'isDraft': isDraft,
         if (status != null) 'status': status.name,
-        if (status == PullRequestState.completed) 'lastMergeSourceCommit': {'commitId': commitId},
+        if (status == PullRequestStatus.completed) 'lastMergeSourceCommit': {'commitId': commitId},
         if (autocomplete != null)
           'autoCompleteSetBy': {
             'id': autocomplete ? reviewerId : '00000000-0000-0000-0000-000000000000',
           },
-        if (status == PullRequestState.completed || isSettingAutocomplete)
+        if (status == PullRequestStatus.completed || isSettingAutocomplete)
           'completionOptions': {
             'deleteSourceBranch': completionOptions!.deleteSourceBranch,
             'mergeCommitMessage': completionOptions.commitMessage,
@@ -1762,26 +1801,31 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   @override
   Future<ApiResponse<List<Pipeline>>> getRecentPipelines({
-    Project? project,
+    Set<Project>? projects,
     int? definition,
     PipelineResult result = PipelineResult.all,
     PipelineStatus status = PipelineStatus.all,
-    String? triggeredBy,
+    Set<String>? triggeredBy,
   }) async {
     const orderSearch = '&queryOrder=queueTimeDescending';
     final resultSearch = '&resultFilter=${result.stringValue}';
     final statusSearch = result != PipelineResult.all ? '' : '&statusFilter=${status.stringValue}';
-    final triggeredBySearch = triggeredBy == null ? '' : '&requestedFor=$triggeredBy';
 
     final definitionSearch = definition == null ? '' : '&definitions=$definition';
 
-    final queryParams = '$_apiVersion$orderSearch$resultSearch$statusSearch$triggeredBySearch$definitionSearch';
+    final projectsToSearch = (definition != null || projects != null) ? projects! : (_chosenProjects ?? _projects);
 
-    final projectsToSearch = (definition != null || project != null) ? [project!] : (_chosenProjects ?? _projects);
+    final allProjectPipelines = <Response>[];
 
-    final allProjectPipelines = await Future.wait([
-      for (final project in projectsToSearch) _get('$_basePath/${project.name}/_apis/build/builds?$queryParams'),
-    ]);
+    for (final author in triggeredBy ?? {''}) {
+      final triggeredBySearch = author.isEmpty ? '' : '&requestedFor=$author';
+      final queryParams = '$_apiVersion$orderSearch$resultSearch$statusSearch$triggeredBySearch$definitionSearch';
+      allProjectPipelines.addAll(
+        await Future.wait([
+          for (final project in projectsToSearch) _get('$_basePath/${project.name}/_apis/build/builds?$queryParams'),
+        ]),
+      );
+    }
 
     var isAllError = true;
 
@@ -1824,8 +1868,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<Commit>>> getRecentCommits({Project? project, String? author, int? maxCount}) async {
-    final projectsToSearch = project != null ? [project] : (_chosenProjects ?? _projects);
+  Future<ApiResponse<List<Commit>>> getRecentCommits({
+    Set<Project>? projects,
+    Set<String>? authors,
+    int? maxCount,
+  }) async {
+    final projectsToSearch = projects ?? (_chosenProjects ?? _projects);
 
     final allProjectRepos = await Future.wait([
       for (final project in projectsToSearch) _get('$_basePath/${project.name}/_apis/git/repositories?$_apiVersion'),
@@ -1842,22 +1890,25 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final repos =
         allProjectRepos.where((r) => !r.isError).map(GetRepositoriesResponse.fromResponse).expand((r) => r).toList();
 
-    final authorSearch = author != null ? '&searchCriteria.author=$author' : '';
     final topSearch = maxCount != null ? '&searchCriteria.\$top=$maxCount' : '';
 
     final allProjectCommits = <Response>[];
 
-    // get commits in slices to avoid 'too many open files' error happening on iOS
-    final slices = repos.slices(50);
-    for (final slice in slices) {
-      allProjectCommits.addAll(
-        await Future.wait([
-          for (final repo in slice)
-            _get(
-              '$_basePath/${repo.project!.name}/_apis/git/repositories/${repo.name}/commits?$_apiVersion$authorSearch$topSearch',
-            ),
-        ]),
-      );
+    for (final author in authors ?? {''}) {
+      final authorSearch = author.isNotEmpty ? '&searchCriteria.author=$author' : '';
+
+      // get commits in slices to avoid 'too many open files' error happening on iOS
+      final slices = repos.slices(50);
+      for (final slice in slices) {
+        allProjectCommits.addAll(
+          await Future.wait([
+            for (final repo in slice)
+              _get(
+                '$_basePath/${repo.project!.name}/_apis/git/repositories/${repo.name}/commits?$_apiVersion$authorSearch$topSearch',
+              ),
+          ]),
+        );
+      }
     }
 
     var isAllCommitsError = true;

@@ -40,7 +40,7 @@ class PullRequestListTile extends StatelessWidget {
                   width: 10,
                 ),
                 Text(
-                  pr.isDraft && pr.status != PullRequestState.abandoned ? 'Draft' : pr.status.toString(),
+                  pr.isDraft && pr.status != PullRequestStatus.abandoned ? 'Draft' : pr.status.toString(),
                   style: subtitleStyle.copyWith(color: pr.status.color),
                 ),
               ],

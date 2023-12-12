@@ -66,7 +66,9 @@ class FilterMenu<T> extends StatelessWidget {
     this.child,
     this.body,
     this.onSearchChanged,
-  });
+  })  : currentFilters = null,
+        onSelectedMultiple = null,
+        _isMultiple = false;
 
   const FilterMenu.custom({
     required this.body,
@@ -78,11 +80,30 @@ class FilterMenu<T> extends StatelessWidget {
   })  : widgetBuilder = null,
         values = const [],
         onSelected = null,
-        onSearchChanged = null;
+        onSearchChanged = null,
+        currentFilters = null,
+        onSelectedMultiple = null,
+        _isMultiple = false;
+
+  const FilterMenu.multiple({
+    this.body,
+    required this.title,
+    this.formatLabel,
+    required this.isDefaultFilter,
+    this.child,
+    required this.currentFilters,
+    required this.onSelectedMultiple,
+    required this.values,
+    required this.widgetBuilder,
+    this.onSearchChanged,
+  })  : onSelected = null,
+        currentFilter = null,
+        _isMultiple = true;
 
   final void Function(T)? onSelected;
   final List<T> values;
-  final T currentFilter;
+  final T? currentFilter;
+  final Set<T>? currentFilters;
   final String title;
   final String Function(T)? formatLabel;
   final Widget Function(T)? widgetBuilder;
@@ -90,9 +111,20 @@ class FilterMenu<T> extends StatelessWidget {
   final Widget? child;
   final Widget? body;
   final List<T> Function(String)? onSearchChanged;
+  final void Function(Set<T> states)? onSelectedMultiple;
+
+  final bool _isMultiple;
 
   @override
   Widget build(BuildContext context) {
+    final chipLabel = switch (isDefaultFilter) {
+      true => title,
+      false when _isMultiple => currentFilters!.length > 1
+          ? '$title - ${currentFilters!.length}'
+          : formatLabel?.call(currentFilters!.single) ?? currentFilters!.single.toString(),
+      _ => formatLabel?.call(currentFilter!) ?? currentFilter.toString(),
+    };
+
     final chip = Chip(
       padding: EdgeInsets.zero,
       labelPadding: EdgeInsets.zero,
@@ -104,7 +136,7 @@ class FilterMenu<T> extends StatelessWidget {
           children: [
             Flexible(
               child: Text(
-                isDefaultFilter ? title : (formatLabel?.call(currentFilter!) ?? currentFilter.toString()),
+                chipLabel,
                 style: context.textTheme.bodySmall!.copyWith(color: context.colorScheme.onBackground, height: 1),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -132,6 +164,9 @@ class FilterMenu<T> extends StatelessWidget {
       customBody: body,
       onSearchChanged: onSearchChanged,
       isDefaultFilter: isDefaultFilter,
+      currentFilters: currentFilters,
+      onSelectedMultiple: onSelectedMultiple,
+      isMultiple: _isMultiple,
       child: child ?? chip,
     );
   }
@@ -144,23 +179,29 @@ class _FilterBottomsheet<T> extends StatelessWidget {
     this.formatLabel,
     this.onSelected,
     required this.widgetBuilder,
-    required this.currentFilter,
+    this.currentFilter,
     required this.child,
     this.customBody,
     this.onSearchChanged,
     required this.isDefaultFilter,
-  });
+    this.currentFilters,
+    this.onSelectedMultiple,
+    required this.isMultiple,
+  }) : assert(!isMultiple || currentFilters != null, 'If [isMultiple] [currentFilters] must not be null');
 
   final String title;
   final List<T> values;
   final String Function(T)? formatLabel;
   final void Function(T)? onSelected;
   final Widget Function(T)? widgetBuilder;
-  final T currentFilter;
+  final T? currentFilter;
+  final Set<T>? currentFilters;
   final Widget child;
   final Widget? customBody;
   final List<T> Function(String)? onSearchChanged;
   final bool isDefaultFilter;
+  final void Function(Set<T>)? onSelectedMultiple;
+  final bool isMultiple;
 
   @override
   Widget build(BuildContext context) {
@@ -172,73 +213,138 @@ class _FilterBottomsheet<T> extends StatelessWidget {
         final visibleValues = ValueNotifier([...values]);
         final isSearchable = onSearchChanged != null;
 
-        if (isSearchable && !isDefaultFilter) {
-          final query = formatLabel?.call(currentFilter) ?? '';
+        if (isSearchable && !isDefaultFilter && !isMultiple) {
+          final query = formatLabel?.call(currentFilter!) ?? '';
           visibleValues.value = onSearchChanged!.call(query);
         }
+
+        final selectedValues = ValueNotifier(isMultiple ? {...currentFilters!} : <T>{});
 
         OverlayService.bottomsheet(
           isScrollControlled: true,
           spaceUnderTitle: false,
           name: 'filter_$title',
+          heightPercentage: isSearchable ? .9 : .8,
           builder: (context) =>
               customBody ??
-              ListView(
+              Column(
                 children: [
-                  if (isSearchable)
+                  if (isMultiple)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16),
-                      child: DevOpsSearchField(
-                        onChanged: (s) {
-                          visibleValues.value = onSearchChanged!.call(s);
-                        },
-                        onResetSearch: () {
-                          visibleValues.value = allValues;
-                        },
-                        hint: 'Search',
-                        initialValue: isDefaultFilter ? null : formatLabel?.call(currentFilter),
-                      ),
-                    ),
-                  ValueListenableBuilder(
-                    valueListenable: visibleValues,
-                    builder: (context, visibleValues, __) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: visibleValues
-                          .map(
-                            (v) => InkWell(
-                              key: ValueKey(formatLabel?.call(v) ?? v.toString()),
-                              onTap: () {
-                                onSelected!(v);
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text('Toggle all'),
+                          ValueListenableBuilder<Set<T>>(
+                            valueListenable: selectedValues,
+                            builder: (_, selectedVals, __) => Checkbox(
+                              value: selectedVals.length >= values.length,
+                              onChanged: (_) {
+                                if (selectedVals.length >= values.length) {
+                                  selectedValues.value = {};
+                                } else {
+                                  selectedValues.value = {...values};
+                                }
+                              },
+                            ),
+                          ),
+                          const Spacer(),
+                          SizedBox(
+                            width: 100,
+                            height: 30,
+                            child: TextButton(
+                              style: Theme.of(context).textButtonTheme.style!.copyWith(
+                                    backgroundColor: MaterialStatePropertyAll(context.colorScheme.primary),
+                                    padding: MaterialStatePropertyAll(EdgeInsets.zero),
+                                  ),
+                              onPressed: () {
+                                onSelectedMultiple?.call(selectedValues.value);
                                 AppRouter.popRoute();
                               },
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        height: imageSize,
-                                        width: imageSize,
-                                        child: widgetBuilder?.call(v),
-                                      ),
-                                      const SizedBox(
-                                        width: 20,
-                                      ),
-                                      Text(formatLabel?.call(v) ?? v.toString()),
-                                      if (currentFilter == v) ...[
-                                        const Spacer(),
-                                        Icon(DevOpsIcons.success),
-                                      ],
-                                    ],
-                                  ),
-                                  if (v != values.last)
-                                    const Divider(
-                                      height: 20,
-                                    ),
-                                ],
-                              ),
+                              child: Text('Confirm'),
                             ),
-                          )
-                          .toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        if (isSearchable)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: DevOpsSearchField(
+                              autofocus: false,
+                              onChanged: (s) {
+                                visibleValues.value = onSearchChanged!.call(s);
+                              },
+                              onResetSearch: () {
+                                visibleValues.value = allValues;
+                              },
+                              hint: 'Search',
+                              initialValue: isDefaultFilter || isMultiple ? null : formatLabel?.call(currentFilter!),
+                            ),
+                          ),
+                        ValueListenableBuilder<Set<T>>(
+                          valueListenable: selectedValues,
+                          builder: (_, selectedVals, __) => ValueListenableBuilder(
+                            valueListenable: visibleValues,
+                            builder: (context, visibleValues, __) => Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: visibleValues
+                                  .map(
+                                    (v) => InkWell(
+                                      key: ValueKey(formatLabel?.call(v) ?? v.toString()),
+                                      onTap: () {
+                                        onSelected!(v);
+                                        AppRouter.popRoute();
+                                      },
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                height: imageSize,
+                                                width: imageSize,
+                                                child: widgetBuilder?.call(v),
+                                              ),
+                                              const SizedBox(
+                                                width: 20,
+                                              ),
+                                              Text(formatLabel?.call(v) ?? v.toString()),
+                                              if (isMultiple) ...[
+                                                const Spacer(),
+                                                Checkbox(
+                                                  value: selectedVals.contains(v),
+                                                  onChanged: (_) {
+                                                    if (selectedVals.contains(v)) {
+                                                      selectedValues.value.remove(v);
+                                                    } else {
+                                                      selectedValues.value.add(v);
+                                                    }
+                                                    selectedValues.value = {...selectedValues.value};
+                                                  },
+                                                ),
+                                              ] else if (currentFilter == v) ...[
+                                                const Spacer(),
+                                                Icon(DevOpsIcons.success),
+                                              ],
+                                            ],
+                                          ),
+                                          if (v != values.last)
+                                            const Divider(
+                                              height: 20,
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -368,6 +474,18 @@ class WorkItemTypeFilterMenu extends FilterMenu<WorkItemType> {
     required super.widgetBuilder,
     super.formatLabel,
   }) : super(
+          values: values.where((t) => !typesToSkip.contains(t.name)).toList(),
+        );
+
+  WorkItemTypeFilterMenu.multiple({
+    required super.title,
+    required List<WorkItemType> values,
+    required super.currentFilters,
+    required super.onSelectedMultiple,
+    required super.isDefaultFilter,
+    required super.widgetBuilder,
+    super.formatLabel,
+  }) : super.multiple(
           values: values.where((t) => !typesToSkip.contains(t.name)).toList(),
         );
 

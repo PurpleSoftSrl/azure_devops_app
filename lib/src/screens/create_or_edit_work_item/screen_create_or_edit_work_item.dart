@@ -99,7 +99,7 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 FilterMenu<WorkItemState>(
                   title: 'Status',
                   values: ctrl.allWorkItemStates,
-                  currentFilter: ctrl.newWorkItemState!,
+                  currentFilter: ctrl.newWorkItemState,
                   formatLabel: (t) => t.name,
                   onSelected: ctrl.setState,
                   isDefaultFilter: false,
