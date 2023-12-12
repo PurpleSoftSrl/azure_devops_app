@@ -386,7 +386,6 @@ class _ResetFiltersMenu extends StatelessWidget {
         ),
       ],
       child: Chip(
-        // backgroundColor: Colors.grey.shade300, TODO remove
         label: Row(
           children: [
             Icon(DevOpsIcons.filter),
