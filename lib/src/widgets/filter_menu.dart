@@ -132,16 +132,15 @@ class FilterMenu<T> extends StatelessWidget {
 
     final chip = Chip(
       backgroundColor: isDefaultFilter ? null : context.colorScheme.primary,
+      visualDensity: VisualDensity.compact,
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Flexible(
-            child: Text(
-              chipLabel,
-              style: context.textTheme.bodySmall!.copyWith(color: context.colorScheme.onBackground, height: 1),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+          Text(
+            chipLabel,
+            style: context.textTheme.bodySmall!.copyWith(color: context.colorScheme.onBackground, height: 1),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(
             width: 4,
@@ -215,12 +214,12 @@ class _FilterBottomsheet<T> extends StatelessWidget {
         final allValues = [...values];
         final visibleValues = ValueNotifier([...values]);
         final isSearchable = onSearchChanged != null;
-
+    
         if (isSearchable && !isDefaultFilter && !isMultiple) {
           final query = formatLabel?.call(currentFilter!) ?? '';
           visibleValues.value = onSearchChanged!.call(query);
         }
-
+    
         final selectedValues = ValueNotifier(isMultiple ? {...currentFilters!} : <T>{});
 
         if (isMultiple) {
@@ -386,6 +385,7 @@ class _ResetFiltersMenu extends StatelessWidget {
         ),
       ],
       child: Chip(
+        visualDensity: VisualDensity.compact,
         label: Row(
           children: [
             Icon(DevOpsIcons.filter),
