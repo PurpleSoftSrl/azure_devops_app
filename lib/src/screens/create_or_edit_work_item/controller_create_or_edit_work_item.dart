@@ -273,8 +273,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
           description += '\nInherited processes are not fully supported yet.';
         } else {
           final apiErrorMessage = jsonDecode(responseBody) as Map<String, dynamic>;
-          final msg = apiErrorMessage['customProperties']['ErrorMessage'] as String? ?? '';
-          final firstMsg = msg.substring(msg.indexOf(':') + 1).split('.').first;
+          final msg = apiErrorMessage['customProperties']?['ErrorMessage'] as String? ?? '';
+          final firstMsg = msg.isEmpty ? '' : msg.substring(msg.indexOf(':') + 1).split('.').first;
 
           description += '\n$firstMsg';
           if (msg.contains('ReadOnly')) {
