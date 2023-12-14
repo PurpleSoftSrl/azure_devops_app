@@ -16,6 +16,7 @@ import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/filter_menu.dart';
+import 'package:azure_devops/src/widgets/member_avatar.dart';
 import 'package:azure_devops/src/widgets/search_field.dart';
 import 'package:azure_devops/src/widgets/work_item_area_filter.dart';
 import 'package:azure_devops/src/widgets/work_item_type_icon.dart';

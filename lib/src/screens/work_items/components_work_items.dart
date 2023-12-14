@@ -54,6 +54,9 @@ class _WorkItemListTile extends StatelessWidget {
     final state = apiService.workItemStates[item.fields.systemTeamProject]?[item.fields.systemWorkItemType]
         ?.firstWhereOrNull((t) => t.name == item.fields.systemState);
 
+    final hasAssignee = item.fields.systemAssignedTo?.descriptor != null;
+    final hasComments = (item.fields.systemCommentCount ?? 0) > 0;
+
     return InkWell(
       onTap: onTap,
       key: ValueKey('work_item_${item.id}'),
@@ -88,26 +91,64 @@ class _WorkItemListTile extends StatelessWidget {
             subtitle: Column(
               children: [
                 const SizedBox(
-                  height: 5,
+                  height: 8,
                 ),
                 Row(
                   children: [
-                    Text(
-                      '#${item.id}',
-                      style: subtitleStyle,
-                    ),
-                    Text(
-                      ' in ',
-                      style: subtitleStyle.copyWith(color: context.colorScheme.onSecondary),
-                    ),
-                    Expanded(
-                      child: Text(
-                        item.fields.systemTeamProject,
-                        style: subtitleStyle,
-                        overflow: TextOverflow.ellipsis,
+                    Flexible(
+                      child: Row(
+                        children: [
+                          Text(
+                            '#${item.id}',
+                            style: subtitleStyle,
+                          ),
+                          Text(
+                            ' in ',
+                            style: subtitleStyle.copyWith(color: context.colorScheme.onSecondary),
+                          ),
+                          Flexible(
+                            child: Text(
+                              item.fields.systemTeamProject,
+                              style: subtitleStyle,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (hasComments) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: context.colorScheme.surface,
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Icon(
+                                    Icons.forum_outlined,
+                                    size: 14,
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    item.fields.systemCommentCount!.toString(),
+                                    style: subtitleStyle.copyWith(height: 1),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          if (hasAssignee) ...[
+                            const SizedBox(width: 8),
+                            MemberAvatar(
+                              userDescriptor: item.fields.systemAssignedTo?.descriptor,
+                              radius: 18,
+                            ),
+                          ],
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 8),
                     Text(
                       item.fields.systemChangedDate.minutesAgo,
                       style: subtitleStyle,
