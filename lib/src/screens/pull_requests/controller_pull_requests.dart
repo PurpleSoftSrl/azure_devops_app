@@ -20,7 +20,7 @@ class _PullRequestsController with FilterMixin {
   }
 
   _PullRequestsController._(this.apiService, this.storageService, this.project) {
-    projectFilter = project ?? projectAll;
+    if (project != null) projectsFilter = {project!};
   }
 
   static _PullRequestsController? instance;

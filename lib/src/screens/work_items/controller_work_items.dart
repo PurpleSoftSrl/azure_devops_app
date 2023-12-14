@@ -20,7 +20,7 @@ class _WorkItemsController with FilterMixin {
   }
 
   _WorkItemsController._(this.apiService, this.storageService, this.project) {
-    projectFilter = project ?? projectAll;
+    if (project != null) projectsFilter = {project!};
   }
 
   static _WorkItemsController? instance;

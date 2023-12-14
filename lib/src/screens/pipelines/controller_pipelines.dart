@@ -20,7 +20,7 @@ class _PipelinesController with FilterMixin {
   }
 
   _PipelinesController._(this.apiService, this.storageService, this.args) {
-    projectFilter = args?.project ?? projectAll;
+    if (args?.project != null) projectsFilter = {args!.project!};
   }
 
   static _PipelinesController? instance;

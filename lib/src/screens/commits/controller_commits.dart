@@ -20,8 +20,8 @@ class _CommitsController with FilterMixin {
   }
 
   _CommitsController._(this.apiService, this.storageService, this.args) {
-    projectFilter = args?.project ?? projectAll;
-    userFilter = args?.author ?? userAll;
+    if (args?.project != null) projectsFilter = {args!.project!};
+    if (args?.author != null) usersFilter = {args!.author!};
   }
 
   static _CommitsController? instance;
