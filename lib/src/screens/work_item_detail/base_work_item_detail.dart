@@ -10,6 +10,7 @@ import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/mixins/share_mixin.dart';
 import 'package:azure_devops/src/models/processes.dart';
+import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/work_item_fields.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';

@@ -233,6 +233,7 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                               switch (field.type) {
                                 'html' => _HtmlFormField(field: field, ctrl: ctrl),
                                 'dateTime' => _DateFormField(field: field, ctrl: ctrl),
+                                _ when field.isIdentity => _UserFormField(field: field, ctrl: ctrl),
                                 _ when field.hasMeaningfulAllowedValues =>
                                   _SelectionFormField(ctrl: ctrl, field: field),
                                 _ => _DefaultFormField(ctrl: ctrl, field: field),

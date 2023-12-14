@@ -69,6 +69,39 @@ class _DateFormField extends StatelessWidget {
   }
 }
 
+class _UserFormField extends StatelessWidget {
+  const _UserFormField({required this.field, required this.ctrl});
+
+  final _CreateOrEditWorkItemController ctrl;
+  final WorkItemField field;
+
+  @override
+  Widget build(BuildContext context) {
+    final formField = ctrl.formFields[field.referenceName];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          ctrl.getFieldName(field),
+          style: context.textTheme.labelSmall!.copyWith(height: 1, fontWeight: FontWeight.bold),
+        ),
+        FilterMenu<GraphUser>(
+          title: formField?.text ?? '-',
+          values: ctrl.getAssignees(),
+          currentFilter: null,
+          onSelected: (u) => ctrl.onFieldChanged('${u.displayName} <${u.mailAddress}>', field.referenceName),
+          formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.apiService),
+          isDefaultFilter: true,
+          widgetBuilder: (u) => UserFilterWidget(user: u),
+        ),
+        const SizedBox(
+          height: 16,
+        ),
+      ],
+    );
+  }
+}
+
 class _SelectionFormField extends StatelessWidget {
   const _SelectionFormField({
     required this.ctrl,

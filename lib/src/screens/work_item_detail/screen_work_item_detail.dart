@@ -193,6 +193,19 @@ class _WorkItemDetailScreen extends StatelessWidget {
 
                               final shouldShowFieldName = entry.value.length > 1 || field.name != entry.key;
 
+                              GraphUser? userField;
+
+                              if (field.isIdentity) {
+                                final userJson = detail.fields.jsonFields[field.referenceName];
+                                if (userJson != null) {
+                                  try {
+                                    userField = GraphUser.fromJson(userJson as Map<String, dynamic>);
+                                  } catch (_) {
+                                    // ignore
+                                  }
+                                }
+                              }
+
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -209,6 +222,22 @@ class _WorkItemDetailScreen extends StatelessWidget {
                                     HtmlWidget(
                                       data: textToShow.toString(),
                                       style: context.textTheme.titleSmall,
+                                    )
+                                  else if (field.isIdentity && userField != null)
+                                    Row(
+                                      children: [
+                                        Text(
+                                          userField.displayName ?? '-',
+                                          style: context.textTheme.titleSmall,
+                                        ),
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        MemberAvatar(
+                                          userDescriptor: userField.descriptor,
+                                          radius: 20,
+                                        ),
+                                      ],
                                     )
                                   else
                                     Text(textToShow!.toString().formatted),

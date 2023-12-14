@@ -914,7 +914,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final wtBasePath = '$_basePath/$projectName/_apis/wit/workItemTypes/$workItemName';
 
     // get xmlForm with all visible fields
-    final typeRes = await _get('$wtBasePath?\$expand=allowedValues&$_apiVersion-preview');
+    final typeRes = await _get('$wtBasePath?$_apiVersion-preview');
     if (typeRes.isError) return ApiResponse.error(null);
 
     final typeWithTransitions = WorkItemTypeWithTransitions.fromResponse(typeRes);
@@ -924,11 +924,27 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final visibleFields = _parseXmlForm(typeWithTransitions.xmlForm);
 
-    // get all fields with more info (previous call doesn't return allowedValues)
+    // get all fields again because we nedd more info: allowedValues
     final fieldsRes = await _get('$wtBasePath/fields?\$expand=allowedValues&$_apiVersion-preview');
     if (fieldsRes.isError) return ApiResponse.error(null);
 
     final allFields = WorkItemTypeFieldsResponse.fromResponse(fieldsRes);
+
+    // get all fields again because we need more info: isIdentity, readOnly and type
+    final fieldsResWithInfo = await _get('$_basePath/$projectName/_apis/wit/fields?$_apiVersion-preview');
+    if (fieldsResWithInfo.isError) return ApiResponse.error(null);
+
+    final allFieldsWithInfo = WorkItemTypeFieldsResponse.fromResponse(fieldsResWithInfo);
+
+    for (final field in allFields) {
+      final fieldWithInfo = allFieldsWithInfo.firstWhereOrNull((f) => f.referenceName == field.referenceName);
+      if (fieldWithInfo == null) continue;
+
+      field
+        ..isIdentity = fieldWithInfo.isIdentity
+        ..readOnly = fieldWithInfo.readOnly
+        ..type = fieldWithInfo.type;
+    }
 
     final fields = _matchFields(visibleFields, allFields);
 
@@ -948,21 +964,6 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       if (isInheritedType) {
         // inherited types have a different name format
         refName = '${projectProcess.name.replaceAll(' ', '')}.${workItemName.replaceAll(' ', '')}';
-      }
-    }
-
-    // get all fields with more info (previous call doesn't return field data type)
-    final processTypesRes = await _get(
-      '$processesPath/${projectProcess.typeId}/workItemTypes/$refName/fields?$_apiVersion',
-    );
-    if (processTypesRes.isError) return ApiResponse.error(null);
-
-    final processFields = WorkItemTypeFieldsResponse.fromResponse(processTypesRes);
-
-    for (final entry in fields.entries) {
-      for (final field in entry.value) {
-        final processField = processFields.firstWhere((f) => f.referenceName == field.referenceName);
-        field.type = processField.type;
       }
     }
 
@@ -2135,7 +2136,10 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     for (final entry in visibleFields.entries) {
       for (final field in entry.value) {
         final matched = allFields.firstWhereOrNull((f) => f.referenceName == field);
-        if (matched != null && matched.referenceName != 'System.History' && matched.name != 'Id') {
+        if (matched != null &&
+            matched.referenceName != 'System.History' &&
+            matched.referenceName != 'System.CreatedBy' &&
+            matched.name != 'Id') {
           matchedFields.putIfAbsent(entry.key, () => {matched});
           matchedFields[entry.key]!.add(matched);
         }

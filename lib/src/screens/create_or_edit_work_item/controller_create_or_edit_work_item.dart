@@ -441,13 +441,27 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
         final refName = field.referenceName;
         formFields[refName] = DynamicFieldData(required: field.required);
 
-        if (!field.readOnly && field.defaultValue != null) {
+        if (field.defaultValue != null) {
           formFields[refName]!.controller.text = field.defaultValue!;
           formFields[refName]!.text = field.defaultValue!;
         }
 
-        if (!field.readOnly && isEditing) {
-          final text = editingWorkItem!.fields.jsonFields[refName]?.toString() ?? field.defaultValue ?? '';
+        if (isEditing) {
+          // write already filled fields with values coming from api or their default value
+          final alreadyFilledValue = editingWorkItem!.fields.jsonFields[refName];
+
+          final String text;
+          if (field.isIdentity) {
+            if (alreadyFilledValue != null) {
+              final user = GraphUser.fromJson(alreadyFilledValue as Map<String, dynamic>);
+              text = user.displayName ?? user.mailAddress ?? '-';
+            } else {
+              text = '-';
+            }
+          } else {
+            text = alreadyFilledValue?.toString() ?? field.defaultValue ?? '';
+          }
+
           onFieldChanged(text, refName, checkRules: false);
         }
       }

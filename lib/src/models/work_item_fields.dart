@@ -37,15 +37,18 @@ class WorkItemField {
     this.defaultValue,
     this.allowedValues = const [],
     this.type,
+    this.isIdentity = false,
   });
 
   factory WorkItemField.fromJson(Map<String, dynamic> json) => WorkItemField(
         referenceName: json['referenceName'] as String,
         name: json['name'] as String,
         required: json['alwaysRequired'] as bool? ?? false,
+        readOnly: json['readOnly'] as bool? ?? false,
         defaultValue: json['defaultValue'] as String?,
         allowedValues: (json['allowedValues'] as List<dynamic>?)?.map((v) => v.toString()).toList() ?? [],
         type: json['type'] as String?,
+        isIdentity: json['isIdentity'] as bool? ?? false,
       );
 
   final String referenceName;
@@ -55,6 +58,7 @@ class WorkItemField {
   final String? defaultValue;
   String? type;
   final List<String> allowedValues;
+  bool isIdentity;
 
   @override
   String toString() {
