@@ -54,6 +54,7 @@ Future<void> main() async {
               case 'HttpExceptionWithStatus':
               case 'ClientException':
               case '_ClientSocketException':
+              case 'NetworkImageLoadException':
                 return null;
             }
 
