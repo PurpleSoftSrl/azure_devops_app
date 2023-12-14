@@ -504,7 +504,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
         final rules = checker.checkRules(field);
         field
           ..readOnly = rules.readOnly || rules.makeEmpty
-          ..required = rules.required;
+          ..required = field.alwaysRequired || rules.required;
 
         final refName = field.referenceName;
 

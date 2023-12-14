@@ -33,6 +33,7 @@ class WorkItemField {
     required this.referenceName,
     required this.name,
     this.required = false,
+    this.alwaysRequired = false,
     this.readOnly = false,
     this.defaultValue,
     this.allowedValues = const [],
@@ -43,7 +44,7 @@ class WorkItemField {
   factory WorkItemField.fromJson(Map<String, dynamic> json) => WorkItemField(
         referenceName: json['referenceName'] as String,
         name: json['name'] as String,
-        required: json['alwaysRequired'] as bool? ?? false,
+        alwaysRequired: json['alwaysRequired'] as bool? ?? false,
         readOnly: json['readOnly'] as bool? ?? false,
         defaultValue: json['defaultValue'] as String?,
         allowedValues: (json['allowedValues'] as List<dynamic>?)?.map((v) => v.toString()).toList() ?? [],
@@ -53,6 +54,7 @@ class WorkItemField {
 
   final String referenceName;
   final String name;
+  bool alwaysRequired;
   bool required;
   bool readOnly;
   final String? defaultValue;
