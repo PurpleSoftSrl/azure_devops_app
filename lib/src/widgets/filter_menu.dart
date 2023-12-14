@@ -297,6 +297,8 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                                     (v) => InkWell(
                                       key: ValueKey(formatLabel?.call(v) ?? v.toString()),
                                       onTap: () {
+                                        if (isMultiple) return;
+
                                         onSelected!(v);
                                         AppRouter.popRoute();
                                       },
