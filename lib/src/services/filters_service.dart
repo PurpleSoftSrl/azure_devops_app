@@ -113,6 +113,43 @@ class FiltersService {
   void resetPipelinesFilters() {
     storageService.resetFilter(organization, _FilterAreas.pipelines);
   }
+
+  PullRequestsFilters getPullRequestsSavedFilters() {
+    final savedFilters = storageService.getFilters();
+
+    final pullRequestsFilters = savedFilters
+        .where(
+          (f) => f.organization == organization && f.area == _FilterAreas.pullRequests,
+        )
+        .toList();
+
+    return PullRequestsFilters(
+      projects: pullRequestsFilters.firstWhereOrNull((f) => f.attribute == _FilterKeys.projects)?.filters ?? {},
+      status: pullRequestsFilters.firstWhereOrNull((f) => f.attribute == _FilterKeys.status)?.filters ?? {},
+      openedBy: pullRequestsFilters.firstWhereOrNull((f) => f.attribute == _FilterKeys.openedBy)?.filters ?? {},
+      assignedTo: pullRequestsFilters.firstWhereOrNull((f) => f.attribute == _FilterKeys.assignees)?.filters ?? {},
+    );
+  }
+
+  void savePullRequestsProjectsFilter(Set<String> projectNames) {
+    storageService.saveFilter(organization, _FilterAreas.pullRequests, _FilterKeys.projects, projectNames);
+  }
+
+  void savePullRequestsStatusFilter(String status) {
+    storageService.saveFilter(organization, _FilterAreas.pullRequests, _FilterKeys.status, {status});
+  }
+
+  void savePullRequestsOpenedByFilter(Set<String> userEmails) {
+    storageService.saveFilter(organization, _FilterAreas.pullRequests, _FilterKeys.openedBy, userEmails);
+  }
+
+  void savePullRequestsAssignedToFilter(Set<String> userEmails) {
+    storageService.saveFilter(organization, _FilterAreas.pullRequests, _FilterKeys.assignees, userEmails);
+  }
+
+  void resetPullRequestsFilters() {
+    storageService.resetFilter(organization, _FilterAreas.pullRequests);
+  }
 }
 
 class WorkItemsFilters {
@@ -153,12 +190,25 @@ class PipelinesFilters {
   final Set<String> status;
 }
 
+class PullRequestsFilters {
+  PullRequestsFilters({
+    required this.projects,
+    required this.status,
+    required this.openedBy,
+    required this.assignedTo,
+  });
+
+  final Set<String> projects;
+  final Set<String> status;
+  final Set<String> openedBy;
+  final Set<String> assignedTo;
+}
+
 class _FilterAreas {
   static const workItems = 'work-items';
   static const commits = 'commits';
   static const pipelines = 'pipelines';
-  // TODO
-  // static const pullRequests = 'pull-requests';
+  static const pullRequests = 'pull-requests';
 }
 
 // TODO move keys in each area class
@@ -171,4 +221,5 @@ class _FilterKeys {
   static const triggeredBy = 'triggeredBy';
   static const result = 'result';
   static const status = 'status';
+  static const openedBy = 'openedBy';
 }
