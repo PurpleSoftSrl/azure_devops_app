@@ -33,38 +33,60 @@ class _ChooseProjectsScreen extends StatelessWidget {
                 const SizedBox(
                   height: 40,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    SectionHeader.noMargin(
-                      text: 'Projects',
-                      textHeight: 1,
-                    ),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: ctrl.chooseAll,
-                      builder: (_, chooseAll, __) => Row(
-                        children: [
-                          Text(
-                            chooseAll ? 'Unselect all' : 'Select all',
-                            style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                          ),
-                          Checkbox(
-                            value: chooseAll,
-                            onChanged: (_) => ctrl.toggleChooseAll(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                ...ctrl.allProjects.map(
-                  (p) => CheckboxListTile(
-                    title: Text(p.name!),
-                    value: projects!.contains(p),
-                    onChanged: (_) => ctrl.toggleChosenProject(p),
-                    contentPadding: EdgeInsets.only(right: 4),
+                if(ctrl.getVisibleProjects().length >= 10)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: DevOpsSearchField(
+                    autofocus: false,
+                    onChanged: ctrl.setVisibleProjects,
+                    onResetSearch: ctrl.resetFilter,
+                    hint: 'Search by name',
                   ),
+                ),
+                // TODO use filter mixin to display the filter only if proj.number >= 10.
+                // TODO check behaviour with a real device ~ keyboard & 'Confirm button'.
+                ValueListenableBuilder(
+                  valueListenable: ctrl.visibleProjects,
+                  builder: (context, item, _) {
+                    return Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            SectionHeader.noMargin(
+                              text: 'Projects',
+                              textHeight: 1,
+                            ),
+                            ValueListenableBuilder<bool>(
+                              valueListenable: ctrl.chooseAll,
+                              builder: (_, chooseAll, __) => Row(
+                                children: [
+                                  Text(
+                                    chooseAll ? 'Unselect all' : 'Select all',
+                                    style:
+                                        context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                                  ),
+                                  Checkbox(
+                                    value: chooseAll,
+                                    onChanged: (_) => ctrl.toggleChooseAll(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        ...ctrl.getVisibleProjects().map(
+                              (p) => CheckboxListTile(
+                                title: Text(p.name!),
+                                value: projects!.contains(p),
+                                onChanged: (_) => ctrl.toggleChosenProject(p),
+                                contentPadding: EdgeInsets.only(right: 4),
+                              ),
+                            ),
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(
                   height: 100,

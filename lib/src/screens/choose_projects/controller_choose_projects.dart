@@ -18,6 +18,7 @@ class _ChooseProjectsController {
   final StorageService storageService;
 
   final chosenProjects = ValueNotifier<ApiResponse<List<Project>?>?>(null);
+  final visibleProjects = ValueNotifier<List<Project>?>(null);
   List<Project> allProjects = <Project>[];
 
   final chooseAll = ValueNotifier(false);
@@ -67,6 +68,8 @@ class _ChooseProjectsController {
     );
 
     _initiallyChosenProjects.addAll(chosenProjects.value!.data!);
+    visibleProjects.value = allProjects;
+    dev.log('@@ initial projects [${visibleProjects.value}]');    // TODO remove
   }
 
   void toggleChooseAll() {
@@ -170,4 +173,18 @@ class _ChooseProjectsController {
 
   /// Prevents user from going back without having selected any project after clear cache
   Future<bool> onWillPop() async => alreadyChosenProjects.isNotEmpty;
+
+  void setVisibleProjects(String filterName){
+    visibleProjects.value = allProjects.where((e) => e.name!.contains(filterName)).toList();
+    dev.log('filtered list ${visibleProjects.value}');    // TODO remove
+  }
+
+  void resetFilter(){
+    visibleProjects.value = allProjects;
+  }
+
+  List<Project> getVisibleProjects(){
+    // TODO handle null
+    return visibleProjects.value!;
+  }
 }
