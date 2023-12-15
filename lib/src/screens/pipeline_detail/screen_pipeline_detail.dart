@@ -120,8 +120,11 @@ class _PipelineDetailScreen extends StatelessWidget {
                     onTap: pipeline.repository?.name == null ? null : ctrl.goToCommitDetail,
                     child: Text(
                       pipeline.triggerInfo!.ciSourceSha!,
-                      style: context.textTheme.titleSmall!
-                          .copyWith(decoration: pipeline.repository?.name == null ? null : TextDecoration.underline),
+                      style: context.textTheme.titleSmall!.copyWith(
+                        decoration: pipeline.repository?.name == null ? null : TextDecoration.underline,
+                        decorationColor: context.colorScheme.onBackground,
+                        decorationThickness: 1,
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -261,8 +264,11 @@ class _PipelineDetailScreen extends StatelessWidget {
                                                           Expanded(
                                                             child: Text(
                                                               task.name,
-                                                              style: context.textTheme.titleSmall!
-                                                                  .copyWith(decoration: TextDecoration.underline),
+                                                              style: context.textTheme.titleSmall!.copyWith(
+                                                                decoration: TextDecoration.underline,
+                                                                decorationColor: context.colorScheme.onBackground,
+                                                                decorationThickness: 1,
+                                                              ),
                                                               overflow: TextOverflow.ellipsis,
                                                             ),
                                                           ),
