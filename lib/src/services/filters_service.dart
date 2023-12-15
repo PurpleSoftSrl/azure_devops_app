@@ -3,7 +3,7 @@ import 'package:collection/collection.dart';
 
 /// This class is responsible for persisting filters to and retrieving them
 /// from local storage by using [storageService].
-/// 
+///
 /// Filters can be different for each organization, that's why we need [organization].
 class FiltersService {
   FiltersService({required this.storageService, required this.organization});
