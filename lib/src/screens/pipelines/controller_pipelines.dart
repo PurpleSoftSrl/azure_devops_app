@@ -44,7 +44,10 @@ class _PipelinesController with FilterMixin {
   final visibilityKey = GlobalKey();
   var _hasStoppedTimer = false;
 
-  late final filtersService = FiltersService(storageService: storageService, apiService: apiService);
+  late final filtersService = FiltersService(
+    storageService: storageService,
+    organization: apiService.organization,
+  );
 
   void dispose() {
     _stopTimer();

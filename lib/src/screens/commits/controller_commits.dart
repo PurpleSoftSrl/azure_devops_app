@@ -33,7 +33,10 @@ class _CommitsController with FilterMixin {
 
   final recentCommits = ValueNotifier<ApiResponse<List<Commit>?>?>(null);
 
-  late final filtersService = FiltersService(storageService: storageService, apiService: apiService);
+  late final filtersService = FiltersService(
+    storageService: storageService,
+    organization: apiService.organization,
+  );
 
   void dispose() {
     instance = null;

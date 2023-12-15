@@ -40,7 +40,10 @@ class _PullRequestsController with FilterMixin {
   final isSearching = ValueNotifier<bool>(false);
   String? _currentSearchQuery;
 
-  late final filtersService = FiltersService(storageService: storageService, apiService: apiService);
+  late final filtersService = FiltersService(
+    storageService: storageService,
+    organization: apiService.organization,
+  );
 
   void dispose() {
     instance = null;

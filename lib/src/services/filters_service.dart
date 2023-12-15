@@ -1,15 +1,15 @@
-import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:collection/collection.dart';
 
-/// This class is responsible for persisting filters to local storage.
+/// This class is responsible for persisting filters to and retrieving them
+/// from local storage by using [storageService].
+/// 
+/// Filters can be different for each organization, that's why we need [organization].
 class FiltersService {
-  FiltersService({required this.storageService, required this.apiService});
+  FiltersService({required this.storageService, required this.organization});
 
   final StorageService storageService;
-  final AzureApiService apiService;
-
-  String get organization => apiService.organization;
+  final String organization;
 
   WorkItemsFilters getWorkItemsSavedFilters() {
     final workItemsFilters = _getAreaFilter(area: _FilterAreas.workItems);
