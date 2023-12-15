@@ -285,7 +285,7 @@ class StorageFilter {
     required this.attribute,
     required this.filters,
   });
-  
+
   factory StorageFilter.fromMap(Map<String, dynamic> map) {
     return StorageFilter(
       organization: map['organization'] as String,

@@ -60,8 +60,7 @@ class _WorkItemsController with FilterMixin {
     final savedFilters = filtersService.getWorkItemsSavedFilters();
 
     if (savedFilters.projects.isNotEmpty) {
-      projectsFilter =
-          getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
     }
 
     if (savedFilters.assignees.isNotEmpty) {
