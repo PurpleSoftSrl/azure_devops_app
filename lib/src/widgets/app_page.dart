@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/widgets/empty_page.dart';
@@ -144,6 +145,8 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
                 title: Text(widget.title),
                 floating: true,
                 snap: true,
+                surfaceTintColor: context.colorScheme.background,
+                shadowColor: Colors.transparent,
                 actions: actions,
                 expandedHeight: 50,
                 bottom: widget.header == null
@@ -229,6 +232,8 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
                         snap: true,
                         pinned: widget.fixedAppBar,
                         actions: actions,
+                        surfaceTintColor: context.colorScheme.background,
+                        scrolledUnderElevation: 0,
                         expandedHeight: 50,
                         automaticallyImplyLeading: widget.showBackButton,
                         bottom: widget.header == null

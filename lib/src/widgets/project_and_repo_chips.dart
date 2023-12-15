@@ -69,8 +69,11 @@ class _InternalChip extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: Text(
                 text ?? '-',
-                style:
-                    context.textTheme.titleSmall!.copyWith(decoration: text == null ? null : TextDecoration.underline),
+                style: context.textTheme.titleSmall!.copyWith(
+                  decoration: text == null ? null : TextDecoration.underline,
+                  decorationColor: context.colorScheme.onBackground,
+                  decorationThickness: 1,
+                ),
               ),
             ),
           ),
