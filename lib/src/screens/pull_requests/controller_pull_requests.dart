@@ -48,6 +48,12 @@ class _PullRequestsController with FilterMixin {
   }
 
   Future<void> init() async {
+    _fillSavedFilters();
+
+    await _getData();
+  }
+
+  void _fillSavedFilters() {
     final savedFilters = filtersService.getPullRequestsSavedFilters();
 
     if (savedFilters.projects.isNotEmpty) {
@@ -66,8 +72,6 @@ class _PullRequestsController with FilterMixin {
       reviewersFilter =
           getSortedUsers(apiService).where((p) => savedFilters.assignedTo.contains(p.mailAddress)).toSet();
     }
-
-    await _getData();
   }
 
   Future<void> goToPullRequestDetail(PullRequest pr) async {

@@ -57,35 +57,7 @@ class _WorkItemsController with FilterMixin {
   }
 
   Future<void> init() async {
-    final savedFilters = filtersService.getWorkItemsSavedFilters();
-
-    if (savedFilters.projects.isNotEmpty) {
-      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
-    }
-
-    if (savedFilters.assignees.isNotEmpty) {
-      usersFilter = getAssignees().where((p) => savedFilters.assignees.contains(p.mailAddress)).toSet();
-    }
-
-    if (savedFilters.area.isNotEmpty) {
-      // we may not have real areas yet, so we use a fake one to show the filter immediately
-      areaFilter = AreaOrIteration.onlyPath(path: savedFilters.area.first);
-    }
-
-    if (savedFilters.iteration.isNotEmpty) {
-      // we may not have real iterations yet, so we use a fake one to show the filter immediately
-      iterationFilter = AreaOrIteration.onlyPath(path: savedFilters.iteration.first);
-    }
-
-    if (savedFilters.types.isNotEmpty) {
-      // we may not have real types yet, so we use a fake one to show the filter immediately
-      typesFilter = savedFilters.types.map((t) => WorkItemType.onlyName(name: t)).toSet();
-    }
-
-    if (savedFilters.states.isNotEmpty) {
-      // we may not have real states yet, so we use a fake one to show the filter immediately
-      statesFilter = savedFilters.states.map((s) => WorkItemState.onlyName(name: s)).toSet();
-    }
+    final savedFilters = _fillSavedFilters();
 
     allWorkItemTypes = [];
     allWorkItemStates = statesFilter.toList();
@@ -106,7 +78,6 @@ class _WorkItemsController with FilterMixin {
     await _getData();
 
     if (savedFilters.area.isNotEmpty) {
-      // use a real area for area filter
       areaFilter = apiService.workItemAreas.values
           .expand((a) => a)
           .expand((a) => [a, if (a.children != null) ...a.children!])
@@ -114,12 +85,44 @@ class _WorkItemsController with FilterMixin {
     }
 
     if (savedFilters.iteration.isNotEmpty) {
-      // use a real iteration for iteration filter
       apiService.workItemIterations.values
           .expand((a) => a)
           .expand((a) => [a, if (a.children != null) ...a.children!])
           .firstWhereOrNull((a) => a.path == savedFilters.iteration.first);
     }
+  }
+
+  /// Here we fill some filters with fake objects just to show them immediately,
+  /// because we may not have the real object yet (areas, iterations, types and states
+  /// need to get downloaded).
+  WorkItemsFilters _fillSavedFilters() {
+    final savedFilters = filtersService.getWorkItemsSavedFilters();
+
+    if (savedFilters.projects.isNotEmpty) {
+      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+    }
+
+    if (savedFilters.assignees.isNotEmpty) {
+      usersFilter = getAssignees().where((p) => savedFilters.assignees.contains(p.mailAddress)).toSet();
+    }
+
+    if (savedFilters.area.isNotEmpty) {
+      areaFilter = AreaOrIteration.onlyPath(path: savedFilters.area.first);
+    }
+
+    if (savedFilters.iteration.isNotEmpty) {
+      iterationFilter = AreaOrIteration.onlyPath(path: savedFilters.iteration.first);
+    }
+
+    if (savedFilters.types.isNotEmpty) {
+      typesFilter = savedFilters.types.map((t) => WorkItemType.onlyName(name: t)).toSet();
+    }
+
+    if (savedFilters.states.isNotEmpty) {
+      statesFilter = savedFilters.states.map((s) => WorkItemState.onlyName(name: s)).toSet();
+    }
+
+    return savedFilters;
   }
 
   void _fillTypesAndStates(Iterable<List<WorkItemType>> values) {

@@ -41,6 +41,12 @@ class _CommitsController with FilterMixin {
   }
 
   Future<void> init() async {
+    _fillSavedFilters();
+
+    await _getData();
+  }
+
+  void _fillSavedFilters() {
     final savedFilters = filtersService.getCommitsSavedFilters();
 
     if (savedFilters.projects.isNotEmpty) {
@@ -50,8 +56,6 @@ class _CommitsController with FilterMixin {
     if (savedFilters.authors.isNotEmpty) {
       usersFilter = getSortedUsers(apiService).where((p) => savedFilters.authors.contains(p.mailAddress)).toSet();
     }
-
-    await _getData();
   }
 
   Future<void> _getData() async {
