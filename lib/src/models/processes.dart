@@ -109,10 +109,18 @@ class WorkItemType {
             .toList(),
       );
 
-  static WorkItemType get all {
+  static WorkItemType get all => WorkItemType(
+        name: 'All',
+        referenceName: 'All',
+        isDisabled: false,
+        icon: '',
+        states: [],
+      );
+
+  static WorkItemType onlyName({required String name}) {
     return WorkItemType(
-      name: 'All',
-      referenceName: 'All',
+      name: name,
+      referenceName: name,
       isDisabled: false,
       icon: '',
       states: [],
@@ -163,13 +171,17 @@ class WorkItemState {
         color: json['color'] as String,
       );
 
-  static WorkItemState get all {
-    return WorkItemState(
-      name: 'All',
-      color: '',
-      id: '',
-    );
-  }
+  static WorkItemState get all => WorkItemState(
+        name: 'All',
+        color: '',
+        id: '',
+      );
+  
+  static WorkItemState onlyName({required String name}) => WorkItemState(
+        name: name,
+        color: '',
+        id: '',
+      );
 
   final String id;
   final String name;

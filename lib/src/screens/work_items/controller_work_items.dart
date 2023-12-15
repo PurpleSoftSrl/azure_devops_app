@@ -67,6 +67,26 @@ class _WorkItemsController with FilterMixin {
       usersFilter = getAssignees().where((p) => savedFilters.assignees.contains(p.mailAddress)).toSet();
     }
 
+    if (savedFilters.area.isNotEmpty) {
+      // we may not have real areas yet, so we use a fake one to show the filter immediately
+      areaFilter = AreaOrIteration.onlyPath(path: savedFilters.area.first);
+    }
+
+    if (savedFilters.iteration.isNotEmpty) {
+      // we may not have real iterations yet, so we use a fake one to show the filter immediately
+      iterationFilter = AreaOrIteration.onlyPath(path: savedFilters.iteration.first);
+    }
+
+    if (savedFilters.types.isNotEmpty) {
+      // we may not have real types yet, so we use a fake one to show the filter immediately
+      typesFilter = savedFilters.types.map((t) => WorkItemType.onlyName(name: t)).toSet();
+    }
+
+    if (savedFilters.states.isNotEmpty) {
+      // we may not have real states yet, so we use a fake one to show the filter immediately
+      statesFilter = savedFilters.states.map((s) => WorkItemState.onlyName(name: s)).toSet();
+    }
+
     allWorkItemTypes = [];
     allWorkItemStates = statesFilter.toList();
 
@@ -84,6 +104,22 @@ class _WorkItemsController with FilterMixin {
     }
 
     await _getData();
+
+    if (savedFilters.area.isNotEmpty) {
+      // use a real area for area filter
+      areaFilter = apiService.workItemAreas.values
+          .expand((a) => a)
+          .expand((a) => [a, if (a.children != null) ...a.children!])
+          .firstWhereOrNull((a) => a.path == savedFilters.area.first);
+    }
+
+    if (savedFilters.iteration.isNotEmpty) {
+      // use a real iteration for iteration filter
+      apiService.workItemIterations.values
+          .expand((a) => a)
+          .expand((a) => [a, if (a.children != null) ...a.children!])
+          .firstWhereOrNull((a) => a.path == savedFilters.iteration.first);
+    }
   }
 
   void _fillTypesAndStates(Iterable<List<WorkItemType>> values) {
@@ -204,6 +240,8 @@ class _WorkItemsController with FilterMixin {
     workItems.value = null;
     areaFilter = area;
     _getData();
+
+    filtersService.saveWorkItemsAreaFilter(area!.path);
   }
 
   void filterByIteration(AreaOrIteration? iteration) {
@@ -212,6 +250,8 @@ class _WorkItemsController with FilterMixin {
     workItems.value = null;
     iterationFilter = iteration;
     _getData();
+
+    filtersService.saveWorkItemsIterationFilter(iteration!.path);
   }
 
   Future<void> _getData() async {

@@ -2,8 +2,6 @@ import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:collection/collection.dart';
 
-// TODO save work items area and iteration filters
-
 /// This class is responsible for persisting filters to local storage.
 class FiltersService {
   FiltersService({required this.storageService, required this.apiService});
@@ -27,6 +25,8 @@ class FiltersService {
       states: workItemsFilters.firstWhereOrNull((f) => f.attribute == _FilterKeys.states)?.filters ?? {},
       types: workItemsFilters.firstWhereOrNull((f) => f.attribute == _FilterKeys.types)?.filters ?? {},
       assignees: workItemsFilters.firstWhereOrNull((f) => f.attribute == _FilterKeys.assignees)?.filters ?? {},
+      area: workItemsFilters.firstWhereOrNull((f) => f.attribute == _FilterKeys.area)?.filters ?? {},
+      iteration: workItemsFilters.firstWhereOrNull((f) => f.attribute == _FilterKeys.iteration)?.filters ?? {},
     );
   }
 
@@ -44,6 +44,14 @@ class FiltersService {
 
   void saveWorkItemsAssigneesFilter(Set<String> userEmails) {
     storageService.saveFilter(organization, _FilterAreas.workItems, _FilterKeys.assignees, userEmails);
+  }
+
+  void saveWorkItemsAreaFilter(String area) {
+    storageService.saveFilter(organization, _FilterAreas.workItems, _FilterKeys.area, {area});
+  }
+
+  void saveWorkItemsIterationFilter(String iteration) {
+    storageService.saveFilter(organization, _FilterAreas.workItems, _FilterKeys.iteration, {iteration});
   }
 
   void resetWorkItemsFilters() {
@@ -158,12 +166,16 @@ class WorkItemsFilters {
     required this.states,
     required this.types,
     required this.assignees,
+    required this.area,
+    required this.iteration,
   });
 
   final Set<String> projects;
   final Set<String> states;
   final Set<String> types;
   final Set<String> assignees;
+  final Set<String> area;
+  final Set<String> iteration;
 }
 
 class CommitsFilters {
@@ -217,6 +229,8 @@ class _FilterKeys {
   static const states = 'states';
   static const types = 'types';
   static const assignees = 'assignees';
+  static const area = 'area';
+  static const iteration = 'iteration';
   static const authors = 'authors';
   static const triggeredBy = 'triggeredBy';
   static const result = 'result';
