@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:azure_devops/src/models/project.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,6 +25,17 @@ abstract class StorageService {
   int get numberOfSessions;
 
   void increaseNumberOfSessions();
+
+  List<StorageFilter> getFilters();
+
+  void saveFilter(
+    String organization,
+    String area,
+    String filterAttribute,
+    Set<String> filters,
+  );
+
+  void resetFilter(String organization, String area);
 }
 
 class StorageServiceCore implements StorageService {
@@ -114,6 +126,59 @@ class StorageServiceCore implements StorageService {
   void increaseNumberOfSessions() {
     _helper.setInt(_Keys.numberOfSessions, numberOfSessions + 1);
   }
+
+  @override
+  List<StorageFilter> getFilters() {
+    final filters = _helper.getStringList(_Keys.filters) ?? [];
+    return filters.map(StorageFilter.fromJson).toList();
+  }
+
+  @override
+  void saveFilter(
+    String organization,
+    String area,
+    String attribute,
+    Set<String> filters,
+  ) {
+    final savedFilters = getFilters();
+
+    final attributeFilters = savedFilters.firstWhereOrNull(
+      (f) => f.organization == organization && f.area == area && f.attribute == attribute,
+    );
+    final hasAttributeFilters = attributeFilters != null;
+    if (hasAttributeFilters) {
+      attributeFilters.filters.clear();
+      attributeFilters.filters.addAll(filters);
+    } else {
+      final filterToSave = StorageFilter(
+        organization: organization,
+        area: area,
+        attribute: attribute,
+        filters: filters,
+      );
+
+      savedFilters.add(filterToSave);
+    }
+
+    _helper.setStringList(
+      _Keys.filters,
+      savedFilters.map((f) => f.toJson()).toList(),
+    );
+  }
+
+  @override
+  void resetFilter(String organization, String area) {
+    final savedFilters = getFilters();
+
+    final otherFilters = savedFilters.whereNot(
+      (f) => f.organization == organization && f.area == area,
+    );
+
+    _helper.setStringList(
+      _Keys.filters,
+      otherFilters.map((f) => f.toJson()).toList(),
+    );
+  }
 }
 
 class _StorageServiceHelper {
@@ -192,6 +257,7 @@ class _Keys {
   static const theme = 'theme';
   static const org = 'org';
   static const numberOfSessions = 'numberOfSessions';
+  static const filters = 'filters';
 }
 
 class StorageServiceInherited extends InheritedWidget {
@@ -206,5 +272,59 @@ class StorageServiceInherited extends InheritedWidget {
   @override
   bool updateShouldNotify(covariant InheritedWidget oldWidget) {
     return false;
+  }
+}
+
+/// Filters are grouped by organization, area and attribute, where
+/// area can be one of (commits, pipelines, workItems, pullRequests) and
+/// attribute can be one of (projects, authors, states, etc.).
+class StorageFilter {
+  StorageFilter({
+    required this.organization,
+    required this.area,
+    required this.attribute,
+    required this.filters,
+  });
+  
+  factory StorageFilter.fromMap(Map<String, dynamic> map) {
+    return StorageFilter(
+      organization: map['organization'] as String,
+      area: map['area'] as String,
+      attribute: map['filterAttribute'] as String,
+      filters: Set<String>.from(map['filters'] as List<dynamic>),
+    );
+  }
+
+  factory StorageFilter.fromJson(String source) => StorageFilter.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  final String organization;
+  final String area;
+  final String attribute;
+  final Set<String> filters;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'organization': organization,
+      'area': area,
+      'filterAttribute': attribute,
+      'filters': filters.toList(),
+    };
+  }
+
+  String toJson() => json.encode(toMap());
+
+  static List<StorageFilter>? listFromJson(
+    String json, {
+    bool growable = false,
+  }) {
+    final list = jsonDecode(json) as List<dynamic>?;
+    final result = <StorageFilter>[];
+    if (list != null) {
+      for (final row in list) {
+        final value = StorageFilter.fromJson(row as String);
+        result.add(value);
+      }
+    }
+    return result.toList(growable: growable);
   }
 }
