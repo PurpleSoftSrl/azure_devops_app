@@ -176,7 +176,7 @@ class WorkItemState {
         color: '',
         id: '',
       );
-  
+
   static WorkItemState onlyName({required String name}) => WorkItemState(
         name: name,
         color: '',
