@@ -12,21 +12,15 @@ class FiltersService {
   String get organization => apiService.organization;
 
   WorkItemsFilters getWorkItemsSavedFilters() {
-    final savedFilters = storageService.getFilters();
-
-    final workItemsFilters = savedFilters
-        .where(
-          (f) => f.organization == organization && f.area == _FilterAreas.workItems,
-        )
-        .toList();
+    final workItemsFilters = _getAreaFilter(area: _FilterAreas.workItems);
 
     return WorkItemsFilters(
-      projects: workItemsFilters.firstWhereOrNull((f) => f.attribute == WorkItemsFilters.projectsKey)?.filters ?? {},
-      states: workItemsFilters.firstWhereOrNull((f) => f.attribute == WorkItemsFilters.statesKey)?.filters ?? {},
-      types: workItemsFilters.firstWhereOrNull((f) => f.attribute == WorkItemsFilters.typesKey)?.filters ?? {},
-      assignees: workItemsFilters.firstWhereOrNull((f) => f.attribute == WorkItemsFilters.assigneesKey)?.filters ?? {},
-      area: workItemsFilters.firstWhereOrNull((f) => f.attribute == WorkItemsFilters.areaKey)?.filters ?? {},
-      iteration: workItemsFilters.firstWhereOrNull((f) => f.attribute == WorkItemsFilters.iterationKey)?.filters ?? {},
+      projects: _getFilters(workItemsFilters, attribute: WorkItemsFilters.projectsKey),
+      states: _getFilters(workItemsFilters, attribute: WorkItemsFilters.statesKey),
+      types: _getFilters(workItemsFilters, attribute: WorkItemsFilters.typesKey),
+      assignees: _getFilters(workItemsFilters, attribute: WorkItemsFilters.assigneesKey),
+      area: _getFilters(workItemsFilters, attribute: WorkItemsFilters.areaKey),
+      iteration: _getFilters(workItemsFilters, attribute: WorkItemsFilters.iterationKey),
     );
   }
 
@@ -59,17 +53,11 @@ class FiltersService {
   }
 
   CommitsFilters getCommitsSavedFilters() {
-    final savedFilters = storageService.getFilters();
-
-    final commitsFilters = savedFilters
-        .where(
-          (f) => f.organization == organization && f.area == _FilterAreas.commits,
-        )
-        .toList();
+    final commitsFilters = _getAreaFilter(area: _FilterAreas.commits);
 
     return CommitsFilters(
-      projects: commitsFilters.firstWhereOrNull((f) => f.attribute == CommitsFilters.projectsKey)?.filters ?? {},
-      authors: commitsFilters.firstWhereOrNull((f) => f.attribute == CommitsFilters.authorsKey)?.filters ?? {},
+      projects: _getFilters(commitsFilters, attribute: CommitsFilters.projectsKey),
+      authors: _getFilters(commitsFilters, attribute: CommitsFilters.authorsKey),
     );
   }
 
@@ -86,20 +74,13 @@ class FiltersService {
   }
 
   PipelinesFilters getPipelinesSavedFilters() {
-    final savedFilters = storageService.getFilters();
-
-    final pipelinesFilters = savedFilters
-        .where(
-          (f) => f.organization == organization && f.area == _FilterAreas.pipelines,
-        )
-        .toList();
+    final pipelinesFilters = _getAreaFilter(area: _FilterAreas.pipelines);
 
     return PipelinesFilters(
-      projects: pipelinesFilters.firstWhereOrNull((f) => f.attribute == PipelinesFilters.projectsKey)?.filters ?? {},
-      triggeredBy:
-          pipelinesFilters.firstWhereOrNull((f) => f.attribute == PipelinesFilters.triggeredByKey)?.filters ?? {},
-      result: pipelinesFilters.firstWhereOrNull((f) => f.attribute == PipelinesFilters.resultKey)?.filters ?? {},
-      status: pipelinesFilters.firstWhereOrNull((f) => f.attribute == PipelinesFilters.statusKey)?.filters ?? {},
+      projects: _getFilters(pipelinesFilters, attribute: PipelinesFilters.projectsKey),
+      triggeredBy: _getFilters(pipelinesFilters, attribute: PipelinesFilters.triggeredByKey),
+      result: _getFilters(pipelinesFilters, attribute: PipelinesFilters.resultKey),
+      status: _getFilters(pipelinesFilters, attribute: PipelinesFilters.statusKey),
     );
   }
 
@@ -124,22 +105,13 @@ class FiltersService {
   }
 
   PullRequestsFilters getPullRequestsSavedFilters() {
-    final savedFilters = storageService.getFilters();
-
-    final pullRequestsFilters = savedFilters
-        .where(
-          (f) => f.organization == organization && f.area == _FilterAreas.pullRequests,
-        )
-        .toList();
+    final pullRequestsFilters = _getAreaFilter(area: _FilterAreas.pullRequests);
 
     return PullRequestsFilters(
-      projects:
-          pullRequestsFilters.firstWhereOrNull((f) => f.attribute == PullRequestsFilters.projectsKey)?.filters ?? {},
-      status: pullRequestsFilters.firstWhereOrNull((f) => f.attribute == PullRequestsFilters.statusKey)?.filters ?? {},
-      openedBy:
-          pullRequestsFilters.firstWhereOrNull((f) => f.attribute == PullRequestsFilters.openedByKey)?.filters ?? {},
-      assignedTo:
-          pullRequestsFilters.firstWhereOrNull((f) => f.attribute == PullRequestsFilters.assignedToKey)?.filters ?? {},
+      projects: _getFilters(pullRequestsFilters, attribute: PullRequestsFilters.projectsKey),
+      status: _getFilters(pullRequestsFilters, attribute: PullRequestsFilters.statusKey),
+      openedBy: _getFilters(pullRequestsFilters, attribute: PullRequestsFilters.openedByKey),
+      assignedTo: _getFilters(pullRequestsFilters, attribute: PullRequestsFilters.assignedToKey),
     );
   }
 
@@ -161,6 +133,15 @@ class FiltersService {
 
   void resetPullRequestsFilters() {
     storageService.resetFilter(organization, _FilterAreas.pullRequests);
+  }
+
+  List<StorageFilter> _getAreaFilter({required String area}) {
+    final savedFilters = storageService.getFilters();
+    return savedFilters.where((f) => f.organization == organization && f.area == area).toList();
+  }
+
+  Set<String> _getFilters(List<StorageFilter> allFilters, {required String attribute}) {
+    return allFilters.firstWhereOrNull((f) => f.attribute == attribute)?.filters ?? {};
   }
 }
 
