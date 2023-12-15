@@ -33,12 +33,24 @@ class _CommitsController with FilterMixin {
 
   final recentCommits = ValueNotifier<ApiResponse<List<Commit>?>?>(null);
 
+  late final filtersService = FiltersService(storageService: storageService, apiService: apiService);
+
   void dispose() {
     instance = null;
     _instances.remove(args);
   }
 
   Future<void> init() async {
+    final savedFilters = filtersService.getCommitsSavedFilters();
+
+    if (savedFilters.projects.isNotEmpty) {
+      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+    }
+
+    if (savedFilters.authors.isNotEmpty) {
+      usersFilter = getSortedUsers(apiService).where((p) => savedFilters.authors.contains(p.mailAddress)).toSet();
+    }
+
     await _getData();
   }
 
@@ -83,6 +95,8 @@ class _CommitsController with FilterMixin {
     recentCommits.value = null;
     projectsFilter = projects;
     _getData();
+
+    filtersService.saveCommitsProjectsFilter(projects.map((p) => p.name!).toSet());
   }
 
   void filterByUsers(Set<GraphUser> users) {
@@ -91,12 +105,17 @@ class _CommitsController with FilterMixin {
     recentCommits.value = null;
     usersFilter = users;
     _getData();
+
+    filtersService.saveCommitsAuthorsFilter(users.map((p) => p.mailAddress!).toSet());
   }
 
   void resetFilters() {
     recentCommits.value = null;
     projectsFilter.clear();
     usersFilter.clear();
+
+    filtersService.resetCommitsFilters();
+
     init();
   }
 }

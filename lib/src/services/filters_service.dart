@@ -47,6 +47,33 @@ class FiltersService {
   void resetWorkItemsFilters() {
     storageService.resetFilter(organization, _FilterAreas.workItems);
   }
+
+  CommitsFilters getCommitsSavedFilters() {
+    final savedFilters = storageService.getFilters();
+
+    final savedCommitsFilters = savedFilters
+        .where(
+          (f) => f.organization == organization && f.area == _FilterAreas.commits,
+        )
+        .toList();
+
+    return CommitsFilters(
+      projects: savedCommitsFilters.firstWhereOrNull((f) => f.attribute == _FilterKeys.projects)?.filters ?? {},
+      authors: savedCommitsFilters.firstWhereOrNull((f) => f.attribute == _FilterKeys.authors)?.filters ?? {},
+    );
+  }
+
+  void saveCommitsProjectsFilter(Set<String> projectNames) {
+    storageService.saveFilter(organization, _FilterAreas.commits, _FilterKeys.projects, projectNames);
+  }
+
+  void saveCommitsAuthorsFilter(Set<String> userEmails) {
+    storageService.saveFilter(organization, _FilterAreas.commits, _FilterKeys.authors, userEmails);
+  }
+
+  void resetCommitsFilters() {
+    storageService.resetFilter(organization, _FilterAreas.commits);
+  }
 }
 
 class WorkItemsFilters {
@@ -63,10 +90,20 @@ class WorkItemsFilters {
   final Set<String> assignees;
 }
 
+class CommitsFilters {
+  CommitsFilters({
+    required this.projects,
+    required this.authors,
+  });
+
+  final Set<String> projects;
+  final Set<String> authors;
+}
+
 class _FilterAreas {
   static const workItems = 'work-items';
+  static const commits = 'commits';
   // TODO
-  // static const commits = 'commits';
   // static const pipelines = 'pipelines';
   // static const pullRequests = 'pull-requests';
 }
@@ -76,4 +113,5 @@ class _FilterKeys {
   static const states = 'states';
   static const types = 'types';
   static const assignees = 'assignees';
+  static const authors = 'authors';
 }
