@@ -60,21 +60,34 @@ class _WorkItemsController with FilterMixin {
 
     final types = await apiService.getWorkItemTypes();
     if (!types.isError) {
-      allWorkItemTypes.addAll(types.data!.values.expand((ts) => ts).toSet());
-
-      final allStatesToAdd = <WorkItemState>{};
-
-      for (final entry in apiService.workItemStates.values) {
-        final states = entry.values.expand((v) => v);
-        allStatesToAdd.addAll(states);
-      }
-
-      final sortedStates = allStatesToAdd.sorted((a, b) => a.name.compareTo(b.name));
-
-      allWorkItemStates.addAll(sortedStates);
+      _fillTypesAndStates(types.data!.values);
     }
 
     await _getData();
+  }
+
+  void _fillTypesAndStates(Iterable<List<WorkItemType>> values) {
+    final typeList = values.expand((ts) => ts).toSet();
+
+    final distinctTypeIds = <String>{};
+
+    // get distinct types by name
+    for (final type in typeList) {
+      if (distinctTypeIds.add(type.name)) {
+        allWorkItemTypes.add(type);
+      }
+    }
+
+    final allStatesToAdd = <WorkItemState>{};
+
+    for (final entry in apiService.workItemStates.values) {
+      final states = entry.values.expand((v) => v);
+      allStatesToAdd.addAll(states);
+    }
+
+    final sortedStates = allStatesToAdd.sorted((a, b) => a.name.compareTo(b.name));
+
+    allWorkItemStates.addAll(sortedStates);
   }
 
   Future<void> goToWorkItemDetail(WorkItem item) async {
