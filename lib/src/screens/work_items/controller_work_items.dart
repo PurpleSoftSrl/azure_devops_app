@@ -57,15 +57,15 @@ class _WorkItemsController with FilterMixin {
   }
 
   Future<void> init() async {
-    final savedWorkItemsFilters = filtersService.getWorkItemsSavedFilters();
+    final savedFilters = filtersService.getWorkItemsSavedFilters();
 
-    if (savedWorkItemsFilters.projects.isNotEmpty) {
+    if (savedFilters.projects.isNotEmpty) {
       projectsFilter =
-          getProjects(storageService).where((p) => savedWorkItemsFilters.projects.contains(p.name)).toSet();
+          getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
     }
 
-    if (savedWorkItemsFilters.assignees.isNotEmpty) {
-      usersFilter = getAssignees().where((p) => savedWorkItemsFilters.assignees.contains(p.mailAddress)).toSet();
+    if (savedFilters.assignees.isNotEmpty) {
+      usersFilter = getAssignees().where((p) => savedFilters.assignees.contains(p.mailAddress)).toSet();
     }
 
     allWorkItemTypes = [];
@@ -75,12 +75,12 @@ class _WorkItemsController with FilterMixin {
     if (!types.isError) {
       _fillTypesAndStates(types.data!.values);
 
-      if (savedWorkItemsFilters.types.isNotEmpty) {
-        typesFilter = allWorkItemTypes.where((s) => savedWorkItemsFilters.types.contains(s.name)).toSet();
+      if (savedFilters.types.isNotEmpty) {
+        typesFilter = allWorkItemTypes.where((s) => savedFilters.types.contains(s.name)).toSet();
       }
 
-      if (savedWorkItemsFilters.states.isNotEmpty) {
-        statesFilter = allWorkItemStates.where((s) => savedWorkItemsFilters.states.contains(s.name)).toSet();
+      if (savedFilters.states.isNotEmpty) {
+        statesFilter = allWorkItemStates.where((s) => savedFilters.states.contains(s.name)).toSet();
       }
     }
 

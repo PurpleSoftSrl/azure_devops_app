@@ -44,6 +44,8 @@ class _PipelinesController with FilterMixin {
   final visibilityKey = GlobalKey();
   var _hasStoppedTimer = false;
 
+  late final filtersService = FiltersService(storageService: storageService, apiService: apiService);
+
   void dispose() {
     _stopTimer();
 
@@ -57,6 +59,22 @@ class _PipelinesController with FilterMixin {
   }
 
   Future<void> init() async {
+    final savedFilters = filtersService.getPipelinesSavedFilters();
+
+    if (savedFilters.projects.isNotEmpty) {
+      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+    }
+
+    if (savedFilters.triggeredBy.isNotEmpty) {
+      usersFilter = getSortedUsers(apiService).where((p) => savedFilters.triggeredBy.contains(p.mailAddress)).toSet();
+    }
+
+    if (savedFilters.result.isNotEmpty) {
+      resultFilter = PipelineResult.fromString(savedFilters.result.first);
+    } else if (savedFilters.status.isNotEmpty) {
+      statusFilter = PipelineStatus.fromString(savedFilters.status.first);
+    }
+
     await _getData();
 
     if (pipelines.value != null) {
@@ -113,6 +131,8 @@ class _PipelinesController with FilterMixin {
     pipelines.value = null;
     projectsFilter = projects;
     _getData();
+
+    filtersService.savePipelinesProjectsFilter(projects.map((p) => p.name!).toSet());
   }
 
   void filterByResult(PipelineResult result) {
@@ -121,6 +141,8 @@ class _PipelinesController with FilterMixin {
     pipelines.value = null;
     resultFilter = result;
     _getData();
+
+    filtersService.savePipelinesResultFilter(result.stringValue);
   }
 
   void filterByStatus(PipelineStatus status) {
@@ -129,6 +151,8 @@ class _PipelinesController with FilterMixin {
     pipelines.value = null;
     statusFilter = status;
     _getData();
+
+    filtersService.savePipelinesStatusFilter(status.stringValue);
   }
 
   void filterByUsers(Set<GraphUser> users) {
@@ -137,6 +161,8 @@ class _PipelinesController with FilterMixin {
     pipelines.value = null;
     usersFilter = users;
     _getData();
+
+    filtersService.savePipelinesTriggeredByFilter(users.map((p) => p.mailAddress!).toSet());
   }
 
   void resetFilters() {
@@ -146,6 +172,8 @@ class _PipelinesController with FilterMixin {
     usersFilter.clear();
 
     if (args?.definition == null) projectsFilter.clear();
+
+    filtersService.resetPipelinesFilters();
 
     init();
   }
