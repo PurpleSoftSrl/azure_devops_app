@@ -300,7 +300,7 @@ class _WorkItemsController with FilterMixin {
   Future<void> createWorkItem() async {
     await AppRouter.goToCreateOrEditWorkItem(
       args: (
-        project: projectFilter != projectAll ? projectFilter.name : null,
+        project: projectsFilter.length != 1 ? null : projectsFilter.first.name,
         id: null,
         area: areaFilter?.path,
         iteration: iterationFilter?.path,
