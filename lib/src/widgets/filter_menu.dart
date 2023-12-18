@@ -341,7 +341,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                                               ],
                                             ],
                                           ),
-                                          if (v != values.last)
+                                          if (v != visibleValues.last)
                                             const Divider(
                                               height: 20,
                                             ),
