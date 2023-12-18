@@ -34,6 +34,7 @@ class _WorkItemsController with FilterMixin {
   List<WorkItem> allWorkItems = [];
 
   Set<WorkItemState> statesFilter = {};
+  Set<WorkItemStateCategory> stateCategoriesFilter = {};
   Set<WorkItemType> typesFilter = {};
   AreaOrIteration? areaFilter;
   AreaOrIteration? iterationFilter;
@@ -48,6 +49,7 @@ class _WorkItemsController with FilterMixin {
   String? _currentSearchQuery;
 
   bool get isDefaultStateFilter => statesFilter.isEmpty;
+  bool get isDefaultStateCategoryFilter => stateCategoriesFilter.isEmpty;
 
   late final filtersService = FiltersService(
     storageService: storageService,
@@ -220,6 +222,14 @@ class _WorkItemsController with FilterMixin {
     filtersService.saveWorkItemsStatesFilter(states.map((p) => p.name).toSet());
   }
 
+  void filterByStateCategory(Set<WorkItemStateCategory> categories) {
+    if (categories == stateCategoriesFilter) return;
+
+    workItems.value = null;
+    stateCategoriesFilter = categories;
+    _getData();
+  }
+
   void filterByTypes(Set<WorkItemType> types) {
     if (types == typesFilter) return;
 
@@ -263,10 +273,18 @@ class _WorkItemsController with FilterMixin {
   Future<void> _getData() async {
     final assignedTo = isDefaultUsersFilter ? null : usersFilter;
 
+    var states = isDefaultStateFilter ? null : statesFilter;
+
+    if (!isDefaultStateCategoryFilter) {
+      states = allWorkItemStates
+          .where((s) => stateCategoriesFilter.map((s) => s.stringValue.replaceAll(' ', '')).contains(s.stateCategory))
+          .toSet();
+    }
+
     final res = await apiService.getWorkItems(
       projects: isDefaultProjectsFilter ? null : projectsFilter,
       types: typesFilter.isEmpty ? null : typesFilter,
-      states: isDefaultStateFilter ? null : statesFilter,
+      states: states,
       assignedTo: assignedTo?.map((u) => u.displayName == 'Unassigned' ? u.copyWith(mailAddress: '') : u).toSet(),
       area: areaFilter,
       iteration: iterationFilter,
@@ -283,6 +301,7 @@ class _WorkItemsController with FilterMixin {
   void resetFilters() {
     workItems.value = null;
     statesFilter.clear();
+    stateCategoriesFilter.clear();
     typesFilter.clear();
     projectsFilter.clear();
     usersFilter.clear();

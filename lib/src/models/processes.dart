@@ -163,12 +163,13 @@ class GetWorkItemStatesResponse {
 }
 
 class WorkItemState {
-  WorkItemState({required this.id, required this.name, required this.color});
+  WorkItemState({required this.id, required this.name, required this.color, this.stateCategory = ''});
 
   factory WorkItemState.fromJson(Map<String, dynamic> json) => WorkItemState(
         id: json['id'] as String,
         name: json['name'] as String,
         color: json['color'] as String,
+        stateCategory: json['stateCategory'] as String? ?? '',
       );
 
   static WorkItemState get all => WorkItemState(
@@ -186,6 +187,7 @@ class WorkItemState {
   final String id;
   final String name;
   final String color;
+  final String stateCategory;
 
   @override
   bool operator ==(Object other) {
@@ -197,5 +199,28 @@ class WorkItemState {
   @override
   int get hashCode {
     return name.hashCode;
+  }
+}
+
+enum WorkItemStateCategory {
+  proposed('Proposed', 0),
+  inProgress('In Progress', 1),
+  resolved('Resolved', 2),
+  completed('Completed', 3),
+  removed('Removed', 4);
+
+  const WorkItemStateCategory(this.stringValue, this.sortOrder);
+
+  final String stringValue;
+  final int sortOrder;
+
+  static WorkItemStateCategory fromString(String str) {
+    return switch (str) {
+      'Proposed' => WorkItemStateCategory.proposed,
+      'In Progress' => WorkItemStateCategory.inProgress,
+      'Resolved' => WorkItemStateCategory.resolved,
+      'Completed' => WorkItemStateCategory.completed,
+      'Removed' || _ => WorkItemStateCategory.removed,
+    };
   }
 }

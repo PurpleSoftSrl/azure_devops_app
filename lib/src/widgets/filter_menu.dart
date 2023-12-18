@@ -451,6 +451,28 @@ class WorkItemStateFilterWidget extends StatelessWidget {
   }
 }
 
+class WorkItemStateCategoryFilterWidget extends StatelessWidget {
+  const WorkItemStateCategoryFilterWidget({required this.category});
+
+  final WorkItemStateCategory category;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: CircleAvatar(
+        backgroundColor: switch (category) {
+          WorkItemStateCategory.proposed => Colors.grey,
+          WorkItemStateCategory.inProgress => Colors.blue,
+          WorkItemStateCategory.resolved => Colors.yellow,
+          WorkItemStateCategory.completed => Colors.green,
+          WorkItemStateCategory.removed => Colors.red,
+        },
+      ),
+    );
+  }
+}
+
 class ProjectFilterWidget extends StatelessWidget {
   const ProjectFilterWidget({required this.project});
 

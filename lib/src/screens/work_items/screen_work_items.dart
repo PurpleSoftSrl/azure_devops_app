@@ -37,15 +37,26 @@ class _WorkItemsScreen extends StatelessWidget {
               onSearchChanged:
                   ctrl.hasManyProjects(ctrl.storageService) ? (s) => ctrl.searchProject(s, ctrl.storageService) : null,
             ),
-            FilterMenu<WorkItemState>.multiple(
-              title: 'States',
-              values: ctrl.allWorkItemStates,
-              formatLabel: (t) => t.name,
-              currentFilters: ctrl.statesFilter,
-              onSelectedMultiple: ctrl.filterByStates,
-              isDefaultFilter: ctrl.isDefaultStateFilter,
-              widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
-            ),
+            if (ctrl.statesFilter.isEmpty)
+              FilterMenu<WorkItemStateCategory>.multiple(
+                title: 'Categories',
+                values: WorkItemStateCategory.values.sorted((a, b) => a.sortOrder.compareTo(b.sortOrder)).toList(),
+                formatLabel: (t) => t.stringValue,
+                currentFilters: ctrl.stateCategoriesFilter,
+                onSelectedMultiple: ctrl.filterByStateCategory,
+                isDefaultFilter: ctrl.isDefaultStateCategoryFilter,
+                widgetBuilder: (s) => WorkItemStateCategoryFilterWidget(category: s),
+              ),
+            if (ctrl.stateCategoriesFilter.isEmpty)
+              FilterMenu<WorkItemState>.multiple(
+                title: 'States',
+                values: ctrl.allWorkItemStates,
+                formatLabel: (t) => t.name,
+                currentFilters: ctrl.statesFilter,
+                onSelectedMultiple: ctrl.filterByStates,
+                isDefaultFilter: ctrl.isDefaultStateFilter,
+                widgetBuilder: (s) => WorkItemStateFilterWidget(state: s),
+              ),
             WorkItemTypeFilterMenu.multiple(
               title: 'Types',
               values: ctrl.allWorkItemTypes,
