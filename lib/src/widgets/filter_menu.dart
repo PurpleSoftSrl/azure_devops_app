@@ -11,6 +11,7 @@ import 'package:azure_devops/src/widgets/popup_menu.dart';
 import 'package:azure_devops/src/widgets/search_field.dart';
 import 'package:azure_devops/src/widgets/work_item_type_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class FiltersRow extends StatelessWidget {
@@ -219,6 +220,12 @@ class _FilterBottomsheet<T> extends StatelessWidget {
         }
 
         final selectedValues = ValueNotifier(isMultiple ? {...currentFilters!} : <T>{});
+
+        if (isMultiple) {
+          final selectedVisibleValues = visibleValues.value.where((v) => selectedValues.value.contains(v));
+          final nonSelectedVisibleValues = visibleValues.value.whereNot((v) => selectedValues.value.contains(v));
+          visibleValues.value = [...selectedVisibleValues, ...nonSelectedVisibleValues];
+        }
 
         OverlayService.bottomsheet(
           isScrollControlled: true,
