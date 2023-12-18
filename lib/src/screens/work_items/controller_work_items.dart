@@ -149,7 +149,7 @@ class _WorkItemsController with FilterMixin {
 
     final sortedStates = allStatesToAdd.sorted((a, b) => a.name.compareTo(b.name));
 
-    allWorkItemStates.addAll(sortedStates);
+    allWorkItemStates = sortedStates;
   }
 
   Future<void> goToWorkItemDetail(WorkItem item) async {
