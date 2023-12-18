@@ -1,3 +1,16 @@
+## 2.1.0 - 2023-12-18
+- Persist filters to local storage (#22) 
+- work_items: show types distinct by name 
+- work_items: show assignee and comment count in list 
+- fix filter not set when navigating from project page 
+- fix tap on multiple choice filter item 
+- sentry: filter out NetworkImageLoadException 
+- fix custom work item error message deserialization 
+- work_items: handle always required fields 
+- work_items: handle identity fields 
+- Add support for multiple choice filters (#13) 
+- work_items: show type only if project is selected 
+
 ## 2.0.2 - 2023-12-12
 - fix wrong work item types shown when project already selected 
 - handle inherited processes with spaces in the name 
