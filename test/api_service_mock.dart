@@ -795,6 +795,17 @@ class StorageServiceMock implements StorageService {
 
   @override
   int get numberOfSessions => throw UnimplementedError();
+
+  @override
+  List<StorageFilter> getFilters() {
+    return [];
+  }
+
+  @override
+  void resetFilter(String organization, String area) {}
+
+  @override
+  void saveFilter(String organization, String area, String filterAttribute, Set<String> filters) {}
 }
 
 extension on WorkItem {

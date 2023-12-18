@@ -49,21 +49,83 @@ class _WorkItemsController with FilterMixin {
 
   bool get isDefaultStateFilter => statesFilter.isEmpty;
 
+  late final filtersService = FiltersService(
+    storageService: storageService,
+    organization: apiService.organization,
+  );
+
   void dispose() {
     instance = null;
     _instances.remove(project.hashCode);
   }
 
   Future<void> init() async {
+    final savedFilters = _fillSavedFilters();
+
     allWorkItemTypes = [];
     allWorkItemStates = statesFilter.toList();
 
     final types = await apiService.getWorkItemTypes();
     if (!types.isError) {
       _fillTypesAndStates(types.data!.values);
+
+      if (savedFilters.types.isNotEmpty) {
+        typesFilter = allWorkItemTypes.where((s) => savedFilters.types.contains(s.name)).toSet();
+      }
+
+      if (savedFilters.states.isNotEmpty) {
+        statesFilter = allWorkItemStates.where((s) => savedFilters.states.contains(s.name)).toSet();
+      }
     }
 
     await _getData();
+
+    if (savedFilters.area.isNotEmpty) {
+      areaFilter = apiService.workItemAreas.values
+          .expand((a) => a)
+          .expand((a) => [a, if (a.children != null) ...a.children!])
+          .firstWhereOrNull((a) => a.path == savedFilters.area.first);
+    }
+
+    if (savedFilters.iteration.isNotEmpty) {
+      apiService.workItemIterations.values
+          .expand((a) => a)
+          .expand((a) => [a, if (a.children != null) ...a.children!])
+          .firstWhereOrNull((a) => a.path == savedFilters.iteration.first);
+    }
+  }
+
+  /// Here we fill some filters with fake objects just to show them immediately,
+  /// because we may not have the real object yet (areas, iterations, types and states
+  /// need to get downloaded).
+  WorkItemsFilters _fillSavedFilters() {
+    final savedFilters = filtersService.getWorkItemsSavedFilters();
+
+    if (savedFilters.projects.isNotEmpty) {
+      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+    }
+
+    if (savedFilters.assignees.isNotEmpty) {
+      usersFilter = getAssignees().where((p) => savedFilters.assignees.contains(p.mailAddress)).toSet();
+    }
+
+    if (savedFilters.area.isNotEmpty) {
+      areaFilter = AreaOrIteration.onlyPath(path: savedFilters.area.first);
+    }
+
+    if (savedFilters.iteration.isNotEmpty) {
+      iterationFilter = AreaOrIteration.onlyPath(path: savedFilters.iteration.first);
+    }
+
+    if (savedFilters.types.isNotEmpty) {
+      typesFilter = savedFilters.types.map((t) => WorkItemType.onlyName(name: t)).toSet();
+    }
+
+    if (savedFilters.states.isNotEmpty) {
+      statesFilter = savedFilters.states.map((s) => WorkItemState.onlyName(name: s)).toSet();
+    }
+
+    return savedFilters;
   }
 
   void _fillTypesAndStates(Iterable<List<WorkItemType>> values) {
@@ -114,6 +176,8 @@ class _WorkItemsController with FilterMixin {
     }
 
     _getData();
+
+    filtersService.saveWorkItemsProjectsFilter(projects.map((p) => p.name!).toSet());
   }
 
   /// Resets [areaFilter] if selected [projectFilter] doesn't contain this area
@@ -152,6 +216,8 @@ class _WorkItemsController with FilterMixin {
     workItems.value = null;
     statesFilter = states;
     _getData();
+
+    filtersService.saveWorkItemsStatesFilter(states.map((p) => p.name).toSet());
   }
 
   void filterByTypes(Set<WorkItemType> types) {
@@ -160,6 +226,8 @@ class _WorkItemsController with FilterMixin {
     workItems.value = null;
     typesFilter = types;
     _getData();
+
+    filtersService.saveWorkItemsTypesFilter(types.map((p) => p.name).toSet());
   }
 
   void filterByUsers(Set<GraphUser> users) {
@@ -168,6 +236,8 @@ class _WorkItemsController with FilterMixin {
     workItems.value = null;
     usersFilter = users;
     _getData();
+
+    filtersService.saveWorkItemsAssigneesFilter(users.map((p) => p.mailAddress!).toSet());
   }
 
   void filterByArea(AreaOrIteration? area) {
@@ -176,6 +246,8 @@ class _WorkItemsController with FilterMixin {
     workItems.value = null;
     areaFilter = area;
     _getData();
+
+    filtersService.saveWorkItemsAreaFilter(area!.path);
   }
 
   void filterByIteration(AreaOrIteration? iteration) {
@@ -184,6 +256,8 @@ class _WorkItemsController with FilterMixin {
     workItems.value = null;
     iterationFilter = iteration;
     _getData();
+
+    filtersService.saveWorkItemsIterationFilter(iteration!.path);
   }
 
   Future<void> _getData() async {
@@ -215,6 +289,9 @@ class _WorkItemsController with FilterMixin {
     areaFilter = null;
     iterationFilter = null;
     _currentSearchQuery = null;
+
+    filtersService.resetWorkItemsFilters();
+
     resetSearch();
 
     init();
@@ -248,8 +325,10 @@ class _WorkItemsController with FilterMixin {
 
     final areas = apiService.workItemAreas;
 
+    if (areas.isEmpty) return [];
+
     if (hasProjectFilter) {
-      return projectsFilter.map((p) => areas[p.name!]).where(hasRealChildren).expand((a) => a!);
+      return projectsFilter.map((p) => areas[p.name!]).where(hasRealChildren).expand((a) => a ?? <AreaOrIteration>[]);
     }
 
     return areas.values.where(hasRealChildren).expand((a) => a);
@@ -260,10 +339,12 @@ class _WorkItemsController with FilterMixin {
   // otherwise show all iterations.
   Iterable<AreaOrIteration> getIterationsToShow() {
     final iterations = apiService.workItemIterations;
+    if (iterations.isEmpty) return [];
 
     final hasProjectFilter = projectsFilter.isNotEmpty;
-    final projectIterations =
-        hasProjectFilter ? projectsFilter.map((p) => iterations[p.name!]).expand((i) => i!) : null;
+    final projectIterations = hasProjectFilter
+        ? projectsFilter.map((p) => iterations[p.name!]).expand((i) => i ?? <AreaOrIteration>[])
+        : null;
 
     final hasAreaFilter = areaFilter != null;
     final areaProjectIterations = hasAreaFilter ? iterations[areaFilter?.projectName] : null;

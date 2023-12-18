@@ -40,13 +40,41 @@ class _PullRequestsController with FilterMixin {
   final isSearching = ValueNotifier<bool>(false);
   String? _currentSearchQuery;
 
+  late final filtersService = FiltersService(
+    storageService: storageService,
+    organization: apiService.organization,
+  );
+
   void dispose() {
     instance = null;
     _instances.remove(project.hashCode);
   }
 
   Future<void> init() async {
+    _fillSavedFilters();
+
     await _getData();
+  }
+
+  void _fillSavedFilters() {
+    final savedFilters = filtersService.getPullRequestsSavedFilters();
+
+    if (savedFilters.projects.isNotEmpty) {
+      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+    }
+
+    if (savedFilters.status.isNotEmpty) {
+      statusFilter = PullRequestStatus.fromString(savedFilters.status.first);
+    }
+
+    if (savedFilters.openedBy.isNotEmpty) {
+      usersFilter = getSortedUsers(apiService).where((p) => savedFilters.openedBy.contains(p.mailAddress)).toSet();
+    }
+
+    if (savedFilters.assignedTo.isNotEmpty) {
+      reviewersFilter =
+          getSortedUsers(apiService).where((p) => savedFilters.assignedTo.contains(p.mailAddress)).toSet();
+    }
   }
 
   Future<void> goToPullRequestDetail(PullRequest pr) async {
@@ -58,12 +86,14 @@ class _PullRequestsController with FilterMixin {
     await init();
   }
 
-  void filterByStatus(PullRequestStatus state) {
-    if (state == statusFilter) return;
+  void filterByStatus(PullRequestStatus status) {
+    if (status == statusFilter) return;
 
     pullRequests.value = null;
-    statusFilter = state;
+    statusFilter = status;
     _getData();
+
+    filtersService.savePullRequestsStatusFilter(status.name);
   }
 
   void filterByUsers(Set<GraphUser> users) {
@@ -72,6 +102,8 @@ class _PullRequestsController with FilterMixin {
     pullRequests.value = null;
     usersFilter = users;
     _getData();
+
+    filtersService.savePullRequestsOpenedByFilter(users.map((p) => p.mailAddress!).toSet());
   }
 
   void filterByReviewers(Set<GraphUser> users) {
@@ -80,6 +112,8 @@ class _PullRequestsController with FilterMixin {
     pullRequests.value = null;
     reviewersFilter = users;
     _getData();
+
+    filtersService.savePullRequestsAssignedToFilter(users.map((p) => p.mailAddress!).toSet());
   }
 
   void filterByProjects(Set<Project> projects) {
@@ -88,6 +122,8 @@ class _PullRequestsController with FilterMixin {
     pullRequests.value = null;
     projectsFilter = projects;
     _getData();
+
+    filtersService.savePullRequestsProjectsFilter(projects.map((p) => p.name!).toSet());
   }
 
   Future<void> _getData() async {
@@ -112,6 +148,8 @@ class _PullRequestsController with FilterMixin {
     statusFilter = PullRequestStatus.all;
     usersFilter.clear();
     reviewersFilter.clear();
+
+    filtersService.resetPullRequestsFilters();
 
     init();
   }
