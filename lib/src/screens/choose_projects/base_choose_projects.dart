@@ -3,7 +3,6 @@ library choose_projects;
 import 'dart:async';
 import 'dart:math';
 
-
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/organization.dart';
