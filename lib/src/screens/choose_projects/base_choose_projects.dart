@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
-import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/router/router.dart';
