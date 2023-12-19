@@ -1,6 +1,6 @@
 part of choose_projects;
 
-class _ChooseProjectsController with FilterMixin{
+class _ChooseProjectsController with FilterMixin {
   factory _ChooseProjectsController({
     required AzureApiService apiService,
     required bool removeRoutes,
@@ -69,7 +69,7 @@ class _ChooseProjectsController with FilterMixin{
 
     _initiallyChosenProjects.addAll(chosenProjects.value!.data!);
     visibleProjects.value = allProjects;
-    dev.log('@@ initial projects [${visibleProjects.value}]');    // TODO remove
+    dev.log('@@ initial projects [${visibleProjects.value}]'); // TODO remove
   }
 
   void toggleChooseAll() {
@@ -174,16 +174,16 @@ class _ChooseProjectsController with FilterMixin{
   /// Prevents user from going back without having selected any project after clear cache
   Future<bool> onWillPop() async => alreadyChosenProjects.isNotEmpty;
 
-  void setVisibleProjects(String filterName){
+  void setVisibleProjects(String filterName) {
     visibleProjects.value = allProjects.where((e) => e.name!.toLowerCase().contains(filterName.toLowerCase())).toList();
   }
 
-  void resetFilter(){
+  void resetFilter() {
     visibleProjects.value = allProjects;
   }
 
-  List<Project> getVisibleProjects(){
-    // TODO handle null
+  List<Project> getVisibleProjects() {
+    if (visibleProjects.value == null) return [];
     return visibleProjects.value!;
   }
 }
