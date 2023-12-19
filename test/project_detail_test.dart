@@ -1,5 +1,6 @@
 import 'package:azure_devops/src/screens/project_detail/base_project_detail.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
+import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -12,11 +13,14 @@ void main() {
   testWidgets("Project detail page shows all project's informations", (t) async {
     final projectPage = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),
-      child: MaterialApp(
-        onGenerateRoute: (_) => MaterialPageRoute(
-          builder: (_) => ProjectDetailPage(),
-          settings: RouteSettings(
-            arguments: 'test name',
+      child: StorageServiceInherited(
+        storageService: StorageServiceMock(),
+        child: MaterialApp(
+          onGenerateRoute: (_) => MaterialPageRoute(
+            builder: (_) => ProjectDetailPage(),
+            settings: RouteSettings(
+              arguments: 'test name',
+            ),
           ),
         ),
       ),

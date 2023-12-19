@@ -1,7 +1,11 @@
 part of project_detail;
 
 class _ProjectDetailController {
-  factory _ProjectDetailController({required AzureApiService apiService, required String projectName}) {
+  factory _ProjectDetailController({
+    required AzureApiService apiService,
+    required StorageService storageService,
+    required String projectName,
+  }) {
     // handle page already in memory with a different project
     if (_instances[projectName] != null) {
       return _instances[projectName]!;
@@ -15,13 +19,19 @@ class _ProjectDetailController {
     return _instances.putIfAbsent(projectName, () => instance!);
   }
 
-  _ProjectDetailController._(this.apiService, this.projectName);
+  _ProjectDetailController._(this.apiService, this.storageService, this.projectName);
 
   static _ProjectDetailController? instance;
 
   static final Map<String, _ProjectDetailController> _instances = {};
 
   final AzureApiService apiService;
+  final StorageService storageService;
+
+  late final filtersService = FiltersService(
+    storageService: storageService,
+    organization: apiService.organization,
+  );
 
   final String projectName;
 
@@ -51,6 +61,15 @@ class _ProjectDetailController {
 
     final isAllErrors = allRes.every((r) => r.isError);
     project.value = projectRes.copyWith(isError: isAllErrors, errorResponse: allRes.first.errorResponse);
+    resetFilters();
+  }
+
+  void resetFilters() {
+    filtersService
+      ..resetCommitsFilters()
+      ..resetPipelinesFilters()
+      ..resetPullRequestsFilters()
+      ..resetWorkItemsFilters();
   }
 
   void goToRepoDetail(GitRepository repo) {
