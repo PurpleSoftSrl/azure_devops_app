@@ -991,6 +991,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final rulesRes = await _get(
       '$_basePath/_apis/work/processes/${projectProcess.typeId}/workItemTypes/$refName/rules?$_apiVersion',
     );
+    if (rulesRes.isError) return {};
 
     final rules = WorkItemTypeRulesResponse.fromResponse(rulesRes).rules;
 
