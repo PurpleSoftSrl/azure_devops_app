@@ -1,6 +1,6 @@
 part of choose_projects;
 
-class _ChooseProjectsController  {
+class _ChooseProjectsController {
   factory _ChooseProjectsController({
     required AzureApiService apiService,
     required bool removeRoutes,

@@ -1,6 +1,6 @@
 part of choose_projects;
 
-class _ChooseProjectsScreen extends StatelessWidget{
+class _ChooseProjectsScreen extends StatelessWidget {
   const _ChooseProjectsScreen(this.ctrl, this.parameters);
 
   final _ChooseProjectsController ctrl;
