@@ -170,9 +170,6 @@ class _ChooseProjectsController with FilterMixin {
     return selectedOrg;
   }
 
-  /// Prevents user from going back without having selected any project after clear cache
-  Future<bool> onWillPop() async => alreadyChosenProjects.isNotEmpty;
-
   void setVisibleProjects(String filterName) {
     visibleProjects.value = allProjects.where((e) => e.name!.toLowerCase().contains(filterName.toLowerCase())).toList();
   }
@@ -185,4 +182,7 @@ class _ChooseProjectsController with FilterMixin {
     if (visibleProjects.value == null) return [];
     return visibleProjects.value!;
   }
+
+  /// Prevents user from going back without having selected any project after clear cache
+  Future<bool> onWillPop() async => alreadyChosenProjects.isNotEmpty;
 }
