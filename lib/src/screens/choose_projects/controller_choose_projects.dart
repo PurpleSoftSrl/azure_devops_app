@@ -175,8 +175,7 @@ class _ChooseProjectsController with FilterMixin{
   Future<bool> onWillPop() async => alreadyChosenProjects.isNotEmpty;
 
   void setVisibleProjects(String filterName){
-    visibleProjects.value = allProjects.where((e) => e.name!.contains(filterName)).toList();
-    dev.log('filtered list ${visibleProjects.value}');    // TODO remove
+    visibleProjects.value = allProjects.where((e) => e.name!.toLowerCase().contains(filterName.toLowerCase())).toList();
   }
 
   void resetFilter(){

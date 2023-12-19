@@ -33,7 +33,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
                 const SizedBox(
                   height: 40,
                 ),
-                if(ctrl.hasManyProjects(ctrl.storageService))
+                if(ctrl.allProjects.length >= 10)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: DevOpsSearchField(
