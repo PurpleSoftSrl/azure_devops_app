@@ -214,12 +214,12 @@ class _FilterBottomsheet<T> extends StatelessWidget {
         final allValues = [...values];
         final visibleValues = ValueNotifier([...values]);
         final isSearchable = onSearchChanged != null;
-    
+
         if (isSearchable && !isDefaultFilter && !isMultiple) {
           final query = formatLabel?.call(currentFilter!) ?? '';
           visibleValues.value = onSearchChanged!.call(query);
         }
-    
+
         final selectedValues = ValueNotifier(isMultiple ? {...currentFilters!} : <T>{});
 
         if (isMultiple) {
