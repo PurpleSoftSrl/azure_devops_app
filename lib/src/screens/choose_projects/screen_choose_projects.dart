@@ -1,6 +1,6 @@
 part of choose_projects;
 
-class _ChooseProjectsScreen extends StatelessWidget {
+class _ChooseProjectsScreen extends StatelessWidget{
   const _ChooseProjectsScreen(this.ctrl, this.parameters);
 
   final _ChooseProjectsController ctrl;
@@ -33,16 +33,16 @@ class _ChooseProjectsScreen extends StatelessWidget {
                 const SizedBox(
                   height: 40,
                 ),
-                if(ctrl.allProjects.length >= 10)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: DevOpsSearchField(
-                    autofocus: false,
-                    onChanged: ctrl.setVisibleProjects,
-                    onResetSearch: ctrl.resetFilter,
-                    hint: 'Search by name',
+                if (ctrl.allProjects.length >= 10)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: DevOpsSearchField(
+                      autofocus: false,
+                      onChanged: ctrl.setVisibleProjects,
+                      onResetSearch: ctrl.resetFilter,
+                      hint: 'Search by name',
+                    ),
                   ),
-                ),
                 ValueListenableBuilder(
                   valueListenable: ctrl.visibleProjects,
                   builder: (context, item, _) {
