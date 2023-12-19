@@ -108,7 +108,7 @@ class StorageServiceCore implements StorageService {
     final keys = _helper.getKeys();
 
     for (final k in keys) {
-      if (k == _Keys.token) continue;
+      if (k == _Keys.token || k ==_Keys.theme) continue;
 
       _helper.remove(k);
     }
