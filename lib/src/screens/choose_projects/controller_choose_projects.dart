@@ -69,7 +69,6 @@ class _ChooseProjectsController with FilterMixin {
 
     _initiallyChosenProjects.addAll(chosenProjects.value!.data!);
     visibleProjects.value = allProjects;
-    dev.log('@@ initial projects [${visibleProjects.value}]'); // TODO remove
   }
 
   void toggleChooseAll() {
