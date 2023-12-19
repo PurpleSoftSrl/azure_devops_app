@@ -33,7 +33,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
                 const SizedBox(
                   height: 40,
                 ),
-                if(ctrl.getVisibleProjects().length >= 10)
+                if(ctrl.hasManyProjects(ctrl.storageService))
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: DevOpsSearchField(
@@ -43,8 +43,6 @@ class _ChooseProjectsScreen extends StatelessWidget {
                     hint: 'Search by name',
                   ),
                 ),
-                // TODO use filter mixin to display the filter only if proj.number >= 10.
-                // TODO check behaviour with a real device ~ keyboard & 'Confirm button'.
                 ValueListenableBuilder(
                   valueListenable: ctrl.visibleProjects,
                   builder: (context, item, _) {
