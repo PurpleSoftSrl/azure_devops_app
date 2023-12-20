@@ -61,16 +61,7 @@ class _WorkItemsController with FilterMixin {
   }
 
   Future<void> init() async {
-    final savedFilters = project != null
-        ? WorkItemsFilters(
-            projects: {project!.name!},
-            states: {},
-            types: {},
-            assignees: {},
-            area: {},
-            iteration: {},
-          )
-        : _fillSavedFilters();
+    final savedFilters = _fillSavedFilters();
 
     allWorkItemTypes = [];
     allWorkItemStates = statesFilter.toList();
@@ -112,27 +103,39 @@ class _WorkItemsController with FilterMixin {
     final savedFilters = filtersService.getWorkItemsSavedFilters();
 
     if (savedFilters.projects.isNotEmpty) {
-      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+      if (project == null) {
+        projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+      }
     }
 
     if (savedFilters.assignees.isNotEmpty) {
-      usersFilter = getAssignees().where((p) => savedFilters.assignees.contains(p.mailAddress)).toSet();
+      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+        usersFilter = getAssignees().where((p) => savedFilters.assignees.contains(p.mailAddress)).toSet();
+      }
     }
 
     if (savedFilters.area.isNotEmpty) {
-      areaFilter = AreaOrIteration.onlyPath(path: savedFilters.area.first);
+      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+        areaFilter = AreaOrIteration.onlyPath(path: savedFilters.area.first);
+      }
     }
 
     if (savedFilters.iteration.isNotEmpty) {
-      iterationFilter = AreaOrIteration.onlyPath(path: savedFilters.iteration.first);
+      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+        iterationFilter = AreaOrIteration.onlyPath(path: savedFilters.iteration.first);
+      }
     }
 
     if (savedFilters.types.isNotEmpty) {
-      typesFilter = savedFilters.types.map((t) => WorkItemType.onlyName(name: t)).toSet();
+      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+        typesFilter = savedFilters.types.map((t) => WorkItemType.onlyName(name: t)).toSet();
+      }
     }
 
     if (savedFilters.states.isNotEmpty) {
-      statesFilter = savedFilters.states.map((s) => WorkItemState.onlyName(name: s)).toSet();
+      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+        statesFilter = savedFilters.states.map((s) => WorkItemState.onlyName(name: s)).toSet();
+      }
     }
 
     if (savedFilters.categories.isNotEmpty) {
