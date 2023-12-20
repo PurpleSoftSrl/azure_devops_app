@@ -45,7 +45,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
                   ),
                 ValueListenableBuilder(
                   valueListenable: ctrl.visibleProjects,
-                  builder: (context, item, _) {
+                  builder: (context, visibleProjects, _) {
                     return Column(
                       children: [
                         Row(
@@ -74,7 +74,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        ...ctrl.getVisibleProjects().map(
+                        ...visibleProjects.map(
                               (p) => CheckboxListTile(
                                 title: Text(p.name!),
                                 value: projects!.contains(p),
