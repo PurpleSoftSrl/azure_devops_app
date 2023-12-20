@@ -73,7 +73,6 @@ class _ChooseProjectsController {
 
   void toggleChooseAll() {
     chosenProjects.value = ApiResponse.ok(chooseAllVisible.value ? [] : [...visibleProjects.value]);
-
     chooseAllVisible.value = !chooseAllVisible.value;
   }
 
@@ -176,10 +175,6 @@ class _ChooseProjectsController {
 
   void resetSearch() {
     visibleProjects.value = allProjects;
-  }
-
-  List<Project> getVisibleProjects() {
-    return visibleProjects.value;
   }
 
   /// Prevents user from going back without having selected any project after clear cache
