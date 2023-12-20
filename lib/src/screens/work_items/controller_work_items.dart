@@ -68,7 +68,7 @@ class _WorkItemsController with FilterMixin {
 
     final types = await apiService.getWorkItemTypes();
     if (!types.isError) {
-      _fillTypesAndStates(types.data!.values);
+      _fillTypesAndStates(types.data!.values); // TODO mods here
 
       if (savedFilters.types.isNotEmpty) {
         typesFilter = allWorkItemTypes.where((s) => savedFilters.types.contains(s.name)).toSet();
@@ -108,32 +108,24 @@ class _WorkItemsController with FilterMixin {
       }
     }
 
-    if (savedFilters.assignees.isNotEmpty) {
-      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+    if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+      if (savedFilters.assignees.isNotEmpty) {
         usersFilter = getAssignees().where((p) => savedFilters.assignees.contains(p.mailAddress)).toSet();
       }
-    }
 
-    if (savedFilters.area.isNotEmpty) {
-      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+      if (savedFilters.area.isNotEmpty) {
         areaFilter = AreaOrIteration.onlyPath(path: savedFilters.area.first);
       }
-    }
 
-    if (savedFilters.iteration.isNotEmpty) {
-      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+      if (savedFilters.iteration.isNotEmpty) {
         iterationFilter = AreaOrIteration.onlyPath(path: savedFilters.iteration.first);
       }
-    }
 
-    if (savedFilters.types.isNotEmpty) {
-      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+      if (savedFilters.types.isNotEmpty) {
         typesFilter = savedFilters.types.map((t) => WorkItemType.onlyName(name: t)).toSet();
       }
-    }
 
-    if (savedFilters.states.isNotEmpty) {
-      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+      if (savedFilters.states.isNotEmpty) {
         statesFilter = savedFilters.states.map((s) => WorkItemState.onlyName(name: s)).toSet();
       }
     }

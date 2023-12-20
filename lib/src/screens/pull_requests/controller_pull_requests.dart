@@ -64,20 +64,16 @@ class _PullRequestsController with FilterMixin {
       }
     }
 
-    if (savedFilters.status.isNotEmpty) {
-      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+    if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+      if (savedFilters.status.isNotEmpty) {
         statusFilter = PullRequestStatus.fromString(savedFilters.status.first);
       }
-    }
 
-    if (savedFilters.openedBy.isNotEmpty) {
-      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+      if (savedFilters.openedBy.isNotEmpty) {
         usersFilter = getSortedUsers(apiService).where((p) => savedFilters.openedBy.contains(p.mailAddress)).toSet();
       }
-    }
 
-    if (savedFilters.assignedTo.isNotEmpty) {
-      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+      if (savedFilters.assignedTo.isNotEmpty) {
         reviewersFilter =
             getSortedUsers(apiService).where((p) => savedFilters.assignedTo.contains(p.mailAddress)).toSet();
       }

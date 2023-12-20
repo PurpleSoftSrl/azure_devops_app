@@ -91,18 +91,14 @@ class _PipelinesController with FilterMixin {
       }
     }
 
-    if (savedFilters.triggeredBy.isNotEmpty) {
-      if ((project != null && savedFilters.projects.contains(project.name)) || project == null) {
+    if ((project != null && savedFilters.projects.contains(project.name)) || project == null) {
+      if (savedFilters.triggeredBy.isNotEmpty) {
         usersFilter = getSortedUsers(apiService).where((p) => savedFilters.triggeredBy.contains(p.mailAddress)).toSet();
       }
-    }
 
-    if (savedFilters.result.isNotEmpty) {
-      if ((project != null && savedFilters.projects.contains(project.name)) || project == null) {
+      if (savedFilters.result.isNotEmpty) {
         resultFilter = PipelineResult.fromString(savedFilters.result.first);
-      }
-    } else if (savedFilters.status.isNotEmpty) {
-      if ((project != null && savedFilters.projects.contains(project.name)) || project == null) {
+      } else if (savedFilters.status.isNotEmpty) {
         statusFilter = PipelineStatus.fromString(savedFilters.status.first);
       }
     }
