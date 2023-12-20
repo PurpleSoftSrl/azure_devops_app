@@ -61,15 +61,6 @@ class _ProjectDetailController {
 
     final isAllErrors = allRes.every((r) => r.isError);
     project.value = projectRes.copyWith(isError: isAllErrors, errorResponse: allRes.first.errorResponse);
-    resetFilters();
-  }
-
-  void resetFilters() {
-    filtersService
-      ..resetCommitsFilters()
-      ..resetPipelinesFilters()
-      ..resetPullRequestsFilters()
-      ..resetWorkItemsFilters();
   }
 
   void goToRepoDetail(GitRepository repo) {
