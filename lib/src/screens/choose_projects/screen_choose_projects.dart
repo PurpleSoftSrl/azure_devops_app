@@ -39,7 +39,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
                     child: DevOpsSearchField(
                       autofocus: false,
                       onChanged: ctrl.setVisibleProjects,
-                      onResetSearch: ctrl.resetResearch,
+                      onResetSearch: ctrl.resetSearch,
                       hint: 'Search by name',
                     ),
                   ),

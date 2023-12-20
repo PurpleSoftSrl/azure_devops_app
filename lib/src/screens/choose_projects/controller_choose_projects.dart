@@ -174,7 +174,7 @@ class _ChooseProjectsController {
     visibleProjects.value = allProjects.where((e) => e.name!.toLowerCase().contains(filterName.toLowerCase())).toList();
   }
 
-  void resetResearch() {
+  void resetSearch() {
     visibleProjects.value = allProjects;
   }
 
