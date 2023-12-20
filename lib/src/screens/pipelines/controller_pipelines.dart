@@ -83,19 +83,28 @@ class _PipelinesController with FilterMixin {
 
   void _fillSavedFilters() {
     final savedFilters = filtersService.getPipelinesSavedFilters();
+    final project = projectsFilter.firstOrNull;
 
     if (savedFilters.projects.isNotEmpty) {
-      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+      if (project == null) {
+        projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+      }
     }
 
     if (savedFilters.triggeredBy.isNotEmpty) {
-      usersFilter = getSortedUsers(apiService).where((p) => savedFilters.triggeredBy.contains(p.mailAddress)).toSet();
+      if ((project != null && savedFilters.projects.contains(project.name)) || project == null) {
+        usersFilter = getSortedUsers(apiService).where((p) => savedFilters.triggeredBy.contains(p.mailAddress)).toSet();
+      }
     }
 
     if (savedFilters.result.isNotEmpty) {
-      resultFilter = PipelineResult.fromString(savedFilters.result.first);
+      if ((project != null && savedFilters.projects.contains(project.name)) || project == null) {
+        resultFilter = PipelineResult.fromString(savedFilters.result.first);
+      }
     } else if (savedFilters.status.isNotEmpty) {
-      statusFilter = PipelineStatus.fromString(savedFilters.status.first);
+      if ((project != null && savedFilters.projects.contains(project.name)) || project == null) {
+        statusFilter = PipelineStatus.fromString(savedFilters.status.first);
+      }
     }
   }
 
