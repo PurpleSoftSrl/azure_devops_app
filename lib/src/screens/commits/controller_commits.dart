@@ -50,13 +50,18 @@ class _CommitsController with FilterMixin {
 
   void _fillSavedFilters() {
     final savedFilters = filtersService.getCommitsSavedFilters();
+    final project = projectsFilter.firstOrNull;
 
     if (savedFilters.projects.isNotEmpty) {
-      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+      if (project == null) {
+        projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+      }
     }
 
     if (savedFilters.authors.isNotEmpty) {
-      usersFilter = getSortedUsers(apiService).where((p) => savedFilters.authors.contains(p.mailAddress)).toSet();
+      if ((project != null && savedFilters.projects.contains(project.name)) || project == null) {
+        usersFilter = getSortedUsers(apiService).where((p) => savedFilters.authors.contains(p.mailAddress)).toSet();
+      }
     }
   }
 
