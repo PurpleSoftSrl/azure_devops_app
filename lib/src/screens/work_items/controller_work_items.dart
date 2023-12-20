@@ -67,8 +67,8 @@ class _WorkItemsController with FilterMixin {
     allWorkItemStates = statesFilter.toList();
 
     final types = await apiService.getWorkItemTypes();
-    if (!types.isError) {
-      _fillTypesAndStates(types.data!.values); // TODO mods here
+    if (!types.isError || project == null || !(project != null && savedFilters.projects.contains(project!.name))) {
+      _fillTypesAndStates(types.data!.values);
 
       if (savedFilters.types.isNotEmpty) {
         typesFilter = allWorkItemTypes.where((s) => savedFilters.types.contains(s.name)).toSet();
@@ -81,18 +81,27 @@ class _WorkItemsController with FilterMixin {
 
     await _getData();
 
-    if (savedFilters.area.isNotEmpty) {
-      areaFilter = apiService.workItemAreas.values
-          .expand((a) => a)
-          .expand((a) => [a, if (a.children != null) ...a.children!])
-          .firstWhereOrNull((a) => a.path == savedFilters.area.first);
-    }
+    /* TODO:
+    - area ~ should be available only if the project name is contained in the path
+    - iterations ~ should be available only if the project has got one 
+    */
+    if (project != null && !savedFilters.area.contains(project!.name)&& !savedFilters.iteration.contains(project!.name)){
+      areaFilter = null;
+      iterationFilter = null;
+    } else {
+      if (savedFilters.area.isNotEmpty) {
+        areaFilter = apiService.workItemAreas.values
+            .expand((a) => a)
+            .expand((a) => [a, if (a.children != null) ...a.children!])
+            .firstWhereOrNull((a) => a.path == savedFilters.area.first);
+      }
 
-    if (savedFilters.iteration.isNotEmpty) {
-      apiService.workItemIterations.values
-          .expand((a) => a)
-          .expand((a) => [a, if (a.children != null) ...a.children!])
-          .firstWhereOrNull((a) => a.path == savedFilters.iteration.first);
+      if (savedFilters.iteration.isNotEmpty) {
+        iterationFilter = apiService.workItemIterations.values
+            .expand((a) => a)
+            .expand((a) => [a, if (a.children != null) ...a.children!])
+            .firstWhereOrNull((a) => a.path == savedFilters.iteration.first);
+      }
     }
   }
 
