@@ -61,8 +61,6 @@ class _PullRequestsController with FilterMixin {
     if (savedFilters.projects.isNotEmpty) {
       if (project == null) {
         projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
-      } else {
-        projectsFilter = {project!};
       }
     }
 
