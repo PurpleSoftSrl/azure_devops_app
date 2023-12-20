@@ -59,20 +59,30 @@ class _PullRequestsController with FilterMixin {
     final savedFilters = filtersService.getPullRequestsSavedFilters();
 
     if (savedFilters.projects.isNotEmpty) {
-      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+      if (project == null) {
+        projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+      } else {
+        projectsFilter = {project!};
+      }
     }
 
     if (savedFilters.status.isNotEmpty) {
-      statusFilter = PullRequestStatus.fromString(savedFilters.status.first);
+      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+        statusFilter = PullRequestStatus.fromString(savedFilters.status.first);
+      }
     }
 
     if (savedFilters.openedBy.isNotEmpty) {
-      usersFilter = getSortedUsers(apiService).where((p) => savedFilters.openedBy.contains(p.mailAddress)).toSet();
+      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+        usersFilter = getSortedUsers(apiService).where((p) => savedFilters.openedBy.contains(p.mailAddress)).toSet();
+      }
     }
 
     if (savedFilters.assignedTo.isNotEmpty) {
-      reviewersFilter =
-          getSortedUsers(apiService).where((p) => savedFilters.assignedTo.contains(p.mailAddress)).toSet();
+      if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+        reviewersFilter =
+            getSortedUsers(apiService).where((p) => savedFilters.assignedTo.contains(p.mailAddress)).toSet();
+      }
     }
   }
 
