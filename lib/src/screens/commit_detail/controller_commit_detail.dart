@@ -8,7 +8,7 @@ class _CommitDetailController with ShareMixin {
     }
 
     if (instance != null && args.commitId != instance!.args.commitId) {
-      instance = _CommitDetailController._(args, apiService);
+      instance = null;
     }
 
     instance ??= _CommitDetailController._(args, apiService);
@@ -46,7 +46,6 @@ class _CommitDetailController with ShareMixin {
 
   void dispose() {
     instance = null;
-    _instances.remove(args.hashCode);
   }
 
   Future<void> init() async {

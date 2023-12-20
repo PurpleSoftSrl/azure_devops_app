@@ -12,7 +12,7 @@ class _PullRequestsController with FilterMixin {
     }
 
     if (instance != null && project?.id != instance!.project?.id) {
-      instance = _PullRequestsController._(apiService, storageService, project);
+      instance = null;
     }
 
     instance ??= _PullRequestsController._(apiService, storageService, project);
@@ -47,7 +47,6 @@ class _PullRequestsController with FilterMixin {
 
   void dispose() {
     instance = null;
-    _instances.remove(project.hashCode);
   }
 
   Future<void> init() async {

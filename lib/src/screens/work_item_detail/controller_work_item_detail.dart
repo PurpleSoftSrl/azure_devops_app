@@ -12,7 +12,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
     }
 
     if (instance != null && instance!.args != args) {
-      instance = _WorkItemDetailController._(args, apiService, storageService);
+      instance = null;
     }
 
     instance ??= _WorkItemDetailController._(args, apiService, storageService);
@@ -49,7 +49,6 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
 
   void dispose() {
     instance = null;
-    _instances.remove(args.hashCode);
   }
 
   Future<void> init() async {

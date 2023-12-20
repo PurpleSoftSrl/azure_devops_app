@@ -12,7 +12,7 @@ class _CommitsController with FilterMixin {
     }
 
     if (instance != null && args != instance!.args) {
-      instance = _CommitsController._(apiService, storageService, args);
+      instance = null;
     }
 
     instance ??= _CommitsController._(apiService, storageService, args);
@@ -40,7 +40,6 @@ class _CommitsController with FilterMixin {
 
   void dispose() {
     instance = null;
-    _instances.remove(args);
   }
 
   Future<void> init() async {

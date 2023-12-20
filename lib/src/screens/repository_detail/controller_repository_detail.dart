@@ -8,7 +8,7 @@ class _RepositoryDetailController {
     }
 
     if (instance != null && instance!.args != args) {
-      instance = _RepositoryDetailController._(apiService, args);
+      instance = null;
     }
 
     instance ??= _RepositoryDetailController._(apiService, args);
@@ -33,7 +33,6 @@ class _RepositoryDetailController {
 
   void dispose() {
     instance = null;
-    _instances.remove(args.hashCode);
   }
 
   Future<void> init() async {

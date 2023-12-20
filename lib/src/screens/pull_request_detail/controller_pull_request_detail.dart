@@ -11,7 +11,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     }
 
     if (instance != null && instance!.args != args) {
-      instance = _PullRequestDetailController._(args, apiService);
+      instance = null;
     }
 
     instance ??= _PullRequestDetailController._(args, apiService);
@@ -65,7 +65,6 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
   void dispose() {
     instance = null;
-    _instances.remove(args.hashCode);
   }
 
   Future<void> init() async {

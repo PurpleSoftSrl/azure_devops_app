@@ -8,7 +8,7 @@ class _PipelineDetailController with ShareMixin {
     }
 
     if (instance != null && args.id != instance!.args.id) {
-      instance = _PipelineDetailController._(args, apiService);
+      instance = null;
     }
 
     instance ??= _PipelineDetailController._(args, apiService);
@@ -39,7 +39,6 @@ class _PipelineDetailController with ShareMixin {
     _stopTimer();
 
     instance = null;
-    _instances.remove(args.hashCode);
   }
 
   void _stopTimer() {

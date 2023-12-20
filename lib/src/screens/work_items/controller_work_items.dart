@@ -12,7 +12,7 @@ class _WorkItemsController with FilterMixin {
     }
 
     if (instance != null && project?.id != instance!.project?.id) {
-      instance = _WorkItemsController._(apiService, storageService, project);
+      instance = null;
     }
 
     instance ??= _WorkItemsController._(apiService, storageService, project);
@@ -58,7 +58,6 @@ class _WorkItemsController with FilterMixin {
 
   void dispose() {
     instance = null;
-    _instances.remove(project.hashCode);
   }
 
   Future<void> init() async {

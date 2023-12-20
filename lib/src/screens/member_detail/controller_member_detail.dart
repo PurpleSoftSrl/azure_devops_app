@@ -8,7 +8,7 @@ class _MemberDetailController {
     }
 
     if (instance != null && instance!.userDescriptor != userDescriptor) {
-      instance = _MemberDetailController._(userDescriptor, apiService);
+      instance = null;
     }
 
     instance ??= _MemberDetailController._(userDescriptor, apiService);
@@ -31,7 +31,6 @@ class _MemberDetailController {
 
   void dispose() {
     instance = null;
-    _instances.remove(userDescriptor);
   }
 
   Future<void> init() async {

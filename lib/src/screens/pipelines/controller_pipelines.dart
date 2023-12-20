@@ -12,7 +12,7 @@ class _PipelinesController with FilterMixin {
     }
 
     if (instance != null && args != instance!.args) {
-      instance = _PipelinesController._(apiService, storageService, args);
+      instance = null;
     }
 
     instance ??= _PipelinesController._(apiService, storageService, args);
@@ -53,7 +53,6 @@ class _PipelinesController with FilterMixin {
     _stopTimer();
 
     instance = null;
-    _instances.remove(args.hashCode);
   }
 
   void _stopTimer() {

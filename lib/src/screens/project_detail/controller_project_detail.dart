@@ -8,8 +8,9 @@ class _ProjectDetailController {
     }
 
     if (instance != null && instance!.projectName != projectName) {
-      instance = _ProjectDetailController._(apiService, projectName);
+      instance = null;
     }
+    
     instance ??= _ProjectDetailController._(apiService, projectName);
     return _instances.putIfAbsent(projectName, () => instance!);
   }
@@ -37,7 +38,6 @@ class _ProjectDetailController {
 
   void dispose() {
     instance = null;
-    _instances.remove(projectName);
   }
 
   Future<void> init() async {
