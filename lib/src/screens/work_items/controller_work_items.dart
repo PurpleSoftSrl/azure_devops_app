@@ -20,6 +20,7 @@ class _WorkItemsController with FilterMixin {
   }
 
   _WorkItemsController._(this.apiService, this.storageService, this.project) {
+    // TODO change this logic to not wipe out filters
     if (project != null) projectsFilter = {project!};
   }
 
@@ -61,7 +62,16 @@ class _WorkItemsController with FilterMixin {
   }
 
   Future<void> init() async {
-    final savedFilters = _fillSavedFilters();
+    final savedFilters = project != null
+        ? WorkItemsFilters(
+            projects: {project!.name!},
+            states: {},
+            types: {},
+            assignees: {},
+            area: {},
+            iteration: {},
+          )
+        : _fillSavedFilters();
 
     allWorkItemTypes = [];
     allWorkItemStates = statesFilter.toList();
