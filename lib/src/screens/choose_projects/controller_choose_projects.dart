@@ -18,7 +18,7 @@ class _ChooseProjectsController {
   final StorageService storageService;
 
   final chosenProjects = ValueNotifier<ApiResponse<List<Project>?>?>(null);
-  final visibleProjects = ValueNotifier<List<Project>?>(null);
+  final visibleProjects = ValueNotifier<List<Project>>([]);
   List<Project> allProjects = <Project>[];
 
   final chooseAll = ValueNotifier(false);
@@ -179,8 +179,7 @@ class _ChooseProjectsController {
   }
 
   List<Project> getVisibleProjects() {
-    if (visibleProjects.value == null) return [];
-    return visibleProjects.value!;
+    return visibleProjects.value;
   }
 
   /// Prevents user from going back without having selected any project after clear cache
