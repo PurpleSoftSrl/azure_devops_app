@@ -20,7 +20,6 @@ class _WorkItemsController with FilterMixin {
   }
 
   _WorkItemsController._(this.apiService, this.storageService, this.project) {
-    // TODO change this logic to not wipe out filters
     if (project != null) projectsFilter = {project!};
   }
 
