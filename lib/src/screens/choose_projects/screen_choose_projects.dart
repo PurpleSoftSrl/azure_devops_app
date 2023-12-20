@@ -39,7 +39,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
                     child: DevOpsSearchField(
                       autofocus: false,
                       onChanged: ctrl.setVisibleProjects,
-                      onResetSearch: ctrl.resetFilter,
+                      onResetSearch: ctrl.resetResearch,
                       hint: 'Search by name',
                     ),
                   ),
@@ -75,13 +75,13 @@ class _ChooseProjectsScreen extends StatelessWidget {
                           ],
                         ),
                         ...visibleProjects.map(
-                              (p) => CheckboxListTile(
-                                title: Text(p.name!),
-                                value: projects!.contains(p),
-                                onChanged: (_) => ctrl.toggleChosenProject(p),
-                                contentPadding: EdgeInsets.only(right: 4),
-                              ),
-                            ),
+                          (p) => CheckboxListTile(
+                            title: Text(p.name!),
+                            value: projects!.contains(p),
+                            onChanged: (_) => ctrl.toggleChosenProject(p),
+                            contentPadding: EdgeInsets.only(right: 4),
+                          ),
+                        ),
                       ],
                     );
                   },
