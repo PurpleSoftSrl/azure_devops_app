@@ -21,7 +21,7 @@ class _ChooseProjectsController {
   final visibleProjects = ValueNotifier<List<Project>>([]);
   List<Project> allProjects = <Project>[];
 
-  final chooseAll = ValueNotifier(false);
+  final chooseAllVisible = ValueNotifier(false);
 
   final _initiallyChosenProjects = <Project>[];
 
@@ -58,7 +58,7 @@ class _ChooseProjectsController {
         );
     } else {
       allProjects.addAll(projects..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)));
-      chooseAll.value = true;
+      chooseAllVisible.value = true;
     }
 
     chosenProjects.value = ApiResponse(
@@ -72,9 +72,9 @@ class _ChooseProjectsController {
   }
 
   void toggleChooseAll() {
-    chosenProjects.value = ApiResponse.ok(chooseAll.value ? [] : [...allProjects]);
+    chosenProjects.value = ApiResponse.ok(chooseAllVisible.value ? [] : [...visibleProjects.value]);
 
-    chooseAll.value = !chooseAll.value;
+    chooseAllVisible.value = !chooseAllVisible.value;
   }
 
   void toggleChosenProject(Project p) {

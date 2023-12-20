@@ -57,16 +57,16 @@ class _ChooseProjectsScreen extends StatelessWidget {
                               textHeight: 1,
                             ),
                             ValueListenableBuilder<bool>(
-                              valueListenable: ctrl.chooseAll,
-                              builder: (_, chooseAll, __) => Row(
+                              valueListenable: ctrl.chooseAllVisible,
+                              builder: (_, chooseAllVisible, __) => Row(
                                 children: [
                                   Text(
-                                    chooseAll ? 'Unselect all' : 'Select all',
+                                    chooseAllVisible ? 'Unselect all' : 'Select all',
                                     style:
                                         context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                                   ),
                                   Checkbox(
-                                    value: chooseAll,
+                                    value: chooseAllVisible,
                                     onChanged: (_) => ctrl.toggleChooseAll(),
                                   ),
                                 ],
