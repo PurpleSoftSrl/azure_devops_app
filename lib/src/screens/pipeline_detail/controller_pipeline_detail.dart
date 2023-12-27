@@ -56,7 +56,7 @@ class _PipelineDetailController with ShareMixin {
       if (pipeStatus == PipelineStatus.notStarted || pipeStatus == PipelineStatus.inProgress) {
         _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
           await _init();
-          if (pipeline.status == PipelineStatus.completed) {
+          if (buildDetail.value?.data != null && pipeline.status == PipelineStatus.completed) {
             timer.cancel();
           }
         });
