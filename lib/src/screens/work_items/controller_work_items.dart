@@ -67,36 +67,41 @@ class _WorkItemsController with FilterMixin {
     allWorkItemStates = statesFilter.toList();
 
     final types = await apiService.getWorkItemTypes();
-    if (!types.isError || project == null || !(project != null && savedFilters.projects.contains(project!.name))) {
+    if (!types.isError) {
       _fillTypesAndStates(types.data!.values);
 
-      if (savedFilters.types.isNotEmpty) {
-        typesFilter = allWorkItemTypes.where((s) => savedFilters.types.contains(s.name)).toSet();
-      }
+      if (project != null && savedFilters.projects.contains(project!.name) || project == null) {
+        if (savedFilters.types.isNotEmpty) {
+          typesFilter = allWorkItemTypes.where((s) => savedFilters.types.contains(s.name)).toSet();
+        }
 
-      if (savedFilters.states.isNotEmpty) {
-        statesFilter = allWorkItemStates.where((s) => savedFilters.states.contains(s.name)).toSet();
+        if (savedFilters.states.isNotEmpty) {
+          statesFilter = allWorkItemStates.where((s) => savedFilters.states.contains(s.name)).toSet();
+        }
       }
     }
 
     await _getData();
 
-    /* TODO:
-    - area ~ should be available only if the project name is contained in the path
-    - iterations ~ should be available only if the project has got one 
-    */
-    if (project != null && !savedFilters.area.contains(project!.name)&& !savedFilters.iteration.contains(project!.name)){
-      areaFilter = null;
-      iterationFilter = null;
-    } else {
-      if (savedFilters.area.isNotEmpty) {
+    if (savedFilters.area.isNotEmpty) {
+      if (project != null) {
+        if (!savedFilters.area.first.contains(project!.name!)) {
+          areaFilter = null;
+        }
+      } else {
         areaFilter = apiService.workItemAreas.values
             .expand((a) => a)
             .expand((a) => [a, if (a.children != null) ...a.children!])
             .firstWhereOrNull((a) => a.path == savedFilters.area.first);
       }
+    }
 
-      if (savedFilters.iteration.isNotEmpty) {
+    if (savedFilters.iteration.isNotEmpty) {
+      if (project != null) {
+        if (!savedFilters.iteration.first.contains(project!.name!)) {
+          iterationFilter = null;
+        }
+      } else {
         iterationFilter = apiService.workItemIterations.values
             .expand((a) => a)
             .expand((a) => [a, if (a.children != null) ...a.children!])
