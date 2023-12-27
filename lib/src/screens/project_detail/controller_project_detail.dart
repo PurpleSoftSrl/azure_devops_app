@@ -10,7 +10,7 @@ class _ProjectDetailController {
     if (instance != null && instance!.projectName != projectName) {
       instance = null;
     }
-    
+
     instance ??= _ProjectDetailController._(apiService, projectName);
     return _instances.putIfAbsent(projectName, () => instance!);
   }
