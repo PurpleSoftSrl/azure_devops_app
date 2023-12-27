@@ -126,6 +126,10 @@ class _WorkItemsController with FilterMixin {
       statesFilter = savedFilters.states.map((s) => WorkItemState.onlyName(name: s)).toSet();
     }
 
+    if (savedFilters.categories.isNotEmpty) {
+      stateCategoriesFilter = savedFilters.categories.map(WorkItemStateCategory.fromString).toSet();
+    }
+
     return savedFilters;
   }
 
@@ -227,6 +231,8 @@ class _WorkItemsController with FilterMixin {
     workItems.value = null;
     stateCategoriesFilter = categories;
     _getData();
+
+    filtersService.saveWorkItemsCategoriesFilter(stateCategoriesFilter.map((p) => p.name).toSet());
   }
 
   void filterByTypes(Set<WorkItemType> types) {

@@ -17,6 +17,7 @@ class FiltersService {
     return WorkItemsFilters(
       projects: _getFilters(workItemsFilters, attribute: WorkItemsFilters.projectsKey),
       states: _getFilters(workItemsFilters, attribute: WorkItemsFilters.statesKey),
+      categories: _getFilters(workItemsFilters, attribute: WorkItemsFilters.categoriesKey),
       types: _getFilters(workItemsFilters, attribute: WorkItemsFilters.typesKey),
       assignees: _getFilters(workItemsFilters, attribute: WorkItemsFilters.assigneesKey),
       area: _getFilters(workItemsFilters, attribute: WorkItemsFilters.areaKey),
@@ -30,6 +31,10 @@ class FiltersService {
 
   void saveWorkItemsStatesFilter(Set<String> stateNames) {
     storageService.saveFilter(organization, _FilterAreas.workItems, WorkItemsFilters.statesKey, stateNames);
+  }
+
+  void saveWorkItemsCategoriesFilter(Set<String> categories) {
+    storageService.saveFilter(organization, _FilterAreas.workItems, WorkItemsFilters.categoriesKey, categories);
   }
 
   void saveWorkItemsTypesFilter(Set<String> typeNames) {
@@ -159,6 +164,7 @@ class WorkItemsFilters {
   WorkItemsFilters({
     required this.projects,
     required this.states,
+    required this.categories,
     required this.types,
     required this.assignees,
     required this.area,
@@ -167,6 +173,7 @@ class WorkItemsFilters {
 
   static const projectsKey = 'projects';
   static const statesKey = 'states';
+  static const categoriesKey = 'categories';
   static const typesKey = 'types';
   static const assigneesKey = 'assignees';
   static const areaKey = 'area';
@@ -174,6 +181,7 @@ class WorkItemsFilters {
 
   final Set<String> projects;
   final Set<String> states;
+  final Set<String> categories;
   final Set<String> types;
   final Set<String> assignees;
   final Set<String> area;

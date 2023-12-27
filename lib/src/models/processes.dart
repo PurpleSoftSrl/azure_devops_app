@@ -215,12 +215,12 @@ enum WorkItemStateCategory {
   final int sortOrder;
 
   static WorkItemStateCategory fromString(String str) {
-    return switch (str) {
-      'Proposed' => WorkItemStateCategory.proposed,
-      'In Progress' => WorkItemStateCategory.inProgress,
-      'Resolved' => WorkItemStateCategory.resolved,
-      'Completed' => WorkItemStateCategory.completed,
-      'Removed' || _ => WorkItemStateCategory.removed,
+    return switch (str.toLowerCase()) {
+      'proposed' => WorkItemStateCategory.proposed,
+      'inprogress' => WorkItemStateCategory.inProgress,
+      'resolved' => WorkItemStateCategory.resolved,
+      'completed' => WorkItemStateCategory.completed,
+      'removed' || _ => WorkItemStateCategory.removed,
     };
   }
 }
