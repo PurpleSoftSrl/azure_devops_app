@@ -123,6 +123,10 @@ class _WorkItemsController with FilterMixin {
     }
 
     if ((project != null && savedFilters.projects.contains(project!.name)) || project == null) {
+      if (savedFilters.categories.isNotEmpty) {
+        stateCategoriesFilter = savedFilters.categories.map(WorkItemStateCategory.fromString).toSet();
+      }
+
       if (savedFilters.assignees.isNotEmpty) {
         usersFilter = getAssignees().where((p) => savedFilters.assignees.contains(p.mailAddress)).toSet();
       }
@@ -199,7 +203,6 @@ class _WorkItemsController with FilterMixin {
     }
 
     _getData();
-
     filtersService.saveWorkItemsProjectsFilter(projects.map((p) => p.name!).toSet());
   }
 
