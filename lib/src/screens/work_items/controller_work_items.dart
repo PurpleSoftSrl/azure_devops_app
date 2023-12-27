@@ -84,10 +84,8 @@ class _WorkItemsController with FilterMixin {
     await _getData();
 
     if (savedFilters.area.isNotEmpty) {
-      if (project != null) {
-        if (!savedFilters.area.first.contains(project!.name!)) {
+      if (project != null && !savedFilters.area.first.contains(project!.name!)) {
           areaFilter = null;
-        }
       } else {
         areaFilter = apiService.workItemAreas.values
             .expand((a) => a)
@@ -97,10 +95,8 @@ class _WorkItemsController with FilterMixin {
     }
 
     if (savedFilters.iteration.isNotEmpty) {
-      if (project != null) {
-        if (!savedFilters.iteration.first.contains(project!.name!)) {
+      if (project != null && !savedFilters.iteration.first.contains(project!.name!)) {
           iterationFilter = null;
-        }
       } else {
         iterationFilter = apiService.workItemIterations.values
             .expand((a) => a)
