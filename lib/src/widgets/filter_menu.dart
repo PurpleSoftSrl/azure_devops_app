@@ -441,11 +441,11 @@ class WorkItemStateFilterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = int.tryParse(state.color, radix: 16);
     return Padding(
       padding: const EdgeInsets.all(8),
       child: CircleAvatar(
-        backgroundColor:
-            state == WorkItemState.all ? Colors.transparent : Color(int.parse(state.color, radix: 16)).withOpacity(1),
+        backgroundColor: state == WorkItemState.all || color == null ? Colors.transparent : Color(color).withOpacity(1),
       ),
     );
   }
