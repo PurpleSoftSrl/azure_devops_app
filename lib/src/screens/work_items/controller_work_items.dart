@@ -256,7 +256,7 @@ class _WorkItemsController with FilterMixin {
     areaFilter = area;
     _getData();
 
-    filtersService.saveWorkItemsAreaFilter(area!.path);
+    filtersService.saveWorkItemsAreaFilter(area?.path ?? '');
   }
 
   void filterByIteration(AreaOrIteration? iteration) {
@@ -266,7 +266,7 @@ class _WorkItemsController with FilterMixin {
     iterationFilter = iteration;
     _getData();
 
-    filtersService.saveWorkItemsIterationFilter(iteration!.path);
+    filtersService.saveWorkItemsIterationFilter(iteration?.path ?? '');
   }
 
   Future<void> _getData() async {

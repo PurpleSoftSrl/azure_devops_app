@@ -41,11 +41,21 @@ class FiltersService {
   }
 
   void saveWorkItemsAreaFilter(String area) {
-    storageService.saveFilter(organization, _FilterAreas.workItems, WorkItemsFilters.areaKey, {area});
+    storageService.saveFilter(
+      organization,
+      _FilterAreas.workItems,
+      WorkItemsFilters.areaKey,
+      area.isEmpty ? {} : {area},
+    );
   }
 
   void saveWorkItemsIterationFilter(String iteration) {
-    storageService.saveFilter(organization, _FilterAreas.workItems, WorkItemsFilters.iterationKey, {iteration});
+    storageService.saveFilter(
+      organization,
+      _FilterAreas.workItems,
+      WorkItemsFilters.iterationKey,
+      iteration.isEmpty ? {} : {iteration},
+    );
   }
 
   void resetWorkItemsFilters() {

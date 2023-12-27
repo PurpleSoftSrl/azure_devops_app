@@ -97,7 +97,7 @@ class _WorkItemsScreen extends StatelessWidget {
                 currentFilter: ctrl.iterationFilter,
                 body: ValueListenableBuilder(
                   valueListenable: ctrl.showActiveIterations,
-                  builder: (ctx, showActive, _) => Column(
+                  builder: (_, showActive, __) => Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
