@@ -56,7 +56,8 @@ mixin FilterMixin {
     return user.displayName ?? '';
   }
 
-  bool hasManyProjects(StorageService storageService) => storageService.getChosenProjects().length > projectsCountThreshold;
+  bool hasManyProjects(StorageService storageService) =>
+      storageService.getChosenProjects().length > projectsCountThreshold;
 
   List<Project> getProjects(StorageService storageService, {bool withProjectAll = true}) {
     return [if (withProjectAll) projectAll, ...storageService.getChosenProjects()];
