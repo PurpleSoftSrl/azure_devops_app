@@ -8,9 +8,7 @@ import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_member.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
-import 'package:azure_devops/src/services/filters_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
-import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
@@ -37,8 +35,7 @@ class ProjectDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final project = AppRouter.getProjectDetailArgs(context);
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final storageService = StorageServiceInherited.of(context).storageService;
-    final ctrl = _ProjectDetailController(apiService: apiService, storageService: storageService, projectName: project);
+    final ctrl = _ProjectDetailController(apiService: apiService, projectName: project);
     return LayoutBuilder(
       builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
           ? _ProjectDetailScreen(ctrl, _smartphoneParameters)
