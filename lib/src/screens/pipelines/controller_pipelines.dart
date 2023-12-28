@@ -217,7 +217,9 @@ class _PipelinesController with FilterMixin {
 
     pipelineNamesFilter.clear();
 
-    filtersService.resetPipelinesFilters();
+    if (shouldPersistFilters) {
+      filtersService.resetPipelinesFilters();
+    }
 
     init();
   }

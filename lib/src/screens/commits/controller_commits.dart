@@ -127,7 +127,9 @@ class _CommitsController with FilterMixin {
     projectsFilter.clear();
     usersFilter.clear();
 
-    filtersService.resetCommitsFilters();
+    if (shouldPersistFilters) {
+      filtersService.resetCommitsFilters();
+    }
 
     init();
   }
