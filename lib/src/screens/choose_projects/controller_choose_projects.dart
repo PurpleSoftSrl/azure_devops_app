@@ -18,9 +18,10 @@ class _ChooseProjectsController {
   final StorageService storageService;
 
   final chosenProjects = ValueNotifier<ApiResponse<List<Project>?>?>(null);
+  final visibleProjects = ValueNotifier<List<Project>>([]);
   List<Project> allProjects = <Project>[];
 
-  final chooseAll = ValueNotifier(false);
+  final chooseAllVisible = ValueNotifier(false);
 
   final _initiallyChosenProjects = <Project>[];
 
@@ -57,7 +58,7 @@ class _ChooseProjectsController {
         );
     } else {
       allProjects.addAll(projects..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)));
-      chooseAll.value = true;
+      chooseAllVisible.value = true;
     }
 
     chosenProjects.value = ApiResponse(
@@ -67,12 +68,13 @@ class _ChooseProjectsController {
     );
 
     _initiallyChosenProjects.addAll(chosenProjects.value!.data!);
+    visibleProjects.value = allProjects;
   }
 
   void toggleChooseAll() {
-    chosenProjects.value = ApiResponse.ok(chooseAll.value ? [] : [...allProjects]);
+    chosenProjects.value = ApiResponse.ok(chooseAllVisible.value ? [] : [...visibleProjects.value]);
 
-    chooseAll.value = !chooseAll.value;
+    chooseAllVisible.value = !chooseAllVisible.value;
   }
 
   void toggleChosenProject(Project p) {
@@ -166,6 +168,14 @@ class _ChooseProjectsController {
       ),
     );
     return selectedOrg;
+  }
+
+  void setVisibleProjects(String filterName) {
+    visibleProjects.value = allProjects.where((p) => p.name!.toLowerCase().contains(filterName.toLowerCase())).toList();
+  }
+
+  void resetSearch() {
+    visibleProjects.value = allProjects;
   }
 
   /// Prevents user from going back without having selected any project after clear cache

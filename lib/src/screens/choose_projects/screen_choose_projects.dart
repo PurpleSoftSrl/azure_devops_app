@@ -33,37 +33,54 @@ class _ChooseProjectsScreen extends StatelessWidget {
                 const SizedBox(
                   height: 40,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    SectionHeader.noMargin(
-                      text: 'Projects',
-                      textHeight: 1,
+                if (ctrl.allProjects.length > projectsCountThreshold)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: DevOpsSearchField(
+                      autofocus: false,
+                      onChanged: ctrl.setVisibleProjects,
+                      onResetSearch: ctrl.resetSearch,
+                      hint: 'Search by name',
                     ),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: ctrl.chooseAll,
-                      builder: (_, chooseAll, __) => Row(
+                  ),
+                ValueListenableBuilder(
+                  valueListenable: ctrl.visibleProjects,
+                  builder: (context, visibleProjects, _) => Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(
-                            chooseAll ? 'Unselect all' : 'Select all',
-                            style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                          SectionHeader.noMargin(
+                            text: 'Projects',
+                            textHeight: 1,
                           ),
-                          Checkbox(
-                            value: chooseAll,
-                            onChanged: (_) => ctrl.toggleChooseAll(),
+                          ValueListenableBuilder<bool>(
+                            valueListenable: ctrl.chooseAllVisible,
+                            builder: (_, chooseAllVisible, __) => Row(
+                              children: [
+                                Text(
+                                  chooseAllVisible ? 'Unselect all' : 'Select all',
+                                  style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                                ),
+                                Checkbox(
+                                  value: chooseAllVisible,
+                                  onChanged: (_) => ctrl.toggleChooseAll(),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-                ...ctrl.allProjects.map(
-                  (p) => CheckboxListTile(
-                    title: Text(p.name!),
-                    value: projects!.contains(p),
-                    onChanged: (_) => ctrl.toggleChosenProject(p),
-                    contentPadding: EdgeInsets.only(right: 4),
+                      ...visibleProjects.map(
+                        (p) => CheckboxListTile(
+                          title: Text(p.name!),
+                          value: projects!.contains(p),
+                          onChanged: (_) => ctrl.toggleChosenProject(p),
+                          contentPadding: EdgeInsets.only(right: 4),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(

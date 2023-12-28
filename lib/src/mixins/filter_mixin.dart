@@ -2,6 +2,7 @@ import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
+import 'package:azure_devops/src/utils/utils.dart';
 import 'package:collection/collection.dart';
 
 mixin FilterMixin {
@@ -55,7 +56,8 @@ mixin FilterMixin {
     return user.displayName ?? '';
   }
 
-  bool hasManyProjects(StorageService storageService) => storageService.getChosenProjects().length > 10;
+  bool hasManyProjects(StorageService storageService) =>
+      storageService.getChosenProjects().length > projectsCountThreshold;
 
   List<Project> getProjects(StorageService storageService, {bool withProjectAll = true}) {
     return [if (withProjectAll) projectAll, ...storageService.getChosenProjects()];
