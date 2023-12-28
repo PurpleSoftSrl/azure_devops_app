@@ -192,7 +192,9 @@ class _WorkItemsController with FilterMixin {
 
     _getData();
 
-    filtersService.saveWorkItemsProjectsFilter(projects.map((p) => p.name!).toSet());
+    if (shouldPersistFilters) {
+      filtersService.saveWorkItemsProjectsFilter(projects.map((p) => p.name!).toSet());
+    }
   }
 
   /// Resets [areaFilter] if selected [projectFilter] doesn't contain this area
@@ -232,7 +234,9 @@ class _WorkItemsController with FilterMixin {
     statesFilter = states;
     _getData();
 
-    filtersService.saveWorkItemsStatesFilter(states.map((p) => p.name).toSet());
+    if (shouldPersistFilters) {
+      filtersService.saveWorkItemsStatesFilter(states.map((p) => p.name).toSet());
+    }
   }
 
   void filterByStateCategory(Set<WorkItemStateCategory> categories) {
@@ -242,7 +246,9 @@ class _WorkItemsController with FilterMixin {
     stateCategoriesFilter = categories;
     _getData();
 
-    filtersService.saveWorkItemsCategoriesFilter(stateCategoriesFilter.map((p) => p.name).toSet());
+    if (shouldPersistFilters) {
+      filtersService.saveWorkItemsCategoriesFilter(stateCategoriesFilter.map((p) => p.name).toSet());
+    }
   }
 
   void filterByTypes(Set<WorkItemType> types) {
@@ -252,7 +258,9 @@ class _WorkItemsController with FilterMixin {
     typesFilter = types;
     _getData();
 
-    filtersService.saveWorkItemsTypesFilter(types.map((p) => p.name).toSet());
+    if (shouldPersistFilters) {
+      filtersService.saveWorkItemsTypesFilter(types.map((p) => p.name).toSet());
+    }
   }
 
   void filterByUsers(Set<GraphUser> users) {
@@ -262,7 +270,9 @@ class _WorkItemsController with FilterMixin {
     usersFilter = users;
     _getData();
 
-    filtersService.saveWorkItemsAssigneesFilter(users.map((p) => p.mailAddress!).toSet());
+    if (shouldPersistFilters) {
+      filtersService.saveWorkItemsAssigneesFilter(users.map((p) => p.mailAddress!).toSet());
+    }
   }
 
   void filterByArea(AreaOrIteration? area) {
@@ -272,7 +282,9 @@ class _WorkItemsController with FilterMixin {
     areaFilter = area;
     _getData();
 
-    filtersService.saveWorkItemsAreaFilter(area?.path ?? '');
+    if (shouldPersistFilters) {
+      filtersService.saveWorkItemsAreaFilter(area?.path ?? '');
+    }
   }
 
   void filterByIteration(AreaOrIteration? iteration) {
@@ -282,7 +294,9 @@ class _WorkItemsController with FilterMixin {
     iterationFilter = iteration;
     _getData();
 
-    filtersService.saveWorkItemsIterationFilter(iteration?.path ?? '');
+    if (shouldPersistFilters) {
+      filtersService.saveWorkItemsIterationFilter(iteration?.path ?? '');
+    }
   }
 
   Future<void> _getData() async {
@@ -324,7 +338,9 @@ class _WorkItemsController with FilterMixin {
     iterationFilter = null;
     _currentSearchQuery = null;
 
-    filtersService.resetWorkItemsFilters();
+    if (shouldPersistFilters) {
+      filtersService.resetWorkItemsFilters();
+    }
 
     resetSearch();
 
