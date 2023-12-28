@@ -45,12 +45,17 @@ class _PullRequestsController with FilterMixin {
     organization: apiService.organization,
   );
 
+  /// Read/write filters from local storage only if user is not coming from project page
+  bool get shouldPersistFilters => project == null;
+
   void dispose() {
     instance = null;
   }
 
   Future<void> init() async {
-    _fillSavedFilters();
+    if (shouldPersistFilters) {
+      _fillSavedFilters();
+    }
 
     await _getData();
   }
