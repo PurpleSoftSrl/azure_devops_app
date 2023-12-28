@@ -56,12 +56,18 @@ class _WorkItemsController with FilterMixin {
     organization: apiService.organization,
   );
 
+  /// Read/write filters from local storage only if user is not coming from project page
+  bool get shouldPersistFilters => project == null;
+
   void dispose() {
     instance = null;
   }
 
   Future<void> init() async {
-    final savedFilters = _fillSavedFilters();
+    WorkItemsFilters? savedFilters;
+    if (shouldPersistFilters) {
+      savedFilters = _fillSavedFilters();
+    }
 
     allWorkItemTypes = [];
     allWorkItemStates = statesFilter.toList();
@@ -70,29 +76,33 @@ class _WorkItemsController with FilterMixin {
     if (!types.isError) {
       _fillTypesAndStates(types.data!.values);
 
-      if (savedFilters.types.isNotEmpty) {
-        typesFilter = allWorkItemTypes.where((s) => savedFilters.types.contains(s.name)).toSet();
-      }
+      if (shouldPersistFilters) {
+        if (savedFilters?.types.isNotEmpty ?? false) {
+          typesFilter = allWorkItemTypes.where((s) => savedFilters!.types.contains(s.name)).toSet();
+        }
 
-      if (savedFilters.states.isNotEmpty) {
-        statesFilter = allWorkItemStates.where((s) => savedFilters.states.contains(s.name)).toSet();
+        if (savedFilters?.states.isNotEmpty ?? false) {
+          statesFilter = allWorkItemStates.where((s) => savedFilters!.states.contains(s.name)).toSet();
+        }
       }
     }
 
     await _getData();
 
-    if (savedFilters.area.isNotEmpty) {
-      areaFilter = apiService.workItemAreas.values
-          .expand((a) => a)
-          .expand((a) => [a, if (a.children != null) ...a.children!])
-          .firstWhereOrNull((a) => a.path == savedFilters.area.first);
-    }
+    if (shouldPersistFilters) {
+      if (savedFilters?.area.isNotEmpty ?? false) {
+        areaFilter = apiService.workItemAreas.values
+            .expand((a) => a)
+            .expand((a) => [a, if (a.children != null) ...a.children!])
+            .firstWhereOrNull((a) => a.path == savedFilters!.area.first);
+      }
 
-    if (savedFilters.iteration.isNotEmpty) {
-      apiService.workItemIterations.values
-          .expand((a) => a)
-          .expand((a) => [a, if (a.children != null) ...a.children!])
-          .firstWhereOrNull((a) => a.path == savedFilters.iteration.first);
+      if (savedFilters?.iteration.isNotEmpty ?? false) {
+        apiService.workItemIterations.values
+            .expand((a) => a)
+            .expand((a) => [a, if (a.children != null) ...a.children!])
+            .firstWhereOrNull((a) => a.path == savedFilters!.iteration.first);
+      }
     }
   }
 
