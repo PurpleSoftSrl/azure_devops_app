@@ -38,7 +38,7 @@ class _CommitsController with FilterMixin {
     organization: apiService.organization,
   );
 
-  bool get shouldPersist => projectsFilter.firstOrNull == null;
+  bool get shouldPersist => args!.project == null;
 
   void dispose() {
     instance = null;
