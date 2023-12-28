@@ -38,12 +38,14 @@ class _CommitsController with FilterMixin {
     organization: apiService.organization,
   );
 
+  bool get shouldPersist => projectsFilter.firstOrNull == null;
+
   void dispose() {
     instance = null;
   }
 
   Future<void> init() async {
-    _fillSavedFilters();
+    if (shouldPersist) _fillSavedFilters();
 
     await _getData();
   }
