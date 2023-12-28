@@ -26,7 +26,7 @@ class _PipelinesController with FilterMixin {
   static _PipelinesController? instance;
   static final Map<int, _PipelinesController> _instances = {};
 
-  final AzureApiService apiService;
+  final AzureApiService apiService; 
   final StorageService storageService;
   final PipelinesArgs? args;
 
