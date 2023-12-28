@@ -83,26 +83,21 @@ class _WorkItemsController with FilterMixin {
 
     await _getData();
 
-    if (savedFilters.area.isNotEmpty) {
-      if (project != null && !savedFilters.area.first.contains(project!.name!)) {
-        areaFilter = null;
-      } else {
-        areaFilter = apiService.workItemAreas.values
-            .expand((a) => a)
-            .expand((a) => [a, if (a.children != null) ...a.children!])
-            .firstWhereOrNull((a) => a.path == savedFilters.area.first);
-      }
+    areaFilter = null;
+    if (savedFilters.area.isNotEmpty && !(project != null && !savedFilters.area.first.contains(project!.name!))) {
+      areaFilter = apiService.workItemAreas.values
+          .expand((a) => a)
+          .expand((a) => [a, if (a.children != null) ...a.children!])
+          .firstWhereOrNull((a) => a.path == savedFilters.area.first);
     }
 
-    if (savedFilters.iteration.isNotEmpty) {
-      if (project != null && !savedFilters.iteration.first.contains(project!.name!)) {
-        iterationFilter = null;
-      } else {
-        iterationFilter = apiService.workItemIterations.values
-            .expand((a) => a)
-            .expand((a) => [a, if (a.children != null) ...a.children!])
-            .firstWhereOrNull((a) => a.path == savedFilters.iteration.first);
-      }
+    iterationFilter = null;
+    if (savedFilters.iteration.isNotEmpty &&
+        !(project != null && !savedFilters.iteration.first.contains(project!.name!))) {
+      iterationFilter = apiService.workItemIterations.values
+          .expand((a) => a)
+          .expand((a) => [a, if (a.children != null) ...a.children!])
+          .firstWhereOrNull((a) => a.path == savedFilters.iteration.first);
     }
   }
 
