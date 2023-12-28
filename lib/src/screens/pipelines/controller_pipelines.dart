@@ -43,7 +43,7 @@ class _PipelinesController with FilterMixin {
   PipelineResult resultFilter = PipelineResult.all;
   PipelineStatus statusFilter = PipelineStatus.all;
 
-  Timer? _timer;
+  Timer? _timer; 
 
   final visibilityKey = GlobalKey();
   var _hasStoppedTimer = false;
