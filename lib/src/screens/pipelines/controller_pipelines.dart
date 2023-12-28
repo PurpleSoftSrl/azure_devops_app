@@ -35,7 +35,9 @@ class _PipelinesController with FilterMixin {
   int get inProgressPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.inProgress).length ?? 0;
   int get queuedPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.notStarted).length ?? 0;
   int get cancellingPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.cancelling).length ?? 0;
-  bool get shouldPersist => args != null && args!.project == null;
+  
+  /// Read/write filters from local storage only if user is not coming from project page
+  bool get shouldPersistFilters => args?.project == null;
 
   Set<String> pipelineNamesFilter = {};
   PipelineResult resultFilter = PipelineResult.all;
@@ -67,7 +69,7 @@ class _PipelinesController with FilterMixin {
   }
 
   Future<void> init() async {
-    if (shouldPersist) _fillSavedFilters();
+    if (shouldPersistFilters) _fillSavedFilters();
 
     await _getData();
 
