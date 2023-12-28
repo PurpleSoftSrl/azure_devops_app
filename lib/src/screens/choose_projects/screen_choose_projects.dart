@@ -33,7 +33,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
                 const SizedBox(
                   height: 40,
                 ),
-                if (ctrl.allProjects.length >= 10)
+                if (ctrl.allProjects.length > projectsCountThreshold)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16),
                     child: DevOpsSearchField(
@@ -45,46 +45,43 @@ class _ChooseProjectsScreen extends StatelessWidget {
                   ),
                 ValueListenableBuilder(
                   valueListenable: ctrl.visibleProjects,
-                  builder: (context, visibleProjects, _) {
-                    return Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            SectionHeader.noMargin(
-                              text: 'Projects',
-                              textHeight: 1,
-                            ),
-                            ValueListenableBuilder<bool>(
-                              valueListenable: ctrl.chooseAllVisible,
-                              builder: (_, chooseAllVisible, __) => Row(
-                                children: [
-                                  Text(
-                                    chooseAllVisible ? 'Unselect all' : 'Select all',
-                                    style:
-                                        context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                                  ),
-                                  Checkbox(
-                                    value: chooseAllVisible,
-                                    onChanged: (_) => ctrl.toggleChooseAll(),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        ...visibleProjects.map(
-                          (p) => CheckboxListTile(
-                            title: Text(p.name!),
-                            value: projects!.contains(p),
-                            onChanged: (_) => ctrl.toggleChosenProject(p),
-                            contentPadding: EdgeInsets.only(right: 4),
+                  builder: (context, visibleProjects, _) => Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          SectionHeader.noMargin(
+                            text: 'Projects',
+                            textHeight: 1,
                           ),
+                          ValueListenableBuilder<bool>(
+                            valueListenable: ctrl.chooseAllVisible,
+                            builder: (_, chooseAllVisible, __) => Row(
+                              children: [
+                                Text(
+                                  chooseAllVisible ? 'Unselect all' : 'Select all',
+                                  style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                                ),
+                                Checkbox(
+                                  value: chooseAllVisible,
+                                  onChanged: (_) => ctrl.toggleChooseAll(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      ...visibleProjects.map(
+                        (p) => CheckboxListTile(
+                          title: Text(p.name!),
+                          value: projects!.contains(p),
+                          onChanged: (_) => ctrl.toggleChosenProject(p),
+                          contentPadding: EdgeInsets.only(right: 4),
                         ),
-                      ],
-                    );
-                  },
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(
                   height: 100,
