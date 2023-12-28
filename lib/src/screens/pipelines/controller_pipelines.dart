@@ -26,7 +26,7 @@ class _PipelinesController with FilterMixin {
   static _PipelinesController? instance;
   static final Map<int, _PipelinesController> _instances = {};
 
-  final AzureApiService apiService; 
+  final AzureApiService apiService;
   final StorageService storageService;
   final PipelinesArgs? args;
 
@@ -43,7 +43,7 @@ class _PipelinesController with FilterMixin {
   PipelineResult resultFilter = PipelineResult.all;
   PipelineStatus statusFilter = PipelineStatus.all;
 
-  Timer? _timer; 
+  Timer? _timer;
 
   final visibilityKey = GlobalKey();
   var _hasStoppedTimer = false;
@@ -193,7 +193,7 @@ class _PipelinesController with FilterMixin {
     pipelines.value = null;
     pipelineNamesFilter = names;
     _getData();
-    
+
     filtersService.savePipelinesNamesFilter(names);
   }
 
