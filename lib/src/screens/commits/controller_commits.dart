@@ -105,7 +105,9 @@ class _CommitsController with FilterMixin {
     projectsFilter = projects;
     _getData();
 
-    filtersService.saveCommitsProjectsFilter(projects.map((p) => p.name!).toSet());
+    if (shouldPersistFilters) {
+      filtersService.saveCommitsProjectsFilter(projects.map((p) => p.name!).toSet());
+    }
   }
 
   void filterByUsers(Set<GraphUser> users) {
@@ -115,7 +117,9 @@ class _CommitsController with FilterMixin {
     usersFilter = users;
     _getData();
 
-    filtersService.saveCommitsAuthorsFilter(users.map((p) => p.mailAddress!).toSet());
+    if (shouldPersistFilters) {
+      filtersService.saveCommitsAuthorsFilter(users.map((p) => p.mailAddress!).toSet());
+    }
   }
 
   void resetFilters() {
