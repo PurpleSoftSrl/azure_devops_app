@@ -36,6 +36,17 @@ class _PipelinesScreen extends StatelessWidget {
                     ? (s) => ctrl.searchProject(s, ctrl.storageService)
                     : null,
               ),
+            if (ctrl.showPipelineNamesFilter)
+              FilterMenu<String>.multiple(
+                title: 'Pipelines',
+                values: ctrl.getPipelineNames(),
+                currentFilters: ctrl.pipelineNamesFilter,
+                onSelectedMultiple: ctrl.filterByPipelines,
+                formatLabel: (p) => p,
+                isDefaultFilter: ctrl.isDefaultPipelineNamesFilter,
+                showLeading: false,
+                widgetBuilder: (p) => const SizedBox(),
+              ),
             FilterMenu<PipelineResult>(
               title: 'Result',
               values: PipelineResult.values.where((v) => v != PipelineResult.none).toList(),

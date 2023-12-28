@@ -93,6 +93,7 @@ class FiltersService {
 
     return PipelinesFilters(
       projects: _getFilters(pipelinesFilters, attribute: PipelinesFilters.projectsKey),
+      pipelines: _getFilters(pipelinesFilters, attribute: PipelinesFilters.pipelinesKey),
       triggeredBy: _getFilters(pipelinesFilters, attribute: PipelinesFilters.triggeredByKey),
       result: _getFilters(pipelinesFilters, attribute: PipelinesFilters.resultKey),
       status: _getFilters(pipelinesFilters, attribute: PipelinesFilters.statusKey),
@@ -101,6 +102,10 @@ class FiltersService {
 
   void savePipelinesProjectsFilter(Set<String> projectNames) {
     storageService.saveFilter(organization, _FilterAreas.pipelines, PipelinesFilters.projectsKey, projectNames);
+  }
+
+  void savePipelinesNamesFilter(Set<String> names) {
+    storageService.saveFilter(organization, _FilterAreas.pipelines, PipelinesFilters.pipelinesKey, names);
   }
 
   void savePipelinesTriggeredByFilter(Set<String> userEmails) {
@@ -204,17 +209,20 @@ class CommitsFilters {
 class PipelinesFilters {
   PipelinesFilters({
     required this.projects,
+    required this.pipelines,
     required this.triggeredBy,
     required this.result,
     required this.status,
   });
 
   static const projectsKey = 'projects';
+  static const pipelinesKey = 'pipelines';
   static const triggeredByKey = 'triggeredBy';
   static const resultKey = 'result';
   static const statusKey = 'status';
 
   final Set<String> projects;
+  final Set<String> pipelines;
   final Set<String> triggeredBy;
   final Set<String> result;
   final Set<String> status;

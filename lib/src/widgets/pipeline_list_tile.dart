@@ -22,6 +22,8 @@ class PipelineListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtitleStyle = context.textTheme.bodySmall!;
+    final isCustomPipelineName = pipe.definition?.name != null && pipe.definition!.name! != pipe.repository?.name;
+    
     return InkWell(
       onTap: onTap,
       key: ValueKey('pipeline_${pipe.id}'),
@@ -73,6 +75,15 @@ class PipelineListTile extends StatelessWidget {
                         ),
                       ],
                     ),
+                    if (isCustomPipelineName) ...[
+                      const SizedBox(
+                        height: 3,
+                      ),
+                      Text(
+                        pipe.definition!.name!,
+                        style: subtitleStyle,
+                      ),
+                    ],
                   ],
                 ),
               ),
