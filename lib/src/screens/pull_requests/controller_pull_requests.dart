@@ -97,7 +97,9 @@ class _PullRequestsController with FilterMixin {
     statusFilter = status;
     _getData();
 
-    filtersService.savePullRequestsStatusFilter(status.name);
+    if (shouldPersistFilters) {
+      filtersService.savePullRequestsStatusFilter(status.name);
+    }
   }
 
   void filterByUsers(Set<GraphUser> users) {
@@ -107,7 +109,9 @@ class _PullRequestsController with FilterMixin {
     usersFilter = users;
     _getData();
 
-    filtersService.savePullRequestsOpenedByFilter(users.map((p) => p.mailAddress!).toSet());
+    if (shouldPersistFilters) {
+      filtersService.savePullRequestsOpenedByFilter(users.map((p) => p.mailAddress!).toSet());
+    }
   }
 
   void filterByReviewers(Set<GraphUser> users) {
@@ -117,7 +121,9 @@ class _PullRequestsController with FilterMixin {
     reviewersFilter = users;
     _getData();
 
-    filtersService.savePullRequestsAssignedToFilter(users.map((p) => p.mailAddress!).toSet());
+    if (shouldPersistFilters) {
+      filtersService.savePullRequestsAssignedToFilter(users.map((p) => p.mailAddress!).toSet());
+    }
   }
 
   void filterByProjects(Set<Project> projects) {
@@ -127,7 +133,9 @@ class _PullRequestsController with FilterMixin {
     projectsFilter = projects;
     _getData();
 
-    filtersService.savePullRequestsProjectsFilter(projects.map((p) => p.name!).toSet());
+    if (shouldPersistFilters) {
+      filtersService.savePullRequestsProjectsFilter(projects.map((p) => p.name!).toSet());
+    }
   }
 
   Future<void> _getData() async {
@@ -153,7 +161,9 @@ class _PullRequestsController with FilterMixin {
     usersFilter.clear();
     reviewersFilter.clear();
 
-    filtersService.resetPullRequestsFilters();
+    if (shouldPersistFilters) {
+      filtersService.resetPullRequestsFilters();
+    }
 
     init();
   }
