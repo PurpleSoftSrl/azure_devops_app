@@ -26,7 +26,7 @@ class _PipelinesController with FilterMixin {
   static _PipelinesController? instance;
   static final Map<int, _PipelinesController> _instances = {};
 
-  final AzureApiService apiService; 
+  final AzureApiService apiService;
   final StorageService storageService;
   final PipelinesArgs? args;
 
@@ -154,7 +154,9 @@ class _PipelinesController with FilterMixin {
     projectsFilter = projects;
     _getData();
 
-    filtersService.savePipelinesProjectsFilter(projects.map((p) => p.name!).toSet());
+    if (shouldPersistFilters) {
+      filtersService.savePipelinesProjectsFilter(projects.map((p) => p.name!).toSet());
+    }
   }
 
   void filterByResult(PipelineResult result) {
@@ -164,7 +166,9 @@ class _PipelinesController with FilterMixin {
     resultFilter = result;
     _getData();
 
-    filtersService.savePipelinesResultFilter(result.stringValue);
+    if (shouldPersistFilters) {
+      filtersService.savePipelinesResultFilter(result.stringValue);
+    }
   }
 
   void filterByStatus(PipelineStatus status) {
@@ -174,7 +178,9 @@ class _PipelinesController with FilterMixin {
     statusFilter = status;
     _getData();
 
-    filtersService.savePipelinesStatusFilter(status.stringValue);
+    if (shouldPersistFilters) {
+      filtersService.savePipelinesStatusFilter(status.stringValue);
+    }
   }
 
   void filterByUsers(Set<GraphUser> users) {
@@ -184,7 +190,9 @@ class _PipelinesController with FilterMixin {
     usersFilter = users;
     _getData();
 
-    filtersService.savePipelinesTriggeredByFilter(users.map((p) => p.mailAddress!).toSet());
+    if (shouldPersistFilters) {
+      filtersService.savePipelinesTriggeredByFilter(users.map((p) => p.mailAddress!).toSet());
+    }
   }
 
   void filterByPipelines(Set<String> names) {
@@ -194,7 +202,9 @@ class _PipelinesController with FilterMixin {
     pipelineNamesFilter = names;
     _getData();
 
-    filtersService.savePipelinesNamesFilter(names);
+    if (shouldPersistFilters) {
+      filtersService.savePipelinesNamesFilter(names);
+    }
   }
 
   void resetFilters() {
