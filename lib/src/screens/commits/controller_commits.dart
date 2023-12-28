@@ -58,10 +58,8 @@ class _CommitsController with FilterMixin {
       }
     }
 
-    if (savedFilters.authors.isNotEmpty) {
-      if ((project != null && savedFilters.projects.contains(project.name)) || project == null) {
+    if (savedFilters.authors.isNotEmpty && ((project != null && savedFilters.projects.contains(project.name)) || project == null)) {
         usersFilter = getSortedUsers(apiService).where((p) => savedFilters.authors.contains(p.mailAddress)).toSet();
-      }
     }
   }
 
