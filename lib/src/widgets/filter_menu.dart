@@ -67,6 +67,7 @@ class FilterMenu<T> extends StatelessWidget {
     this.child,
     this.body,
     this.onSearchChanged,
+    this.showLeading = true,
   })  : currentFilters = null,
         onSelectedMultiple = null,
         _isMultiple = false;
@@ -84,6 +85,7 @@ class FilterMenu<T> extends StatelessWidget {
         onSearchChanged = null,
         currentFilters = null,
         onSelectedMultiple = null,
+        showLeading = true,
         _isMultiple = false;
 
   const FilterMenu.multiple({
@@ -97,6 +99,7 @@ class FilterMenu<T> extends StatelessWidget {
     required this.values,
     required this.widgetBuilder,
     this.onSearchChanged,
+    this.showLeading = true,
   })  : onSelected = null,
         currentFilter = null,
         _isMultiple = true;
@@ -113,6 +116,7 @@ class FilterMenu<T> extends StatelessWidget {
   final Widget? body;
   final List<T> Function(String)? onSearchChanged;
   final void Function(Set<T> states)? onSelectedMultiple;
+  final bool showLeading;
 
   final bool _isMultiple;
 
@@ -167,6 +171,7 @@ class FilterMenu<T> extends StatelessWidget {
       isDefaultFilter: isDefaultFilter,
       currentFilters: currentFilters,
       onSelectedMultiple: onSelectedMultiple,
+      showLeading: showLeading,
       isMultiple: _isMultiple,
       child: child ?? chip,
     );
@@ -188,6 +193,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
     this.currentFilters,
     this.onSelectedMultiple,
     required this.isMultiple,
+    this.showLeading = true,
   }) : assert(!isMultiple || currentFilters != null, 'If [isMultiple] [currentFilters] must not be null');
 
   final String title;
@@ -203,6 +209,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
   final bool isDefaultFilter;
   final void Function(Set<T>)? onSelectedMultiple;
   final bool isMultiple;
+  final bool showLeading;
 
   @override
   Widget build(BuildContext context) {
@@ -313,17 +320,18 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                                         children: [
                                           Row(
                                             children: [
-                                              SizedBox(
-                                                height: imageSize,
-                                                width: imageSize,
-                                                child: widgetBuilder?.call(v),
-                                              ),
-                                              const SizedBox(
-                                                width: 20,
-                                              ),
-                                              Text(formatLabel?.call(v) ?? v.toString()),
+                                              if (showLeading) ...[
+                                                SizedBox(
+                                                  height: imageSize,
+                                                  width: imageSize,
+                                                  child: widgetBuilder?.call(v),
+                                                ),
+                                                const SizedBox(
+                                                  width: 20,
+                                                ),
+                                              ],
+                                              Expanded(child: Text(formatLabel?.call(v) ?? v.toString())),
                                               if (isMultiple) ...[
-                                                const Spacer(),
                                                 Checkbox(
                                                   value: selectedVals.contains(v),
                                                   onChanged: (_) {
@@ -336,7 +344,6 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                                                   },
                                                 ),
                                               ] else if (currentFilter == v) ...[
-                                                const Spacer(),
                                                 Icon(DevOpsIcons.success),
                                               ],
                                             ],

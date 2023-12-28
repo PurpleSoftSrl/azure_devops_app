@@ -36,6 +36,7 @@ class _PipelinesController with FilterMixin {
   int get queuedPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.notStarted).length ?? 0;
   int get cancellingPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.cancelling).length ?? 0;
 
+  Set<String> pipelineNamesFilter = {};
   PipelineResult resultFilter = PipelineResult.all;
   PipelineStatus statusFilter = PipelineStatus.all;
 
@@ -48,6 +49,10 @@ class _PipelinesController with FilterMixin {
     storageService: storageService,
     organization: apiService.organization,
   );
+
+  bool get isDefaultPipelineNamesFilter => pipelineNamesFilter.isEmpty;
+
+  bool get showPipelineNamesFilter => getPipelineNames().isNotEmpty;
 
   void dispose() {
     _stopTimer();
@@ -88,6 +93,10 @@ class _PipelinesController with FilterMixin {
       projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
     }
 
+    if (savedFilters.pipelines.isNotEmpty) {
+      pipelineNamesFilter = savedFilters.pipelines;
+    }
+
     if (savedFilters.triggeredBy.isNotEmpty) {
       usersFilter = getSortedUsers(apiService).where((p) => savedFilters.triggeredBy.contains(p.mailAddress)).toSet();
     }
@@ -122,6 +131,10 @@ class _PipelinesController with FilterMixin {
       );
 
     pipes = pipes.take(100).toList();
+
+    if (!isDefaultPipelineNamesFilter) {
+      pipes = pipes.where((p) => pipelineNamesFilter.contains(p.definition?.name)).toList();
+    }
 
     pipelines.value = res.copyWith(data: pipes);
   }
@@ -171,6 +184,16 @@ class _PipelinesController with FilterMixin {
     filtersService.savePipelinesTriggeredByFilter(users.map((p) => p.mailAddress!).toSet());
   }
 
+  void filterByPipelines(Set<String> names) {
+    if (names == pipelineNamesFilter) return;
+
+    pipelines.value = null;
+    pipelineNamesFilter = names;
+    _getData();
+    
+    filtersService.savePipelinesNamesFilter(names);
+  }
+
   void resetFilters() {
     pipelines.value = null;
     resultFilter = PipelineResult.all;
@@ -178,6 +201,8 @@ class _PipelinesController with FilterMixin {
     usersFilter.clear();
 
     if (args?.definition == null) projectsFilter.clear();
+
+    pipelineNamesFilter.clear();
 
     filtersService.resetPipelinesFilters();
 
@@ -191,5 +216,17 @@ class _PipelinesController with FilterMixin {
     } else if (info.visibleFraction > 0 && _hasStoppedTimer) {
       init();
     }
+  }
+
+  List<String> getPipelineNames() {
+    final pipelines = this.pipelines.value?.data;
+    if (pipelines == null) return [];
+
+    return pipelines
+        .where((p) => p.definition?.name != p.repository?.name)
+        .map((p) => p.definition?.name)
+        .whereType<String>()
+        .toSet()
+        .sortedBy((s) => s.toLowerCase());
   }
 }
