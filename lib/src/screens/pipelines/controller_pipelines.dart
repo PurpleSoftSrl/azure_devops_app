@@ -37,7 +37,7 @@ class _PipelinesController with FilterMixin {
   int get cancellingPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.cancelling).length ?? 0;
   
   /// Read/write filters from local storage only if user is not coming from project page
-  bool get shouldPersistFilters => args?.project == null;
+  bool get shouldPersistFilters => args?.project == null; 
 
   Set<String> pipelineNamesFilter = {};
   PipelineResult resultFilter = PipelineResult.all;
