@@ -67,7 +67,7 @@ class _PipelinesController with FilterMixin {
   }
 
   Future<void> init() async {
-    if(shouldPersist) _fillSavedFilters();
+    if (shouldPersist) _fillSavedFilters();
 
     await _getData();
 
