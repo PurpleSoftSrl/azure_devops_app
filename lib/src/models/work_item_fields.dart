@@ -52,6 +52,9 @@ class WorkItemField {
         isIdentity: json['isIdentity'] as bool? ?? false,
       );
 
+  static WorkItemField fromResponse(Response res) =>
+      WorkItemField.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+
   final String referenceName;
   final String name;
   bool alwaysRequired;

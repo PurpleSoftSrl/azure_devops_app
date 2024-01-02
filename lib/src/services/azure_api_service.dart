@@ -924,17 +924,23 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final visibleFields = _parseXmlForm(typeWithTransitions.xmlForm);
 
-    // get all fields again because we nedd more info: allowedValues
-    final fieldsRes = await _get('$wtBasePath/fields?\$expand=allowedValues&$_apiVersion-preview');
-    if (fieldsRes.isError) return ApiResponse.error(null);
-
-    final allFields = WorkItemTypeFieldsResponse.fromResponse(fieldsRes);
-
     // get all fields again because we need more info: isIdentity, readOnly and type
     final fieldsResWithInfo = await _get('$_basePath/$projectName/_apis/wit/fields?$_apiVersion-preview');
     if (fieldsResWithInfo.isError) return ApiResponse.error(null);
 
     final allFieldsWithInfo = WorkItemTypeFieldsResponse.fromResponse(fieldsResWithInfo);
+
+    final allFields = <WorkItemField>[];
+
+    // get all fields again because we need more info: allowedValues
+    final parallelFieldsRes = await Future.wait([
+      for (final field in allFieldsWithInfo)
+        _get('$wtBasePath/fields/${field.referenceName}?\$expand=allowedValues&$_apiVersion-preview'),
+    ]);
+
+    for (final res in parallelFieldsRes.where((r) => !r.isError)) {
+      allFields.add(WorkItemField.fromResponse(res));
+    }
 
     for (final field in allFields) {
       final fieldWithInfo = allFieldsWithInfo.firstWhereOrNull((f) => f.referenceName == field.referenceName);
