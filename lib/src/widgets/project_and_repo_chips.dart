@@ -71,8 +71,6 @@ class _InternalChip extends StatelessWidget {
                 text ?? '-',
                 style: context.textTheme.titleSmall!.copyWith(
                   decoration: text == null ? null : TextDecoration.underline,
-                  decorationColor: context.colorScheme.onBackground,
-                  decorationThickness: 1,
                 ),
               ),
             ),

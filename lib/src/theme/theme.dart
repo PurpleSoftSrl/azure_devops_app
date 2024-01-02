@@ -138,6 +138,7 @@ class AppTheme {
     return TextStyle(
       fontFamily: defaultFont,
       color: brightness == Brightness.light ? _lightColorScheme.onBackground : _darkColorScheme.onBackground,
+      decorationColor: brightness == Brightness.light ? _lightColorScheme.onBackground : _darkColorScheme.onBackground,
       fontWeight: fontWeight,
       fontSize: fsMultiplier * fs,
       height: height == null ? null : height / (fsMultiplier * fs),

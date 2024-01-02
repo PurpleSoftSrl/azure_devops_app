@@ -136,11 +136,13 @@ class FilterMenu<T> extends StatelessWidget {
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            chipLabel,
-            style: context.textTheme.bodySmall!.copyWith(color: context.colorScheme.onBackground, height: 1),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+          Flexible(
+            child: Text(
+              chipLabel,
+              style: context.textTheme.bodySmall!.copyWith(color: context.colorScheme.onBackground, height: 1),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           const SizedBox(
             width: 4,

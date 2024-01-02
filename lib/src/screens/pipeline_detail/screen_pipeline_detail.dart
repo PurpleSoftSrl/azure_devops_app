@@ -122,8 +122,6 @@ class _PipelineDetailScreen extends StatelessWidget {
                       pipeline.triggerInfo!.ciSourceSha!,
                       style: context.textTheme.titleSmall!.copyWith(
                         decoration: pipeline.repository?.name == null ? null : TextDecoration.underline,
-                        decorationColor: context.colorScheme.onBackground,
-                        decorationThickness: 1,
                       ),
                     ),
                   ),
@@ -266,8 +264,6 @@ class _PipelineDetailScreen extends StatelessWidget {
                                                               task.name,
                                                               style: context.textTheme.titleSmall!.copyWith(
                                                                 decoration: TextDecoration.underline,
-                                                                decorationColor: context.colorScheme.onBackground,
-                                                                decorationThickness: 1,
                                                               ),
                                                               overflow: TextOverflow.ellipsis,
                                                             ),
