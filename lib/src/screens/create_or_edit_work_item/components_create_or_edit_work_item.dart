@@ -89,7 +89,10 @@ class _UserFormField extends StatelessWidget {
           title: formField?.text ?? '-',
           values: ctrl.getAssignees(),
           currentFilter: null,
-          onSelected: (u) => ctrl.onFieldChanged('${u.displayName} <${u.mailAddress}>', field.referenceName),
+          onSelected: (u) => ctrl.onFieldChanged(
+            u.mailAddress == null ? '' : '${u.displayName} <${u.mailAddress}>',
+            field.referenceName,
+          ),
           formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.apiService),
           isDefaultFilter: true,
           widgetBuilder: (u) => UserFilterWidget(user: u),

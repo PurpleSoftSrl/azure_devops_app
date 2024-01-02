@@ -87,10 +87,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       allProjectsWorkItemTypes = types.data!;
     }
 
-    if (newWorkItemType != WorkItemType.all) await _getTypeFormFields();
-
     if (args.project != null) {
       await setProject(newWorkItemProject, force: true);
+    } else if (newWorkItemType != WorkItemType.all) {
+      await _getTypeFormFields();
     }
 
     _refreshPage();
@@ -454,9 +454,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
           if (field.isIdentity) {
             if (alreadyFilledValue != null) {
               final user = GraphUser.fromJson(alreadyFilledValue as Map<String, dynamic>);
-              text = user.displayName ?? user.mailAddress ?? '-';
+              text = user.displayName ?? user.mailAddress ?? '';
             } else {
-              text = '-';
+              text = '';
             }
           } else {
             text = alreadyFilledValue?.toString() ?? field.defaultValue ?? '';
