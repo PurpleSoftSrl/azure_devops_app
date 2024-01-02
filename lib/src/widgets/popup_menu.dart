@@ -57,6 +57,7 @@ class DevOpsPopupMenu extends StatelessWidget {
       key: menuKey ?? ValueKey('Popup menu $tooltip'),
       itemBuilder: _getEffectiveItems,
       elevation: 5,
+      surfaceTintColor: context.colorScheme.background,
       shadowColor: Colors.black,
       tooltip: tooltip,
       offset: offset,

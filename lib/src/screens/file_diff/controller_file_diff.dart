@@ -129,7 +129,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
     return (TextPainter(
       text: TextSpan(text: b.trimRight(), style: AppRouter.navigatorKey.currentContext!.textTheme.titleSmall),
       maxLines: 1,
-      textScaleFactor: MediaQuery.of(AppRouter.navigatorKey.currentContext!).textScaleFactor,
+      textScaler: MediaQuery.of(AppRouter.navigatorKey.currentContext!).textScaler,
       textDirection: TextDirection.ltr,
     )..layout())
         .size

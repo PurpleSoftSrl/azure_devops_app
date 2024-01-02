@@ -14,6 +14,7 @@ class _StatsChip extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: Chip(
+        visualDensity: VisualDensity.adaptivePlatformDensity,
         label: Text.rich(
           TextSpan(
             children: [

@@ -8,8 +8,8 @@ class _LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: AppRouter.askBeforeClosingApp,
+    return PopScope(
+      onPopInvoked: (_) => AppRouter.askBeforeClosingApp,
       child: AppPage(
         init: () async => true,
         dispose: ctrl.dispose,

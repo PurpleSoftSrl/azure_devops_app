@@ -40,8 +40,9 @@ class _RepositoryDetailScreen extends StatelessWidget {
                           Expanded(
                             child: Text(
                               i.path.replaceFirst('$pathPrefix/', ''),
-                              style: context.textTheme.titleSmall!
-                                  .copyWith(decoration: i.isFolder ? null : TextDecoration.underline),
+                              style: context.textTheme.titleSmall!.copyWith(
+                                decoration: i.isFolder ? null : TextDecoration.underline,
+                              ),
                             ),
                           ),
                           Icon(Icons.arrow_forward_ios),

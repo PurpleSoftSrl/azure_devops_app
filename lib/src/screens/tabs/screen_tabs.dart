@@ -8,8 +8,8 @@ class _TabsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: ctrl.askBeforeClosing,
+    return PopScope(
+      onPopInvoked: (_) => ctrl.askBeforeClosing,
       child: ScrollConfiguration(
         behavior: ScrollBehavior(),
         child: AppPage.empty(

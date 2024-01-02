@@ -8,8 +8,8 @@ class _ChooseProjectsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: ctrl.onWillPop,
+    return PopScope(
+      onPopInvoked: (_) => ctrl.onWillPop,
       child: Stack(
         children: [
           AppPage<List<Project>?>(

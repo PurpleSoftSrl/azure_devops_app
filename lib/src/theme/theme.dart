@@ -18,6 +18,7 @@ const _lightColorScheme = ColorScheme(
   error: Colors.red,
   onError: Color(0xFFF3F3F4),
   onSurface: Color.fromRGBO(154, 154, 154, 1),
+  tertiaryContainer: Color.fromRGBO(220, 220, 220, 1),
 );
 
 const _darkColorScheme = ColorScheme(
@@ -34,6 +35,7 @@ const _darkColorScheme = ColorScheme(
   error: Colors.red,
   onError: Color(0xFFF3F3F4),
   brightness: Brightness.dark,
+  tertiaryContainer: Color.fromRGBO(73, 73, 73, 1),
 );
 
 class AppTheme {
@@ -78,7 +80,7 @@ class AppTheme {
     final textTheme = _getTextTheme(colorScheme.brightness);
 
     return ThemeData(
-      useMaterial3: false,
+      useMaterial3: true,
       fontFamily: defaultFont,
       textTheme: textTheme,
       primaryTextTheme: textTheme,
@@ -136,6 +138,7 @@ class AppTheme {
     return TextStyle(
       fontFamily: defaultFont,
       color: brightness == Brightness.light ? _lightColorScheme.onBackground : _darkColorScheme.onBackground,
+      decorationColor: brightness == Brightness.light ? _lightColorScheme.onBackground : _darkColorScheme.onBackground,
       fontWeight: fontWeight,
       fontSize: fsMultiplier * fs,
       height: height == null ? null : height / (fsMultiplier * fs),
@@ -190,7 +193,12 @@ class AppTheme {
 
   static ChipThemeData _getChipTheme(TextTheme textTheme, ColorScheme colorScheme) {
     return ChipThemeData(
+      padding: EdgeInsets.only(left: 10, right: 10),
+      labelPadding: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
+      side: BorderSide(color: Colors.transparent),
       labelStyle: textTheme.labelSmall!.copyWith(color: colorScheme.onBackground),
+      backgroundColor: colorScheme.tertiaryContainer,
     );
   }
 

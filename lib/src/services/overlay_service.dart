@@ -23,6 +23,7 @@ class OverlayService {
       routeSettings: RouteSettings(name: 'alert_${title}_$description'),
       builder: (ctx) => Center(
         child: AlertDialog(
+          surfaceTintColor: context.colorScheme.background,
           title: Text(
             title,
             style: context.textTheme.headlineSmall,
@@ -93,6 +94,7 @@ class OverlayService {
       routeSettings: RouteSettings(name: 'alert_${title}_$description'),
       builder: (ctx) => Center(
         child: AlertDialog(
+          surfaceTintColor: context.colorScheme.background,
           title: Text(
             title,
             style: context.textTheme.headlineSmall,
@@ -234,6 +236,8 @@ class OverlayService {
         onVisible: () =>
             Timer(Duration(seconds: 3), () => scaffoldMessengerKey.currentState!.hideCurrentMaterialBanner()),
         backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
       ),
     );
   }

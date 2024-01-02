@@ -131,31 +131,27 @@ class FilterMenu<T> extends StatelessWidget {
     };
 
     final chip = Chip(
-      padding: EdgeInsets.zero,
-      labelPadding: EdgeInsets.zero,
       backgroundColor: isDefaultFilter ? null : context.colorScheme.primary,
-      label: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: Text(
-                chipLabel,
-                style: context.textTheme.bodySmall!.copyWith(color: context.colorScheme.onBackground, height: 1),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
+      visualDensity: VisualDensity.compact,
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: Text(
+              chipLabel,
+              style: context.textTheme.bodySmall!.copyWith(color: context.colorScheme.onBackground, height: 1),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(
-              width: 4,
-            ),
-            Icon(
-              Icons.keyboard_arrow_down_outlined,
-              color: context.colorScheme.onBackground,
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(
+            width: 4,
+          ),
+          Icon(
+            Icons.keyboard_arrow_down_outlined,
+            color: context.colorScheme.onBackground,
+          ),
+        ],
       ),
     );
 
@@ -391,6 +387,7 @@ class _ResetFiltersMenu extends StatelessWidget {
         ),
       ],
       child: Chip(
+        visualDensity: VisualDensity.compact,
         label: Row(
           children: [
             Icon(DevOpsIcons.filter),
