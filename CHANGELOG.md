@@ -1,3 +1,29 @@
+## 2.2.0 - 2024-01-02
+- Add FUNDING.yml
+- Avoid persisting filters when coming from project page for pipelines and commits. (#30)
+- Fix pipeline filters bug (#28)
+- pipelines: add pipeline name filter
+- Fix commits filters bug (#29)
+- Add project search by name (#25)
+- don't persist pull requests filters when coming from project page
+- don't persist work items filters when coming from project page
+- fix pull requests filters when coming from project page
+- fix work items filters when coming from project page
+- work_items: persist categories filter
+- format files
+- sentry: remove msal error logs
+- fix pipeline null in autorefresh timer
+- fix reset work items area and iteration filters
+- fix parse work item state color
+- fix handle multiple identical instances in memory
+- Cache: bugged dark mode (#26)
+- fix work item rules deserialization error
+- work_items: add 'category' filter
+- fix divider on wrong line when last filter is selected
+- fix navigation to create_work_item with a selected project
+- filters: show selected filters first
+- fix duplicate work items states
+
 ## 2.1.0 - 2023-12-18
 - Persist filters to local storage (#22) 
 - work_items: show types distinct by name 
