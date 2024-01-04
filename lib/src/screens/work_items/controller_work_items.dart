@@ -4,23 +4,23 @@ class _WorkItemsController with FilterMixin {
   factory _WorkItemsController({
     required AzureApiService apiService,
     required StorageService storageService,
-    Project? project,
+    WorkItemsArgs? args,
   }) {
     // handle page already in memory with a different project filter
-    if (_instances[project.hashCode] != null) {
-      return _instances[project.hashCode]!;
+    if (_instances[args.hashCode] != null) {
+      return _instances[args.hashCode]!;
     }
 
-    if (instance != null && project?.id != instance!.project?.id) {
+    if (instance != null && args != instance!.args) {
       instance = null;
     }
 
-    instance ??= _WorkItemsController._(apiService, storageService, project);
-    return _instances.putIfAbsent(project.hashCode, () => instance!);
+    instance ??= _WorkItemsController._(apiService, storageService, args);
+    return _instances.putIfAbsent(args.hashCode, () => instance!);
   }
 
-  _WorkItemsController._(this.apiService, this.storageService, this.project) {
-    if (project != null) projectsFilter = {project!};
+  _WorkItemsController._(this.apiService, this.storageService, this.args) {
+    if (args?.project != null) projectsFilter = {args!.project!};
   }
 
   static _WorkItemsController? instance;
@@ -28,7 +28,7 @@ class _WorkItemsController with FilterMixin {
 
   final AzureApiService apiService;
   final StorageService storageService;
-  final Project? project;
+  final WorkItemsArgs? args;
 
   final workItems = ValueNotifier<ApiResponse<List<WorkItem>?>?>(null);
   List<WorkItem> allWorkItems = [];
@@ -57,7 +57,9 @@ class _WorkItemsController with FilterMixin {
   );
 
   /// Read/write filters from local storage only if user is not coming from project page
-  bool get shouldPersistFilters => project == null;
+  bool get shouldPersistFilters => args == null && !hasShortcut;
+
+  bool get hasShortcut => args?.shortcut != null;
 
   void dispose() {
     instance = null;
@@ -67,6 +69,8 @@ class _WorkItemsController with FilterMixin {
     WorkItemsFilters? savedFilters;
     if (shouldPersistFilters) {
       savedFilters = _fillSavedFilters();
+    } else if (hasShortcut) {
+      _fillShortcutFilters();
     }
 
     allWorkItemTypes = [];
@@ -111,7 +115,15 @@ class _WorkItemsController with FilterMixin {
   /// need to get downloaded).
   WorkItemsFilters _fillSavedFilters() {
     final savedFilters = filtersService.getWorkItemsSavedFilters();
+    return _fillFilters(savedFilters);
+  }
 
+  WorkItemsFilters _fillShortcutFilters() {
+    final savedFilters = filtersService.getWorkItemsShortcut(args!.shortcut!.label);
+    return _fillFilters(savedFilters);
+  }
+
+  WorkItemsFilters _fillFilters(WorkItemsFilters savedFilters) {
     if (savedFilters.projects.isNotEmpty) {
       projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
     }
@@ -438,5 +450,25 @@ class _WorkItemsController with FilterMixin {
     final loweredQuery = query.toLowerCase().trim();
     final users = getAssignees();
     return users.where((u) => u.displayName != null && u.displayName!.toLowerCase().contains(loweredQuery)).toList();
+  }
+
+  Future<void> saveFilters() async {
+    final shortcutLabel = await OverlayService.formBottomsheet(title: 'Choose a name', label: 'Name');
+    if (shortcutLabel == null) return;
+
+    final res = filtersService.saveWorkItemsShortcut(shortcutLabel, {
+      if (areaFilter?.path != null) WorkItemsFilters.areaKey: {areaFilter!.path},
+      if (!isDefaultUsersFilter) WorkItemsFilters.assigneesKey: usersFilter.map((u) => u.mailAddress!).toSet(),
+      if (!isDefaultStateCategoryFilter)
+        WorkItemsFilters.categoriesKey: stateCategoriesFilter.map((c) => c.name).toSet(),
+      if (iterationFilter?.path != null) WorkItemsFilters.iterationKey: {iterationFilter!.path},
+      if (!isDefaultProjectsFilter) WorkItemsFilters.projectsKey: projectsFilter.map((p) => p.name!).toSet(),
+      if (!isDefaultStateFilter) WorkItemsFilters.statesKey: statesFilter.map((s) => s.name).toSet(),
+      if (typesFilter.isNotEmpty) WorkItemsFilters.typesKey: typesFilter.map((t) => t.name).toSet(),
+    });
+
+    if (!res.result) {
+      OverlayService.snackbar(res.message, isError: true);
+    }
   }
 }

@@ -25,6 +25,7 @@ class _WorkItemsScreen extends StatelessWidget {
 
         return FiltersRow(
           resetFilters: ctrl.resetFilters,
+          saveFilters: ctrl.saveFilters,
           filters: [
             FilterMenu<Project>.multiple(
               title: 'Projects',

@@ -20,6 +20,8 @@ class _HomeController with AppLogger {
   int _projectsCount = 0;
   bool get hasManyProjects => _projectsCount > 10;
 
+  List<SavedShortcut> shortcuts = [];
+
   void dispose() {
     instance = null;
   }
@@ -42,6 +44,8 @@ class _HomeController with AppLogger {
     _projectsCount = existentProjects.length;
 
     _hideSearchField();
+
+    shortcuts = storageService.getSavedShortcuts();
 
     projects.value = ApiResponse.ok(sortedProjects);
 
@@ -76,6 +80,19 @@ class _HomeController with AppLogger {
 
   void goToProjectDetail(Project p) {
     AppRouter.goToProjectDetail(p.name!);
+  }
+
+  void goToListPage(SavedShortcut shortcut) {
+    switch (shortcut.area) {
+      case FilterAreas.commits:
+        AppRouter.goToCommits(shortcut: shortcut);
+      case FilterAreas.pipelines:
+        AppRouter.goToPipelines(args: (definition: null, project: null, shortcut: shortcut));
+      case FilterAreas.workItems:
+        AppRouter.goToWorkItems(args: (project: null, shortcut: shortcut));
+      case FilterAreas.pullRequests:
+        AppRouter.goToPullRequests(args: (project: null, shortcut: shortcut));
+    }
   }
 
   void _configureSentryAndFirebase() {

@@ -4,23 +4,23 @@ class _PullRequestsController with FilterMixin {
   factory _PullRequestsController({
     required AzureApiService apiService,
     required StorageService storageService,
-    Project? project,
+    PullRequestArgs? args,
   }) {
     // handle page already in memory with a different project filter
-    if (_instances[project.hashCode] != null) {
-      return _instances[project.hashCode]!;
+    if (_instances[args.hashCode] != null) {
+      return _instances[args.hashCode]!;
     }
 
-    if (instance != null && project?.id != instance!.project?.id) {
+    if (instance != null && args != instance!.args) {
       instance = null;
     }
 
-    instance ??= _PullRequestsController._(apiService, storageService, project);
-    return _instances.putIfAbsent(project.hashCode, () => instance!);
+    instance ??= _PullRequestsController._(apiService, storageService, args);
+    return _instances.putIfAbsent(args.hashCode, () => instance!);
   }
 
-  _PullRequestsController._(this.apiService, this.storageService, this.project) {
-    if (project != null) projectsFilter = {project!};
+  _PullRequestsController._(this.apiService, this.storageService, this.args) {
+    if (args?.project != null) projectsFilter = {args!.project!};
   }
 
   static _PullRequestsController? instance;
@@ -28,7 +28,7 @@ class _PullRequestsController with FilterMixin {
 
   final AzureApiService apiService;
   final StorageService storageService;
-  final Project? project;
+  final PullRequestArgs? args;
 
   final pullRequests = ValueNotifier<ApiResponse<List<PullRequest>?>?>(null);
   List<PullRequest> allPullRequests = [];
@@ -46,7 +46,9 @@ class _PullRequestsController with FilterMixin {
   );
 
   /// Read/write filters from local storage only if user is not coming from project page
-  bool get shouldPersistFilters => project == null;
+  bool get shouldPersistFilters => args?.project == null && !hasShortcut;
+
+  bool get hasShortcut => args?.shortcut != null;
 
   void dispose() {
     instance = null;
@@ -55,6 +57,8 @@ class _PullRequestsController with FilterMixin {
   Future<void> init() async {
     if (shouldPersistFilters) {
       _fillSavedFilters();
+    } else if (hasShortcut) {
+      _fillShortcutFilters();
     }
 
     await _getData();
@@ -62,7 +66,15 @@ class _PullRequestsController with FilterMixin {
 
   void _fillSavedFilters() {
     final savedFilters = filtersService.getPullRequestsSavedFilters();
+    _fillFilters(savedFilters);
+  }
 
+  void _fillShortcutFilters() {
+    final savedFilters = filtersService.getPullRequestsShortcut(args!.shortcut!.label);
+    _fillFilters(savedFilters);
+  }
+
+  void _fillFilters(PullRequestsFilters savedFilters) {
     if (savedFilters.projects.isNotEmpty) {
       projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
     }
@@ -185,5 +197,22 @@ class _PullRequestsController with FilterMixin {
   void resetSearch() {
     searchPullRequests('');
     isSearching.value = false;
+  }
+
+  Future<void> saveFilters() async {
+    final shortcutLabel = await OverlayService.formBottomsheet(title: 'Choose a name', label: 'Name');
+    if (shortcutLabel == null) return;
+
+    final res = filtersService.savePullRequestsShortcut(shortcutLabel, {
+      if (!isDefaultProjectsFilter) PullRequestsFilters.projectsKey: projectsFilter.map((p) => p.name!).toSet(),
+      if (statusFilter != PullRequestStatus.all) PullRequestsFilters.statusKey: {statusFilter.name},
+      if (!isDefaultUsersFilter) PullRequestsFilters.openedByKey: usersFilter.map((u) => u.mailAddress!).toSet(),
+      if (reviewersFilter.isNotEmpty)
+        PullRequestsFilters.assignedToKey: reviewersFilter.map((u) => u.mailAddress!).toSet(),
+    });
+
+    if (!res.result) {
+      OverlayService.snackbar(res.message, isError: true);
+    }
   }
 }

@@ -22,6 +22,7 @@ class _PipelinesScreen extends StatelessWidget {
         onEmpty: 'No pipelines found',
         header: () => FiltersRow(
           resetFilters: ctrl.resetFilters,
+          saveFilters: ctrl.saveFilters,
           filters: [
             if (ctrl.args?.definition == null)
               FilterMenu<Project>.multiple(

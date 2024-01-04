@@ -18,6 +18,7 @@ class _CommitsScreen extends StatelessWidget {
       onEmpty: 'No commits found',
       header: () => FiltersRow(
         resetFilters: ctrl.resetFilters,
+        saveFilters: ctrl.saveFilters,
         filters: [
           FilterMenu<Project>.multiple(
             title: 'Projects',

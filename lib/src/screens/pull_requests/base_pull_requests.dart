@@ -7,6 +7,7 @@ import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/filters_service.dart';
+import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
@@ -30,11 +31,11 @@ class PullRequestsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final storageService = StorageServiceInherited.of(context).storageService;
-    final project = AppRouter.getPullRequestsArgs(context);
+    final args = AppRouter.getPullRequestsArgs(context);
     final ctrl = _PullRequestsController(
       apiService: apiService,
       storageService: storageService,
-      project: project,
+      args: args,
     );
     return LayoutBuilder(
       builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint

@@ -56,6 +56,18 @@ class _HomeScreen extends StatelessWidget {
               ),
             ],
           ),
+          if (ctrl.shortcuts.isNotEmpty) ...[
+            SectionHeader.withIcon(
+              text: 'Saved filters',
+              icon: DevOpsIcons.list,
+            ),
+            ...ctrl.shortcuts.map(
+              (s) => _ShortcutRow(
+                shortcut: s,
+                onTap: ctrl.goToListPage,
+              ),
+            ),
+          ],
           if (ctrl.hasManyProjects)
             _ProjectsHeaderWithSearchField(ctrl: ctrl)
           else
