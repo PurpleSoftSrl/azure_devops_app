@@ -255,6 +255,14 @@ class FiltersService {
   Set<String> _getShortcutFilters(SavedShortcut shortcut, {required String attribute}) {
     return shortcut.filters.firstWhereOrNull((f) => f.attribute == attribute)?.filters ?? {};
   }
+
+  void renameShortcut(SavedShortcut shortcut, {required String label}) {
+    storageService.renameShortcut(shortcut, label);
+  }
+
+  void deleteShortcut(SavedShortcut shortcut) {
+    storageService.deleteShortcut(shortcut);
+  }
 }
 
 class WorkItemsFilters {

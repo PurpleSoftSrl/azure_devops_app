@@ -1,10 +1,17 @@
 part of home;
 
 class _ShortcutRow extends StatelessWidget {
-  const _ShortcutRow({required this.shortcut, required this.onTap});
+  const _ShortcutRow({
+    required this.shortcut,
+    required this.onTap,
+    required this.onRename,
+    required this.onDelete,
+  });
 
   final SavedShortcut shortcut;
-  final void Function(SavedShortcut p) onTap;
+  final void Function(SavedShortcut) onTap;
+  final void Function(SavedShortcut) onRename;
+  final void Function(SavedShortcut) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +62,22 @@ class _ShortcutRow extends StatelessWidget {
               ],
             ),
           ),
-          Icon(Icons.arrow_forward_ios),
+          DevOpsPopupMenu(
+            tooltip: 'Shortcut ${shortcut.label} actions',
+            offset: const Offset(0, 20),
+            items: () => [
+              PopupItem(
+                onTap: () => onRename(shortcut),
+                text: 'Rename',
+                icon: DevOpsIcons.edit,
+              ),
+              PopupItem(
+                onTap: () => onDelete(shortcut),
+                text: 'Delete',
+                icon: DevOpsIcons.trash,
+              ),
+            ],
+          ),
         ],
       ),
     );

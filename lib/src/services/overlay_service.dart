@@ -243,7 +243,7 @@ class OverlayService {
     );
   }
 
-  static Future<String?> formBottomsheet({required String title, required String label}) async {
+  static Future<String?> formBottomsheet({required String title, required String label, String? initialValue}) async {
     var result = '';
     var hasConfirmed = false;
 
@@ -253,6 +253,7 @@ class OverlayService {
       builder: (_) => DevOpsFormField(
         onChanged: (s) => result = s,
         label: label,
+        initialValue: initialValue,
       ),
       topRight: Builder(
         builder: (context) => TextButton(

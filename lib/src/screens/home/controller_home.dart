@@ -173,4 +173,29 @@ class _HomeController with AppLogger {
     if (projects.value?.data == null) return;
     projects.value = ApiResponse.ok(projects.value!.data);
   }
+
+  Future<void> renameShortcut(SavedShortcut shortcut) async {
+    final shortcutLabel = await OverlayService.formBottomsheet(
+      title: 'Rename shortcut',
+      label: 'Name',
+      initialValue: shortcut.label,
+    );
+    if (shortcutLabel == null) return;
+
+    filtersService.renameShortcut(shortcut, label: shortcutLabel);
+
+    _getShortcuts();
+  }
+
+  Future<void> deleteShortcut(SavedShortcut shortcut) async {
+    final confirm = await OverlayService.confirm(
+      'Attention',
+      description: "Do you really want to delete '${shortcut.label}'?",
+    );
+    if (!confirm) return;
+
+    filtersService.deleteShortcut(shortcut);
+
+    _getShortcuts();
+  }
 }

@@ -46,7 +46,9 @@ abstract class StorageService {
     Map<String, Set<String>> filtersWithAttribute,
   );
 
-  void deleteShortcut(String organization, String area, String label);
+  void renameShortcut(SavedShortcut shortcut, String newLabel);
+
+  void deleteShortcut(SavedShortcut shortcut);
 }
 
 class StorageServiceCore implements StorageService {
@@ -231,11 +233,26 @@ class StorageServiceCore implements StorageService {
   }
 
   @override
-  void deleteShortcut(String organization, String area, String label) {
+  void renameShortcut(SavedShortcut shortcut, String newLabel) {
+    final savedShortcuts = getSavedShortcuts();
+
+    final editedShortcuts = savedShortcuts
+      ..firstWhereOrNull(
+        (f) => f.organization == shortcut.organization && f.area == shortcut.area && f.label == shortcut.label,
+      )?.label = newLabel;
+
+    _helper.setStringList(
+      _Keys.shortcuts,
+      editedShortcuts.map((f) => f.toJson()).toList(),
+    );
+  }
+
+  @override
+  void deleteShortcut(SavedShortcut shortcut) {
     final savedShortcuts = getSavedShortcuts();
 
     final otherShortcuts = savedShortcuts.whereNot(
-      (f) => f.organization == organization || f.label == label,
+      (f) => f.organization == shortcut.organization && f.label == shortcut.label,
     );
 
     _helper.setStringList(
@@ -416,7 +433,7 @@ class SavedShortcut {
 
   final String organization;
   final String area;
-  final String label;
+  String label;
   final List<StorageFilter> filters;
 
   Map<String, dynamic> toMap() {
