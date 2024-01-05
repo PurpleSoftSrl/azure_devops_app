@@ -14,6 +14,7 @@ import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/filter_menu.dart';
 import 'package:azure_devops/src/widgets/pull_request_list_tile.dart';
 import 'package:azure_devops/src/widgets/search_field.dart';
+import 'package:azure_devops/src/widgets/shortcut_label.dart';
 import 'package:flutter/material.dart';
 
 part 'components_pull_requests.dart';

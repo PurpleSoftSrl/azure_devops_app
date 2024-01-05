@@ -16,33 +16,39 @@ class _CommitsScreen extends StatelessWidget {
       showScrollbar: true,
       onResetFilters: ctrl.resetFilters,
       onEmpty: 'No commits found',
-      header: () => FiltersRow(
-        resetFilters: ctrl.resetFilters,
-        saveFilters: ctrl.saveFilters,
-        filters: [
-          FilterMenu<Project>.multiple(
-            title: 'Projects',
-            values: ctrl.getProjects(ctrl.storageService, withProjectAll: false),
-            currentFilters: ctrl.projectsFilter,
-            onSelectedMultiple: ctrl.filterByProjects,
-            formatLabel: (p) => p.name!,
-            isDefaultFilter: ctrl.isDefaultProjectsFilter,
-            widgetBuilder: (p) => ProjectFilterWidget(project: p),
-            onSearchChanged:
-                ctrl.hasManyProjects(ctrl.storageService) ? (s) => ctrl.searchProject(s, ctrl.storageService) : null,
-          ),
-          FilterMenu<GraphUser>.multiple(
-            title: 'Authors',
-            values: ctrl.getSortedUsers(ctrl.apiService, withUserAll: false),
-            currentFilters: ctrl.usersFilter,
-            onSelectedMultiple: ctrl.filterByUsers,
-            formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.apiService),
-            isDefaultFilter: ctrl.isDefaultUsersFilter,
-            widgetBuilder: (u) => UserFilterWidget(user: u),
-            onSearchChanged: ctrl.hasManyUsers(ctrl.apiService) ? (s) => ctrl.searchUser(s, ctrl.apiService) : null,
-          ),
-        ],
-      ),
+      header: () => ctrl.hasShortcut
+          ? ShortcutLabel(
+              label: ctrl.args!.shortcut!.label,
+            )
+          : FiltersRow(
+              resetFilters: ctrl.resetFilters,
+              saveFilters: ctrl.saveFilters,
+              filters: [
+                FilterMenu<Project>.multiple(
+                  title: 'Projects',
+                  values: ctrl.getProjects(ctrl.storageService, withProjectAll: false),
+                  currentFilters: ctrl.projectsFilter,
+                  onSelectedMultiple: ctrl.filterByProjects,
+                  formatLabel: (p) => p.name!,
+                  isDefaultFilter: ctrl.isDefaultProjectsFilter,
+                  widgetBuilder: (p) => ProjectFilterWidget(project: p),
+                  onSearchChanged: ctrl.hasManyProjects(ctrl.storageService)
+                      ? (s) => ctrl.searchProject(s, ctrl.storageService)
+                      : null,
+                ),
+                FilterMenu<GraphUser>.multiple(
+                  title: 'Authors',
+                  values: ctrl.getSortedUsers(ctrl.apiService, withUserAll: false),
+                  currentFilters: ctrl.usersFilter,
+                  onSelectedMultiple: ctrl.filterByUsers,
+                  formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.apiService),
+                  isDefaultFilter: ctrl.isDefaultUsersFilter,
+                  widgetBuilder: (u) => UserFilterWidget(user: u),
+                  onSearchChanged:
+                      ctrl.hasManyUsers(ctrl.apiService) ? (s) => ctrl.searchUser(s, ctrl.apiService) : null,
+                ),
+              ],
+            ),
       builder: (commits) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: commits!

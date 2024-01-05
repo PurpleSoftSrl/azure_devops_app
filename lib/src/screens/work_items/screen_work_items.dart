@@ -20,6 +20,12 @@ class _WorkItemsScreen extends StatelessWidget {
       onResetFilters: ctrl.resetFilters,
       onEmpty: 'No work items found',
       header: () {
+        if (ctrl.hasShortcut) {
+          return ShortcutLabel(
+            label: ctrl.args!.shortcut!.label,
+          );
+        }
+
         final areasToShow = ctrl.getAreasToShow();
         final iterationsToShow = ctrl.getIterationsToShow();
 
