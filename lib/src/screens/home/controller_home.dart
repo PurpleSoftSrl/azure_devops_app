@@ -27,6 +27,8 @@ class _HomeController with AppLogger {
 
   List<SavedShortcut> shortcuts = [];
 
+  final visibilityKey = GlobalKey();
+
   void dispose() {
     instance = null;
   }
@@ -50,7 +52,7 @@ class _HomeController with AppLogger {
 
     _hideSearchField();
 
-    shortcuts = filtersService.getOrganizationShortcuts();
+    _getShortcuts();
 
     projects.value = ApiResponse.ok(sortedProjects);
 
@@ -157,5 +159,18 @@ class _HomeController with AppLogger {
 
   void _hideSearchField() {
     isSearchingProjects.value = false;
+  }
+
+  void visibilityChanged(VisibilityInfo info) {
+    if (info.visibleFraction > 0) {
+      _getShortcuts();
+    }
+  }
+
+  void _getShortcuts() {
+    shortcuts = filtersService.getOrganizationShortcuts();
+
+    if (projects.value?.data == null) return;
+    projects.value = ApiResponse.ok(projects.value!.data);
   }
 }

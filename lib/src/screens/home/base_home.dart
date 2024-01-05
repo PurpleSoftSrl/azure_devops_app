@@ -22,6 +22,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 part 'components_home.dart';
 part 'controller_home.dart';
