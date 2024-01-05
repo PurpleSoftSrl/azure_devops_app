@@ -36,6 +36,19 @@ abstract class StorageService {
   );
 
   void resetFilter(String organization, String area);
+
+  List<SavedShortcut> getSavedShortcuts();
+
+  void saveShortcut(
+    String organization,
+    String area,
+    String label,
+    Map<String, Set<String>> filtersWithAttribute,
+  );
+
+  void renameShortcut(SavedShortcut shortcut, String newLabel);
+
+  void deleteShortcut(SavedShortcut shortcut);
 }
 
 class StorageServiceCore implements StorageService {
@@ -179,6 +192,74 @@ class StorageServiceCore implements StorageService {
       otherFilters.map((f) => f.toJson()).toList(),
     );
   }
+
+  @override
+  List<SavedShortcut> getSavedShortcuts() {
+    final shortcuts = _helper.getStringList(_Keys.shortcuts) ?? [];
+    return shortcuts.map(SavedShortcut.fromJson).toList();
+  }
+
+  @override
+  void saveShortcut(String organization, String area, String label, Map<String, Set<String>> filtersWithAttribute) {
+    final savedShortcuts = getSavedShortcuts();
+
+    final shortcutWithLabel = savedShortcuts.firstWhereOrNull(
+      (f) => f.organization == organization && f.area == area && f.label == label,
+    );
+
+    final mappedFilters = filtersWithAttribute.entries.map(
+      (entry) => StorageFilter(organization: organization, area: area, attribute: entry.key, filters: entry.value),
+    );
+
+    final hasShortcutWithLabel = shortcutWithLabel != null;
+    if (hasShortcutWithLabel) {
+      shortcutWithLabel.filters.clear();
+      shortcutWithLabel.filters.addAll(mappedFilters);
+    } else {
+      final shortcutToSave = SavedShortcut(
+        organization: organization,
+        area: area,
+        label: label,
+        filters: mappedFilters.toList(),
+      );
+
+      savedShortcuts.add(shortcutToSave);
+    }
+
+    _helper.setStringList(
+      _Keys.shortcuts,
+      savedShortcuts.map((f) => f.toJson()).toList(),
+    );
+  }
+
+  @override
+  void renameShortcut(SavedShortcut shortcut, String newLabel) {
+    final savedShortcuts = getSavedShortcuts();
+
+    final editedShortcuts = savedShortcuts
+      ..firstWhereOrNull(
+        (f) => f.organization == shortcut.organization && f.area == shortcut.area && f.label == shortcut.label,
+      )?.label = newLabel;
+
+    _helper.setStringList(
+      _Keys.shortcuts,
+      editedShortcuts.map((f) => f.toJson()).toList(),
+    );
+  }
+
+  @override
+  void deleteShortcut(SavedShortcut shortcut) {
+    final savedShortcuts = getSavedShortcuts();
+
+    final otherShortcuts = savedShortcuts.whereNot(
+      (f) => f.organization == shortcut.organization && f.label == shortcut.label,
+    );
+
+    _helper.setStringList(
+      _Keys.shortcuts,
+      otherShortcuts.map((f) => f.toJson()).toList(),
+    );
+  }
 }
 
 class _StorageServiceHelper {
@@ -258,6 +339,7 @@ class _Keys {
   static const org = 'org';
   static const numberOfSessions = 'numberOfSessions';
   static const filters = 'filters';
+  static const shortcuts = 'shortcuts';
 }
 
 class StorageServiceInherited extends InheritedWidget {
@@ -322,6 +404,58 @@ class StorageFilter {
     if (list != null) {
       for (final row in list) {
         final value = StorageFilter.fromJson(row as String);
+        result.add(value);
+      }
+    }
+    return result.toList(growable: growable);
+  }
+}
+
+/// Shortcuts are labeled lists of filters which belongs to an area inside an organization.
+class SavedShortcut {
+  SavedShortcut({
+    required this.organization,
+    required this.area,
+    required this.label,
+    required this.filters,
+  });
+
+  factory SavedShortcut.fromMap(Map<String, dynamic> map) {
+    return SavedShortcut(
+      organization: map['organization'] as String,
+      area: map['area'] as String,
+      label: map['label'] as String,
+      filters: StorageFilter.listFromJson(jsonEncode(map['filters']), growable: true) ?? [],
+    );
+  }
+
+  factory SavedShortcut.fromJson(String source) => SavedShortcut.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  final String organization;
+  final String area;
+  String label;
+  final List<StorageFilter> filters;
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'organization': organization,
+      'area': area,
+      'label': label,
+      'filters': filters.toList(),
+    };
+  }
+
+  String toJson() => json.encode(toMap());
+
+  static List<SavedShortcut>? listFromJson(
+    String json, {
+    bool growable = false,
+  }) {
+    final list = jsonDecode(json) as List<dynamic>?;
+    final result = <SavedShortcut>[];
+    if (list != null) {
+      for (final row in list) {
+        final value = SavedShortcut.fromJson(row as String);
         result.add(value);
       }
     }

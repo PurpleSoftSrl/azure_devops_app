@@ -23,17 +23,20 @@ import 'package:azure_devops/src/screens/tabs/base_tabs.dart';
 import 'package:azure_devops/src/screens/work_item_detail/base_work_item_detail.dart';
 import 'package:azure_devops/src/screens/work_items/base_work_items.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
+import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/widgets/error_page.dart';
 import 'package:flutter/material.dart';
 
+typedef WorkItemsArgs = ({Project? project, SavedShortcut? shortcut});
 typedef WorkItemDetailArgs = ({String project, int id});
 typedef CreateOrEditWorkItemArgs = ({String? project, int? id, String? area, String? iteration});
+typedef PullRequestArgs = ({Project? project, SavedShortcut? shortcut});
 typedef PullRequestDetailArgs = ({String project, String repository, int id});
-typedef CommitsArgs = ({Project? project, GraphUser? author});
+typedef CommitsArgs = ({Project? project, GraphUser? author, SavedShortcut? shortcut});
 typedef CommitDetailArgs = ({String project, String repository, String commitId});
 typedef FileDiffArgs = ({Commit commit, String filePath, bool isAdded, bool isDeleted, int? pullRequestId});
 typedef PipelineLogsArgs = ({String project, int pipelineId, String taskId, String parentTaskId, int logId});
-typedef PipelinesArgs = ({Project? project, int? definition});
+typedef PipelinesArgs = ({Project? project, int? definition, SavedShortcut? shortcut});
 
 class AppRouter {
   AppRouter._();
@@ -143,8 +146,8 @@ class AppRouter {
 
   static PipelineLogsArgs getPipelineLogsArgs(BuildContext context) => _getArgs(context);
 
-  static Future<void> goToCommits({Project? project, GraphUser? author}) =>
-      _goTo(_commits, args: (project: project, author: author));
+  static Future<void> goToCommits({Project? project, GraphUser? author, SavedShortcut? shortcut}) =>
+      _goTo(_commits, args: (project: project, author: author, shortcut: shortcut));
 
   static CommitsArgs? getCommitsArgs(BuildContext context) => _getArgs(context);
 
@@ -165,9 +168,9 @@ class AppRouter {
 
   static String getProjectDetailArgs(BuildContext context) => _getArgs(context);
 
-  static Future<void> goToWorkItems({Project? project}) => _goTo(_workItems, args: project);
+  static Future<void> goToWorkItems({WorkItemsArgs? args}) => _goTo(_workItems, args: args);
 
-  static Project? getWorkItemsArgs(BuildContext context) => _getArgs(context);
+  static WorkItemsArgs? getWorkItemsArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToWorkItemDetail({required String project, required int id}) =>
       _goTo<WorkItemDetailArgs>(_workItemDetail, args: (project: project, id: id));
@@ -179,9 +182,9 @@ class AppRouter {
 
   static CreateOrEditWorkItemArgs getCreateOrEditWorkItemArgs(BuildContext context) => _getArgs(context);
 
-  static Future<void> goToPullRequests({Project? project}) => _goTo(_pullRequests, args: project);
+  static Future<void> goToPullRequests({PullRequestArgs? args}) => _goTo(_pullRequests, args: args);
 
-  static Project? getPullRequestsArgs(BuildContext context) => _getArgs(context);
+  static PullRequestArgs? getPullRequestsArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToPullRequestDetail({required String project, required String repository, required int id}) =>
       _goTo<PullRequestDetailArgs>(_pullRequestDetail, args: (project: project, repository: repository, id: id));

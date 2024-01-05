@@ -18,10 +18,12 @@ class FiltersRow extends StatelessWidget {
   const FiltersRow({
     required this.filters,
     required this.resetFilters,
+    required this.saveFilters,
   });
 
   final List<FilterMenu<Object?>> filters;
   final VoidCallback resetFilters;
+  final VoidCallback saveFilters;
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +37,9 @@ class FiltersRow extends StatelessWidget {
           if (hasSelectedFilters)
             Padding(
               padding: const EdgeInsets.only(left: 16),
-              child: _ResetFiltersMenu(
+              child: _FiltersActionsMenu(
                 resetFilters: resetFilters,
+                saveFilters: saveFilters,
                 selectedFiltersCount: selectedFilters.length,
               ),
             ),
@@ -368,22 +371,32 @@ class _FilterBottomsheet<T> extends StatelessWidget {
   }
 }
 
-class _ResetFiltersMenu extends StatelessWidget {
-  const _ResetFiltersMenu({required this.resetFilters, required this.selectedFiltersCount});
+class _FiltersActionsMenu extends StatelessWidget {
+  const _FiltersActionsMenu({
+    required this.resetFilters,
+    required this.saveFilters,
+    required this.selectedFiltersCount,
+  });
 
   final VoidCallback resetFilters;
+  final VoidCallback saveFilters;
   final int selectedFiltersCount;
 
   @override
   Widget build(BuildContext context) {
     return DevOpsPopupMenu(
-      tooltip: 'Reset filters',
+      tooltip: 'Reset or save filters',
       offset: const Offset(0, 20),
       items: () => [
         PopupItem(
           onTap: resetFilters,
           text: 'Reset filters',
           icon: DevOpsIcons.failed,
+        ),
+        PopupItem(
+          onTap: saveFilters,
+          text: 'Save filters',
+          icon: Icons.save_outlined,
         ),
       ],
       child: Chip(

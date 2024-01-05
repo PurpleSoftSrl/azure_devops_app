@@ -234,7 +234,7 @@ class _PipelineDetailController with ShareMixin {
   }
 
   void goToPreviousRuns() {
-    AppRouter.goToPipelines(args: (definition: pipeline.definition!.id!, project: pipeline.project!));
+    AppRouter.goToPipelines(args: (definition: pipeline.definition!.id!, project: pipeline.project!, shortcut: null));
   }
 }
 

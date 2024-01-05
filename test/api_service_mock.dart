@@ -806,6 +806,20 @@ class StorageServiceMock implements StorageService {
 
   @override
   void saveFilter(String organization, String area, String filterAttribute, Set<String> filters) {}
+
+  @override
+  List<SavedShortcut> getSavedShortcuts() {
+    return [];
+  }
+
+  @override
+  void saveShortcut(String organization, String area, String label, Map<String, Set<String>> filtersWithAttribute) {}
+
+  @override
+  void renameShortcut(SavedShortcut shortcut, String newLabel) {}
+
+  @override
+  void deleteShortcut(SavedShortcut shortcut) {}
 }
 
 extension on WorkItem {

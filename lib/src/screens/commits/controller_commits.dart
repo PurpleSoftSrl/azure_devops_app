@@ -38,22 +38,36 @@ class _CommitsController with FilterMixin {
     organization: apiService.organization,
   );
 
-  /// Read/write filters from local storage only if user is not coming from project page
-  bool get shouldPersistFilters => args?.project == null;
+  /// Read/write filters from local storage only if user is not coming from project page or from shortcut
+  bool get shouldPersistFilters => args?.project == null && !hasShortcut;
+
+  bool get hasShortcut => args?.shortcut != null;
 
   void dispose() {
     instance = null;
   }
 
   Future<void> init() async {
-    if (shouldPersistFilters) _fillSavedFilters();
+    if (shouldPersistFilters) {
+      _fillSavedFilters();
+    } else if (hasShortcut) {
+      _fillShortcutFilters();
+    }
 
     await _getData();
   }
 
   void _fillSavedFilters() {
     final savedFilters = filtersService.getCommitsSavedFilters();
+    _fillFilters(savedFilters);
+  }
 
+  void _fillShortcutFilters() {
+    final savedFilters = filtersService.getCommitsShortcut(args!.shortcut!.label);
+    _fillFilters(savedFilters);
+  }
+
+  void _fillFilters(CommitsFilters savedFilters) {
     if (savedFilters.projects.isNotEmpty) {
       projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
     }
@@ -132,5 +146,20 @@ class _CommitsController with FilterMixin {
     }
 
     init();
+  }
+
+  Future<void> saveFilters() async {
+    final shortcutLabel = await OverlayService.formBottomsheet(title: 'Choose a name', label: 'Name');
+    if (shortcutLabel == null) return;
+
+    final res = filtersService.saveCommitsShortcut(
+      shortcutLabel,
+      filters: CommitsFilters(
+        projects: projectsFilter.map((p) => p.name!).toSet(),
+        authors: usersFilter.map((u) => u.mailAddress!).toSet(),
+      ),
+    );
+
+    OverlayService.snackbar(res.message, isError: !res.result);
   }
 }

@@ -20,6 +20,15 @@ class _HomeController with AppLogger {
   int _projectsCount = 0;
   bool get hasManyProjects => _projectsCount > 10;
 
+  late final filtersService = FiltersService(
+    storageService: storageService,
+    organization: apiService.organization,
+  );
+
+  List<SavedShortcut> shortcuts = [];
+
+  final visibilityKey = GlobalKey();
+
   void dispose() {
     instance = null;
   }
@@ -42,6 +51,8 @@ class _HomeController with AppLogger {
     _projectsCount = existentProjects.length;
 
     _hideSearchField();
+
+    _getShortcuts();
 
     projects.value = ApiResponse.ok(sortedProjects);
 
@@ -76,6 +87,19 @@ class _HomeController with AppLogger {
 
   void goToProjectDetail(Project p) {
     AppRouter.goToProjectDetail(p.name!);
+  }
+
+  void goToListPage(SavedShortcut shortcut) {
+    switch (shortcut.area) {
+      case FilterAreas.commits:
+        AppRouter.goToCommits(shortcut: shortcut);
+      case FilterAreas.pipelines:
+        AppRouter.goToPipelines(args: (definition: null, project: null, shortcut: shortcut));
+      case FilterAreas.workItems:
+        AppRouter.goToWorkItems(args: (project: null, shortcut: shortcut));
+      case FilterAreas.pullRequests:
+        AppRouter.goToPullRequests(args: (project: null, shortcut: shortcut));
+    }
   }
 
   void _configureSentryAndFirebase() {
@@ -135,5 +159,85 @@ class _HomeController with AppLogger {
 
   void _hideSearchField() {
     isSearchingProjects.value = false;
+  }
+
+  void visibilityChanged(VisibilityInfo info) {
+    if (info.visibleFraction > 0) {
+      _getShortcuts();
+    }
+  }
+
+  void _getShortcuts() {
+    shortcuts = filtersService.getOrganizationShortcuts();
+
+    if (projects.value?.data == null) return;
+    projects.value = ApiResponse.ok(projects.value!.data);
+  }
+
+  void showShortcut(SavedShortcut shortcut) {
+    OverlayService.bottomsheet(
+      title: shortcut.label,
+      isScrollControlled: true,
+      builder: (context) => ListView(
+        children: shortcut.filters
+            .map(
+              (f) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    f.attribute.titleCase,
+                    style: context.textTheme.bodyMedium,
+                  ),
+                  ...f.filters.map(
+                    (f2) => Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 2,
+                          backgroundColor: context.colorScheme.onBackground,
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          f2,
+                          style: context.textTheme.labelMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                ],
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+
+  Future<void> renameShortcut(SavedShortcut shortcut) async {
+    final shortcutLabel = await OverlayService.formBottomsheet(
+      title: 'Rename shortcut',
+      label: 'Name',
+      initialValue: shortcut.label,
+    );
+    if (shortcutLabel == null) return;
+
+    filtersService.renameShortcut(shortcut, label: shortcutLabel);
+
+    _getShortcuts();
+  }
+
+  Future<void> deleteShortcut(SavedShortcut shortcut) async {
+    final confirm = await OverlayService.confirm(
+      'Attention',
+      description: "Do you really want to delete '${shortcut.label}'?",
+    );
+    if (!confirm) return;
+
+    filtersService.deleteShortcut(shortcut);
+
+    _getShortcuts();
   }
 }

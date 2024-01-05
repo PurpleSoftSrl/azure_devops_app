@@ -1,6 +1,8 @@
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:collection/collection.dart';
 
+typedef ResultWithMessage = ({bool result, String message});
+
 /// This class is responsible for persisting filters to and retrieving them
 /// from local storage by using [storageService].
 ///
@@ -12,7 +14,7 @@ class FiltersService {
   final String organization;
 
   WorkItemsFilters getWorkItemsSavedFilters() {
-    final workItemsFilters = _getAreaFilter(area: _FilterAreas.workItems);
+    final workItemsFilters = _getAreaFilter(area: FilterAreas.workItems);
 
     return WorkItemsFilters(
       projects: _getFilters(workItemsFilters, attribute: WorkItemsFilters.projectsKey),
@@ -26,29 +28,29 @@ class FiltersService {
   }
 
   void saveWorkItemsProjectsFilter(Set<String> projectNames) {
-    storageService.saveFilter(organization, _FilterAreas.workItems, WorkItemsFilters.projectsKey, projectNames);
+    storageService.saveFilter(organization, FilterAreas.workItems, WorkItemsFilters.projectsKey, projectNames);
   }
 
   void saveWorkItemsStatesFilter(Set<String> stateNames) {
-    storageService.saveFilter(organization, _FilterAreas.workItems, WorkItemsFilters.statesKey, stateNames);
+    storageService.saveFilter(organization, FilterAreas.workItems, WorkItemsFilters.statesKey, stateNames);
   }
 
   void saveWorkItemsCategoriesFilter(Set<String> categories) {
-    storageService.saveFilter(organization, _FilterAreas.workItems, WorkItemsFilters.categoriesKey, categories);
+    storageService.saveFilter(organization, FilterAreas.workItems, WorkItemsFilters.categoriesKey, categories);
   }
 
   void saveWorkItemsTypesFilter(Set<String> typeNames) {
-    storageService.saveFilter(organization, _FilterAreas.workItems, WorkItemsFilters.typesKey, typeNames);
+    storageService.saveFilter(organization, FilterAreas.workItems, WorkItemsFilters.typesKey, typeNames);
   }
 
   void saveWorkItemsAssigneesFilter(Set<String> userEmails) {
-    storageService.saveFilter(organization, _FilterAreas.workItems, WorkItemsFilters.assigneesKey, userEmails);
+    storageService.saveFilter(organization, FilterAreas.workItems, WorkItemsFilters.assigneesKey, userEmails);
   }
 
   void saveWorkItemsAreaFilter(String area) {
     storageService.saveFilter(
       organization,
-      _FilterAreas.workItems,
+      FilterAreas.workItems,
       WorkItemsFilters.areaKey,
       area.isEmpty ? {} : {area},
     );
@@ -57,18 +59,18 @@ class FiltersService {
   void saveWorkItemsIterationFilter(String iteration) {
     storageService.saveFilter(
       organization,
-      _FilterAreas.workItems,
+      FilterAreas.workItems,
       WorkItemsFilters.iterationKey,
       iteration.isEmpty ? {} : {iteration},
     );
   }
 
   void resetWorkItemsFilters() {
-    storageService.resetFilter(organization, _FilterAreas.workItems);
+    storageService.resetFilter(organization, FilterAreas.workItems);
   }
 
   CommitsFilters getCommitsSavedFilters() {
-    final commitsFilters = _getAreaFilter(area: _FilterAreas.commits);
+    final commitsFilters = _getAreaFilter(area: FilterAreas.commits);
 
     return CommitsFilters(
       projects: _getFilters(commitsFilters, attribute: CommitsFilters.projectsKey),
@@ -77,19 +79,19 @@ class FiltersService {
   }
 
   void saveCommitsProjectsFilter(Set<String> projectNames) {
-    storageService.saveFilter(organization, _FilterAreas.commits, CommitsFilters.projectsKey, projectNames);
+    storageService.saveFilter(organization, FilterAreas.commits, CommitsFilters.projectsKey, projectNames);
   }
 
   void saveCommitsAuthorsFilter(Set<String> userEmails) {
-    storageService.saveFilter(organization, _FilterAreas.commits, CommitsFilters.authorsKey, userEmails);
+    storageService.saveFilter(organization, FilterAreas.commits, CommitsFilters.authorsKey, userEmails);
   }
 
   void resetCommitsFilters() {
-    storageService.resetFilter(organization, _FilterAreas.commits);
+    storageService.resetFilter(organization, FilterAreas.commits);
   }
 
   PipelinesFilters getPipelinesSavedFilters() {
-    final pipelinesFilters = _getAreaFilter(area: _FilterAreas.pipelines);
+    final pipelinesFilters = _getAreaFilter(area: FilterAreas.pipelines);
 
     return PipelinesFilters(
       projects: _getFilters(pipelinesFilters, attribute: PipelinesFilters.projectsKey),
@@ -101,31 +103,31 @@ class FiltersService {
   }
 
   void savePipelinesProjectsFilter(Set<String> projectNames) {
-    storageService.saveFilter(organization, _FilterAreas.pipelines, PipelinesFilters.projectsKey, projectNames);
+    storageService.saveFilter(organization, FilterAreas.pipelines, PipelinesFilters.projectsKey, projectNames);
   }
 
   void savePipelinesNamesFilter(Set<String> names) {
-    storageService.saveFilter(organization, _FilterAreas.pipelines, PipelinesFilters.pipelinesKey, names);
+    storageService.saveFilter(organization, FilterAreas.pipelines, PipelinesFilters.pipelinesKey, names);
   }
 
   void savePipelinesTriggeredByFilter(Set<String> userEmails) {
-    storageService.saveFilter(organization, _FilterAreas.pipelines, PipelinesFilters.triggeredByKey, userEmails);
+    storageService.saveFilter(organization, FilterAreas.pipelines, PipelinesFilters.triggeredByKey, userEmails);
   }
 
   void savePipelinesResultFilter(String result) {
-    storageService.saveFilter(organization, _FilterAreas.pipelines, PipelinesFilters.resultKey, {result});
+    storageService.saveFilter(organization, FilterAreas.pipelines, PipelinesFilters.resultKey, {result});
   }
 
   void savePipelinesStatusFilter(String status) {
-    storageService.saveFilter(organization, _FilterAreas.pipelines, PipelinesFilters.statusKey, {status});
+    storageService.saveFilter(organization, FilterAreas.pipelines, PipelinesFilters.statusKey, {status});
   }
 
   void resetPipelinesFilters() {
-    storageService.resetFilter(organization, _FilterAreas.pipelines);
+    storageService.resetFilter(organization, FilterAreas.pipelines);
   }
 
   PullRequestsFilters getPullRequestsSavedFilters() {
-    final pullRequestsFilters = _getAreaFilter(area: _FilterAreas.pullRequests);
+    final pullRequestsFilters = _getAreaFilter(area: FilterAreas.pullRequests);
 
     return PullRequestsFilters(
       projects: _getFilters(pullRequestsFilters, attribute: PullRequestsFilters.projectsKey),
@@ -136,23 +138,23 @@ class FiltersService {
   }
 
   void savePullRequestsProjectsFilter(Set<String> projectNames) {
-    storageService.saveFilter(organization, _FilterAreas.pullRequests, PullRequestsFilters.projectsKey, projectNames);
+    storageService.saveFilter(organization, FilterAreas.pullRequests, PullRequestsFilters.projectsKey, projectNames);
   }
 
   void savePullRequestsStatusFilter(String status) {
-    storageService.saveFilter(organization, _FilterAreas.pullRequests, PullRequestsFilters.statusKey, {status});
+    storageService.saveFilter(organization, FilterAreas.pullRequests, PullRequestsFilters.statusKey, {status});
   }
 
   void savePullRequestsOpenedByFilter(Set<String> userEmails) {
-    storageService.saveFilter(organization, _FilterAreas.pullRequests, PullRequestsFilters.openedByKey, userEmails);
+    storageService.saveFilter(organization, FilterAreas.pullRequests, PullRequestsFilters.openedByKey, userEmails);
   }
 
   void savePullRequestsAssignedToFilter(Set<String> userEmails) {
-    storageService.saveFilter(organization, _FilterAreas.pullRequests, PullRequestsFilters.assignedToKey, userEmails);
+    storageService.saveFilter(organization, FilterAreas.pullRequests, PullRequestsFilters.assignedToKey, userEmails);
   }
 
   void resetPullRequestsFilters() {
-    storageService.resetFilter(organization, _FilterAreas.pullRequests);
+    storageService.resetFilter(organization, FilterAreas.pullRequests);
   }
 
   List<StorageFilter> _getAreaFilter({required String area}) {
@@ -162,6 +164,104 @@ class FiltersService {
 
   Set<String> _getFilters(List<StorageFilter> allFilters, {required String attribute}) {
     return allFilters.firstWhereOrNull((f) => f.attribute == attribute)?.filters ?? {};
+  }
+
+  List<SavedShortcut> getOrganizationShortcuts() {
+    final shortcuts = storageService.getSavedShortcuts();
+    return shortcuts.where((s) => s.organization == organization).toList();
+  }
+
+  CommitsFilters getCommitsShortcut(String label) {
+    final shortcut = _getAreaShortcut(area: FilterAreas.commits, label: label)!;
+
+    return CommitsFilters(
+      projects: _getShortcutFilters(shortcut, attribute: CommitsFilters.projectsKey),
+      authors: _getShortcutFilters(shortcut, attribute: CommitsFilters.authorsKey),
+    );
+  }
+
+  ResultWithMessage saveCommitsShortcut(String label, {required CommitsFilters filters}) {
+    return _saveShortcut(FilterAreas.commits, label, filters.toMap());
+  }
+
+  PipelinesFilters getPipelinesShortcut(String label) {
+    final shortcut = _getAreaShortcut(area: FilterAreas.pipelines, label: label)!;
+
+    return PipelinesFilters(
+      projects: _getShortcutFilters(shortcut, attribute: PipelinesFilters.projectsKey),
+      pipelines: _getShortcutFilters(shortcut, attribute: PipelinesFilters.pipelinesKey),
+      result: _getShortcutFilters(shortcut, attribute: PipelinesFilters.resultKey),
+      status: _getShortcutFilters(shortcut, attribute: PipelinesFilters.statusKey),
+      triggeredBy: _getShortcutFilters(shortcut, attribute: PipelinesFilters.triggeredByKey),
+    );
+  }
+
+  ResultWithMessage savePipelinesShortcut(String label, {required PipelinesFilters filters}) {
+    return _saveShortcut(FilterAreas.pipelines, label, filters.toMap());
+  }
+
+  PullRequestsFilters getPullRequestsShortcut(String label) {
+    final shortcut = _getAreaShortcut(area: FilterAreas.pullRequests, label: label)!;
+
+    return PullRequestsFilters(
+      projects: _getShortcutFilters(shortcut, attribute: PullRequestsFilters.projectsKey),
+      status: _getShortcutFilters(shortcut, attribute: PipelinesFilters.statusKey),
+      assignedTo: _getShortcutFilters(shortcut, attribute: PullRequestsFilters.assignedToKey),
+      openedBy: _getShortcutFilters(shortcut, attribute: PullRequestsFilters.openedByKey),
+    );
+  }
+
+  ResultWithMessage savePullRequestsShortcut(String label, {required PullRequestsFilters filters}) {
+    return _saveShortcut(FilterAreas.pullRequests, label, filters.toMap());
+  }
+
+  WorkItemsFilters getWorkItemsShortcut(String label) {
+    final shortcut = _getAreaShortcut(area: FilterAreas.workItems, label: label)!;
+
+    return WorkItemsFilters(
+      projects: _getShortcutFilters(shortcut, attribute: WorkItemsFilters.projectsKey),
+      categories: _getShortcutFilters(shortcut, attribute: WorkItemsFilters.categoriesKey),
+      states: _getShortcutFilters(shortcut, attribute: WorkItemsFilters.statesKey),
+      types: _getShortcutFilters(shortcut, attribute: WorkItemsFilters.typesKey),
+      assignees: _getShortcutFilters(shortcut, attribute: WorkItemsFilters.assigneesKey),
+      area: _getShortcutFilters(shortcut, attribute: WorkItemsFilters.areaKey),
+      iteration: _getShortcutFilters(shortcut, attribute: WorkItemsFilters.iterationKey),
+    );
+  }
+
+  ResultWithMessage saveWorkItemsShortcut(String label, {required WorkItemsFilters filters}) {
+    return _saveShortcut(FilterAreas.workItems, label, filters.toMap());
+  }
+
+  ResultWithMessage _saveShortcut(String area, String label, Map<String, Set<String>> filters) {
+    final savedShortcuts = storageService.getSavedShortcuts();
+
+    final hasShortcutWithSameLabel = savedShortcuts.any((s) => s.organization == organization && s.label == label);
+
+    if (hasShortcutWithSameLabel) {
+      return (result: false, message: 'There is already a saved filter with this label');
+    }
+
+    storageService.saveShortcut(organization, area, label, filters);
+
+    return (result: true, message: 'Filter saved successfully!');
+  }
+
+  SavedShortcut? _getAreaShortcut({required String area, required String label}) {
+    final shortcuts = storageService.getSavedShortcuts();
+    return shortcuts.firstWhereOrNull((s) => s.organization == organization && s.area == area && s.label == label);
+  }
+
+  Set<String> _getShortcutFilters(SavedShortcut shortcut, {required String attribute}) {
+    return shortcut.filters.firstWhereOrNull((f) => f.attribute == attribute)?.filters ?? {};
+  }
+
+  void renameShortcut(SavedShortcut shortcut, {required String label}) {
+    storageService.renameShortcut(shortcut, label);
+  }
+
+  void deleteShortcut(SavedShortcut shortcut) {
+    storageService.deleteShortcut(shortcut);
   }
 }
 
@@ -191,6 +291,18 @@ class WorkItemsFilters {
   final Set<String> assignees;
   final Set<String> area;
   final Set<String> iteration;
+
+  Map<String, Set<String>> toMap() {
+    return {
+      if (projects.isNotEmpty) projectsKey: projects,
+      if (area.isNotEmpty) areaKey: area,
+      if (assignees.isNotEmpty) assigneesKey: assignees,
+      if (categories.isNotEmpty) categoriesKey: categories,
+      if (iteration.isNotEmpty) iterationKey: iteration,
+      if (states.isNotEmpty) statesKey: states,
+      if (types.isNotEmpty) typesKey: types,
+    };
+  }
 }
 
 class CommitsFilters {
@@ -204,6 +316,13 @@ class CommitsFilters {
 
   final Set<String> projects;
   final Set<String> authors;
+
+  Map<String, Set<String>> toMap() {
+    return {
+      if (authors.isNotEmpty) authorsKey: authors,
+      if (projects.isNotEmpty) projectsKey: projects,
+    };
+  }
 }
 
 class PipelinesFilters {
@@ -226,6 +345,16 @@ class PipelinesFilters {
   final Set<String> triggeredBy;
   final Set<String> result;
   final Set<String> status;
+
+  Map<String, Set<String>> toMap() {
+    return {
+      if (projects.isNotEmpty) projectsKey: projects,
+      if (result.isNotEmpty) resultKey: result,
+      if (status.isNotEmpty) statusKey: status,
+      if (triggeredBy.isNotEmpty) triggeredByKey: triggeredBy,
+      if (pipelines.isNotEmpty) pipelinesKey: pipelines,
+    };
+  }
 }
 
 class PullRequestsFilters {
@@ -245,9 +374,18 @@ class PullRequestsFilters {
   final Set<String> status;
   final Set<String> openedBy;
   final Set<String> assignedTo;
+
+  Map<String, Set<String>> toMap() {
+    return {
+      if (projects.isNotEmpty) projectsKey: projects,
+      if (status.isNotEmpty) statusKey: status,
+      if (openedBy.isNotEmpty) openedByKey: openedBy,
+      if (assignedTo.isNotEmpty) assignedToKey: assignedTo,
+    };
+  }
 }
 
-class _FilterAreas {
+class FilterAreas {
   static const workItems = 'work-items';
   static const commits = 'commits';
   static const pipelines = 'pipelines';

@@ -91,14 +91,14 @@ class _ProjectDetailController {
   }
 
   void goToPipelines() {
-    AppRouter.goToPipelines(args: (project: project.value?.data?.project, definition: null));
+    AppRouter.goToPipelines(args: (project: project.value?.data?.project, definition: null, shortcut: null));
   }
 
   void goToWorkItems() {
-    AppRouter.goToWorkItems(project: project.value?.data?.project);
+    AppRouter.goToWorkItems(args: (project: project.value?.data?.project, shortcut: null));
   }
 
   void goToPullRequests() {
-    AppRouter.goToPullRequests(project: project.value?.data?.project);
+    AppRouter.goToPullRequests(args: (project: project.value?.data?.project, shortcut: null));
   }
 }

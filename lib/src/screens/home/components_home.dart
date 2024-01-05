@@ -1,5 +1,96 @@
 part of home;
 
+class _ShortcutRow extends StatelessWidget {
+  const _ShortcutRow({
+    required this.shortcut,
+    required this.onTap,
+    required this.onShowDetail,
+    required this.onRename,
+    required this.onDelete,
+  });
+
+  final SavedShortcut shortcut;
+  final void Function(SavedShortcut) onTap;
+  final void Function(SavedShortcut) onShowDetail;
+  final void Function(SavedShortcut) onRename;
+  final void Function(SavedShortcut) onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    return NavigationButton(
+      margin: const EdgeInsets.only(top: 8),
+      inkwellKey: ValueKey(shortcut.label),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      onTap: () => onTap(shortcut),
+      child: Row(
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: context.colorScheme.primary,
+              shape: BoxShape.circle,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Icon(
+                switch (shortcut.area) {
+                  FilterAreas.commits => DevOpsIcons.commit,
+                  FilterAreas.pipelines => DevOpsIcons.pipeline,
+                  FilterAreas.workItems => DevOpsIcons.task,
+                  FilterAreas.pullRequests => DevOpsIcons.pullrequest,
+                  _ => DevOpsIcons.task,
+                },
+                color: context.colorScheme.onPrimary,
+                size: 14,
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 12,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  shortcut.label,
+                  style: context.textTheme.bodyMedium,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  shortcut.area,
+                  style: context.textTheme.labelSmall,
+                ),
+              ],
+            ),
+          ),
+          DevOpsPopupMenu(
+            tooltip: 'Shortcut ${shortcut.label} actions',
+            offset: const Offset(0, 20),
+            items: () => [
+              PopupItem(
+                onTap: () => onShowDetail(shortcut),
+                text: 'Show filters',
+                icon: DevOpsIcons.filter,
+              ),
+              PopupItem(
+                onTap: () => onRename(shortcut),
+                text: 'Rename',
+                icon: DevOpsIcons.edit,
+              ),
+              PopupItem(
+                onTap: () => onDelete(shortcut),
+                text: 'Delete',
+                icon: DevOpsIcons.trash,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ProjectCard extends StatelessWidget {
   const _ProjectCard({
     required this.parameters,

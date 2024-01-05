@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
+import 'package:azure_devops/src/widgets/form_field.dart';
 import 'package:azure_devops/src/widgets/navigation_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -174,7 +175,7 @@ class OverlayService {
                         const SizedBox(
                           width: 80,
                         ),
-                        Text(title),
+                        Flexible(child: Text(title)),
                         SizedBox(
                           width: 80,
                           child: topRight ??
@@ -240,5 +241,36 @@ class OverlayService {
         surfaceTintColor: Colors.transparent,
       ),
     );
+  }
+
+  static Future<String?> formBottomsheet({required String title, required String label, String? initialValue}) async {
+    var result = '';
+    var hasConfirmed = false;
+
+    await OverlayService.bottomsheet(
+      title: title,
+      isScrollControlled: true,
+      builder: (_) => DevOpsFormField(
+        onChanged: (s) => result = s,
+        label: label,
+        initialValue: initialValue,
+      ),
+      topRight: Builder(
+        builder: (context) => TextButton(
+          onPressed: () {
+            hasConfirmed = true;
+            AppRouter.popRoute();
+          },
+          style: TextButtonTheme.of(context).style!.copyWith(padding: MaterialStatePropertyAll(EdgeInsets.zero)),
+          child: Text(
+            'Confirm',
+            style: context.textTheme.bodyMedium!.copyWith(color: context.colorScheme.primary),
+          ),
+        ),
+      ),
+    );
+    if (result.isEmpty || !hasConfirmed) return null;
+
+    return result;
   }
 }

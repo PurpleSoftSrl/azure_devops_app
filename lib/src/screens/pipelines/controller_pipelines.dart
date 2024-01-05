@@ -36,9 +36,6 @@ class _PipelinesController with FilterMixin {
   int get queuedPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.notStarted).length ?? 0;
   int get cancellingPipelines => pipelines.value?.data?.where((b) => b.status == PipelineStatus.cancelling).length ?? 0;
 
-  /// Read/write filters from local storage only if user is not coming from project page
-  bool get shouldPersistFilters => args?.project == null;
-
   Set<String> pipelineNamesFilter = {};
   PipelineResult resultFilter = PipelineResult.all;
   PipelineStatus statusFilter = PipelineStatus.all;
@@ -57,6 +54,11 @@ class _PipelinesController with FilterMixin {
 
   bool get showPipelineNamesFilter => getPipelineNames().isNotEmpty;
 
+  /// Read/write filters from local storage only if user is not coming from project page or from shortcut
+  bool get shouldPersistFilters => args?.project == null && !hasShortcut;
+
+  bool get hasShortcut => args?.shortcut != null;
+
   void dispose() {
     _stopTimer();
 
@@ -69,7 +71,11 @@ class _PipelinesController with FilterMixin {
   }
 
   Future<void> init() async {
-    if (shouldPersistFilters) _fillSavedFilters();
+    if (shouldPersistFilters) {
+      _fillSavedFilters();
+    } else if (hasShortcut) {
+      _fillShortcutFilters();
+    }
 
     await _getData();
 
@@ -91,7 +97,15 @@ class _PipelinesController with FilterMixin {
 
   void _fillSavedFilters() {
     final savedFilters = filtersService.getPipelinesSavedFilters();
+    _fillFilters(savedFilters);
+  }
 
+  void _fillShortcutFilters() {
+    final savedFilters = filtersService.getPipelinesShortcut(args!.shortcut!.label);
+    _fillFilters(savedFilters);
+  }
+
+  void _fillFilters(PipelinesFilters savedFilters) {
     if (savedFilters.projects.isNotEmpty) {
       projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
     }
@@ -243,5 +257,23 @@ class _PipelinesController with FilterMixin {
         .whereType<String>()
         .toSet()
         .sortedBy((s) => s.toLowerCase());
+  }
+
+  Future<void> saveFilters() async {
+    final shortcutLabel = await OverlayService.formBottomsheet(title: 'Choose a name', label: 'Name');
+    if (shortcutLabel == null) return;
+
+    final res = filtersService.savePipelinesShortcut(
+      shortcutLabel,
+      filters: PipelinesFilters(
+        projects: projectsFilter.map((p) => p.name!).toSet(),
+        pipelines: pipelineNamesFilter,
+        triggeredBy: usersFilter.map((u) => u.mailAddress!).toSet(),
+        result: {if (resultFilter != PipelineResult.all) resultFilter.stringValue},
+        status: {if (statusFilter != PipelineStatus.all) statusFilter.stringValue},
+      ),
+    );
+
+    OverlayService.snackbar(res.message, isError: !res.result);
   }
 }
