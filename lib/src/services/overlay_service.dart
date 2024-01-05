@@ -175,7 +175,7 @@ class OverlayService {
                         const SizedBox(
                           width: 80,
                         ),
-                        Text(title),
+                        Flexible(child: Text(title)),
                         SizedBox(
                           width: 80,
                           child: topRight ??

@@ -174,6 +174,48 @@ class _HomeController with AppLogger {
     projects.value = ApiResponse.ok(projects.value!.data);
   }
 
+  void showShortcut(SavedShortcut shortcut) {
+    OverlayService.bottomsheet(
+      title: shortcut.label,
+      isScrollControlled: true,
+      builder: (context) => ListView(
+        children: shortcut.filters
+            .map(
+              (f) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    f.attribute.titleCase,
+                    style: context.textTheme.bodyMedium,
+                  ),
+                  ...f.filters.map(
+                    (f2) => Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 2,
+                          backgroundColor: context.colorScheme.onBackground,
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          f2,
+                          style: context.textTheme.labelMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                ],
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+
   Future<void> renameShortcut(SavedShortcut shortcut) async {
     final shortcutLabel = await OverlayService.formBottomsheet(
       title: 'Rename shortcut',

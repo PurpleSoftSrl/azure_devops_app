@@ -68,6 +68,7 @@ class _HomeScreen extends StatelessWidget {
                 (s) => _ShortcutRow(
                   shortcut: s,
                   onTap: ctrl.goToListPage,
+                  onShowDetail: ctrl.showShortcut,
                   onRename: ctrl.renameShortcut,
                   onDelete: ctrl.deleteShortcut,
                 ),

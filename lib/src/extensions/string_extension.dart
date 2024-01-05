@@ -13,4 +13,10 @@ extension StringExt on String {
 
     return this;
   }
+
+  String get titleCase {
+    if (isEmpty) return this;
+
+    return '${substring(0, 1).toUpperCase()}${substring(1)}';
+  }
 }

@@ -4,12 +4,14 @@ class _ShortcutRow extends StatelessWidget {
   const _ShortcutRow({
     required this.shortcut,
     required this.onTap,
+    required this.onShowDetail,
     required this.onRename,
     required this.onDelete,
   });
 
   final SavedShortcut shortcut;
   final void Function(SavedShortcut) onTap;
+  final void Function(SavedShortcut) onShowDetail;
   final void Function(SavedShortcut) onRename;
   final void Function(SavedShortcut) onDelete;
 
@@ -66,6 +68,11 @@ class _ShortcutRow extends StatelessWidget {
             tooltip: 'Shortcut ${shortcut.label} actions',
             offset: const Offset(0, 20),
             items: () => [
+              PopupItem(
+                onTap: () => onShowDetail(shortcut),
+                text: 'Show filters',
+                icon: DevOpsIcons.filter,
+              ),
               PopupItem(
                 onTap: () => onRename(shortcut),
                 text: 'Rename',
