@@ -456,16 +456,18 @@ class _WorkItemsController with FilterMixin {
     final shortcutLabel = await OverlayService.formBottomsheet(title: 'Choose a name', label: 'Name');
     if (shortcutLabel == null) return;
 
-    final res = filtersService.saveWorkItemsShortcut(shortcutLabel, {
-      if (areaFilter?.path != null) WorkItemsFilters.areaKey: {areaFilter!.path},
-      if (!isDefaultUsersFilter) WorkItemsFilters.assigneesKey: usersFilter.map((u) => u.mailAddress!).toSet(),
-      if (!isDefaultStateCategoryFilter)
-        WorkItemsFilters.categoriesKey: stateCategoriesFilter.map((c) => c.name).toSet(),
-      if (iterationFilter?.path != null) WorkItemsFilters.iterationKey: {iterationFilter!.path},
-      if (!isDefaultProjectsFilter) WorkItemsFilters.projectsKey: projectsFilter.map((p) => p.name!).toSet(),
-      if (!isDefaultStateFilter) WorkItemsFilters.statesKey: statesFilter.map((s) => s.name).toSet(),
-      if (typesFilter.isNotEmpty) WorkItemsFilters.typesKey: typesFilter.map((t) => t.name).toSet(),
-    });
+    final res = filtersService.saveWorkItemsShortcut(
+      shortcutLabel,
+      filters: WorkItemsFilters(
+        projects: projectsFilter.map((p) => p.name!).toSet(),
+        states: statesFilter.map((s) => s.name).toSet(),
+        categories: stateCategoriesFilter.map((c) => c.name).toSet(),
+        types: typesFilter.map((t) => t.name).toSet(),
+        assignees: usersFilter.map((u) => u.mailAddress!).toSet(),
+        area: {if (areaFilter?.path != null) areaFilter!.path},
+        iteration: {if (iterationFilter?.path != null) iterationFilter!.path},
+      ),
+    );
 
     if (!res.result) {
       OverlayService.snackbar(res.message, isError: true);

@@ -263,13 +263,16 @@ class _PipelinesController with FilterMixin {
     final shortcutLabel = await OverlayService.formBottomsheet(title: 'Choose a name', label: 'Name');
     if (shortcutLabel == null) return;
 
-    final res = filtersService.savePipelinesShortcut(shortcutLabel, {
-      if (!isDefaultProjectsFilter) PipelinesFilters.projectsKey: projectsFilter.map((p) => p.name!).toSet(),
-      if (resultFilter != PipelineResult.all) PipelinesFilters.resultKey: {resultFilter.stringValue},
-      if (statusFilter != PipelineStatus.all) PipelinesFilters.statusKey: {statusFilter.stringValue},
-      if (!isDefaultUsersFilter) PipelinesFilters.triggeredByKey: usersFilter.map((u) => u.mailAddress!).toSet(),
-      if (pipelineNamesFilter.isNotEmpty) PipelinesFilters.pipelinesKey: pipelineNamesFilter,
-    });
+    final res = filtersService.savePipelinesShortcut(
+      shortcutLabel,
+      filters: PipelinesFilters(
+        projects: projectsFilter.map((p) => p.name!).toSet(),
+        pipelines: pipelineNamesFilter,
+        triggeredBy: usersFilter.map((u) => u.mailAddress!).toSet(),
+        result: {if (resultFilter != PipelineResult.all) resultFilter.stringValue},
+        status: {if (statusFilter != PipelineStatus.all) statusFilter.stringValue},
+      ),
+    );
 
     if (!res.result) {
       OverlayService.snackbar(res.message, isError: true);

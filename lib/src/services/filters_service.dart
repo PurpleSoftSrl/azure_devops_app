@@ -175,8 +175,8 @@ class FiltersService {
     );
   }
 
-  ResultWithMessage saveCommitsShortcut(String label, Map<String, Set<String>> filters) {
-    return _saveShortcut(FilterAreas.commits, label, filters);
+  ResultWithMessage saveCommitsShortcut(String label, {required CommitsFilters filters}) {
+    return _saveShortcut(FilterAreas.commits, label, filters.toMap());
   }
 
   PipelinesFilters getPipelinesShortcut(String label) {
@@ -191,8 +191,8 @@ class FiltersService {
     );
   }
 
-  ResultWithMessage savePipelinesShortcut(String label, Map<String, Set<String>> filters) {
-    return _saveShortcut(FilterAreas.pipelines, label, filters);
+  ResultWithMessage savePipelinesShortcut(String label, {required PipelinesFilters filters}) {
+    return _saveShortcut(FilterAreas.pipelines, label, filters.toMap());
   }
 
   PullRequestsFilters getPullRequestsShortcut(String label) {
@@ -206,8 +206,8 @@ class FiltersService {
     );
   }
 
-  ResultWithMessage savePullRequestsShortcut(String label, Map<String, Set<String>> filters) {
-    return _saveShortcut(FilterAreas.pullRequests, label, filters);
+  ResultWithMessage savePullRequestsShortcut(String label, {required PullRequestsFilters filters}) {
+    return _saveShortcut(FilterAreas.pullRequests, label, filters.toMap());
   }
 
   WorkItemsFilters getWorkItemsShortcut(String label) {
@@ -224,8 +224,8 @@ class FiltersService {
     );
   }
 
-  ResultWithMessage saveWorkItemsShortcut(String label, Map<String, Set<String>> filters) {
-    return _saveShortcut(FilterAreas.workItems, label, filters);
+  ResultWithMessage saveWorkItemsShortcut(String label, {required WorkItemsFilters filters}) {
+    return _saveShortcut(FilterAreas.workItems, label, filters.toMap());
   }
 
   ResultWithMessage _saveShortcut(String area, String label, Map<String, Set<String>> filters) {
@@ -278,6 +278,18 @@ class WorkItemsFilters {
   final Set<String> assignees;
   final Set<String> area;
   final Set<String> iteration;
+
+  Map<String, Set<String>> toMap() {
+    return {
+      if (projects.isNotEmpty) projectsKey: projects,
+      if (area.isNotEmpty) areaKey: area,
+      if (assignees.isNotEmpty) assigneesKey: assignees,
+      if (categories.isNotEmpty) categoriesKey: categories,
+      if (iteration.isNotEmpty) iterationKey: iteration,
+      if (states.isNotEmpty) statesKey: states,
+      if (types.isNotEmpty) typesKey: types,
+    };
+  }
 }
 
 class CommitsFilters {
@@ -291,6 +303,13 @@ class CommitsFilters {
 
   final Set<String> projects;
   final Set<String> authors;
+
+  Map<String, Set<String>> toMap() {
+    return {
+      if (authors.isNotEmpty) authorsKey: authors,
+      if (projects.isNotEmpty) projectsKey: projects,
+    };
+  }
 }
 
 class PipelinesFilters {
@@ -313,6 +332,16 @@ class PipelinesFilters {
   final Set<String> triggeredBy;
   final Set<String> result;
   final Set<String> status;
+
+  Map<String, Set<String>> toMap() {
+    return {
+      if (projects.isNotEmpty) projectsKey: projects,
+      if (result.isNotEmpty) resultKey: result,
+      if (status.isNotEmpty) statusKey: status,
+      if (triggeredBy.isNotEmpty) triggeredByKey: triggeredBy,
+      if (pipelines.isNotEmpty) pipelinesKey: pipelines,
+    };
+  }
 }
 
 class PullRequestsFilters {
@@ -332,6 +361,15 @@ class PullRequestsFilters {
   final Set<String> status;
   final Set<String> openedBy;
   final Set<String> assignedTo;
+
+  Map<String, Set<String>> toMap() {
+    return {
+      if (projects.isNotEmpty) projectsKey: projects,
+      if (status.isNotEmpty) statusKey: status,
+      if (openedBy.isNotEmpty) openedByKey: openedBy,
+      if (assignedTo.isNotEmpty) assignedToKey: assignedTo,
+    };
+  }
 }
 
 class FilterAreas {

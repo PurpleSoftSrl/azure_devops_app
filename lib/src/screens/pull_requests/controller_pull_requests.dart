@@ -203,13 +203,15 @@ class _PullRequestsController with FilterMixin {
     final shortcutLabel = await OverlayService.formBottomsheet(title: 'Choose a name', label: 'Name');
     if (shortcutLabel == null) return;
 
-    final res = filtersService.savePullRequestsShortcut(shortcutLabel, {
-      if (!isDefaultProjectsFilter) PullRequestsFilters.projectsKey: projectsFilter.map((p) => p.name!).toSet(),
-      if (statusFilter != PullRequestStatus.all) PullRequestsFilters.statusKey: {statusFilter.name},
-      if (!isDefaultUsersFilter) PullRequestsFilters.openedByKey: usersFilter.map((u) => u.mailAddress!).toSet(),
-      if (reviewersFilter.isNotEmpty)
-        PullRequestsFilters.assignedToKey: reviewersFilter.map((u) => u.mailAddress!).toSet(),
-    });
+    final res = filtersService.savePullRequestsShortcut(
+      shortcutLabel,
+      filters: PullRequestsFilters(
+        projects: projectsFilter.map((p) => p.name!).toSet(),
+        status: {if (statusFilter != PullRequestStatus.all) statusFilter.name},
+        openedBy: usersFilter.map((u) => u.mailAddress!).toSet(),
+        assignedTo: reviewersFilter.map((u) => u.mailAddress!).toSet(),
+      ),
+    );
 
     if (!res.result) {
       OverlayService.snackbar(res.message, isError: true);

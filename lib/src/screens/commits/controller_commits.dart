@@ -152,10 +152,13 @@ class _CommitsController with FilterMixin {
     final shortcutLabel = await OverlayService.formBottomsheet(title: 'Choose a name', label: 'Name');
     if (shortcutLabel == null) return;
 
-    final res = filtersService.saveCommitsShortcut(shortcutLabel, {
-      if (!isDefaultUsersFilter) CommitsFilters.authorsKey: usersFilter.map((u) => u.mailAddress!).toSet(),
-      if (!isDefaultProjectsFilter) CommitsFilters.projectsKey: projectsFilter.map((p) => p.name!).toSet(),
-    });
+    final res = filtersService.saveCommitsShortcut(
+      shortcutLabel,
+      filters: CommitsFilters(
+        projects: projectsFilter.map((p) => p.name!).toSet(),
+        authors: usersFilter.map((u) => u.mailAddress!).toSet(),
+      ),
+    );
 
     if (!res.result) {
       OverlayService.snackbar(res.message, isError: true);
