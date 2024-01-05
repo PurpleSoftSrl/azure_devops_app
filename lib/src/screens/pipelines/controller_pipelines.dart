@@ -54,7 +54,7 @@ class _PipelinesController with FilterMixin {
 
   bool get showPipelineNamesFilter => getPipelineNames().isNotEmpty;
 
-  /// Read/write filters from local storage only if user is not coming from project page
+  /// Read/write filters from local storage only if user is not coming from project page or from shortcut
   bool get shouldPersistFilters => args?.project == null && !hasShortcut;
 
   bool get hasShortcut => args?.shortcut != null;

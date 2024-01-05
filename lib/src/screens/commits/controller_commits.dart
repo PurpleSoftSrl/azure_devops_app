@@ -38,7 +38,7 @@ class _CommitsController with FilterMixin {
     organization: apiService.organization,
   );
 
-  /// Read/write filters from local storage only if user is not coming from project page or from saved filter
+  /// Read/write filters from local storage only if user is not coming from project page or from shortcut
   bool get shouldPersistFilters => args?.project == null && !hasShortcut;
 
   bool get hasShortcut => args?.shortcut != null;

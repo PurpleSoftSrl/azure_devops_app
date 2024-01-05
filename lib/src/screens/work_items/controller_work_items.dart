@@ -56,7 +56,7 @@ class _WorkItemsController with FilterMixin {
     organization: apiService.organization,
   );
 
-  /// Read/write filters from local storage only if user is not coming from project page
+  /// Read/write filters from local storage only if user is not coming from project page or from shortcut
   bool get shouldPersistFilters => args == null && !hasShortcut;
 
   bool get hasShortcut => args?.shortcut != null;

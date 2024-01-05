@@ -411,7 +411,7 @@ class StorageFilter {
   }
 }
 
-/// Shortcuts are labeled lists of filters.
+/// Shortcuts are labeled lists of filters which belongs to an area inside an organization.
 class SavedShortcut {
   SavedShortcut({
     required this.organization,
