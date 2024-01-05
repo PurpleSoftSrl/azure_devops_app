@@ -244,7 +244,7 @@ class FiltersService {
 
     storageService.saveShortcut(organization, area, label, filters);
 
-    return (result: true, message: 'ok');
+    return (result: true, message: 'Filter saved successfully!');
   }
 
   SavedShortcut? _getAreaShortcut({required String area, required String label}) {

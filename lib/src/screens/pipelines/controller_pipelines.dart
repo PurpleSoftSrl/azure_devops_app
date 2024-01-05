@@ -274,8 +274,6 @@ class _PipelinesController with FilterMixin {
       ),
     );
 
-    if (!res.result) {
-      OverlayService.snackbar(res.message, isError: true);
-    }
+    OverlayService.snackbar(res.message, isError: !res.result);
   }
 }
