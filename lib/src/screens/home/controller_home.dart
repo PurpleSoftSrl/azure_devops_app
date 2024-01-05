@@ -20,6 +20,11 @@ class _HomeController with AppLogger {
   int _projectsCount = 0;
   bool get hasManyProjects => _projectsCount > 10;
 
+  late final filtersService = FiltersService(
+    storageService: storageService,
+    organization: apiService.organization,
+  );
+
   List<SavedShortcut> shortcuts = [];
 
   void dispose() {
@@ -45,7 +50,7 @@ class _HomeController with AppLogger {
 
     _hideSearchField();
 
-    shortcuts = storageService.getSavedShortcuts();
+    shortcuts = filtersService.getOrganizationShortcuts();
 
     projects.value = ApiResponse.ok(sortedProjects);
 

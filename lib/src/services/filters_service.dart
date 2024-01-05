@@ -166,6 +166,11 @@ class FiltersService {
     return allFilters.firstWhereOrNull((f) => f.attribute == attribute)?.filters ?? {};
   }
 
+  List<SavedShortcut> getOrganizationShortcuts() {
+    final shortcuts = storageService.getSavedShortcuts();
+    return shortcuts.where((s) => s.organization == organization).toList();
+  }
+
   CommitsFilters getCommitsShortcut(String label) {
     final shortcut = _getAreaShortcut(area: FilterAreas.commits, label: label)!;
 
@@ -243,8 +248,8 @@ class FiltersService {
   }
 
   SavedShortcut? _getAreaShortcut({required String area, required String label}) {
-    final savedFilters = storageService.getSavedShortcuts();
-    return savedFilters.firstWhereOrNull((f) => f.organization == organization && f.area == area && f.label == label);
+    final shortcuts = storageService.getSavedShortcuts();
+    return shortcuts.firstWhereOrNull((s) => s.organization == organization && s.area == area && s.label == label);
   }
 
   Set<String> _getShortcutFilters(SavedShortcut shortcut, {required String attribute}) {
