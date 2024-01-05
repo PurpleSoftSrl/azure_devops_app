@@ -62,7 +62,7 @@ class _HomeScreen extends StatelessWidget {
             if (ctrl.shortcuts.isNotEmpty) ...[
               SectionHeader.withIcon(
                 text: 'Saved filters',
-                icon: DevOpsIcons.list,
+                icon: DevOpsIcons.filter,
               ),
               ...ctrl.shortcuts.map(
                 (s) => _ShortcutRow(
