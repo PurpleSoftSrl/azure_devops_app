@@ -45,9 +45,11 @@ class _ShortcutRow extends StatelessWidget {
                 Text(
                   shortcut.label,
                   style: context.textTheme.bodyMedium,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  shortcut.filters.map((f) => '${f.attribute}: ${f.filters.join(', ')}').join('\n'),
+                  shortcut.area,
                   style: context.textTheme.labelSmall,
                 ),
               ],
