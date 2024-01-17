@@ -3,7 +3,7 @@ import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/extensions/pipeline_result_extension.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
-import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/pipeline_in_progress_animated_icon.dart';
 import 'package:flutter/material.dart';
 
@@ -97,16 +97,9 @@ class PipelineListTile extends StatelessWidget {
             ],
           ),
           if (!isLast)
-            LayoutBuilder(
-              builder: (_, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-                  ? Divider(
-                      height: 24,
-                      thickness: 1,
-                    )
-                  : Divider(
-                      height: 48,
-                      thickness: 1,
-                    ),
+            AppLayoutBuilder(
+              smartphone: Divider(height: 24, thickness: 1),
+              tablet: Divider(height: 48, thickness: 1),
             ),
         ],
       ),

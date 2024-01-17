@@ -15,7 +15,7 @@ class AppPage<T extends Object?> extends StatefulWidget {
     this.onEmpty,
     required this.init,
     this.onLoading,
-    required this.dispose,
+    this.dispose,
     required this.title,
     this.notifier,
     this.actions,
@@ -33,7 +33,7 @@ class AppPage<T extends Object?> extends StatefulWidget {
     super.key,
     required this.builder,
     required this.init,
-    required this.dispose,
+    this.dispose,
   })  : title = '',
         actions = null,
         header = null,
@@ -53,7 +53,7 @@ class AppPage<T extends Object?> extends StatefulWidget {
   final String? onEmpty;
   final Future<dynamic> Function() init;
   final Future<bool> Function()? onLoading;
-  final VoidCallback dispose;
+  final VoidCallback? dispose;
   final String title;
   final List<Widget>? actions;
   final ValueNotifier<ApiResponse<T>?>? notifier;
@@ -120,7 +120,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
 
   @override
   void dispose() {
-    widget.dispose();
+    widget.dispose?.call();
     super.dispose();
   }
 

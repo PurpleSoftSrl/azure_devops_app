@@ -1,13 +1,7 @@
 part of home;
 
 class _HomeController with AppLogger {
-  factory _HomeController({required AzureApiService apiService, required StorageService storageService}) {
-    return instance ??= _HomeController._(apiService, storageService);
-  }
-
   _HomeController._(this.apiService, this.storageService);
-
-  static _HomeController? instance;
 
   final AzureApiService apiService;
   final StorageService storageService;
@@ -28,10 +22,6 @@ class _HomeController with AppLogger {
   List<SavedShortcut> shortcuts = [];
 
   final visibilityKey = GlobalKey();
-
-  void dispose() {
-    instance = null;
-  }
 
   Future<void> init() async {
     final allProjectsRes = await apiService.getProjects();

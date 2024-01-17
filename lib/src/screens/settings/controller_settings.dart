@@ -1,13 +1,7 @@
 part of settings;
 
 class _SettingsController with ShareMixin, AppLogger {
-  factory _SettingsController({required AzureApiService apiService, required StorageService storageService}) {
-    return instance ??= _SettingsController._(apiService, storageService);
-  }
-
   _SettingsController._(this.apiService, this.storageService);
-
-  static _SettingsController? instance;
 
   final AzureApiService apiService;
   final StorageService storageService;
@@ -19,10 +13,6 @@ class _SettingsController with ShareMixin, AppLogger {
   final organizations = ValueNotifier<ApiResponse<List<Organization>>?>(null);
 
   bool get hasMultiOrgs => (organizations.value?.data?.length ?? 0) > 1;
-
-  void dispose() {
-    instance = null;
-  }
 
   Future<void> init() async {
     final info = await PackageInfo.fromPlatform();

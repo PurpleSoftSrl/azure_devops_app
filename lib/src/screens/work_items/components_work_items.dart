@@ -159,16 +159,9 @@ class _WorkItemListTile extends StatelessWidget {
             ),
           ),
           if (!isLast)
-            LayoutBuilder(
-              builder: (_, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-                  ? const Divider(
-                      height: 1,
-                      thickness: 1,
-                    )
-                  : const Divider(
-                      height: 5,
-                      thickness: 1,
-                    ),
+            AppLayoutBuilder(
+              smartphone: const Divider(height: 1, thickness: 1),
+              tablet: const Divider(height: 5, thickness: 1),
             ),
         ],
       ),

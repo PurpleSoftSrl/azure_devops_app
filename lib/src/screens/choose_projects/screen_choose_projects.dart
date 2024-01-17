@@ -15,7 +15,6 @@ class _ChooseProjectsScreen extends StatelessWidget {
         children: [
           AppPage<List<Project>?>(
             init: ctrl.init,
-            dispose: ctrl.dispose,
             title: 'Choose projects',
             notifier: ctrl.chosenProjects,
             safeAreaBottom: false,

@@ -13,7 +13,7 @@ import 'package:azure_devops/src/services/filters_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
-import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/navigation_button.dart';
 import 'package:azure_devops/src/widgets/popup_menu.dart';
@@ -42,11 +42,10 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final storageService = StorageServiceInherited.of(context).storageService;
-    final ctrl = _HomeController(apiService: apiService, storageService: storageService);
-    return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-          ? _HomeScreen(ctrl, _smartphoneParameters)
-          : _HomeScreen(ctrl, _tabletParameters),
+    return AppBasePage(
+      initState: () => _HomeController._(apiService, storageService),
+      smartphone: (ctrl) => _HomeScreen(ctrl, _smartphoneParameters),
+      tablet: (ctrl) => _HomeScreen(ctrl, _tabletParameters),
     );
   }
 }

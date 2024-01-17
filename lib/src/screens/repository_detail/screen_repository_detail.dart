@@ -10,7 +10,6 @@ class _RepositoryDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage<List<RepoItem>?>(
       init: ctrl.init,
-      dispose: ctrl.dispose,
       title: (ctrl.args.filePath?.startsWith('/') ?? false ? ctrl.args.filePath?.substring(1) : ctrl.args.filePath) ??
           ctrl.args.repositoryName,
       notifier: ctrl.repoItems,

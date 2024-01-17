@@ -1,17 +1,7 @@
 part of choose_projects;
 
 class _ChooseProjectsController {
-  factory _ChooseProjectsController({
-    required AzureApiService apiService,
-    required bool removeRoutes,
-    required StorageService storageService,
-  }) {
-    return instance ??= _ChooseProjectsController._(apiService, removeRoutes, storageService);
-  }
-
   _ChooseProjectsController._(this.apiService, this.removeRoutes, this.storageService);
-
-  static _ChooseProjectsController? instance;
 
   final AzureApiService apiService;
   final bool removeRoutes;
@@ -27,10 +17,6 @@ class _ChooseProjectsController {
 
   /// Projects already in local storage
   Iterable<Project> alreadyChosenProjects = [];
-
-  void dispose() {
-    instance = null;
-  }
 
   Future<void> init() async {
     final org = storageService.getOrganization();

@@ -41,10 +41,10 @@ const _darkColorScheme = ColorScheme(
 class AppTheme {
   static double radius = 8;
 
-  static int tabletBeakpoint = 600;
+  static int tabletBreakpoint = 600;
 
   static bool isTablet =
-      (MediaQueryData.fromView(PlatformDispatcher.instance.views.first).size.width) >= tabletBeakpoint;
+      (MediaQueryData.fromView(PlatformDispatcher.instance.views.first).size.width) >= tabletBreakpoint;
 
   static StorageService get storageService => StorageServiceCore();
 

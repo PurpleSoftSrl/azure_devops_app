@@ -1,13 +1,7 @@
 part of splash;
 
 class _SplashController {
-  factory _SplashController({required AzureApiService apiService}) {
-    return instance ??= _SplashController._(apiService);
-  }
-
   _SplashController._(this.apiService);
-
-  static _SplashController? instance;
 
   final AzureApiService apiService;
 
@@ -16,10 +10,6 @@ class _SplashController {
   late LoginStatus _isLogged;
 
   String _errorMessage = 'Generic error';
-
-  void dispose() {
-    instance = null;
-  }
 
   Future<void> init() async {
     final token = StorageServiceCore().getToken();

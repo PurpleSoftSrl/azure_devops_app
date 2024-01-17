@@ -1,30 +1,9 @@
 part of pipelines;
 
 class _PipelinesController with FilterMixin {
-  factory _PipelinesController({
-    required AzureApiService apiService,
-    required StorageService storageService,
-    PipelinesArgs? args,
-  }) {
-    // handle page already in memory with a different filter
-    if (_instances[args.hashCode] != null) {
-      return _instances[args.hashCode]!;
-    }
-
-    if (instance != null && args != instance!.args) {
-      instance = null;
-    }
-
-    instance ??= _PipelinesController._(apiService, storageService, args);
-    return _instances.putIfAbsent(args.hashCode, () => instance!);
-  }
-
   _PipelinesController._(this.apiService, this.storageService, this.args) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
-
-  static _PipelinesController? instance;
-  static final Map<int, _PipelinesController> _instances = {};
 
   final AzureApiService apiService;
   final StorageService storageService;
@@ -61,8 +40,6 @@ class _PipelinesController with FilterMixin {
 
   void dispose() {
     _stopTimer();
-
-    instance = null;
   }
 
   void _stopTimer() {

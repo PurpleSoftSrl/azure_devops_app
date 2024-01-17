@@ -10,7 +10,6 @@ class _CommitsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage<List<Commit>?>(
       init: ctrl.init,
-      dispose: ctrl.dispose,
       title: 'Commits',
       notifier: ctrl.recentCommits,
       showScrollbar: true,

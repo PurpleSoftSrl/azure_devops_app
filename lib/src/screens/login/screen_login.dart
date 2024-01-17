@@ -13,7 +13,6 @@ class _LoginScreen extends StatelessWidget {
       onPopInvoked: (didPop) => AppRouter.askBeforeClosingApp(didPop: didPop),
       child: AppPage(
         init: () async => true,
-        dispose: ctrl.dispose,
         title: 'Az DevOps',
         builder: (_) => Column(
           children: [

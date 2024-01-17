@@ -11,7 +11,6 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
     final style = context.textTheme.bodySmall!.copyWith(height: 1, fontWeight: FontWeight.bold);
     return AppPage<bool>(
       init: ctrl.init,
-      dispose: ctrl.dispose,
       title: ctrl.args.id == null ? 'Create work item' : 'Edit work item #${ctrl.args.id}',
       notifier: ctrl.hasChanged,
       fixedAppBar: true,

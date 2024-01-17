@@ -10,7 +10,6 @@ class _FileDiffScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage<Diff?>(
       init: ctrl.init,
-      dispose: ctrl.dispose,
       title: 'File diff',
       actions: [
         IconButton(

@@ -10,7 +10,7 @@ import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
-import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
 import 'package:azure_devops/src/widgets/navigation_button.dart';
@@ -35,11 +35,10 @@ class ProjectDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final project = AppRouter.getProjectDetailArgs(context);
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final ctrl = _ProjectDetailController(apiService: apiService, projectName: project);
-    return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-          ? _ProjectDetailScreen(ctrl, _smartphoneParameters)
-          : _ProjectDetailScreen(ctrl, _tabletParameters),
+    return AppBasePage(
+      initState: () => _ProjectDetailController._(apiService, project),
+      smartphone: (ctrl) => _ProjectDetailScreen(ctrl, _smartphoneParameters),
+      tablet: (ctrl) => _ProjectDetailScreen(ctrl, _tabletParameters),
     );
   }
 }

@@ -14,6 +14,7 @@ import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/commit_list_tile.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
@@ -36,11 +37,10 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final storageService = StorageServiceInherited.of(context).storageService;
-    final ctrl = _ProfileController(apiService: apiService, storageService: storageService);
-    return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-          ? _ProfileScreen(ctrl, _smartphoneParameters)
-          : _ProfileScreen(ctrl, _tabletParameters),
+    return AppBasePage(
+      initState: () => _ProfileController._(apiService, storageService),
+      smartphone: (ctrl) => _ProfileScreen(ctrl, _smartphoneParameters),
+      tablet: (ctrl) => _ProfileScreen(ctrl, _tabletParameters),
     );
   }
 }

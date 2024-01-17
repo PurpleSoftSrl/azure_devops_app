@@ -1,13 +1,7 @@
 part of tabs;
 
 class _TabsController {
-  factory _TabsController() {
-    return instance ??= _TabsController._();
-  }
-
   _TabsController._();
-
-  static _TabsController? instance;
 
   late List<_TabPage> navPages = _getTabPages();
 
@@ -27,10 +21,6 @@ class _TabsController {
 
     AppRouter.tabKeys = navPages.map((e) => e.key).toList();
     AppRouter.index = 0;
-  }
-
-  void dispose() {
-    instance = null;
   }
 
   void popAll(GlobalKey<NavigatorState> key) {

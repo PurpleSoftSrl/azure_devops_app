@@ -14,7 +14,7 @@ import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
-import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
 import 'package:azure_devops/src/widgets/pipeline_in_progress_animated_icon.dart';
@@ -40,11 +40,10 @@ class PipelineDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = AppRouter.getPipelineDetailArgs(context);
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final ctrl = _PipelineDetailController(args: args, apiService: apiService);
-    return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-          ? _PipelineDetailScreen(ctrl, _smartphoneParameters)
-          : _PipelineDetailScreen(ctrl, _tabletParameters),
+    return AppBasePage(
+      initState: () => _PipelineDetailController._(args, apiService),
+      smartphone: (ctrl) => _PipelineDetailScreen(ctrl, _smartphoneParameters),
+      tablet: (ctrl) => _PipelineDetailScreen(ctrl, _tabletParameters),
     );
   }
 }

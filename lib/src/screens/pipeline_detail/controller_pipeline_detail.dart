@@ -1,25 +1,7 @@
 part of pipeline_detail;
 
 class _PipelineDetailController with ShareMixin {
-  factory _PipelineDetailController({required ({String project, int id}) args, required AzureApiService apiService}) {
-    // handle page already in memory with a different build
-    if (_instances[args.hashCode] != null) {
-      return _instances[args.hashCode]!..visibilityKey = GlobalKey();
-    }
-
-    if (instance != null && args.id != instance!.args.id) {
-      instance = null;
-    }
-
-    instance ??= _PipelineDetailController._(args, apiService);
-    return _instances.putIfAbsent(args.hashCode, () => instance!);
-  }
-
   _PipelineDetailController._(this.args, this.apiService) : visibilityKey = GlobalKey();
-
-  static _PipelineDetailController? instance;
-
-  static final Map<int, _PipelineDetailController> _instances = {};
 
   final ({String project, int id}) args;
   final AzureApiService apiService;
@@ -37,8 +19,6 @@ class _PipelineDetailController with ShareMixin {
 
   void dispose() {
     _stopTimer();
-
-    instance = null;
   }
 
   void _stopTimer() {

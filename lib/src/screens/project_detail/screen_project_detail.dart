@@ -11,7 +11,6 @@ class _ProjectDetailScreen extends StatelessWidget {
     var i = 0;
     return AppPage<ProjectDetail?>(
       init: ctrl.init,
-      dispose: ctrl.dispose,
       title: ctrl.projectName,
       notifier: ctrl.project,
       actions: [

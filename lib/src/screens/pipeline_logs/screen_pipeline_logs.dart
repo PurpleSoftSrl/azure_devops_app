@@ -10,7 +10,6 @@ class _PipelineLogsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage<String?>(
       init: ctrl.init,
-      dispose: ctrl.dispose,
       title: 'Pipeline logs',
       notifier: ctrl.logs,
       padding: const EdgeInsets.only(left: 8),

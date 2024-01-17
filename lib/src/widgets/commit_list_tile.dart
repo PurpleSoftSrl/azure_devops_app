@@ -3,7 +3,7 @@ import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commits_tags.dart';
-import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/popup_menu.dart';
 import 'package:flutter/material.dart';
 
@@ -86,16 +86,9 @@ class CommitListTile extends StatelessWidget {
             ),
           ),
           if (!isLast)
-            LayoutBuilder(
-              builder: (_, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-                  ? const Divider(
-                      height: 1,
-                      thickness: 1,
-                    )
-                  : const Divider(
-                      height: 10,
-                      thickness: 1,
-                    ),
+            AppLayoutBuilder(
+              smartphone: const Divider(height: 1, thickness: 1),
+              tablet: const Divider(height: 10, thickness: 1),
             ),
         ],
       ),

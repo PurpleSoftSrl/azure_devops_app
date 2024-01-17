@@ -8,7 +8,7 @@ import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
-import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/filter_menu.dart';
 import 'package:azure_devops/src/widgets/navigation_button.dart';
@@ -30,11 +30,10 @@ class RepositoryDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = AppRouter.getRepositoryDetailArgs(context);
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final ctrl = _RepositoryDetailController(apiService: apiService, args: args);
-    return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-          ? _RepositoryDetailScreen(ctrl, _smartphoneParameters)
-          : _RepositoryDetailScreen(ctrl, _tabletParameters),
+    return AppBasePage(
+      initState: () => _RepositoryDetailController._(apiService, args),
+      smartphone: (ctrl) => _RepositoryDetailScreen(ctrl, _smartphoneParameters),
+      tablet: (ctrl) => _RepositoryDetailScreen(ctrl, _tabletParameters),
     );
   }
 }

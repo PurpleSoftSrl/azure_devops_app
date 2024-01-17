@@ -10,7 +10,6 @@ class _WorkItemsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage<List<WorkItem>?>(
       init: ctrl.init,
-      dispose: ctrl.dispose,
       title: 'Work items',
       notifier: ctrl.workItems,
       showScrollbar: true,

@@ -9,7 +9,7 @@ import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/msal_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
-import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:flutter/material.dart';
 
@@ -27,11 +27,10 @@ class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final ctrl = _SplashController(apiService: apiService);
-    return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-          ? _SplashScreen(ctrl, _smartphoneParameters)
-          : _SplashScreen(ctrl, _tabletParameters),
+    return AppBasePage(
+      initState: () => _SplashController._(apiService),
+      smartphone: (ctrl) => _SplashScreen(ctrl, _smartphoneParameters),
+      tablet: (ctrl) => _SplashScreen(ctrl, _tabletParameters),
     );
   }
 }

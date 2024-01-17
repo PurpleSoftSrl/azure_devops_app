@@ -9,7 +9,7 @@ import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
-import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/changed_files.dart';
 import 'package:azure_devops/src/widgets/commit_list_tile.dart';
@@ -33,11 +33,10 @@ class CommitDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final args = AppRouter.getCommitDetailArgs(context);
-    final ctrl = _CommitDetailController(args: args, apiService: apiService);
-    return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-          ? _CommitDetailScreen(ctrl, _smartphoneParameters)
-          : _CommitDetailScreen(ctrl, _tabletParameters),
+    return AppBasePage(
+      initState: () => _CommitDetailController._(args, apiService),
+      smartphone: (ctrl) => _CommitDetailScreen(ctrl, _smartphoneParameters),
+      tablet: (ctrl) => _CommitDetailScreen(ctrl, _tabletParameters),
     );
   }
 }

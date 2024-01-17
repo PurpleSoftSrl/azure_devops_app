@@ -4,7 +4,7 @@ import 'package:azure_devops/main.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
-import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,11 +24,10 @@ class TabsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = _TabsController();
-    return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-          ? _TabsScreen(ctrl, _smartphoneParameters)
-          : _TabsScreen(ctrl, _tabletParameters),
+    return AppBasePage(
+      initState: _TabsController._,
+      smartphone: (ctrl) => _TabsScreen(ctrl, _smartphoneParameters),
+      tablet: (ctrl) => _TabsScreen(ctrl, _tabletParameters),
     );
   }
 }

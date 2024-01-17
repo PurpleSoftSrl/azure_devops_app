@@ -1,28 +1,7 @@
 part of pull_request_detail;
 
 class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper {
-  factory _PullRequestDetailController({
-    required PullRequestDetailArgs args,
-    required AzureApiService apiService,
-  }) {
-    // handle page already in memory with a different work item
-    if (_instances[args.hashCode] != null) {
-      return _instances[args.hashCode]!;
-    }
-
-    if (instance != null && instance!.args != args) {
-      instance = null;
-    }
-
-    instance ??= _PullRequestDetailController._(args, apiService);
-    return _instances.putIfAbsent(args.hashCode, () => instance!);
-  }
-
   _PullRequestDetailController._(this.args, this.apiService);
-
-  static _PullRequestDetailController? instance;
-
-  static final Map<int, _PullRequestDetailController> _instances = {};
 
   final PullRequestDetailArgs args;
 
@@ -63,9 +42,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   final showCommentField = ValueNotifier<bool>(false);
   final historyKey = GlobalKey();
 
-  void dispose() {
-    instance = null;
-  }
+  var _isDisposed = false;
 
   Future<void> init() async {
     final res = await apiService.getPullRequest(
@@ -103,6 +80,10 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     );
 
     prDetail.value = res.copyWith(data: res.data?.copyWith(pr: prAndThreads.pr, updates: prAndThreads.updates));
+  }
+
+  void dispose() {
+    _isDisposed = true;
   }
 
   void _getChangedFiles(List<CommitWithChangeEntry> changes) {
@@ -521,7 +502,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   void onHistoryVisibilityChanged(VisibilityInfo info) {
     if (info.visibleFraction > 0 && !showCommentField.value) {
       showCommentField.value = true;
-    } else if (instance != null && info.visibleFraction == 0 && showCommentField.value) {
+    } else if (!_isDisposed && info.visibleFraction == 0 && showCommentField.value) {
       showCommentField.value = false;
     }
   }

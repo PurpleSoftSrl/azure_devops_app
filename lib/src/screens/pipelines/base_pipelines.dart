@@ -12,7 +12,7 @@ import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/filters_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
-import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/filter_menu.dart';
 import 'package:azure_devops/src/widgets/pipeline_list_tile.dart';
@@ -37,15 +37,10 @@ class PipelinesPage extends StatelessWidget {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final storageService = StorageServiceInherited.of(context).storageService;
     final args = AppRouter.getPipelinesArgs(context);
-    final ctrl = _PipelinesController(
-      apiService: apiService,
-      storageService: storageService,
-      args: args,
-    );
-    return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-          ? _PipelinesScreen(ctrl, _smartphoneParameters)
-          : _PipelinesScreen(ctrl, _tabletParameters),
+    return AppBasePage(
+      initState: () => _PipelinesController._(apiService, storageService, args),
+      smartphone: (ctrl) => _PipelinesScreen(ctrl, _smartphoneParameters),
+      tablet: (ctrl) => _PipelinesScreen(ctrl, _tabletParameters),
     );
   }
 }

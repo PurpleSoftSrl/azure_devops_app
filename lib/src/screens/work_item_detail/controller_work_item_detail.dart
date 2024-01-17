@@ -1,29 +1,7 @@
 part of work_item_detail;
 
 class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
-  factory _WorkItemDetailController({
-    required WorkItemDetailArgs args,
-    required AzureApiService apiService,
-    required StorageService storageService,
-  }) {
-    // handle page already in memory with a different work item
-    if (_instances[args.hashCode] != null) {
-      return _instances[args.hashCode]!;
-    }
-
-    if (instance != null && instance!.args != args) {
-      instance = null;
-    }
-
-    instance ??= _WorkItemDetailController._(args, apiService, storageService);
-    return _instances.putIfAbsent(args.hashCode, () => instance!);
-  }
-
   _WorkItemDetailController._(this.args, this.apiService, this.storageService);
-
-  static _WorkItemDetailController? instance;
-
-  static final Map<int, _WorkItemDetailController> _instances = {};
 
   final WorkItemDetailArgs args;
   final AzureApiService apiService;
@@ -47,9 +25,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
 
   Map<String, Set<WorkItemField>> fieldsToShow = {};
 
-  void dispose() {
-    instance = null;
-  }
+  var _isDisposed = false;
 
   Future<void> init() async {
     final res = await apiService.getWorkItemDetail(projectName: args.project, workItemId: args.id);
@@ -65,6 +41,10 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
 
     itemDetail.value = res;
     updates = itemDetail.value?.data?.updates ?? [];
+  }
+
+  void dispose() {
+    _isDisposed = true;
   }
 
   void toggleShowUpdatesReversed() {
@@ -198,7 +178,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
   void onHistoryVisibilityChanged(VisibilityInfo info) {
     if (info.visibleFraction > 0 && !showCommentField.value) {
       showCommentField.value = true;
-    } else if (instance != null && info.visibleFraction == 0 && showCommentField.value) {
+    } else if (!_isDisposed && info.visibleFraction == 0 && showCommentField.value) {
       showCommentField.value = false;
     }
   }

@@ -7,6 +7,7 @@ import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/msal_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/form_field.dart';
 import 'package:azure_devops/src/widgets/loading_button.dart';
@@ -27,11 +28,10 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final ctrl = _LoginController(apiService: apiService);
-    return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-          ? _LoginScreen(ctrl, _smartphoneParameters)
-          : _LoginScreen(ctrl, _tabletParameters),
+    return AppBasePage(
+      initState: () => _LoginController._(apiService),
+      smartphone: (ctrl) => _LoginScreen(ctrl, _smartphoneParameters),
+      tablet: (ctrl) => _LoginScreen(ctrl, _tabletParameters),
     );
   }
 }

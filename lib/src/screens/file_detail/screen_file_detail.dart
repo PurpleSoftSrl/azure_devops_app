@@ -10,7 +10,6 @@ class _FileDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage<FileDetailResponse?>(
       init: ctrl.init,
-      dispose: ctrl.dispose,
       title: ctrl.args.filePath!.startsWith('/') ? ctrl.args.filePath!.substring(1) : ctrl.args.filePath!,
       notifier: ctrl.fileContent,
       padding: EdgeInsets.zero,

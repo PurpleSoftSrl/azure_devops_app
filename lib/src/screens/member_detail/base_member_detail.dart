@@ -6,7 +6,7 @@ import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
-import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/commit_list_tile.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
@@ -30,11 +30,10 @@ class MemberDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final member = AppRouter.getMemberDetailArgs(context);
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final ctrl = _MemberDetailController(userDescriptor: member, apiService: apiService);
-    return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-          ? _MemberDetailScreen(ctrl, _smartphoneParameters)
-          : _MemberDetailScreen(ctrl, _tabletParameters),
+    return AppBasePage(
+      initState: () => _MemberDetailController._(member, apiService),
+      smartphone: (ctrl) => _MemberDetailScreen(ctrl, _smartphoneParameters),
+      tablet: (ctrl) => _MemberDetailScreen(ctrl, _tabletParameters),
     );
   }
 }

@@ -1,13 +1,7 @@
 part of file_diff;
 
 class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
-  factory _FileDiffController({required AzureApiService apiService, required FileDiffArgs args}) {
-    return instance ??= _FileDiffController._(apiService, args);
-  }
-
   _FileDiffController._(this.apiService, this.args);
-
-  static _FileDiffController? instance;
 
   final AzureApiService apiService;
   final FileDiffArgs args;
@@ -23,10 +17,6 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
   List<ThreadUpdate> prThreads = [];
 
   bool get isImageDiff => imageDiffContent != null || previousImageDiffContent != null;
-
-  void dispose() {
-    instance = null;
-  }
 
   Future<void> init() async {
     final res = await apiService.getCommitDiff(

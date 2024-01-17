@@ -13,8 +13,8 @@ import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
-import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/add_comment_field.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
 import 'package:azure_devops/src/widgets/popup_menu.dart';
@@ -39,11 +39,10 @@ class FileDiffPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final args = AppRouter.getCommitDiffArgs(context);
-    final ctrl = _FileDiffController(apiService: apiService, args: args);
-    return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-          ? _FileDiffScreen(ctrl, _smartphoneParameters)
-          : _FileDiffScreen(ctrl, _tabletParameters),
+    return AppBasePage(
+      initState: () => _FileDiffController._(apiService, args),
+      smartphone: (ctrl) => _FileDiffScreen(ctrl, _smartphoneParameters),
+      tablet: (ctrl) => _FileDiffScreen(ctrl, _tabletParameters),
     );
   }
 }

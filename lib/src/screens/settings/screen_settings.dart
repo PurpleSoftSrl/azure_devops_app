@@ -10,7 +10,6 @@ class _SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage(
       init: ctrl.init,
-      dispose: ctrl.dispose,
       title: 'Settings',
       notifier: ctrl.organizations,
       actions: [

@@ -1,13 +1,7 @@
 part of profile;
 
 class _ProfileController with FilterMixin {
-  factory _ProfileController({required AzureApiService apiService, required StorageService storageService}) {
-    return instance ??= _ProfileController._(apiService, storageService);
-  }
-
   _ProfileController._(this.apiService, this.storageService);
-
-  static _ProfileController? instance;
 
   final AzureApiService apiService;
   final StorageService storageService;
@@ -31,10 +25,6 @@ class _ProfileController with FilterMixin {
   }
 
   final myWorkItems = <WorkItem>[];
-
-  void dispose() {
-    instance = null;
-  }
 
   Future<void> init() async {
     gitUsername = apiService.user?.emailAddress ?? '';

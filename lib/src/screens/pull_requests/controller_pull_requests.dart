@@ -1,30 +1,9 @@
 part of pull_requests;
 
 class _PullRequestsController with FilterMixin {
-  factory _PullRequestsController({
-    required AzureApiService apiService,
-    required StorageService storageService,
-    PullRequestArgs? args,
-  }) {
-    // handle page already in memory with a different project filter
-    if (_instances[args.hashCode] != null) {
-      return _instances[args.hashCode]!;
-    }
-
-    if (instance != null && args != instance!.args) {
-      instance = null;
-    }
-
-    instance ??= _PullRequestsController._(apiService, storageService, args);
-    return _instances.putIfAbsent(args.hashCode, () => instance!);
-  }
-
   _PullRequestsController._(this.apiService, this.storageService, this.args) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
-
-  static _PullRequestsController? instance;
-  static final Map<int, _PullRequestsController> _instances = {};
 
   final AzureApiService apiService;
   final StorageService storageService;
@@ -49,10 +28,6 @@ class _PullRequestsController with FilterMixin {
   bool get shouldPersistFilters => args?.project == null && !hasShortcut;
 
   bool get hasShortcut => args?.shortcut != null;
-
-  void dispose() {
-    instance = null;
-  }
 
   Future<void> init() async {
     if (shouldPersistFilters) {

@@ -10,7 +10,6 @@ class _ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage<List<Commit>?>(
       init: ctrl.init,
-      dispose: ctrl.dispose,
       title: 'Profile',
       notifier: ctrl.recentCommits,
       showScrollbar: true,

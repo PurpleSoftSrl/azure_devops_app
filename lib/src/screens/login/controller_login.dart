@@ -1,23 +1,13 @@
 part of login;
 
 class _LoginController with AppLogger {
-  factory _LoginController({required AzureApiService apiService}) {
-    return instance ??= _LoginController._(apiService);
-  }
-
   _LoginController._(this.apiService);
-
-  static _LoginController? instance;
 
   final AzureApiService apiService;
 
   final formFieldKey = GlobalKey<FormFieldState<dynamic>>();
 
   String pat = '';
-
-  void dispose() {
-    instance = null;
-  }
 
   // ignore: use_setters_to_change_properties
   void setPat(String value) {

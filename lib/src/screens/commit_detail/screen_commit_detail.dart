@@ -11,7 +11,6 @@ class _CommitDetailScreen extends StatelessWidget {
     final labelStyle = context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary);
     return AppPage<CommitWithChanges?>(
       init: ctrl.init,
-      dispose: ctrl.dispose,
       title: 'Commit detail',
       actions: [
         IconButton(

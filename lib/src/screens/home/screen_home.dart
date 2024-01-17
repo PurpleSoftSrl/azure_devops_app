@@ -15,7 +15,6 @@ class _HomeScreen extends StatelessWidget {
       child: AppPage<List<Project>>(
         notifier: ctrl.projects,
         init: ctrl.init,
-        dispose: ctrl.dispose,
         title: ctrl.apiService.organization,
         builder: (projects) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,

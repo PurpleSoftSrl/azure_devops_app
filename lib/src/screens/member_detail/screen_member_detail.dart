@@ -10,7 +10,6 @@ class _MemberDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage<GraphUser?>(
       init: ctrl.init,
-      dispose: ctrl.dispose,
       title: 'User detail',
       notifier: ctrl.user,
       builder: (user) => Column(

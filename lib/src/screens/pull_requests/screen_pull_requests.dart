@@ -10,7 +10,6 @@ class _PullRequestsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage<List<PullRequest>?>(
       init: ctrl.init,
-      dispose: ctrl.dispose,
       title: 'Pull requests',
       notifier: ctrl.pullRequests,
       showScrollbar: true,

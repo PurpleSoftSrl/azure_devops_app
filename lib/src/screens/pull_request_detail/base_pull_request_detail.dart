@@ -17,6 +17,7 @@ import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/add_comment_field.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/changed_files.dart';
 import 'package:azure_devops/src/widgets/commit_list_tile.dart';
@@ -51,11 +52,10 @@ class PullRequestDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final args = AppRouter.getPullRequestDetailArgs(context);
-    final ctrl = _PullRequestDetailController(args: args, apiService: apiService);
-    return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-          ? _PullRequestDetailScreen(ctrl, _smartphoneParameters)
-          : _PullRequestDetailScreen(ctrl, _tabletParameters),
+    return AppBasePage(
+      initState: () => _PullRequestDetailController._(args, apiService),
+      smartphone: (ctrl) => _PullRequestDetailScreen(ctrl, _smartphoneParameters),
+      tablet: (ctrl) => _PullRequestDetailScreen(ctrl, _tabletParameters),
     );
   }
 }

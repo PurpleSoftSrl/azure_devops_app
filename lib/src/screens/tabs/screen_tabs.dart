@@ -12,7 +12,6 @@ class _TabsScreen extends StatelessWidget {
       behavior: ScrollBehavior(),
       child: AppPage.empty(
         init: ctrl.init,
-        dispose: ctrl.dispose,
         builder: (_) => CupertinoTabScaffold(
           controller: ctrl.tabController,
           tabBar: CupertinoTabBar(

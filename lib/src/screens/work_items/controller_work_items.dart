@@ -1,30 +1,9 @@
 part of work_items;
 
 class _WorkItemsController with FilterMixin {
-  factory _WorkItemsController({
-    required AzureApiService apiService,
-    required StorageService storageService,
-    WorkItemsArgs? args,
-  }) {
-    // handle page already in memory with a different project filter
-    if (_instances[args.hashCode] != null) {
-      return _instances[args.hashCode]!;
-    }
-
-    if (instance != null && args != instance!.args) {
-      instance = null;
-    }
-
-    instance ??= _WorkItemsController._(apiService, storageService, args);
-    return _instances.putIfAbsent(args.hashCode, () => instance!);
-  }
-
   _WorkItemsController._(this.apiService, this.storageService, this.args) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
-
-  static _WorkItemsController? instance;
-  static final Map<int, _WorkItemsController> _instances = {};
 
   final AzureApiService apiService;
   final StorageService storageService;
@@ -60,10 +39,6 @@ class _WorkItemsController with FilterMixin {
   bool get shouldPersistFilters => args == null && !hasShortcut;
 
   bool get hasShortcut => args?.shortcut != null;
-
-  void dispose() {
-    instance = null;
-  }
 
   Future<void> init() async {
     WorkItemsFilters? savedFilters;

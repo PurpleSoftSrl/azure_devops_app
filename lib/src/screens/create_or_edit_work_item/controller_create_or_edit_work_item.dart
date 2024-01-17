@@ -3,14 +3,6 @@
 part of create_or_edit_work_item;
 
 class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
-  factory _CreateOrEditWorkItemController({
-    required AzureApiService apiService,
-    required CreateOrEditWorkItemArgs args,
-    required StorageService storageService,
-  }) {
-    return instance ??= _CreateOrEditWorkItemController._(apiService, args, storageService);
-  }
-
   _CreateOrEditWorkItemController._(this.apiService, this.args, this.storageService) {
     if (args.project != null) {
       newWorkItemProject = getProjects(storageService).firstWhereOrNull((p) => p.name == args.project) ?? projectAll;
@@ -18,8 +10,6 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     if (args.area != null) newWorkItemArea = AreaOrIteration.onlyPath(path: args.area!);
     if (args.iteration != null) newWorkItemIteration = AreaOrIteration.onlyPath(path: args.iteration!);
   }
-
-  static _CreateOrEditWorkItemController? instance;
 
   final AzureApiService apiService;
   final StorageService storageService;
@@ -67,10 +57,6 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   // Used to show loader while api call to get fields is in progress because it can be slow
   final isGettingFields = ValueNotifier<bool>(false);
-
-  void dispose() {
-    instance = null;
-  }
 
   Future<void> init() async {
     if (isEditing) {

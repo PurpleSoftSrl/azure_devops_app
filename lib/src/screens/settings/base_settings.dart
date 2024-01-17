@@ -14,6 +14,7 @@ import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/theme/theme.dart';
+import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:azure_devops/src/widgets/navigation_button.dart';
@@ -41,11 +42,10 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final storageService = StorageServiceInherited.of(context).storageService;
     final apiService = AzureApiServiceInherited.of(context).apiService;
-    final ctrl = _SettingsController(apiService: apiService, storageService: storageService);
-    return LayoutBuilder(
-      builder: (context, constraints) => constraints.maxWidth < AppTheme.tabletBeakpoint
-          ? _SettingsScreen(ctrl, _smartphoneParameters)
-          : _SettingsScreen(ctrl, _tabletParameters),
+    return AppBasePage(
+      initState: () => _SettingsController._(apiService, storageService),
+      smartphone: (ctrl) => _SettingsScreen(ctrl, _smartphoneParameters),
+      tablet: (ctrl) => _SettingsScreen(ctrl, _tabletParameters),
     );
   }
 }

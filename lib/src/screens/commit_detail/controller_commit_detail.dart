@@ -1,25 +1,7 @@
 part of commit_detail;
 
 class _CommitDetailController with ShareMixin {
-  factory _CommitDetailController({required CommitDetailArgs args, required AzureApiService apiService}) {
-    // handle page already in memory with a different commit
-    if (_instances[args.hashCode] != null) {
-      return _instances[args.hashCode]!;
-    }
-
-    if (instance != null && args.commitId != instance!.args.commitId) {
-      instance = null;
-    }
-
-    instance ??= _CommitDetailController._(args, apiService);
-    return _instances.putIfAbsent(args.hashCode, () => instance!);
-  }
-
   _CommitDetailController._(this.args, this.apiService);
-
-  static _CommitDetailController? instance;
-
-  static final Map<int, _CommitDetailController> _instances = {};
 
   final CommitDetailArgs args;
   final AzureApiService apiService;
@@ -43,10 +25,6 @@ class _CommitDetailController with ShareMixin {
   final groupedEditedFiles = <String, Set<ChangedFileDiff>>{};
   final groupedAddedFiles = <String, Set<ChangedFileDiff>>{};
   final groupedDeletedFiles = <String, Set<ChangedFileDiff>>{};
-
-  void dispose() {
-    instance = null;
-  }
 
   Future<void> init() async {
     final detailRes = await apiService.getCommitDetail(

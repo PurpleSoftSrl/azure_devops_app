@@ -1,31 +1,10 @@
 part of commits;
 
 class _CommitsController with FilterMixin {
-  factory _CommitsController({
-    required AzureApiService apiService,
-    required StorageService storageService,
-    CommitsArgs? args,
-  }) {
-    // handle page already in memory with a different project filter
-    if (_instances[args] != null) {
-      return _instances[args]!;
-    }
-
-    if (instance != null && args != instance!.args) {
-      instance = null;
-    }
-
-    instance ??= _CommitsController._(apiService, storageService, args);
-    return _instances.putIfAbsent(args, () => instance!);
-  }
-
   _CommitsController._(this.apiService, this.storageService, this.args) {
     if (args?.project != null) projectsFilter = {args!.project!};
     if (args?.author != null) usersFilter = {args!.author!};
   }
-
-  static _CommitsController? instance;
-  static final Map<CommitsArgs?, _CommitsController> _instances = {};
 
   final AzureApiService apiService;
   final StorageService storageService;
@@ -42,10 +21,6 @@ class _CommitsController with FilterMixin {
   bool get shouldPersistFilters => args?.project == null && !hasShortcut;
 
   bool get hasShortcut => args?.shortcut != null;
-
-  void dispose() {
-    instance = null;
-  }
 
   Future<void> init() async {
     if (shouldPersistFilters) {
