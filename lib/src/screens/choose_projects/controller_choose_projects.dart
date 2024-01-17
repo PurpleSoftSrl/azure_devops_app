@@ -179,5 +179,18 @@ class _ChooseProjectsController {
   }
 
   /// Prevents user from going back without having selected any project after clear cache
-  Future<bool> onWillPop() async => alreadyChosenProjects.isNotEmpty;
+  void onPopInvoked({required bool didPop}) {
+    if (didPop) return;
+
+    if (alreadyChosenProjects.isEmpty) return;
+
+    final canPop = AppRouter.rootNavigator?.canPop() ?? false;
+
+    if (canPop) {
+      AppRouter.popRoute();
+      return;
+    }
+
+    AppRouter.askBeforeClosingApp(didPop: didPop);
+  }
 }

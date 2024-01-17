@@ -26,6 +26,7 @@ import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/widgets/error_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 typedef WorkItemsArgs = ({Project? project, SavedShortcut? shortcut});
 typedef WorkItemDetailArgs = ({String project, int id});
@@ -213,9 +214,15 @@ class AppRouter {
     rootNavigator!.pop();
   }
 
-  static Future<bool> askBeforeClosingApp() async {
+  static Future<void> askBeforeClosingApp({required bool didPop}) async {
+    if (didPop) return;
+
     final shouldPop = await OverlayService.confirm('Attention', description: 'Do you really want to close the app?');
-    return shouldPop;
+
+    if (shouldPop) {
+      await Future<void>.delayed(Duration(milliseconds: 100));
+      await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    }
   }
 
   static Future<void> _goTo<T>(String page, {T? args}) => _currentNavigator!.pushNamed(page, arguments: args);

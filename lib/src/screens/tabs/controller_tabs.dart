@@ -91,15 +91,14 @@ class _TabsController {
     return RouteSettings(name: routeName);
   }
 
-  Future<bool> askBeforeClosing() async {
-    final canPop = navPages[page].key.currentState!.canPop();
-    if (canPop) {
-      final maybePop = await navPages[page].key.currentState!.maybePop();
-      return !maybePop;
-    }
+  void popTab({required bool didPop}) {
+    if (didPop) return;
 
-    final shouldPop = await AppRouter.askBeforeClosingApp();
-    return shouldPop;
+    final canPop = navPages[page].key.currentState!.canPop();
+
+    if (canPop) return;
+
+    AppRouter.askBeforeClosingApp(didPop: didPop);
   }
 }
 

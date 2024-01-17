@@ -9,7 +9,8 @@ class _LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      onPopInvoked: (_) => AppRouter.askBeforeClosingApp,
+      canPop: false,
+      onPopInvoked: (didPop) => AppRouter.askBeforeClosingApp(didPop: didPop),
       child: AppPage(
         init: () async => true,
         dispose: ctrl.dispose,
