@@ -8,41 +8,41 @@ class _TabsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScrollConfiguration(
-      behavior: ScrollBehavior(),
-      child: AppPage.empty(
-        init: ctrl.init,
-        builder: (_) => CupertinoTabScaffold(
-          controller: ctrl.tabController,
-          tabBar: CupertinoTabBar(
-            backgroundColor: context.colorScheme.background,
-            activeColor: context.colorScheme.onBackground,
-            inactiveColor: context.colorScheme.onSecondary.withOpacity(.4),
-            key: ctrl.tabKey,
-            onTap: ctrl.goToTab,
-            border: Border(top: BorderSide(color: context.colorScheme.secondaryContainer)),
-            height: parameters.tabBarHeight,
-            items: ctrl.navPages
-                .map(
-                  (p) => BottomNavigationBarItem(
-                    icon: ValueListenableBuilder<bool>(
-                      valueListenable: ctrl.tabState[p.pageName]!,
-                      builder: (_, isActive, __) => Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: Icon(
-                          p.icon,
-                          size: parameters.tabIconHeight,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) => ctrl.popTab(didPop: didPop),
+      child: ScrollConfiguration(
+        behavior: ScrollBehavior(),
+        child: AppPage.empty(
+          init: ctrl.init,
+          builder: (_) => CupertinoTabScaffold(
+            controller: ctrl.tabController,
+            tabBar: CupertinoTabBar(
+              backgroundColor: context.colorScheme.background,
+              activeColor: context.colorScheme.onBackground,
+              inactiveColor: context.colorScheme.onSecondary.withOpacity(.4),
+              key: ctrl.tabKey,
+              onTap: ctrl.goToTab,
+              border: Border(top: BorderSide(color: context.colorScheme.secondaryContainer)),
+              height: parameters.tabBarHeight,
+              items: ctrl.navPages
+                  .map(
+                    (p) => BottomNavigationBarItem(
+                      icon: ValueListenableBuilder<bool>(
+                        valueListenable: ctrl.tabState[p.pageName]!,
+                        builder: (_, isActive, __) => Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Icon(
+                            p.icon,
+                            size: parameters.tabIconHeight,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                )
-                .toList(),
-          ),
-          tabBuilder: (_, i) => PopScope(
-            canPop: false,
-            onPopInvoked: (didPop) => ctrl.popTab(didPop: didPop),
-            child: CupertinoTabView(
+                  )
+                  .toList(),
+            ),
+            tabBuilder: (_, i) => CupertinoTabView(
               navigatorKey: ctrl.navPages[i].key,
               navigatorObservers: [
                 SentryNavigatorObserver(
