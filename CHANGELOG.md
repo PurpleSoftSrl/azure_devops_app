@@ -1,3 +1,15 @@
+## 2.3.0 - 2024-01-26
+- fix android back button handling (2)
+- upgrade to flutter 3.16.7 and upgrade dependencies
+- refactoring: add AppBasePage component
+- fix android back button handling
+- Implement named filters (#31)
+- fix material3 TabBar style
+- get work item type fields faster
+- fix edit work item with empty identity field
+- Upgrade to Flutter 3.16.5 (#21)
+- avoid clearing filters on clear cache
+
 ## 2.2.0 - 2024-01-02
 - Add FUNDING.yml
 - Avoid persisting filters when coming from project page for pipelines and commits. (#30)
