@@ -13,6 +13,27 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets(
+    'Page building test',
+    (t) async {
+      final app = MaterialApp(
+        home: StorageServiceInherited(
+          storageService: StorageServiceMock(),
+          child: AzureApiServiceInherited(
+            apiService: AzureApiServiceMock(),
+            child: PipelinesPage(),
+          ),
+        ),
+      );
+
+      await t.pumpWidget(app);
+
+      await t.pump();
+
+      expect(find.byType(PipelinesPage), findsOneWidget);
+    },
+  );
+
+  testWidgets(
     'Pipelines are sorted by status',
     (t) async {
       final pipelinesPage = MaterialApp(

@@ -12,6 +12,28 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets(
+    'Page building test',
+    (t) async {
+      final app = MaterialApp(
+        navigatorKey: AppRouter.navigatorKey,
+        home: StorageServiceInherited(
+          storageService: StorageServiceMock(),
+          child: AzureApiServiceInherited(
+            apiService: AzureApiServiceMock(),
+            child: PullRequestsPage(),
+          ),
+        ),
+      );
+
+      await t.pumpWidget(app);
+
+      await t.pump();
+
+      expect(find.byType(PullRequestsPage), findsOneWidget);
+    },
+  );
+
+  testWidgets(
     'Pull requests are visible, with their title, creator and repository and are sorted by creation date',
     (t) async {
       final workitemsPage = MaterialApp(

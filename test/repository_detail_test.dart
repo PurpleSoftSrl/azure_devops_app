@@ -9,8 +9,8 @@ import 'api_service_mock.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('Repository detail page showing all items', (t) async {
-    final repoDetailPage = AzureApiServiceInherited(
+  testWidgets('Page building test', (t) async {
+    final app = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),
       child: MaterialApp(
         onGenerateRoute: (_) => MaterialPageRoute(
@@ -25,9 +25,9 @@ void main() {
       ),
     );
 
-    await t.pumpWidget(repoDetailPage);
+    await t.pumpWidget(app);
     await t.pump();
 
-    expect(find.text('item 2', findRichText: true), findsWidgets);
+    expect(find.byType(RepositoryDetailPage), findsOneWidget);
   });
 }

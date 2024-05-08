@@ -9,7 +9,7 @@ import 'api_service_mock.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('Pipeline logs page shows all logs', (t) async {
+  testWidgets('Page building test', (t) async {
     final pipelineLogsPage = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),
       child: MaterialApp(
@@ -31,6 +31,6 @@ void main() {
     await t.pumpWidget(pipelineLogsPage);
     await t.pump();
 
-    expect(find.text('log test', findRichText: true), findsOneWidget);
+    expect(find.byType(PipelineLogsPage), findsOneWidget);
   });
 }

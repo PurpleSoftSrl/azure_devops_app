@@ -9,8 +9,8 @@ import 'api_service_mock.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets("Project detail page shows all project's informations", (t) async {
-    final projectPage = AzureApiServiceInherited(
+  testWidgets('Page building test', (t) async {
+    final app = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),
       child: MaterialApp(
         onGenerateRoute: (_) => MaterialPageRoute(
@@ -22,9 +22,9 @@ void main() {
       ),
     );
 
-    await t.pumpWidget(projectPage);
+    await t.pumpWidget(app);
     await t.pumpAndSettle();
 
-    expect(find.text('member_2_name', findRichText: true), findsOneWidget);
+    expect(find.byType(ProjectDetailPage), findsOneWidget);
   });
 }

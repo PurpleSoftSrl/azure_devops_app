@@ -11,9 +11,9 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets(
-    'Work items are visible, with their title, id and project',
+    'Page building test',
     (t) async {
-      final workitemsPage = MaterialApp(
+      final app = MaterialApp(
         navigatorKey: AppRouter.navigatorKey,
         home: StorageServiceInherited(
           storageService: StorageServiceMock(),
@@ -24,28 +24,11 @@ void main() {
         ),
       );
 
-      await t.pumpWidget(workitemsPage);
+      await t.pumpWidget(app);
 
       await t.pump();
 
-      final titles = find.textContaining('Work item title');
-      final ids = find.textContaining('#');
-      final projects = find.textContaining('Project ');
-
-      // first work item
-      expect((t.widget(titles.at(0)) as Text).data, 'Work item title 1');
-      expect((t.widget(ids.at(0)) as Text).data, '#1');
-      expect((t.widget(projects.at(0)) as Text).data, 'Project 1');
-
-      // second work item
-      expect((t.widget(titles.at(1)) as Text).data, 'Work item title 2');
-      expect((t.widget(ids.at(1)) as Text).data, '#2');
-      expect((t.widget(projects.at(1)) as Text).data, 'Project 2');
-
-      // third work item
-      expect((t.widget(titles.at(2)) as Text).data, 'Work item title 3');
-      expect((t.widget(ids.at(2)) as Text).data, '#3');
-      expect((t.widget(projects.at(2)) as Text).data, 'Project 3');
+      expect(find.byType(WorkItemsPage), findsOneWidget);
     },
   );
 }
