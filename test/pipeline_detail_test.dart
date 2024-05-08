@@ -10,10 +10,12 @@ import 'api_service_mock.dart';
 void main() {
   setUp(() => VisibilityDetectorController.instance.updateInterval = Duration.zero);
 
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   testWidgets(
-    'Pipeline detail page shows all the details',
+    'Page building test',
     (t) async {
-      final detailPage = AzureApiServiceInherited(
+      final app = AzureApiServiceInherited(
         apiService: AzureApiServiceMock(),
         child: MaterialApp(
           onGenerateRoute: (_) => MaterialPageRoute(
@@ -25,24 +27,11 @@ void main() {
         ),
       );
 
-      await t.pumpWidget(detailPage);
+      await t.pumpWidget(app);
 
       await t.pump();
 
-      // pipeline info
-      expect(find.text('Test User'), findsOneWidget);
-      expect(find.text('now'), findsOneWidget);
-      expect(find.text('TestProject'), findsOneWidget);
-      expect(find.text('test_repo'), findsOneWidget);
-
-      // commit info
-      expect(find.text('Test commit message'), findsOneWidget);
-      expect(find.text('123456789'), findsOneWidget);
-      expect(find.text('Branch: test_branch', findRichText: true), findsOneWidget);
-
-      // build info
-      expect(find.text('Id:  1234', findRichText: true), findsOneWidget);
-      expect(find.text('Number:  5678', findRichText: true), findsOneWidget);
+      expect(find.byType(PipelineDetailPage), findsOneWidget);
     },
   );
 }

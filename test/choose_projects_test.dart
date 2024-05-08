@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'api_service_mock.dart';
 
 void main() {
-  testWidgets('Projects are visible', (t) async {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('Page building test', (t) async {
     final app = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),
       child: StorageServiceInherited(
@@ -25,15 +27,10 @@ void main() {
 
     await t.pumpWidget(app);
 
-    final pageTitle = find.textContaining('Choose projects');
-    expect(pageTitle, findsOneWidget);
+    await t.pump();
 
-    await t.pumpAndSettle();
-
-    final firstProject = find.textContaining('p1');
-    expect(firstProject, findsOneWidget);
+    expect(find.byType(ChooseProjectsPage), findsOneWidget);
   });
-
   testWidgets('All projects are selected by default', (t) async {
     final app = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),

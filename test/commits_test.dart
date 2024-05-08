@@ -10,6 +10,27 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets(
+    'Page building test',
+    (t) async {
+      final app = MaterialApp(
+        home: AzureApiServiceInherited(
+          apiService: AzureApiServiceMock(),
+          child: StorageServiceInherited(
+            storageService: StorageServiceMock(),
+            child: CommitsPage(),
+          ),
+        ),
+      );
+
+      await t.pumpWidget(app);
+
+      await t.pump();
+
+      expect(find.byType(CommitsPage), findsOneWidget);
+    },
+  );
+
+  testWidgets(
     'Commits are sorted by date descending',
     (t) async {
       final commitsPage = MaterialApp(

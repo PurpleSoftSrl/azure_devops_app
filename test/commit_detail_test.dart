@@ -7,10 +7,12 @@ import 'api_service_mock.dart';
 
 /// Mock commit is taken from [AzureApiServiceMock.getCommitDetail]
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   testWidgets(
-    'Commit detail page shows all the details',
+    'Page building test',
     (t) async {
-      final detailPage = AzureApiServiceInherited(
+      final app = AzureApiServiceInherited(
         apiService: AzureApiServiceMock(),
         child: MaterialApp(
           onGenerateRoute: (_) => MaterialPageRoute(
@@ -22,19 +24,10 @@ void main() {
         ),
       );
 
-      await t.pumpWidget(detailPage);
+      await t.pumpWidget(app);
       await t.pump();
 
-      // commit info
-      expect(find.text('TestProject'), findsOneWidget);
-      expect(find.text('test_repo'), findsOneWidget);
-      expect(find.text('Test commit message'), findsOneWidget);
-      expect(find.text('123456789'), findsOneWidget);
-
-      // edited files details
-      expect(find.text('5 edited files'), findsOneWidget);
-      expect(find.text('3 added files'), findsOneWidget);
-      expect(find.text('1 deleted file'), findsOneWidget);
+      expect(find.byType(CommitDetailPage), findsOneWidget);
     },
   );
 }

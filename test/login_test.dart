@@ -8,6 +8,27 @@ import 'package:flutter_test/flutter_test.dart';
 import 'api_service_mock.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('Page building test', (t) async {
+    final app = AzureApiServiceInherited(
+      apiService: AzureApiServiceMock(),
+      child: StorageServiceInherited(
+        storageService: StorageServiceMock(),
+        child: MaterialApp(
+          navigatorKey: AppRouter.navigatorKey,
+          routes: AppRouter.routes,
+          home: LoginPage(),
+        ),
+      ),
+    );
+
+    await t.pumpWidget(app);
+
+    await t.pump();
+
+    expect(find.byType(LoginPage), findsOneWidget);
+  });
   testWidgets('Login with invalid token shows error alert', (t) async {
     final app = MaterialApp(
       navigatorKey: AppRouter.navigatorKey,
