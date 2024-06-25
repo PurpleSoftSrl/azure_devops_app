@@ -21,7 +21,15 @@ class HtmlWidget extends StatelessWidget {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final defaultTextStyle = context.textTheme.labelMedium!;
     final effectiveStyle = style ?? defaultTextStyle;
-    final htmlTextStyle = Style.fromTextStyle(effectiveStyle).copyWith(margin: Margins.zero, padding: padding);
+    final htmlTextStyle = Style.fromTextStyle(effectiveStyle).copyWith(
+      margin: Margins.zero,
+      padding: HtmlPaddings(
+        top: HtmlPadding(padding.top),
+        right: HtmlPadding(padding.right),
+        bottom: HtmlPadding(padding.bottom),
+        left: HtmlPadding(padding.left),
+      ),
+    );
 
     // workaround to avoid layout error (https://github.com/flutter/flutter/issues/135912)
     RenderObject.debugCheckingIntrinsics = true;
@@ -34,14 +42,15 @@ class HtmlWidget extends StatelessWidget {
         'body': htmlTextStyle,
         'html': htmlTextStyle,
       },
-      onLinkTap: (str, _, __, ___) async {
+      onLinkTap: (str, _, __) async {
         final url = str.toString();
         if (await canLaunchUrlString(url)) await launchUrlString(url);
       },
-      customRenders: {
-        (ctx) => ctx.tree.element?.localName == 'img': CustomRender.widget(
-          widget: (ctx, child) {
-            final src = ctx.tree.attributes['src'];
+      extensions: [
+        TagExtension(
+          tagsToExtend: {'img'},
+          builder: (ctx) {
+            final src = ctx.attributes['src'];
             if (src == null) return const SizedBox();
 
             final isNetworkImage = src.startsWith('http');
@@ -53,8 +62,8 @@ class HtmlWidget extends StatelessWidget {
                 imageUrl: src,
                 httpHeaders: apiService.headers,
                 fit: BoxFit.contain,
-                height: double.tryParse(ctx.tree.attributes['height'] ?? ''),
-                width: double.tryParse(ctx.tree.attributes['width'] ?? ''),
+                height: double.tryParse(ctx.attributes['height'] ?? ''),
+                width: double.tryParse(ctx.attributes['width'] ?? ''),
                 placeholder: (_, __) => Center(child: const CircularProgressIndicator()),
               );
             } else if (isBase64) {
@@ -99,108 +108,89 @@ class HtmlWidget extends StatelessWidget {
             );
           },
         ),
-        (ctx) => ctx.tree.element?.localName == 'br': CustomRender.widget(
-          widget: (ctx, child) => const Text(''),
+        TagExtension(
+          tagsToExtend: {'br'},
+          builder: (_) => const Text(''),
         ),
-        (ctx) =>
-            ctx.tree.element?.localName == 'a' &&
-            ctx.tree.attributes['data-vss-mention'] != null &&
-            ctx.tree.element!.innerHtml.startsWith('@'): CustomRender.widget(
-          widget: (ctx, child) => GestureDetector(
-            onTap: () async {
-              final name = ctx.tree.element!.innerHtml.substring(1);
-              final user = await apiService.getUserFromDisplayName(name: name);
-              if (user.isError) return;
+        TagExtension(
+          tagsToExtend: {'a'},
+          builder: (ctx) {
+            final innerHtml = ctx.element!.innerHtml;
 
-              unawaited(AppRouter.goToMemberDetail(user.data!.descriptor!));
-            },
-            child: Text(
-              ctx.tree.element!.innerHtml,
+            final linkChild = Text(
+              innerHtml,
               style: effectiveStyle.copyWith(color: Colors.blue, decoration: TextDecoration.underline),
-            ),
-          ),
+            );
+
+            final mention = ctx.attributes['data-vss-mention'];
+            if (mention == null) return linkChild;
+
+            final href = ctx.attributes['href'];
+
+            // user mention
+            if (innerHtml.startsWith('@')) {
+              return GestureDetector(
+                onTap: () async {
+                  final name = innerHtml.substring(1);
+                  final user = await apiService.getUserFromDisplayName(name: name);
+                  if (user.isError) return;
+
+                  unawaited(AppRouter.goToMemberDetail(user.data!.descriptor!));
+                },
+                child: linkChild,
+              );
+            }
+
+            // work item mention
+            if (innerHtml.startsWith('#')) {
+              return GestureDetector(
+                onTap: () {
+                  final url = href;
+                  if (url == null) return;
+
+                  final project = url.substring(0, url.indexOf('/_workitems')).split('/').lastOrNull;
+                  if (project == null) return;
+
+                  final id = url.split('/').lastOrNull;
+                  if (id == null) return;
+
+                  final parsedId = int.tryParse(id);
+                  if (parsedId == null) return;
+
+                  AppRouter.goToWorkItemDetail(project: project, id: parsedId);
+                },
+                child: linkChild,
+              );
+            }
+
+            // pr link
+            if (href != null && href.contains('/pullrequest/')) {
+              return GestureDetector(
+                onTap: () {
+                  final url = href;
+
+                  final project = url.substring(0, url.indexOf('/_git')).split('/').lastOrNull;
+                  if (project == null) return;
+
+                  final repository = url.substring(0, url.indexOf('/pullrequest')).split('/').lastOrNull;
+                  if (repository == null) return;
+
+                  final id = url.split('/').lastOrNull;
+                  if (id == null) return;
+
+                  final parsedId = int.tryParse(id);
+                  if (parsedId == null) return;
+
+                  AppRouter.goToPullRequestDetail(project: project, repository: repository, id: parsedId);
+                },
+                child: linkChild,
+              );
+            }
+
+            return linkChild;
+          },
         ),
-        (ctx) =>
-            ctx.tree.element?.localName == 'a' &&
-            ctx.tree.attributes['data-vss-mention'] != null &&
-            ctx.tree.element!.innerHtml.startsWith('#'): CustomRender.widget(
-          widget: (ctx, child) => GestureDetector(
-            onTap: () {
-              final url = ctx.tree.attributes['href'];
-              if (url == null) return;
-
-              final project = url.substring(0, url.indexOf('/_workitems')).split('/').lastOrNull;
-              if (project == null) return;
-
-              final id = url.split('/').lastOrNull;
-              if (id == null) return;
-
-              final parsedId = int.tryParse(id);
-              if (parsedId == null) return;
-
-              AppRouter.goToWorkItemDetail(project: project, id: parsedId);
-            },
-            child: Text(
-              ctx.tree.element!.innerHtml,
-              style: effectiveStyle.copyWith(color: Colors.blue, decoration: TextDecoration.underline),
-            ),
-          ),
-        ),
-        (ctx) => // pr link
-            ctx.tree.element?.localName == 'a' &&
-            ctx.tree.attributes['data-vss-mention'] != null &&
-            ctx.tree.attributes['href'] != null &&
-            ctx.tree.attributes['href']!.startsWith(apiService.basePath) &&
-            ctx.tree.attributes['href']!.contains('/pullrequest/'): CustomRender.widget(
-          widget: (ctx, child) => GestureDetector(
-            onTap: () {
-              final url = ctx.tree.attributes['href'];
-              if (url == null) return;
-
-              final project = url.substring(0, url.indexOf('/_git')).split('/').lastOrNull;
-              if (project == null) return;
-
-              final repository = url.substring(0, url.indexOf('/pullrequest')).split('/').lastOrNull;
-              if (repository == null) return;
-
-              final id = url.split('/').lastOrNull;
-              if (id == null) return;
-
-              final parsedId = int.tryParse(id.substring(0, id.indexOf('?')));
-              if (parsedId == null) return;
-
-              AppRouter.goToPullRequestDetail(project: project, repository: repository, id: parsedId);
-            },
-            child: Text(
-              ctx.tree.element!.innerHtml,
-              style: effectiveStyle.copyWith(color: Colors.blue, decoration: TextDecoration.underline),
-            ),
-          ),
-        ),
-        (ctx) => // pr mention
-            ctx.tree.element?.localName == 'a' &&
-            ctx.tree.attributes['data-vss-mention'] != null &&
-            ctx.tree.element!.innerHtml.startsWith('Pull Request '): CustomRender.widget(
-          widget: (ctx, child) => GestureDetector(
-            onTap: () {
-              final url = ctx.tree.attributes['data-vss-mention']!;
-
-              final parts = url.split(':');
-
-              final project = parts[4];
-              final repository = parts[5];
-              final id = int.tryParse(parts[6]);
-              if (id == null) return;
-
-              AppRouter.goToPullRequestDetail(project: project, repository: repository, id: id);
-            },
-            child: Text(
-              ctx.tree.element!.innerHtml,
-              style: effectiveStyle.copyWith(color: Colors.blue, decoration: TextDecoration.underline),
-            ),
-          ),
-        ),
-      },
+      ],
     );
   }
 }

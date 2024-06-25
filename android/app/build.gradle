@@ -40,7 +40,7 @@ if (project.hasProperty('dart-defines')) {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -59,7 +59,7 @@ android {
     defaultConfig {
         applicationId "io.purplesoft.azuredevops"
         minSdkVersion 24
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
