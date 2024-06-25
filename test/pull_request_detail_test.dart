@@ -21,6 +21,7 @@ void main() {
         child: StorageServiceInherited(
           storageService: StorageServiceMock(),
           child: MaterialApp(
+            theme: mockTheme,
             onGenerateRoute: (_) => MaterialPageRoute(
               builder: (_) => PullRequestDetailPage(),
               settings: RouteSettings(

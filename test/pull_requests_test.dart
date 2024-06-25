@@ -16,6 +16,7 @@ void main() {
     (t) async {
       final app = MaterialApp(
         navigatorKey: AppRouter.navigatorKey,
+        theme: mockTheme,
         home: StorageServiceInherited(
           storageService: StorageServiceMock(),
           child: AzureApiServiceInherited(
@@ -38,6 +39,7 @@ void main() {
     (t) async {
       final workitemsPage = MaterialApp(
         navigatorKey: AppRouter.navigatorKey,
+        theme: mockTheme,
         home: StorageServiceInherited(
           storageService: StorageServiceMock(),
           child: AzureApiServiceInherited(

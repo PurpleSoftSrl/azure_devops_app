@@ -13,6 +13,7 @@ void main() {
     final app = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),
       child: MaterialApp(
+        theme: mockTheme,
         onGenerateRoute: (_) => MaterialPageRoute(
           builder: (_) => FileDetailPage(),
           settings: RouteSettings(

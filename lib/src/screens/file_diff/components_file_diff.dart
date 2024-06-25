@@ -170,7 +170,7 @@ class _FileDiffHeader extends StatelessWidget {
             Text(file.contentMetadata.fileName),
             Text(
               file.serverItem.startsWith('/') ? file.serverItem.substring(1) : file.serverItem,
-              style: context.textTheme.labelSmall!.copyWith(color: context.colorScheme.onBackground.withOpacity(.6)),
+              style: context.textTheme.labelSmall!.copyWith(color: context.themeExtension.onBackground.withOpacity(.6)),
             ),
           ],
           Row(

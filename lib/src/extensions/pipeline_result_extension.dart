@@ -74,7 +74,7 @@ extension PipelineResultExt on PipelineResult? {
       case PipelineResult.canceled:
         icon = Icon(
           DevOpsIcons.cancelled,
-          color: AppRouter.rootNavigator!.context.colorScheme.onBackground,
+          color: AppRouter.rootNavigator!.context.themeExtension.onBackground,
         );
       case PipelineResult.failed:
         icon = Icon(

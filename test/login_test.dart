@@ -18,6 +18,7 @@ void main() {
         child: MaterialApp(
           navigatorKey: AppRouter.navigatorKey,
           routes: AppRouter.routes,
+          theme: mockTheme,
           home: LoginPage(),
         ),
       ),
@@ -32,6 +33,7 @@ void main() {
   testWidgets('Login with invalid token shows error alert', (t) async {
     final app = MaterialApp(
       navigatorKey: AppRouter.navigatorKey,
+      theme: mockTheme,
       home: AzureApiServiceInherited(
         apiService: AzureApiServiceMock(),
         child: LoginPage(),
@@ -61,6 +63,7 @@ void main() {
   testWidgets("Login with token without 'All organizations' shows 'Insert your organization' bottomsheet", (t) async {
     final app = MaterialApp(
       navigatorKey: AppRouter.navigatorKey,
+      theme: mockTheme,
       home: AzureApiServiceInherited(
         apiService: AzureApiServiceMock(),
         child: LoginPage(),
@@ -95,6 +98,7 @@ void main() {
         child: MaterialApp(
           navigatorKey: AppRouter.navigatorKey,
           routes: AppRouter.routes,
+          theme: mockTheme,
           home: LoginPage(),
         ),
       ),

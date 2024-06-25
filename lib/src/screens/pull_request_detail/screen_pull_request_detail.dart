@@ -24,11 +24,11 @@ class _PullRequestDetailScreen extends StatelessWidget {
                 indicatorPadding: const EdgeInsets.symmetric(horizontal: 24),
                 labelPadding: EdgeInsets.zero,
                 dividerColor: Colors.transparent,
-                overlayColor: MaterialStatePropertyAll(Colors.transparent),
+                overlayColor: WidgetStatePropertyAll(Colors.transparent),
                 indicatorSize: TabBarIndicatorSize.tab,
                 indicatorColor: context.colorScheme.secondary,
                 labelColor: context.colorScheme.secondary,
-                unselectedLabelColor: context.colorScheme.onBackground.withOpacity(.8),
+                unselectedLabelColor: context.themeExtension.onBackground.withOpacity(.8),
                 labelStyle: context.textTheme.labelLarge,
                 unselectedLabelStyle: context.textTheme.labelLarge,
                 tabs: const [

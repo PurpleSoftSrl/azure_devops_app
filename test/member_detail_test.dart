@@ -13,6 +13,7 @@ void main() {
     final memberPage = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),
       child: MaterialApp(
+        theme: mockTheme,
         onGenerateRoute: (_) => MaterialPageRoute(
           builder: (_) => MemberDetailPage(),
           settings: RouteSettings(

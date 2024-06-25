@@ -85,7 +85,7 @@ class _DevOpsSearchFieldState extends State<DevOpsSearchField> {
         },
         child: Icon(
           Icons.close,
-          color: context.colorScheme.onBackground,
+          color: context.themeExtension.onBackground,
         ),
       ),
     );

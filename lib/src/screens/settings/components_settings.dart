@@ -27,10 +27,10 @@ class _ThemeModeRadio extends StatelessWidget {
           ),
           Radio(
             groupValue: true,
-            activeColor: isSelected ? context.colorScheme.onBackground : context.colorScheme.onSecondary,
+            activeColor: isSelected ? context.themeExtension.onBackground : context.colorScheme.onSecondary,
             value: isSelected,
-            fillColor: MaterialStateProperty.resolveWith(
-              (states) => states.contains(MaterialState.selected) ? null : context.colorScheme.onSecondary,
+            fillColor: WidgetStateProperty.resolveWith(
+              (states) => states.contains(WidgetState.selected) ? null : context.colorScheme.onSecondary,
             ),
             onChanged: (_) => onChanged(mode),
           ),

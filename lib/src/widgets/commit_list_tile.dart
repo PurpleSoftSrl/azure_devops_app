@@ -125,7 +125,7 @@ class TagChip extends StatelessWidget {
             Icon(
               Icons.sell_outlined,
               size: 10,
-              color: context.colorScheme.onBackground,
+              color: context.themeExtension.onBackground,
             ),
             const SizedBox(
               width: 4,

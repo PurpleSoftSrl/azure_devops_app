@@ -26,6 +26,10 @@ import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
+import 'package:azure_devops/src/theme/theme.dart';
+import 'package:flutter/material.dart';
+
+final mockTheme = ThemeData(extensions: [AppColorsExtension(background: Colors.white, onBackground: Colors.black)]);
 
 class AzureApiServiceMock implements AzureApiService {
   @override

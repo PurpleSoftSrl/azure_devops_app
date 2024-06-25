@@ -42,7 +42,7 @@ class _LoadingButtonState extends State<LoadingButton> with AppLogger {
         },
         child: _isLoading
             ? CircularProgressIndicator(
-                backgroundColor: context.colorScheme.background,
+                backgroundColor: context.themeExtension.background,
               )
             : Text(
                 widget.text,

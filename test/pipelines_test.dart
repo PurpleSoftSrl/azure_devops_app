@@ -16,6 +16,7 @@ void main() {
     'Page building test',
     (t) async {
       final app = MaterialApp(
+        theme: mockTheme,
         home: StorageServiceInherited(
           storageService: StorageServiceMock(),
           child: AzureApiServiceInherited(
@@ -37,6 +38,7 @@ void main() {
     'Pipelines are sorted by status',
     (t) async {
       final pipelinesPage = MaterialApp(
+        theme: mockTheme,
         home: StorageServiceInherited(
           storageService: StorageServiceMock(),
           child: AzureApiServiceInherited(

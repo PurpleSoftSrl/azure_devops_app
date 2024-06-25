@@ -13,6 +13,7 @@ void main() {
     'Page building test',
     (t) async {
       final app = MaterialApp(
+        theme: mockTheme,
         home: AzureApiServiceInherited(
           apiService: AzureApiServiceMock(),
           child: StorageServiceInherited(
@@ -34,6 +35,7 @@ void main() {
     'Commits are sorted by date descending',
     (t) async {
       final commitsPage = MaterialApp(
+        theme: mockTheme,
         home: AzureApiServiceInherited(
           apiService: AzureApiServiceMock(),
           child: StorageServiceInherited(

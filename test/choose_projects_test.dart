@@ -17,6 +17,7 @@ void main() {
         storageService: StorageServiceMock(),
         child: MaterialApp(
           navigatorKey: AppRouter.navigatorKey,
+          theme: mockTheme,
           onGenerateRoute: (settings) => MaterialPageRoute(
             builder: (ctx) => ChooseProjectsPage(),
             settings: RouteSettings(arguments: false),
@@ -38,6 +39,7 @@ void main() {
         storageService: StorageServiceMock(),
         child: MaterialApp(
           navigatorKey: AppRouter.navigatorKey,
+          theme: mockTheme,
           onGenerateRoute: (settings) => MaterialPageRoute(
             builder: (ctx) => ChooseProjectsPage(),
             settings: RouteSettings(arguments: false),

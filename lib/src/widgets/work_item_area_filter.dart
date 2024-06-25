@@ -81,7 +81,7 @@ class ProjectAreas extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 2.5,
-                backgroundColor: context.colorScheme.onBackground,
+                backgroundColor: context.themeExtension.onBackground,
               ),
               const SizedBox(width: 8),
               Text(area.name),

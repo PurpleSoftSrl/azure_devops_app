@@ -282,7 +282,7 @@ enum _TaskResult {
       case _TaskResult.canceled:
         return Icon(
           DevOpsIcons.cancelled,
-          color: AppRouter.rootNavigator!.context.colorScheme.onBackground,
+          color: AppRouter.rootNavigator!.context.themeExtension.onBackground,
           size: size,
         );
       case _TaskResult.failed:
@@ -294,7 +294,7 @@ enum _TaskResult {
       case _TaskResult.skipped:
         return Icon(
           DevOpsIcons.skipped,
-          color: AppRouter.rootNavigator!.context.colorScheme.onBackground,
+          color: AppRouter.rootNavigator!.context.themeExtension.onBackground,
           size: size,
         );
       case _TaskResult.succeeded:

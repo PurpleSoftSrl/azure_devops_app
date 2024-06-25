@@ -7,8 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 const _lightColorScheme = ColorScheme(
   primary: Color.fromRGBO(51, 118, 205, 1),
   primaryContainer: Color(0xFF74759A),
-  background: Color.fromRGBO(248, 248, 248, 1),
-  onBackground: Color.fromRGBO(25, 25, 25, 1),
   onPrimary: Color(0xFFFFFFFF),
   onSecondary: Color(0xFFA6A6A6),
   secondary: Color.fromRGBO(65, 95, 141, 1),
@@ -25,8 +23,6 @@ const _darkColorScheme = ColorScheme(
   primary: Color.fromRGBO(51, 118, 205, 1),
   onPrimary: Color(0xFFFFFFFF),
   primaryContainer: Color(0xFF74759A),
-  background: Color.fromRGBO(32, 31, 30, 1),
-  onBackground: Color.fromRGBO(214, 214, 214, 1),
   secondary: Color(0xFFE37322),
   onSecondary: Color(0xFFA6A6A6),
   secondaryContainer: Color(0xA5545458),
@@ -37,6 +33,11 @@ const _darkColorScheme = ColorScheme(
   brightness: Brightness.dark,
   tertiaryContainer: Color.fromRGBO(73, 73, 73, 1),
 );
+
+const _lightBackground = Color.fromRGBO(248, 248, 248, 1);
+const _lightOnBackground = Color.fromRGBO(25, 25, 25, 1);
+const _darkBackground = Color.fromRGBO(32, 31, 30, 1);
+const _darkOnBackground = Color.fromRGBO(214, 214, 214, 1);
 
 class AppTheme {
   static double radius = 8;
@@ -79,25 +80,31 @@ class AppTheme {
   static ThemeData _getCustomTheme(ColorScheme colorScheme) {
     final textTheme = _getTextTheme(colorScheme.brightness);
 
+    final themeExtension = AppColorsExtension(
+      background: isLightTheme ? _lightBackground : _darkBackground,
+      onBackground: isLightTheme ? _lightOnBackground : _darkOnBackground,
+    );
+
     return ThemeData(
       useMaterial3: true,
+      extensions: [themeExtension],
       fontFamily: defaultFont,
       textTheme: textTheme,
       primaryTextTheme: textTheme,
       colorScheme: colorScheme,
       brightness: colorScheme.brightness,
-      scaffoldBackgroundColor: colorScheme.background,
+      scaffoldBackgroundColor: themeExtension.background,
       buttonTheme: _getButtonTheme(colorScheme),
-      textButtonTheme: _getTextButtonTheme(textTheme, colorScheme),
+      textButtonTheme: _getTextButtonTheme(textTheme, themeExtension),
       dividerTheme: _getDividerTheme(colorScheme),
-      iconTheme: _getIconTheme(colorScheme),
+      iconTheme: _getIconTheme(themeExtension),
       snackBarTheme: _getSnackbarTheme(colorScheme, textTheme),
       shadowColor: Colors.transparent,
-      appBarTheme: _getAppBarTheme(colorScheme, textTheme),
-      chipTheme: _getChipTheme(textTheme, colorScheme),
+      appBarTheme: _getAppBarTheme(colorScheme, textTheme, themeExtension),
+      chipTheme: _getChipTheme(textTheme, colorScheme, themeExtension),
       dialogTheme: _getDialogTheme(colorScheme),
       bottomSheetTheme: _getBottomSheetTheme(colorScheme),
-      checkboxTheme: _getCheckboxTheme(colorScheme),
+      checkboxTheme: _getCheckboxTheme(colorScheme, themeExtension),
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       hoverColor: Colors.transparent,
@@ -137,8 +144,8 @@ class AppTheme {
     final fsMultiplier = isTablet ? 1.2 : 1.0;
     return TextStyle(
       fontFamily: defaultFont,
-      color: brightness == Brightness.light ? _lightColorScheme.onBackground : _darkColorScheme.onBackground,
-      decorationColor: brightness == Brightness.light ? _lightColorScheme.onBackground : _darkColorScheme.onBackground,
+      color: brightness == Brightness.light ? _lightOnBackground : _darkOnBackground,
+      decorationColor: brightness == Brightness.light ? _lightOnBackground : _darkOnBackground,
       fontWeight: fontWeight,
       fontSize: fsMultiplier * fs,
       height: height == null ? null : height / (fsMultiplier * fs),
@@ -146,17 +153,17 @@ class AppTheme {
     );
   }
 
-  static CheckboxThemeData _getCheckboxTheme(ColorScheme colorScheme) {
+  static CheckboxThemeData _getCheckboxTheme(ColorScheme colorScheme, AppColorsExtension ext) {
     return CheckboxThemeData(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(6),
       ),
-      fillColor: MaterialStateProperty.resolveWith((states) {
-        return states.contains(MaterialState.selected) ? colorScheme.primary : colorScheme.background;
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        return states.contains(WidgetState.selected) ? colorScheme.primary : ext.background;
       }),
       side: BorderSide(
         width: .5,
-        color: colorScheme.onBackground,
+        color: ext.onBackground,
       ),
     );
   }
@@ -191,25 +198,25 @@ class AppTheme {
     );
   }
 
-  static ChipThemeData _getChipTheme(TextTheme textTheme, ColorScheme colorScheme) {
+  static ChipThemeData _getChipTheme(TextTheme textTheme, ColorScheme colorScheme, AppColorsExtension ext) {
     return ChipThemeData(
       padding: EdgeInsets.only(left: 10, right: 10),
       labelPadding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
       side: BorderSide(color: Colors.transparent),
-      labelStyle: textTheme.labelSmall!.copyWith(color: colorScheme.onBackground),
+      labelStyle: textTheme.labelSmall!.copyWith(color: ext.onBackground),
       backgroundColor: colorScheme.tertiaryContainer,
     );
   }
 
-  static AppBarTheme _getAppBarTheme(ColorScheme colorScheme, TextTheme textTheme) {
+  static AppBarTheme _getAppBarTheme(ColorScheme colorScheme, TextTheme textTheme, AppColorsExtension ext) {
     return AppBarTheme(
       elevation: 0,
-      color: colorScheme.background,
-      titleTextStyle: textTheme.titleLarge!.copyWith(color: colorScheme.onBackground),
+      color: ext.background,
+      titleTextStyle: textTheme.titleLarge!.copyWith(color: ext.onBackground),
       centerTitle: true,
       shadowColor: colorScheme.primary,
-      iconTheme: IconThemeData(color: colorScheme.onBackground),
+      iconTheme: IconThemeData(color: ext.onBackground),
     );
   }
 
@@ -222,9 +229,9 @@ class AppTheme {
     );
   }
 
-  static IconThemeData _getIconTheme(ColorScheme colorScheme) {
+  static IconThemeData _getIconTheme(AppColorsExtension ext) {
     return IconThemeData(
-      color: colorScheme.onBackground,
+      color: ext.onBackground,
       size: isTablet ? 30 : 20,
     );
   }
@@ -236,13 +243,13 @@ class AppTheme {
     );
   }
 
-  static TextButtonThemeData _getTextButtonTheme(TextTheme textTheme, ColorScheme colorScheme) {
+  static TextButtonThemeData _getTextButtonTheme(TextTheme textTheme, AppColorsExtension ext) {
     return TextButtonThemeData(
       style: ButtonStyle(
-        textStyle: MaterialStatePropertyAll(textTheme.labelLarge),
-        foregroundColor: MaterialStatePropertyAll(colorScheme.onBackground),
-        padding: MaterialStatePropertyAll(EdgeInsets.all(10)),
-        shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+        textStyle: WidgetStatePropertyAll(textTheme.labelLarge),
+        foregroundColor: WidgetStatePropertyAll(ext.onBackground),
+        padding: WidgetStatePropertyAll(EdgeInsets.all(10)),
+        shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
       ),
     );
   }
@@ -256,6 +263,33 @@ class AppTheme {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(radius),
       ),
+    );
+  }
+}
+
+class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
+  AppColorsExtension({
+    required this.background,
+    required this.onBackground,
+  });
+
+  final Color background;
+  final Color onBackground;
+
+  @override
+  ThemeExtension<AppColorsExtension> copyWith() {
+    return this;
+  }
+
+  @override
+  ThemeExtension<AppColorsExtension> lerp(ThemeExtension<AppColorsExtension>? other, double t) {
+    if (other is! AppColorsExtension) {
+      return this;
+    }
+
+    return AppColorsExtension(
+      background: Color.lerp(background, other.background, t) ?? background,
+      onBackground: Color.lerp(onBackground, other.onBackground, t) ?? onBackground,
     );
   }
 }

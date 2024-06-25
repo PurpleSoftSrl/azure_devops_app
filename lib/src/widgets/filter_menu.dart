@@ -142,7 +142,7 @@ class FilterMenu<T> extends StatelessWidget {
           Flexible(
             child: Text(
               chipLabel,
-              style: context.textTheme.bodySmall!.copyWith(color: context.colorScheme.onBackground, height: 1),
+              style: context.textTheme.bodySmall!.copyWith(color: context.themeExtension.onBackground, height: 1),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -152,7 +152,7 @@ class FilterMenu<T> extends StatelessWidget {
           ),
           Icon(
             Icons.keyboard_arrow_down_outlined,
-            color: context.colorScheme.onBackground,
+            color: context.themeExtension.onBackground,
           ),
         ],
       ),
@@ -268,8 +268,8 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                             height: 30,
                             child: TextButton(
                               style: Theme.of(context).textButtonTheme.style!.copyWith(
-                                    backgroundColor: MaterialStatePropertyAll(context.colorScheme.primary),
-                                    padding: MaterialStatePropertyAll(EdgeInsets.zero),
+                                    backgroundColor: WidgetStatePropertyAll(context.colorScheme.primary),
+                                    padding: WidgetStatePropertyAll(EdgeInsets.zero),
                                   ),
                               onPressed: () {
                                 onSelectedMultiple?.call(selectedValues.value);
@@ -409,10 +409,10 @@ class _FiltersActionsMenu extends StatelessWidget {
             ),
             CircleAvatar(
               radius: 10,
-              backgroundColor: context.colorScheme.onBackground,
+              backgroundColor: context.themeExtension.onBackground,
               child: Text(
                 selectedFiltersCount.toString(),
-                style: context.textTheme.labelSmall!.copyWith(color: context.colorScheme.background, height: 1),
+                style: context.textTheme.labelSmall!.copyWith(color: context.themeExtension.background, height: 1),
               ),
             ),
           ],

@@ -183,7 +183,7 @@ class _HomeController with AppLogger {
                       children: [
                         CircleAvatar(
                           radius: 2,
-                          backgroundColor: context.colorScheme.onBackground,
+                          backgroundColor: context.themeExtension.onBackground,
                         ),
                         const SizedBox(
                           width: 8,

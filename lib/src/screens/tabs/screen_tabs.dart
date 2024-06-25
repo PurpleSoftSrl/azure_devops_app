@@ -18,8 +18,8 @@ class _TabsScreen extends StatelessWidget {
           builder: (_) => CupertinoTabScaffold(
             controller: ctrl.tabController,
             tabBar: CupertinoTabBar(
-              backgroundColor: context.colorScheme.background,
-              activeColor: context.colorScheme.onBackground,
+              backgroundColor: context.themeExtension.background,
+              activeColor: context.themeExtension.onBackground,
               inactiveColor: context.colorScheme.onSecondary.withOpacity(.4),
               key: ctrl.tabKey,
               onTap: ctrl.goToTab,

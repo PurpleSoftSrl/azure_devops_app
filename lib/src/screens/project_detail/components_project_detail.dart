@@ -20,7 +20,7 @@ class _StatsChip extends StatelessWidget {
             children: [
               TextSpan(
                 text: '$name    ',
-                style: context.textTheme.labelMedium!.copyWith(color: context.colorScheme.onBackground),
+                style: context.textTheme.labelMedium!.copyWith(color: context.themeExtension.onBackground),
               ),
               TextSpan(
                 text: value,

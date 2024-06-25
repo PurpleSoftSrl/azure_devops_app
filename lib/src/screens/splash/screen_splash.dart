@@ -10,7 +10,7 @@ class _SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ColoredBox(
-        color: context.colorScheme.background,
+        color: context.themeExtension.background,
         child: AppPage.empty(
           init: ctrl.init,
           builder: (_) => Center(

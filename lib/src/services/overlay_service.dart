@@ -24,7 +24,7 @@ class OverlayService {
       routeSettings: RouteSettings(name: 'alert_${title}_$description'),
       builder: (ctx) => Center(
         child: AlertDialog(
-          surfaceTintColor: context.colorScheme.background,
+          surfaceTintColor: context.themeExtension.background,
           title: Text(
             title,
             style: context.textTheme.headlineSmall,
@@ -48,8 +48,8 @@ class OverlayService {
                     child: TextButton(
                       onPressed: AppRouter.popRoute,
                       style: ButtonStyle(
-                        foregroundColor: MaterialStatePropertyAll(context.colorScheme.onPrimary),
-                        backgroundColor: MaterialStatePropertyAll(Colors.transparent),
+                        foregroundColor: WidgetStatePropertyAll(context.colorScheme.onPrimary),
+                        backgroundColor: WidgetStatePropertyAll(Colors.transparent),
                       ),
                       child: Text(
                         'Cancel',
@@ -67,8 +67,8 @@ class OverlayService {
                         AppRouter.popRoute();
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(context.colorScheme.primary),
-                        foregroundColor: MaterialStatePropertyAll(context.colorScheme.onPrimary),
+                        backgroundColor: WidgetStatePropertyAll(context.colorScheme.primary),
+                        foregroundColor: WidgetStatePropertyAll(context.colorScheme.onPrimary),
                       ),
                       child: Text(
                         'Confirm',
@@ -95,7 +95,7 @@ class OverlayService {
       routeSettings: RouteSettings(name: 'alert_${title}_$description'),
       builder: (ctx) => Center(
         child: AlertDialog(
-          surfaceTintColor: context.colorScheme.background,
+          surfaceTintColor: context.themeExtension.background,
           title: Text(
             title,
             style: context.textTheme.headlineSmall,
@@ -116,8 +116,8 @@ class OverlayService {
               TextButton(
                 onPressed: AppRouter.popRoute,
                 style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(context.colorScheme.primary),
-                  foregroundColor: MaterialStatePropertyAll(context.colorScheme.onPrimary),
+                  backgroundColor: WidgetStatePropertyAll(context.colorScheme.primary),
+                  foregroundColor: WidgetStatePropertyAll(context.colorScheme.onPrimary),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -148,7 +148,7 @@ class OverlayService {
   }) async {
     await showModalBottomSheet(
       context: context,
-      backgroundColor: context.colorScheme.background,
+      backgroundColor: context.themeExtension.background,
       useRootNavigator: true,
       isDismissible: isDismissible,
       isScrollControlled: isScrollControlled,
@@ -161,7 +161,7 @@ class OverlayService {
         child: Container(
           height: context.height * heightPercentage,
           decoration: BoxDecoration(
-            color: context.colorScheme.background,
+            color: context.themeExtension.background,
           ),
           child: Scaffold(
             body: Padding(
@@ -261,7 +261,7 @@ class OverlayService {
             hasConfirmed = true;
             AppRouter.popRoute();
           },
-          style: TextButtonTheme.of(context).style!.copyWith(padding: MaterialStatePropertyAll(EdgeInsets.zero)),
+          style: TextButtonTheme.of(context).style!.copyWith(padding: WidgetStatePropertyAll(EdgeInsets.zero)),
           child: Text(
             'Confirm',
             style: context.textTheme.bodyMedium!.copyWith(color: context.colorScheme.primary),

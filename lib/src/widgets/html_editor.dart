@@ -54,7 +54,7 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
     final ctx = widget.editorGlobalKey.currentContext;
     if (ctx == null) return;
 
-    if (!mounted) return;
+    if (!ctx.mounted) return;
 
     await Scrollable.of(ctx).position.ensureVisible(
           ctx.findRenderObject()!,

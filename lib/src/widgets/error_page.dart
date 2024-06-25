@@ -16,7 +16,7 @@ class ErrorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       child: ColoredBox(
-        color: context.colorScheme.background,
+        color: context.themeExtension.background,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

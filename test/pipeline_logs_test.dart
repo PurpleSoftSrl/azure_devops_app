@@ -13,6 +13,7 @@ void main() {
     final pipelineLogsPage = AzureApiServiceInherited(
       apiService: AzureApiServiceMock(),
       child: MaterialApp(
+        theme: mockTheme,
         onGenerateRoute: (_) => MaterialPageRoute(
           builder: (_) => PipelineLogsPage(),
           settings: RouteSettings(

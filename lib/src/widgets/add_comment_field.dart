@@ -87,7 +87,7 @@ class _AddCommentFieldState extends State<AddCommentField> with SingleTickerProv
                         hint: 'Add comment',
                         enabled: false,
                         maxLines: 2,
-                        fillColor: context.colorScheme.background,
+                        fillColor: context.themeExtension.background,
                       ),
                     ),
                   ),
@@ -133,7 +133,7 @@ Future<bool> showEditor(
                   confirm = true;
                   AppRouter.popRoute();
                 },
-                style: ButtonStyle(padding: MaterialStatePropertyAll(EdgeInsets.zero)),
+                style: ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.zero)),
                 child: Text(
                   'Confirm',
                   style: context.textTheme.bodyMedium!.copyWith(color: context.colorScheme.primary),
