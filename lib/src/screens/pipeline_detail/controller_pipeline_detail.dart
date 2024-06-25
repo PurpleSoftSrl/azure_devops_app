@@ -247,3 +247,11 @@ class _Job {
   final Record job;
   final List<Record> tasks;
 }
+
+extension on Record {
+  String getRunTime() {
+    if (startTime == null) return '';
+
+    return (finishTime ?? DateTime.now()).timeDifference(startTime!);
+  }
+}

@@ -198,45 +198,14 @@ class _PipelineDetailScreen extends StatelessWidget {
                                   (stage) => Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      if (stage.stage.name != '__default')
-                                        Row(
-                                          children: [
-                                            if (stage.stage.state == TaskStatus.inProgress)
-                                              InProgressPipelineIcon(
-                                                child: stage.stage.state.icon,
-                                              )
-                                            else
-                                              stage.stage.state == TaskStatus.completed && stage.stage.result != null
-                                                  ? stage.stage.result!.icon
-                                                  : stage.stage.state.icon,
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Expanded(child: Text('${stage.stage.name} (${stage.stage.type})')),
-                                          ],
-                                        ),
+                                      if (stage.stage.name != '__default') _StageRow(stage: stage.stage),
                                       ...stage.phases.expand((phase) => phase.jobs).map(
                                             (job) => Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Padding(
                                                   padding: const EdgeInsets.only(left: 10, top: 5),
-                                                  child: Row(
-                                                    children: [
-                                                      if (job.job.state == TaskStatus.inProgress)
-                                                        InProgressPipelineIcon(
-                                                          child: job.job.state.icon,
-                                                        )
-                                                      else
-                                                        job.job.state == TaskStatus.completed && job.job.result != null
-                                                            ? job.job.result!.icon
-                                                            : job.job.state.icon,
-                                                      const SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      Expanded(child: Text('${job.job.name} (${job.job.type})')),
-                                                    ],
-                                                  ),
+                                                  child: _JobRow(job: job.job),
                                                 ),
                                                 const SizedBox(
                                                   height: 5,
@@ -246,30 +215,7 @@ class _PipelineDetailScreen extends StatelessWidget {
                                                     onTap: () => ctrl.seeLogs(task),
                                                     child: Padding(
                                                       padding: const EdgeInsets.only(bottom: 5, left: 20),
-                                                      child: Row(
-                                                        children: [
-                                                          if (task.state == TaskStatus.inProgress)
-                                                            InProgressPipelineIcon(
-                                                              child: task.state.icon,
-                                                            )
-                                                          else
-                                                            task.state == TaskStatus.completed && task.result != null
-                                                                ? task.result!.icon
-                                                                : task.state.icon,
-                                                          const SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Expanded(
-                                                            child: Text(
-                                                              task.name,
-                                                              style: context.textTheme.titleSmall!.copyWith(
-                                                                decoration: TextDecoration.underline,
-                                                              ),
-                                                              overflow: TextOverflow.ellipsis,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
+                                                      child: _TaskRow(task: task),
                                                     ),
                                                   ),
                                                 ),

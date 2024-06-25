@@ -28,4 +28,22 @@ extension PurpleDateTime on DateTime {
     final now = DateTime.now();
     return year == now.year && month == now.month && day == now.day;
   }
+
+  String timeDifference(DateTime other) {
+    final diff = difference(other);
+
+    if (diff.inHours > 0) {
+      return '${diff.inHours}h ${diff.inMinutes % 60}m';
+    }
+
+    if (diff.inMinutes > 0) {
+      return '${diff.inMinutes}m ${diff.inSeconds % 60}s';
+    }
+
+    if (diff.inSeconds > 0) {
+      return '${diff.inSeconds}s';
+    }
+
+    return '-';
+  }
 }
