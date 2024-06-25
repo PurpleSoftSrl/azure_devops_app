@@ -171,10 +171,23 @@ class _CommentWidget extends StatelessWidget {
             const SizedBox(
               height: 5,
             ),
-            HtmlWidget(
-              data: update.text,
-              padding: const EdgeInsets.all(3),
-            ),
+            if (update.format == 'markdown')
+              Padding(
+                padding: const EdgeInsets.only(left: 8, bottom: 8, right: 8),
+                child: MarkdownBody(
+                  data: update.text,
+                  styleSheet:
+                      MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.labelMedium),
+                  onTapLink: (_, url, ___) async {
+                    if (await canLaunchUrlString(url!)) await launchUrlString(url);
+                  },
+                ),
+              )
+            else if (update.format == 'html')
+              HtmlWidget(
+                data: update.text,
+                padding: const EdgeInsets.all(3),
+              ),
             const SizedBox(
               height: 4,
             ),

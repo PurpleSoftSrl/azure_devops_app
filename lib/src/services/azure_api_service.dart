@@ -1053,6 +1053,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
           workItemId: c.workItemId,
           text: c.text,
           isEdited: c.createdDate.isBefore(c.modifiedDate),
+          format: c.format,
         ),
       ),
       ...updates.where((u) => u.hasSupportedChanges).map(

@@ -355,12 +355,14 @@ class CommentItemUpdate extends ItemUpdate {
     required this.id,
     required this.text,
     this.isEdited = false,
+    required this.format,
   });
 
   final int workItemId;
   final int id;
   final String text;
   final bool isEdited;
+  final String format;
 }
 
 final class UpdateUser {

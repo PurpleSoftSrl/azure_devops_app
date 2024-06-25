@@ -37,6 +37,7 @@ class Comment {
     required this.createdDate,
     required this.modifiedBy,
     required this.modifiedDate,
+    required this.format,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) => Comment(
@@ -48,6 +49,7 @@ class Comment {
         createdDate: DateTime.parse(json['createdDate']!.toString()).toLocal(),
         modifiedBy: EdBy.fromJson(json['modifiedBy'] as Map<String, dynamic>),
         modifiedDate: DateTime.parse(json['modifiedDate']!.toString()).toLocal(),
+        format: json['format'] as String,
       );
 
   final int workItemId;
@@ -58,6 +60,7 @@ class Comment {
   final DateTime createdDate;
   final EdBy modifiedBy;
   final DateTime modifiedDate;
+  final String format;
 }
 
 class EdBy {
