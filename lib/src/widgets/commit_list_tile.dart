@@ -25,7 +25,7 @@ class CommitListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtitleStyle = context.textTheme.bodySmall!.copyWith(height: 1);
+    final subtitleStyle = context.textTheme.bodySmall!;
     return InkWell(
       key: ValueKey('commit_${commit.commitId?.substring(0, 6)}'),
       onTap: onTap,
@@ -36,7 +36,7 @@ class CommitListTile extends StatelessWidget {
             title: Text(
               '${commit.comment}',
               overflow: TextOverflow.ellipsis,
-              style: context.textTheme.labelLarge!.copyWith(height: 1),
+              style: context.textTheme.labelLarge,
             ),
             subtitle: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
