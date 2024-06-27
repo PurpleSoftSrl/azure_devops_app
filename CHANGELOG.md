@@ -1,3 +1,12 @@
+## 2.4.0 - 2024-06-27
+- (HEAD -> main, origin/main, origin/HEAD) fix commit message text vertically cut
+- pipelines: show task/job/stage execution time in timeline
+- github_actions: upgrade Flutter version
+- theme: fix deprecated members and update tests
+- work_items: handle markdown comments
+- upgrade to Flutter 3.22.2
+- updated tests with Page building test (#36)
+
 ## 2.3.0 - 2024-01-26
 - fix android back button handling (2)
 - upgrade to flutter 3.16.7 and upgrade dependencies
