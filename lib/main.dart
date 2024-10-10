@@ -44,7 +44,7 @@ Future<void> main() async {
             if (kDebugMode) return null;
             return 1;
           }
-          ..beforeSend = (evt, {hint}) {
+          ..beforeSend = (evt, hint) {
             if (kDebugMode) {
               log('[sentry] ${evt.exceptions?.firstOrNull?.value}');
               return null;

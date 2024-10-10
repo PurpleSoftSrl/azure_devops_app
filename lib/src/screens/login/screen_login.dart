@@ -10,7 +10,7 @@ class _LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) => AppRouter.askBeforeClosingApp(didPop: didPop),
+      onPopInvokedWithResult: (didPop, _) => AppRouter.askBeforeClosingApp(didPop: didPop),
       child: AppPage(
         init: () async => true,
         title: 'Az DevOps',

@@ -10,7 +10,7 @@ class _TabsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) => ctrl.popTab(didPop: didPop),
+      onPopInvokedWithResult: (didPop, _) => ctrl.popTab(didPop: didPop),
       child: ScrollConfiguration(
         behavior: ScrollBehavior(),
         child: AppPage.empty(

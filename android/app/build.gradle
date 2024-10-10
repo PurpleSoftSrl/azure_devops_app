@@ -40,8 +40,9 @@ if (project.hasProperty('dart-defines')) {
 }
 
 android {
+    namespace 'io.purplesoft.azuredevops'
+
     compileSdkVersion 34
-    ndkVersion flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -82,6 +83,7 @@ android {
         release {
            signingConfig signingConfigs.release
            manifestPlaceholders.msalProdPath = dartEnvironmentVariables.MSAL_PROD_PATH + "="
+           proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
