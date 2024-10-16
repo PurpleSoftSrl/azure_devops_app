@@ -149,6 +149,36 @@ class _WorkItemDetailScreen extends StatelessWidget {
                     style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                   ),
                   Text(detail.fields.systemTitle),
+                  if (detail.fields.systemTags != null) ...[
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Tags',
+                      style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final tag in detail.fields.systemTags!.split(';'))
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: context.colorScheme.secondaryContainer,
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                            child: Text(
+                              tag.trim(),
+                              style: context.textTheme.titleSmall!.copyWith(height: 1),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
                   if (detail.fields.systemAssignedTo != null) ...[
                     const SizedBox(
                       height: 20,
