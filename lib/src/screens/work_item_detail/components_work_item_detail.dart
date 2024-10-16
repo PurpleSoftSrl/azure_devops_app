@@ -177,8 +177,14 @@ class _CommentWidget extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 8, bottom: 8, right: 8),
                 child: MarkdownBody(
                   data: update.text,
-                  styleSheet:
-                      MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.labelMedium),
+                  styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+                    p: context.textTheme.labelMedium,
+                    a: context.textTheme.labelMedium!.copyWith(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.blue,
+                    ),
+                  ),
                   onTapLink: (_, url, ___) async {
                     if (await canLaunchUrlString(url!)) await launchUrlString(url);
                   },

@@ -119,7 +119,11 @@ class HtmlWidget extends StatelessWidget {
 
             final linkChild = Text(
               innerHtml,
-              style: effectiveStyle.copyWith(color: Colors.blue, decoration: TextDecoration.underline),
+              style: effectiveStyle.copyWith(
+                color: Colors.blue,
+                decoration: TextDecoration.underline,
+                decorationColor: Colors.blue,
+              ),
             );
 
             final mention = ctx.attributes['data-vss-mention'];
