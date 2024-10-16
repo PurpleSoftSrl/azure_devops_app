@@ -17,4 +17,12 @@ extension WorkItemUpdateExt on WorkItemUpdate {
         (relations != null && relations!.removed != null && relations!.removed!.any((r) => r.rel == 'AttachedFile')) ||
         (relations != null && relations!.updated != null && relations!.updated!.any((r) => r.rel == 'AttachedFile'));
   }
+
+  bool get hasLinks {
+    final regexp = RegExp('System.LinkTypes|Microsoft.VSTS.Common.TestedBy');
+    final hasAddedLinks = relations?.added?.firstOrNull?.rel?.startsWith(regexp) ?? false;
+    final hasUpdatedLinks = relations?.updated?.firstOrNull?.rel?.startsWith(regexp) ?? false;
+    final hasRemovedLinks = relations?.removed?.firstOrNull?.rel?.startsWith(regexp) ?? false;
+    return hasAddedLinks || hasUpdatedLinks || hasRemovedLinks;
+  }
 }

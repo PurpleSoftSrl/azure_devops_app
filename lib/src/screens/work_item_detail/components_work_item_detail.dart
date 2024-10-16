@@ -17,6 +17,7 @@ class _History extends StatelessWidget {
                 switch (update) {
                   SimpleItemUpdate() => _SimpleUpdateWidget(ctrl: ctrl, update: update),
                   CommentItemUpdate() => _CommentWidget(ctrl: ctrl, update: update),
+                  LinkUpdate() => _LinkWidget(ctrl: ctrl, update: update),
                 },
                 if (update != updates.last) const Divider(height: 30),
               ],
@@ -255,6 +256,112 @@ class _AttachmentRow extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _LinkWidget extends StatelessWidget {
+  const _LinkWidget({required this.ctrl, required this.update});
+
+  final _WorkItemDetailController ctrl;
+  final LinkUpdate update;
+
+  @override
+  Widget build(BuildContext context) {
+    final relations = update.relations;
+    final addedLinks = relations.added ?? <Relation>[];
+    final removedLinks = relations.removed ?? <Relation>[];
+    return DefaultTextStyle(
+      style: context.textTheme.labelSmall!.copyWith(
+        fontFamily: AppTheme.defaultFont,
+        fontWeight: FontWeight.w200,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              MemberAvatar(userDescriptor: update.updatedBy.descriptor, radius: 15),
+              const SizedBox(width: 10),
+              Text(
+                update.updatedBy.displayName,
+                style: context.textTheme.titleSmall,
+              ),
+              const Spacer(),
+              Text(update.updateDate.minutesAgo),
+            ],
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          for (final link in addedLinks) ...[
+            _LinkRow(
+              link: link,
+              ctrl: ctrl,
+            ),
+            if (link != addedLinks.last) const SizedBox(height: 5),
+          ],
+          if (removedLinks.isNotEmpty)
+            const SizedBox(
+              height: 5,
+            ),
+          for (final link in removedLinks) ...[
+            _LinkRow(
+              link: link,
+              ctrl: ctrl,
+              isRemoved: true,
+            ),
+            if (link != removedLinks.last) const SizedBox(height: 5),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _LinkRow extends StatelessWidget {
+  const _LinkRow({
+    required this.link,
+    required this.ctrl,
+    this.isRemoved = false,
+  });
+
+  final Relation link;
+  final _WorkItemDetailController ctrl;
+  final bool isRemoved;
+
+  @override
+  Widget build(BuildContext context) {
+    return Builder(
+      builder: (ctx) {
+        final linkedItem = link.url?.split('/').lastOrNull;
+        final type = link.attributes?.name;
+        final comment = link.attributes?.comment;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(text: isRemoved ? 'Removed link ' : 'Linked work item '),
+                  TextSpan(
+                    text: '#$linkedItem',
+                    style: ctx.textTheme.labelSmall!.copyWith(
+                      decoration: TextDecoration.underline,
+                      color: Colors.blue,
+                      decorationColor: Colors.blue,
+                    ),
+                    recognizer: TapGestureRecognizer()..onTap = () => ctrl.openLinkedWorkItem(linkedItem!, link),
+                  ),
+                  WidgetSpan(child: const SizedBox(width: 10)),
+                  TextSpan(text: '($type)'),
+                ],
+              ),
+            ),
+            if (comment != null) Text(comment),
+          ],
+        );
+      },
     );
   }
 }

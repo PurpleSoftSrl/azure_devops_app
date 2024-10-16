@@ -300,21 +300,24 @@ class _Attributes {
     this.id,
     this.resourceSize,
     this.name,
+    this.comment,
   });
 
   factory _Attributes.fromJson(Map<String, dynamic> json) => _Attributes(
         id: json['id'] as int?,
         resourceSize: json['resourceSize'] as int?,
         name: json['name'] as String?,
+        comment: json['comment'] as String?,
       );
 
   final int? id;
   final int? resourceSize;
   final String? name;
+  final String? comment;
 
   @override
   String toString() {
-    return '_Attributes(id: $id, resourceSize: $resourceSize, name: $name)';
+    return '_Attributes(id: $id, resourceSize: $resourceSize, name: $name, comment: $comment)';
   }
 }
 
@@ -363,6 +366,16 @@ class CommentItemUpdate extends ItemUpdate {
   final String text;
   final bool isEdited;
   final String format;
+}
+
+class LinkUpdate extends ItemUpdate {
+  LinkUpdate({
+    required super.updateDate,
+    required super.updatedBy,
+    required this.relations,
+  });
+
+  WorkItemRelations relations;
 }
 
 final class UpdateUser {

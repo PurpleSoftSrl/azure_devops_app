@@ -960,7 +960,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (processesRes.isError) return ApiResponse.error(null);
 
     final processes = GetProcessesResponse.fromResponse(processesRes).where((p) => p.projects.isNotEmpty).toList();
-    final projectProcess = processes.firstWhere((p) => p.projects.any((proj) => proj.name == projectName));
+    final projectProcess =
+        processes.firstWhere((p) => p.projects.any((proj) => proj.name == projectName || proj.id == projectName));
 
     final isInheritedProcess = projectProcess.customizationType == 'inherited';
     if (isInheritedProcess) {
@@ -1072,6 +1073,16 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
               effort: u.fields?.microsoftVstsSchedulingEffort,
               title: u.fields?.systemTitle,
               relations: u.relations,
+            ),
+          ),
+      ...updates.where((u) => (u.hasLinks)).map(
+            (u) => LinkUpdate(
+              updateDate: u.revisedDate,
+              updatedBy: UpdateUser(
+                descriptor: u.revisedBy.descriptor ?? '',
+                displayName: u.revisedBy.displayName ?? '',
+              ),
+              relations: u.relations!,
             ),
           ),
     ]..sort((a, b) {

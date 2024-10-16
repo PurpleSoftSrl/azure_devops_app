@@ -254,4 +254,17 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
       (f) => jsonFields[f.referenceName] != null && jsonFields[f.referenceName]!.toString().isNotEmpty,
     );
   }
+
+  void openLinkedWorkItem(String id, Relation relation) {
+    final url = relation.url;
+    if (url == null) return;
+
+    final project = url.substring(0, url.indexOf('/_apis')).split('/').lastOrNull;
+    if (project == null) return;
+
+    final parsedId = int.tryParse(id);
+    if (parsedId == null) return;
+
+    AppRouter.goToWorkItemDetail(project: project, id: parsedId);
+  }
 }
