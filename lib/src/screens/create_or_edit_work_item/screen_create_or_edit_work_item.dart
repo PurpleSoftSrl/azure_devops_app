@@ -194,6 +194,79 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
+          if (ctrl.newWorkItemProject != ctrl.projectAll || ctrl.isEditing)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(
+                    'Tags:',
+                    style: style,
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Flexible(
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      for (final tag in ctrl._newWorkItemTags.sortedBy((t) => t.toLowerCase()))
+                        Container(
+                          height: 24,
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: context.colorScheme.secondaryContainer,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                tag,
+                                style: context.textTheme.labelSmall!.copyWith(height: 1),
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              GestureDetector(
+                                onTap: () => ctrl.removeTag(tag),
+                                child: Icon(
+                                  DevOpsIcons.failedsolid,
+                                  size: 14,
+                                  color: context.colorScheme.onSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      CircleAvatar(
+                        backgroundColor: context.colorScheme.tertiaryContainer,
+                        radius: 12,
+                        child: IconButton(
+                          onPressed: ctrl.addTag,
+                          padding: EdgeInsets.zero,
+                          icon: Icon(
+                            DevOpsIcons.plus,
+                            size: 18,
+                            color: context.themeExtension.onBackground,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          const SizedBox(
+            height: 20,
+          ),
           DevOpsFormField(
             initialValue: ctrl.newWorkItemTitle,
             onChanged: ctrl.onTitleChanged,

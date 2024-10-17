@@ -46,6 +46,12 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   AreaOrIteration? newWorkItemArea;
   AreaOrIteration? newWorkItemIteration;
 
+  /// Tags available for the project
+  final _projectTags = ValueNotifier<Set<String>?>(null);
+
+  /// Tags added to this work item
+  Set<String> _newWorkItemTags = {};
+
   bool get isEditing => args.id != null;
   WorkItem? editingWorkItem;
 
@@ -119,6 +125,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     newWorkItemArea = AreaOrIteration.onlyPath(path: fields.systemAreaPath);
     newWorkItemIteration = AreaOrIteration.onlyPath(path: fields.systemIterationPath);
+
+    if (fields.systemTags != null) {
+      _newWorkItemTags = fields.systemTags!.split(';').map((t) => t.trim()).toSet();
+    }
   }
 
   Future<void> setType(WorkItemType type) async {
@@ -345,6 +355,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       state: newWorkItemState?.name,
       area: newWorkItemArea,
       iteration: newWorkItemIteration,
+      tags: _newWorkItemTags.toList(),
       formFields: {for (final field in formFields.entries) field.key: field.value.text},
     );
     return res;
@@ -359,6 +370,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       description: newWorkItemDescription,
       area: newWorkItemArea,
       iteration: newWorkItemIteration,
+      tags: _newWorkItemTags.toList(),
       formFields: {for (final field in formFields.entries) field.key: field.value.text},
     );
     return res;
@@ -607,6 +619,67 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     final loweredQuery = query.toLowerCase().trim();
     final users = getAssignees();
     return users.where((u) => u.displayName != null && u.displayName!.toLowerCase().contains(loweredQuery)).toList();
+  }
+
+  void addTag() {
+    // ignore: unawaited_futures, reason: to show a loader inside the bottomsheet while getting tags
+    _getProjectTags();
+
+    OverlayService.bottomsheet(
+      title: 'Add tags',
+      heightPercentage: .7,
+      isScrollControlled: true,
+      builder: (context) => _AddTagBottomsheet(
+        projectTags: _projectTags,
+        addExistingTag: _addExistingTag,
+        addNewTag: _addNewTag,
+        workItemTags: _newWorkItemTags,
+      ),
+    );
+  }
+
+  Future<void> _getProjectTags() {
+    return apiService.getProjectTags(projectName: newWorkItemProject.name!).then((res) {
+      if (res.isError) {
+        return OverlayService.snackbar('Could not get tags for project ${newWorkItemProject.name}', isError: true);
+      }
+
+      _projectTags.value = {
+        if (_projectTags.value != null) ..._projectTags.value!,
+        ...res.data!.map((t) => t.name).toSet(),
+      };
+    });
+  }
+
+  void _addExistingTag(String t) {
+    if (_newWorkItemTags.contains(t)) {
+      _newWorkItemTags.remove(t);
+    } else {
+      _newWorkItemTags.add(t);
+    }
+
+    _projectTags.value = {..._projectTags.value!};
+    _setHasChanged();
+  }
+
+  bool _addNewTag(String tagToAdd) {
+    if (tagToAdd.isEmpty) return false;
+
+    if (_projectTags.value!.contains(tagToAdd)) {
+      _addExistingTag(tagToAdd);
+    } else {
+      _newWorkItemTags.add(tagToAdd);
+      _projectTags.value = {..._projectTags.value!, tagToAdd};
+    }
+
+    _setHasChanged();
+
+    return true;
+  }
+
+  void removeTag(String tag) {
+    _newWorkItemTags.remove(tag);
+    _setHasChanged();
   }
 }
 

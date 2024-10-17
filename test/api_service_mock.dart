@@ -22,6 +22,7 @@ import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_member.dart' as t;
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/work_item_fields.dart';
+import 'package:azure_devops/src/models/work_item_tags.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
@@ -444,6 +445,11 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
+  Future<ApiResponse<List<WorkItemTag>>> getProjectTags({required String projectName}) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<ApiResponse<PipelineWithTimeline>> getPipeline({required String projectName, required int id}) async {
     return ApiResponse.ok(
       PipelineWithTimeline(
@@ -575,6 +581,7 @@ class AzureApiServiceMock implements AzureApiService {
     required String description,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    List<String> tags = const [],
     required Map<String, String> formFields,
   }) {
     throw UnimplementedError();
@@ -591,6 +598,7 @@ class AzureApiServiceMock implements AzureApiService {
     String? state,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    List<String> tags = const [],
     required Map<String, String> formFields,
   }) {
     throw UnimplementedError();

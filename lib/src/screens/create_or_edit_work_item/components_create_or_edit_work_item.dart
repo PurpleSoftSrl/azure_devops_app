@@ -173,3 +173,84 @@ class _DefaultFormField extends StatelessWidget {
     );
   }
 }
+
+class _AddTagBottomsheet extends StatelessWidget {
+  _AddTagBottomsheet({
+    required this.projectTags,
+    required this.workItemTags,
+    required this.addExistingTag,
+    required this.addNewTag,
+  });
+
+  final ValueNotifier<Set<String>?> projectTags;
+  final Set<String> workItemTags;
+  final void Function(String) addExistingTag;
+  final bool Function(String) addNewTag;
+
+  final newTagController = TextEditingController();
+
+  void _onSubmit() {
+    final tagToAdd = newTagController.text.trim();
+    final res = addNewTag(tagToAdd);
+
+    if (res) newTagController.clear();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        DevOpsFormField(
+          label: 'New tag',
+          maxLines: 1,
+          onChanged: (s) => true,
+          controller: newTagController,
+          validator: (_) => null,
+          suffix: ValueListenableBuilder(
+            valueListenable: newTagController,
+            builder: (_, tagCtrl, ___) => IconButton(
+              onPressed: tagCtrl.text.isEmpty ? null : _onSubmit,
+              color: Colors.blue,
+              disabledColor: Colors.transparent,
+              icon: const Icon(Icons.done),
+            ),
+          ),
+          onFieldSubmitted: _onSubmit,
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        ValueListenableBuilder(
+          valueListenable: projectTags,
+          builder: (_, tags, __) => switch (tags) {
+            null => const CircularProgressIndicator(),
+            [] => const Text('No tags available'),
+            _ => Expanded(
+                child: ListView.separated(
+                  itemCount: tags.length,
+                  separatorBuilder: (_, __) => const Divider(),
+                  itemBuilder: (context, index) {
+                    final t = tags.toList().sortedBy((t) => t.toLowerCase())[index];
+                    return GestureDetector(
+                      onTap: () => addExistingTag(t),
+                      behavior: HitTestBehavior.opaque,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(t),
+                            if (workItemTags.contains(t)) const Icon(DevOpsIcons.success),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+          },
+        ),
+      ],
+    );
+  }
+}

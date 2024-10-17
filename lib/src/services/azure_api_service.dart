@@ -33,6 +33,7 @@ import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/user_entitlements.dart';
 import 'package:azure_devops/src/models/work_item_comments.dart';
 import 'package:azure_devops/src/models/work_item_fields.dart';
+import 'package:azure_devops/src/models/work_item_tags.dart';
 import 'package:azure_devops/src/models/work_item_type_rules.dart';
 import 'package:azure_devops/src/models/work_item_type_with_transitions.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
@@ -124,6 +125,8 @@ abstract class AzureApiService {
     required String fileName,
   });
 
+  Future<ApiResponse<List<WorkItemTag>>> getProjectTags({required String projectName});
+
   Future<ApiResponse<WorkItem>> createWorkItem({
     required String projectName,
     required WorkItemType type,
@@ -132,6 +135,7 @@ abstract class AzureApiService {
     required String description,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    List<String> tags = const [],
     required Map<String, String> formFields,
   });
 
@@ -145,6 +149,7 @@ abstract class AzureApiService {
     String? state,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    List<String> tags = const [],
     required Map<String, String> formFields,
   });
 
@@ -1108,6 +1113,14 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 
   @override
+  Future<ApiResponse<List<WorkItemTag>>> getProjectTags({required String projectName}) async {
+    final tagsRes = await _get('$_basePath/$projectName/_apis/wit/tags');
+    if (tagsRes.isError) return ApiResponse.error(tagsRes);
+
+    return ApiResponse.ok(WorkItemTagsResponse.fromResponse(tagsRes).tags);
+  }
+
+  @override
   Future<ApiResponse<WorkItem>> createWorkItem({
     required String projectName,
     required WorkItemType type,
@@ -1116,6 +1129,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     required String description,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    List<String> tags = const [],
     required Map<String, String> formFields,
   }) async {
     final createRes = await _postList(
@@ -1144,6 +1158,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
             'path': '/fields/System.IterationPath',
             'value': iteration.escapedIterationPath,
           },
+        if (tags.isNotEmpty)
+          {
+            'op': 'add',
+            'value': tags.join(';'),
+            'path': '/fields/System.Tags',
+          },
         for (final field in formFields.entries)
           {
             'op': 'add',
@@ -1170,6 +1190,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     String? state,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    List<String> tags = const [],
     required Map<String, String> formFields,
   }) async {
     final editRes = await _patchList(
@@ -1211,6 +1232,11 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
             'path': '/fields/System.IterationPath',
             'value': iteration.escapedIterationPath,
           },
+        {
+          'op': 'replace',
+          'value': tags.join(';'),
+          'path': '/fields/System.Tags',
+        },
         for (final field in formFields.entries)
           {
             'op': 'add',
