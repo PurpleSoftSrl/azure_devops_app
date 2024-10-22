@@ -1,5 +1,13 @@
+## 2.5.0 - 2024-10-22
+- work_items: add support for adding/removing tags
+- work_items: show tags in detail page
+- work_items: make all html/markdown links blue underlined
+- work_items: show links in history
+- github_actions: update Flutter version
+- upgrade to Flutter 3.24.2 and upgrade dependencies
+
 ## 2.4.0 - 2024-06-27
-- (HEAD -> main, origin/main, origin/HEAD) fix commit message text vertically cut
+- fix commit message text vertically cut
 - pipelines: show task/job/stage execution time in timeline
 - github_actions: upgrade Flutter version
 - theme: fix deprecated members and update tests
