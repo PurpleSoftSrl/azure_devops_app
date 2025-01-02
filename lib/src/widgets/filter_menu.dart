@@ -462,7 +462,8 @@ class WorkItemStateFilterWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: CircleAvatar(
-        backgroundColor: state == WorkItemState.all || color == null ? Colors.transparent : Color(color).withOpacity(1),
+        backgroundColor:
+            state == WorkItemState.all || color == null ? Colors.transparent : Color(color).withValues(alpha: 1),
       ),
     );
   }

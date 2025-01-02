@@ -20,7 +20,7 @@ class _TabsScreen extends StatelessWidget {
             tabBar: CupertinoTabBar(
               backgroundColor: context.themeExtension.background,
               activeColor: context.themeExtension.onBackground,
-              inactiveColor: context.colorScheme.onSecondary.withOpacity(.4),
+              inactiveColor: context.colorScheme.onSecondary.withValues(alpha: .4),
               key: ctrl.tabKey,
               onTap: ctrl.goToTab,
               border: Border(top: BorderSide(color: context.colorScheme.secondaryContainer)),

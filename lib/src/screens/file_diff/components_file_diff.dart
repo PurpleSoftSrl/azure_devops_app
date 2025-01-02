@@ -170,7 +170,8 @@ class _FileDiffHeader extends StatelessWidget {
             Text(file.contentMetadata.fileName),
             Text(
               file.serverItem.startsWith('/') ? file.serverItem.substring(1) : file.serverItem,
-              style: context.textTheme.labelSmall!.copyWith(color: context.themeExtension.onBackground.withOpacity(.6)),
+              style: context.textTheme.labelSmall!
+                  .copyWith(color: context.themeExtension.onBackground.withValues(alpha: .6)),
             ),
           ],
           Row(
@@ -238,7 +239,7 @@ class _RemovedLines extends StatelessWidget {
     var lineNumber = oldLineNumber;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(.4),
+        color: Colors.red.withValues(alpha: .4),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,7 +270,7 @@ class _AddedLines extends StatelessWidget {
     var lineNumber = newLineNumber;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.green.withOpacity(.4),
+        color: Colors.green.withValues(alpha: .4),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

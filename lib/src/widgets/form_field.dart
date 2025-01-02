@@ -69,7 +69,7 @@ class DevOpsFormField extends StatelessWidget {
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         hintText: hint,
-        hintStyle: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSurface.withOpacity(.4)),
+        hintStyle: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSurface.withValues(alpha: .4)),
         fillColor: fillColor ?? context.colorScheme.surface,
         filled: true,
         suffixIcon: suffix,

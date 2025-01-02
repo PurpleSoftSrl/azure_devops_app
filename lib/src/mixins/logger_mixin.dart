@@ -31,7 +31,7 @@ mixin AppLogger {
 
     const prefix = 'az_';
     final prefixedName = name.startsWith('az_') ? name : '$prefix$name';
-    final prefixedParameters = <String, Object?>{};
+    final prefixedParameters = <String, Object>{};
 
     for (final entry in parameters.entries) {
       final oldKey = entry.key;
@@ -39,7 +39,7 @@ mixin AppLogger {
 
       final oldValue = entry.value;
       final value = (oldValue is String || oldValue is num) ? oldValue : oldValue.toString();
-      prefixedParameters.putIfAbsent(prefixedKey, () => value);
+      prefixedParameters.putIfAbsent(prefixedKey, () => value ?? '');
     }
 
     FirebaseAnalytics.instance.logEvent(

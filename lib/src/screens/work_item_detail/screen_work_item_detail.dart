@@ -78,7 +78,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                       Text(
                         detail.fields.systemState,
                         style: context.textTheme.titleSmall!.copyWith(
-                          color: state == null ? null : Color(int.parse(state.color, radix: 16)).withOpacity(1),
+                          color: state == null ? null : Color(int.parse(state.color, radix: 16)).withValues(alpha: 1),
                         ),
                       ),
                     ],

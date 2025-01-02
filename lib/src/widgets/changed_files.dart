@@ -44,7 +44,7 @@ class GroupedFiles extends StatelessWidget {
                       width: 30,
                       child: Icon(
                         DevOpsIcons.repository,
-                        color: context.colorScheme.secondary.withOpacity(.8),
+                        color: context.colorScheme.secondary.withValues(alpha: .8),
                       ),
                     ),
                     Flexible(child: Text(entry.key.startsWith('/') ? entry.key.substring(1) : entry.key)),

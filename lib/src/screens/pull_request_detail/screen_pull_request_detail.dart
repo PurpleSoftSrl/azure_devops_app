@@ -28,7 +28,7 @@ class _PullRequestDetailScreen extends StatelessWidget {
                 indicatorSize: TabBarIndicatorSize.tab,
                 indicatorColor: context.colorScheme.secondary,
                 labelColor: context.colorScheme.secondary,
-                unselectedLabelColor: context.themeExtension.onBackground.withOpacity(.8),
+                unselectedLabelColor: context.themeExtension.onBackground.withValues(alpha: .8),
                 labelStyle: context.textTheme.labelLarge,
                 unselectedLabelStyle: context.textTheme.labelLarge,
                 tabs: const [

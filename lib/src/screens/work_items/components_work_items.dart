@@ -83,7 +83,7 @@ class _WorkItemListTile extends StatelessWidget {
                 Text(
                   item.fields.systemState,
                   style: subtitleStyle.copyWith(
-                    color: state == null ? null : Color(int.parse(state.color, radix: 16)).withOpacity(1),
+                    color: state == null ? null : Color(int.parse(state.color, radix: 16)).withValues(alpha: 1),
                   ),
                 ),
               ],
