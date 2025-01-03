@@ -41,16 +41,24 @@ class WorkItemField {
     this.isIdentity = false,
   });
 
-  factory WorkItemField.fromJson(Map<String, dynamic> json) => WorkItemField(
-        referenceName: json['referenceName'] as String,
-        name: json['name'] as String,
-        alwaysRequired: json['alwaysRequired'] as bool? ?? false,
-        readOnly: json['readOnly'] as bool? ?? false,
-        defaultValue: json['defaultValue'] as String?,
-        allowedValues: (json['allowedValues'] as List<dynamic>?)?.map((v) => v.toString()).toList() ?? [],
-        type: json['type'] as String?,
-        isIdentity: json['isIdentity'] as bool? ?? false,
-      );
+  factory WorkItemField.fromJson(Map<String, dynamic> json) {
+    final parsedDefaultValue = switch (json['defaultValue']) {
+      final String str => str,
+      final Map<String, dynamic> map => _WorkItemFieldIdentity.fromJson(map).identityName,
+      _ => null,
+    };
+
+    return WorkItemField(
+      referenceName: json['referenceName'] as String,
+      name: json['name'] as String,
+      alwaysRequired: json['alwaysRequired'] as bool? ?? false,
+      readOnly: json['readOnly'] as bool? ?? false,
+      defaultValue: parsedDefaultValue,
+      allowedValues: (json['allowedValues'] as List<dynamic>?)?.map((v) => v.toString()).toList() ?? [],
+      type: json['type'] as String?,
+      isIdentity: json['isIdentity'] as bool? ?? false,
+    );
+  }
 
   static WorkItemField fromResponse(Response res) =>
       WorkItemField.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
@@ -68,5 +76,36 @@ class WorkItemField {
   @override
   String toString() {
     return 'WorkItemField(referenceName: $referenceName, name: $name, required: $required, defaultValue: $defaultValue)';
+  }
+}
+
+class _WorkItemFieldIdentity {
+  _WorkItemFieldIdentity({
+    required this.displayName,
+    required this.id,
+    required this.uniqueName,
+    required this.descriptor,
+  });
+
+  factory _WorkItemFieldIdentity.fromJson(Map<String, dynamic> json) {
+    return _WorkItemFieldIdentity(
+      displayName: json['displayName'] as String?,
+      id: json['id'] as String?,
+      uniqueName: json['uniqueName'] as String?,
+      descriptor: json['descriptor'] as String?,
+    );
+  }
+
+  final String? displayName;
+  final String? id;
+  final String? uniqueName;
+  final String? descriptor;
+
+  String get identityName {
+    if (displayName != null && uniqueName != null) {
+      return '$displayName <$uniqueName>';
+    }
+
+    return '';
   }
 }
