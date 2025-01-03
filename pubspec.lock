@@ -592,15 +592,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
-  msal_flutter:
+  msal_auth:
     dependency: "direct main"
     description:
-      path: "."
-      ref: "8abb2b6801bf106156ad74fefb722de11657375b"
-      resolved-ref: "8abb2b6801bf106156ad74fefb722de11657375b"
-      url: "https://github.com/PurpleSoftSrl/msal-flutter"
-    source: git
-    version: "3.0.0-alpha1"
+      name: msal_auth
+      sha256: f662c961e4aa99593057ab9b563c660f6526d2f599ee5460f543378bf5f3c32e
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0"
   numberpicker:
     dependency: transitive
     description:

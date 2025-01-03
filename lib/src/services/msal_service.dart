@@ -1,5 +1,5 @@
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
-import 'package:msal_flutter/msal_flutter.dart';
+import 'package:msal_auth/msal_auth.dart';
 
 class MsalService with AppLogger {
   factory MsalService() {
@@ -12,7 +12,7 @@ class MsalService with AppLogger {
 
   static const _scopes = ['499b84ac-1321-427f-aa17-267ca6975798/user_impersonation'];
 
-  PublicClientApplication? _pca;
+  SingleAccountPca? _pca;
 
   var _isLoggedIn = false;
 
@@ -24,9 +24,10 @@ class MsalService with AppLogger {
     const msalClientId = String.fromEnvironment('MSAL_CLIENT_ID');
     const msalRedirectUri = String.fromEnvironment('MSAL_REDIRECT_URI');
 
-    _pca = await PublicClientApplication.createPublicClientApplication(
-      msalClientId,
-      redirectUri: msalRedirectUri,
+    _pca = await SingleAccountPca.create(
+      clientId: msalClientId,
+      androidConfig: AndroidConfig(configFilePath: 'assets/msal_config.json', redirectUri: msalRedirectUri),
+      appleConfig: AppleConfig(),
     );
   }
 
@@ -36,9 +37,9 @@ class MsalService with AppLogger {
     try {
       if (_pca == null) await init();
 
-      await _pca!.logout(browserLogout: true);
+      await _pca!.signOut();
     } on MsalException catch (e) {
-      logDebug('MSAL logout exception: ${e.errorMessage}');
+      logDebug('MSAL logout exception: ${e.message}');
     }
   }
 
@@ -46,11 +47,11 @@ class MsalService with AppLogger {
     try {
       if (_pca == null) await init();
 
-      final token = await _pca!.acquireToken(_scopes);
+      final token = await _pca!.acquireToken(scopes: _scopes);
       _isLoggedIn = true;
-      return token;
+      return token.accessToken;
     } on MsalException catch (e) {
-      logDebug('MSAL login exception: ${e.errorMessage}');
+      logDebug('MSAL login exception: ${e.message}');
       return null;
     }
   }
@@ -59,11 +60,11 @@ class MsalService with AppLogger {
     try {
       if (_pca == null) await init();
 
-      final token = await _pca!.acquireTokenSilent(_scopes);
+      final token = await _pca!.acquireTokenSilent(scopes: _scopes);
       _isLoggedIn = true;
-      return token;
+      return token.accessToken;
     } on MsalException catch (e) {
-      logDebug('MSAL loginSilently exception: ${e.errorMessage}');
+      logDebug('MSAL loginSilently exception: ${e.message}');
       return null;
     }
   }

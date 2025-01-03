@@ -135,12 +135,12 @@ PODS:
     - GoogleUtilities/Privacy
   - in_app_review (2.0.0):
     - Flutter
-  - MSAL (1.5.0):
-    - MSAL/app-lib (= 1.5.0)
-  - MSAL/app-lib (1.5.0)
-  - msal_flutter (1.0.2):
+  - MSAL (1.6.3):
+    - MSAL/app-lib (= 1.6.3)
+  - MSAL/app-lib (1.6.3)
+  - msal_auth (2.0.0):
     - Flutter
-    - MSAL (~> 1.5.0)
+    - MSAL (~> 1.6.1)
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
     - nanopb/encode (= 3.30910.0)
@@ -185,7 +185,7 @@ DEPENDENCIES:
   - flutter_inappwebview_ios (from `.symlinks/plugins/flutter_inappwebview_ios/ios`)
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
-  - msal_flutter (from `.symlinks/plugins/msal_flutter/ios`)
+  - msal_auth (from `.symlinks/plugins/msal_auth/ios`)
   - open_filex (from `.symlinks/plugins/open_filex/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
@@ -230,8 +230,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   in_app_review:
     :path: ".symlinks/plugins/in_app_review/ios"
-  msal_flutter:
-    :path: ".symlinks/plugins/msal_flutter/ios"
+  msal_auth:
+    :path: ".symlinks/plugins/msal_auth/ios"
   open_filex:
     :path: ".symlinks/plugins/open_filex/ios"
   package_info_plus:
@@ -268,8 +268,8 @@ SPEC CHECKSUMS:
   GoogleAppMeasurement: 987769c4ca6b968f2479fbcc9fe3ce34af454b8e
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
   in_app_review: a31b5257259646ea78e0e35fc914979b0031d011
-  MSAL: 56e15631c0d629a8d5406b1dbe72915f35958e4c
-  msal_flutter: cf00bd1bcf190ac8df95850c1b05618f0173f129
+  MSAL: fa41cdccd3c50bc5f8b79562a015f4a86191b041
+  msal_auth: da6630811d103b768f6bb6071b18d962f6ed0e16
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   open_filex: 6e26e659846ec990262224a12ef1c528bb4edbe4
   OrderedSet: e539b66b644ff081c73a262d24ad552a69be3a94

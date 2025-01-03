@@ -34,10 +34,7 @@ dependencies:
   firebase_core: ^3.9.0
   firebase_analytics: ^11.3.6
   file_picker: ^8.0.5
-  msal_flutter:
-    git:
-      url: https://github.com/PurpleSoftSrl/msal-flutter
-      ref: 8abb2b6801bf106156ad74fefb722de11657375b
+  msal_auth:
   xml: ^6.3.0
   purple_theme:
    git:
@@ -61,6 +58,7 @@ flutter:
     - assets/illustrations/
     - assets/fonts/
     - assets/logos/
+    - assets/msal_config.json
     - CHANGELOG.md
 
   fonts:
