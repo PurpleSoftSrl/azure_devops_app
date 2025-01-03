@@ -170,21 +170,15 @@ class _ModifiedFileClass {
 
 class _ContentMetadata {
   _ContentMetadata({
-    required this.encoding,
-    required this.contentType,
     required this.fileName,
     required this.extension,
   });
 
   factory _ContentMetadata.fromJson(Map<String, dynamic> json) => _ContentMetadata(
-        encoding: json['encoding'] as int,
-        contentType: json['contentType'] as String,
-        fileName: json['fileName'] as String,
-        extension: json['extension'] as String,
+        fileName: json['fileName'] as String? ?? '',
+        extension: json['extension'] as String? ?? '',
       );
 
-  final int encoding;
-  final String contentType;
   final String fileName;
   final String extension;
 }
