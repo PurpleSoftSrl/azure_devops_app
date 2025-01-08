@@ -879,6 +879,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
               if (_workItemAreas[proj.name!] == null) {
                 // ignore: unawaited_futures, reason: speed up work items page loading time
                 _get('$_basePath/${proj.name}/_apis/wit/classificationnodes?\$depth=14&$_apiVersion').then((areaRes) {
+                  if (areaRes.isError) return;
+
                   final areasAndIterations = AreasAndIterationsResponse.fromResponse(areaRes);
 
                   _workItemAreas.putIfAbsent(
