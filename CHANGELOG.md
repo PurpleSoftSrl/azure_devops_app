@@ -1,3 +1,17 @@
+## 2.6.0 - 2025-01-09
+- work_items: fix item null on three dots actions
+- file_diff: small UI improvements
+- make text selectable
+- work_items: show only work items links in detail page
+- work_items: add/remove links
+- work_items: handle areas api error
+- work_items: handle identity fields default value
+- fix file diff content metadata fields null
+- rm empty directory
+- github_actions: update Flutter version
+- use msal_auth plugin for microsoft login
+- upgrade to Flutter 3.27
+
 ## 2.5.0 - 2024-10-22
 - work_items: add support for adding/removing tags
 - work_items: show tags in detail page
