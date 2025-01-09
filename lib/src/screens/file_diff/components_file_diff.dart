@@ -78,7 +78,7 @@ class _FileDiff extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: max(ctrl.diffMaxLength.toDouble() + 55, MediaQuery.of(context).size.width),
+          maxWidth: max(ctrl.diffMaxLength.toDouble() + 65, MediaQuery.of(context).size.width),
           minHeight: context.height,
         ),
         child: DefaultTextStyle(
