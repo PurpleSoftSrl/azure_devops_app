@@ -24,7 +24,7 @@ class _FileDetailScreen extends StatelessWidget {
         final path when path.isImage => Image.memory(Uint8List.fromList(res!.content.codeUnits)),
         final path when path.isMd => Padding(
             padding: const EdgeInsets.only(left: 8),
-            child: MarkdownBody(
+            child: AppMarkdownWidget(
               data: res!.content,
               styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
             ),
@@ -37,14 +37,35 @@ class _FileDetailScreen extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: context.height),
-              child: HighlightView(
-                res.content,
-                language: ctrl.args.filePath!.split('.').last,
-                theme: _customTheme(context),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                textStyle: context.textTheme.bodySmall!.copyWith(
-                  fontWeight: FontWeight.normal,
-                ),
+              child: Builder(
+                builder: (context) {
+                  var languageId = ctrl.args.filePath!.split('.').last;
+
+                  if (builtinLanguages[languageId] == null) {
+                    // try to get language from file extension, otherwise register language without highlighting
+                    final langFromExtension = languageExtensions[languageId];
+                    final builtinLang = builtinLanguages[langFromExtension];
+
+                    if (langFromExtension != null && builtinLang != null) {
+                      languageId = builtinLang.id;
+                    } else {
+                      final language = Language(id: languageId, refs: {});
+                      highlight.registerLanguage(language);
+                    }
+                  }
+
+                  return SelectionArea(
+                    child: HighlightView(
+                      res.content,
+                      languageId: languageId,
+                      theme: _customTheme(context),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      textStyle: context.textTheme.bodySmall!.copyWith(
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ),

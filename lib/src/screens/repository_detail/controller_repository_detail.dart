@@ -50,17 +50,17 @@ class _RepositoryDetailController {
     );
   }
 
-  void goToItem(RepoItem i) {
-    final newArgs = args.copyWith(filePath: i.path, branch: currentBranch?.name);
-    if (i.isFolder) {
+  void goToItem(RepoItem item) {
+    final newArgs = args.copyWith(filePath: item.path, branch: currentBranch?.name);
+    if (item.isFolder) {
       AppRouter.goToRepositoryDetail(newArgs);
     } else {
       AppRouter.goToFileDetail(newArgs);
     }
   }
 
-  void changeBranch(Branch? b) {
-    currentBranch = b;
+  void changeBranch(Branch? branch) {
+    currentBranch = branch;
     _getRepoItems();
   }
 }

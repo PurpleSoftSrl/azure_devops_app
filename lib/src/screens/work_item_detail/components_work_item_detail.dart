@@ -175,7 +175,7 @@ class _CommentWidget extends StatelessWidget {
             if (update.format == 'markdown')
               Padding(
                 padding: const EdgeInsets.only(left: 8, bottom: 8, right: 8),
-                child: MarkdownBody(
+                child: AppMarkdownWidget(
                   data: update.text,
                   styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
                     p: context.textTheme.labelMedium,

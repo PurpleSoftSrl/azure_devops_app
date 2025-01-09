@@ -9,9 +9,13 @@ import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
+import 'package:azure_devops/src/widgets/markdown_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_highlight/flutter_highlight.dart';
+import 'package:flutter_highlighting/flutter_highlighting.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:highlighting/highlighting.dart';
+import 'package:highlighting/languages/all.dart';
+import 'package:highlighting/src/language.dart';
 
 part 'components_file_detail.dart';
 part 'controller_file_detail.dart';

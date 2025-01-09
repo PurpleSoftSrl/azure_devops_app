@@ -22,7 +22,12 @@ dependencies:
   package_info_plus: ^8.1.2
   flutter_markdown: ^0.7.4+3
   flutter_html: 3.0.0-beta.2
-  flutter_highlight: ^0.7.0
+  flutter_highlighting:
+    git:
+      url: https://github.com/amake/dart-highlighting
+      ref: text-rich
+      path: flutter_highlighting
+  highlighting: ^0.9.0+11.8.0
   in_app_review: ^2.0.6
   flutter_svg: ^2.0.5
   path: ^1.8.2

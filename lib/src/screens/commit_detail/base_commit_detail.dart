@@ -15,6 +15,7 @@ import 'package:azure_devops/src/widgets/changed_files.dart';
 import 'package:azure_devops/src/widgets/commit_list_tile.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
 import 'package:azure_devops/src/widgets/project_and_repo_chips.dart';
+import 'package:azure_devops/src/widgets/text_title_description.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 

@@ -76,36 +76,26 @@ class _CommitDetailScreen extends StatelessWidget {
                       height: 10,
                     ),
                     Text(
-                      'Message: ',
+                      'Message',
                       style: labelStyle,
                     ),
-                    Text(
+                    SelectableText(
                       detail.commit.comment!,
                     ),
                     const SizedBox(
                       height: 20,
                     ),
                     Text(
-                      'CommitId: ',
+                      'CommitId',
                       style: labelStyle,
                     ),
                     SelectableText(ctrl.args.commitId),
                     const SizedBox(
                       height: 20,
                     ),
-                    Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Committed at: ',
-                            style: labelStyle,
-                          ),
-                          TextSpan(
-                            text: author?.date?.toSimpleDate() ?? '-',
-                            style: context.textTheme.titleSmall,
-                          ),
-                        ],
-                      ),
+                    TextTitleDescription(
+                      title: 'Committed at:',
+                      description: author?.date?.toSimpleDate() ?? '-',
                     ),
                     if (detail.commit.tags?.isNotEmpty ?? false) ...[
                       const SizedBox(

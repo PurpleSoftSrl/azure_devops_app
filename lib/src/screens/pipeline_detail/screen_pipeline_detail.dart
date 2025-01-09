@@ -54,12 +54,12 @@ class _PipelineDetailScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Triggered by:',
+                  'Triggered by',
                   style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                 ),
                 Row(
                   children: [
-                    Text(pipeline.requestedFor!.displayName!),
+                    SelectableText(pipeline.requestedFor!.displayName!),
                     if (pipeline.requestedFor?.imageUrl != null && ctrl.apiService.organization.isNotEmpty) ...[
                       const SizedBox(
                         width: 10,
@@ -103,17 +103,17 @@ class _PipelineDetailScreen extends StatelessWidget {
                 ),
                 if (pipeline.triggerInfo?.ciMessage != null) ...[
                   Text(
-                    'Commit message: ',
+                    'Commit message',
                     style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                   ),
-                  Text(
+                  SelectableText(
                     pipeline.triggerInfo!.ciMessage ?? '',
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   Text(
-                    'CommitId: ',
+                    'CommitId',
                     style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                   ),
                   InkWell(
@@ -129,27 +129,20 @@ class _PipelineDetailScreen extends StatelessWidget {
                     height: 20,
                   ),
                 ],
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Branch: ',
-                        style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                      ),
-                      TextSpan(text: pipeline.sourceBranchShort),
-                    ],
-                  ),
+                TextTitleDescription(
+                  title: 'Branch:',
+                  description: pipeline.sourceBranchShort ?? '',
                 ),
                 const Divider(
                   height: 40,
                 ),
                 Row(
                   children: [
-                    TextTitleDescription(title: 'Id: ', description: pipeline.id!.toString()),
+                    TextTitleDescription(title: 'Id:', description: pipeline.id!.toString()),
                     const SizedBox(
                       width: 20,
                     ),
-                    TextTitleDescription(title: 'Number: ', description: pipeline.buildNumber!),
+                    TextTitleDescription(title: 'Number:', description: pipeline.buildNumber!),
                   ],
                 ),
                 const SizedBox(

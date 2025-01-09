@@ -119,13 +119,11 @@ class _SettingsController with ShareMixin, AppLogger {
       isScrollControlled: true,
       heightPercentage: .9,
       builder: (context) => SingleChildScrollView(
-        child: MarkdownBody(
+        child: AppMarkdownWidget(
           data: str,
           shrinkWrap: false,
           styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
-          paddingBuilders: {
-            'h2': _H2PaddingBuilder(),
-          },
+          paddingBuilders: {'h2': _H2PaddingBuilder()},
         ),
       ),
     );

@@ -34,167 +34,169 @@ class HtmlWidget extends StatelessWidget {
     // workaround to avoid layout error (https://github.com/flutter/flutter/issues/135912)
     RenderObject.debugCheckingIntrinsics = true;
 
-    return Html(
-      data: data,
-      style: {
-        'div': htmlTextStyle,
-        'p': htmlTextStyle,
-        'body': htmlTextStyle,
-        'html': htmlTextStyle,
-      },
-      onLinkTap: (str, _, __) async {
-        final url = str.toString();
-        if (await canLaunchUrlString(url)) await launchUrlString(url);
-      },
-      extensions: [
-        TagExtension(
-          tagsToExtend: {'img'},
-          builder: (ctx) {
-            final src = ctx.attributes['src'];
-            if (src == null) return const SizedBox();
+    return SelectionArea(
+      child: Html(
+        data: data,
+        style: {
+          'div': htmlTextStyle,
+          'p': htmlTextStyle,
+          'body': htmlTextStyle,
+          'html': htmlTextStyle,
+        },
+        onLinkTap: (str, _, __) async {
+          final url = str.toString();
+          if (await canLaunchUrlString(url)) await launchUrlString(url);
+        },
+        extensions: [
+          TagExtension(
+            tagsToExtend: {'img'},
+            builder: (ctx) {
+              final src = ctx.attributes['src'];
+              if (src == null) return const SizedBox();
 
-            final isNetworkImage = src.startsWith('http');
-            final isBase64 = src.startsWith('data:');
+              final isNetworkImage = src.startsWith('http');
+              final isBase64 = src.startsWith('data:');
 
-            Widget image;
-            if (isNetworkImage) {
-              image = CachedNetworkImage(
-                imageUrl: src,
-                httpHeaders: apiService.headers,
-                fit: BoxFit.contain,
-                height: double.tryParse(ctx.attributes['height'] ?? ''),
-                width: double.tryParse(ctx.attributes['width'] ?? ''),
-                placeholder: (_, __) => Center(child: const CircularProgressIndicator()),
-              );
-            } else if (isBase64) {
-              final data = src.split(',').last;
-              image = Image.memory(base64Decode(data));
-            } else {
-              image = const SizedBox();
-            }
+              Widget image;
+              if (isNetworkImage) {
+                image = CachedNetworkImage(
+                  imageUrl: src,
+                  httpHeaders: apiService.headers,
+                  fit: BoxFit.contain,
+                  height: double.tryParse(ctx.attributes['height'] ?? ''),
+                  width: double.tryParse(ctx.attributes['width'] ?? ''),
+                  placeholder: (_, __) => Center(child: const CircularProgressIndicator()),
+                );
+              } else if (isBase64) {
+                final data = src.split(',').last;
+                image = Image.memory(base64Decode(data));
+              } else {
+                image = const SizedBox();
+              }
 
-            late OverlayEntry entry;
+              late OverlayEntry entry;
 
-            void exitFullScreen() {
-              entry.remove();
-            }
+              void exitFullScreen() {
+                entry.remove();
+              }
 
-            void goFullScreen() {
-              entry = OverlayEntry(
-                builder: (context) => Scaffold(
-                  appBar: AppBar(
-                    actions: [
-                      CloseButton(
-                        onPressed: exitFullScreen,
+              void goFullScreen() {
+                entry = OverlayEntry(
+                  builder: (context) => Scaffold(
+                    appBar: AppBar(
+                      actions: [
+                        CloseButton(
+                          onPressed: exitFullScreen,
+                        ),
+                      ],
+                    ),
+                    body: InteractiveViewer(
+                      child: SizedBox(
+                        height: context.height,
+                        width: context.width,
+                        child: image,
                       ),
-                    ],
-                  ),
-                  body: InteractiveViewer(
-                    child: SizedBox(
-                      height: context.height,
-                      width: context.width,
-                      child: image,
                     ),
                   ),
+                );
+
+                Overlay.of(context).insert(entry);
+              }
+
+              return GestureDetector(
+                onTap: goFullScreen,
+                child: image,
+              );
+            },
+          ),
+          TagExtension(
+            tagsToExtend: {'br'},
+            builder: (_) => const Text(''),
+          ),
+          TagExtension(
+            tagsToExtend: {'a'},
+            builder: (ctx) {
+              final innerHtml = ctx.element!.innerHtml;
+
+              final linkChild = Text(
+                innerHtml,
+                style: effectiveStyle.copyWith(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                  decorationColor: Colors.blue,
                 ),
               );
 
-              Overlay.of(context).insert(entry);
-            }
+              final mention = ctx.attributes['data-vss-mention'];
+              if (mention == null) return linkChild;
 
-            return GestureDetector(
-              onTap: goFullScreen,
-              child: image,
-            );
-          },
-        ),
-        TagExtension(
-          tagsToExtend: {'br'},
-          builder: (_) => const Text(''),
-        ),
-        TagExtension(
-          tagsToExtend: {'a'},
-          builder: (ctx) {
-            final innerHtml = ctx.element!.innerHtml;
+              final href = ctx.attributes['href'];
 
-            final linkChild = Text(
-              innerHtml,
-              style: effectiveStyle.copyWith(
-                color: Colors.blue,
-                decoration: TextDecoration.underline,
-                decorationColor: Colors.blue,
-              ),
-            );
+              // user mention
+              if (innerHtml.startsWith('@')) {
+                return GestureDetector(
+                  onTap: () async {
+                    final name = innerHtml.substring(1);
+                    final user = await apiService.getUserFromDisplayName(name: name);
+                    if (user.isError) return;
 
-            final mention = ctx.attributes['data-vss-mention'];
-            if (mention == null) return linkChild;
+                    unawaited(AppRouter.goToMemberDetail(user.data!.descriptor!));
+                  },
+                  child: linkChild,
+                );
+              }
 
-            final href = ctx.attributes['href'];
+              // work item mention
+              if (innerHtml.startsWith('#')) {
+                return GestureDetector(
+                  onTap: () {
+                    final url = href;
+                    if (url == null) return;
 
-            // user mention
-            if (innerHtml.startsWith('@')) {
-              return GestureDetector(
-                onTap: () async {
-                  final name = innerHtml.substring(1);
-                  final user = await apiService.getUserFromDisplayName(name: name);
-                  if (user.isError) return;
+                    final project = url.substring(0, url.indexOf('/_workitems')).split('/').lastOrNull;
+                    if (project == null) return;
 
-                  unawaited(AppRouter.goToMemberDetail(user.data!.descriptor!));
-                },
-                child: linkChild,
-              );
-            }
+                    final id = url.split('/').lastOrNull;
+                    if (id == null) return;
 
-            // work item mention
-            if (innerHtml.startsWith('#')) {
-              return GestureDetector(
-                onTap: () {
-                  final url = href;
-                  if (url == null) return;
+                    final parsedId = int.tryParse(id);
+                    if (parsedId == null) return;
 
-                  final project = url.substring(0, url.indexOf('/_workitems')).split('/').lastOrNull;
-                  if (project == null) return;
+                    AppRouter.goToWorkItemDetail(project: project, id: parsedId);
+                  },
+                  child: linkChild,
+                );
+              }
 
-                  final id = url.split('/').lastOrNull;
-                  if (id == null) return;
+              // pr link
+              if (href != null && href.contains('/pullrequest/')) {
+                return GestureDetector(
+                  onTap: () {
+                    final url = href;
 
-                  final parsedId = int.tryParse(id);
-                  if (parsedId == null) return;
+                    final project = url.substring(0, url.indexOf('/_git')).split('/').lastOrNull;
+                    if (project == null) return;
 
-                  AppRouter.goToWorkItemDetail(project: project, id: parsedId);
-                },
-                child: linkChild,
-              );
-            }
+                    final repository = url.substring(0, url.indexOf('/pullrequest')).split('/').lastOrNull;
+                    if (repository == null) return;
 
-            // pr link
-            if (href != null && href.contains('/pullrequest/')) {
-              return GestureDetector(
-                onTap: () {
-                  final url = href;
+                    final id = url.split('/').lastOrNull;
+                    if (id == null) return;
 
-                  final project = url.substring(0, url.indexOf('/_git')).split('/').lastOrNull;
-                  if (project == null) return;
+                    final parsedId = int.tryParse(id);
+                    if (parsedId == null) return;
 
-                  final repository = url.substring(0, url.indexOf('/pullrequest')).split('/').lastOrNull;
-                  if (repository == null) return;
+                    AppRouter.goToPullRequestDetail(project: project, repository: repository, id: parsedId);
+                  },
+                  child: linkChild,
+                );
+              }
 
-                  final id = url.split('/').lastOrNull;
-                  if (id == null) return;
-
-                  final parsedId = int.tryParse(id);
-                  if (parsedId == null) return;
-
-                  AppRouter.goToPullRequestDetail(project: project, repository: repository, id: parsedId);
-                },
-                child: linkChild,
-              );
-            }
-
-            return linkChild;
-          },
-        ),
-      ],
+              return linkChild;
+            },
+          ),
+        ],
+      ),
     );
   }
 }

@@ -12,7 +12,7 @@ class TextTitleDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text.rich(
+    return SelectableText.rich(
       TextSpan(
         children: [
           TextSpan(

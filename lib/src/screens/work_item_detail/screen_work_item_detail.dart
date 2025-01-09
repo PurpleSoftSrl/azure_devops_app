@@ -89,11 +89,10 @@ class _WorkItemDetailScreen extends StatelessWidget {
                   if (detail.fields.systemCreatedBy != null)
                     Row(
                       children: [
-                        Text(
-                          'Created by: ',
-                          style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                        TextTitleDescription(
+                          title: 'Created by:',
+                          description: detail.fields.systemCreatedBy!.displayName!,
                         ),
-                        Text(detail.fields.systemCreatedBy!.displayName!),
                         if (ctrl.apiService.organization.isNotEmpty) ...[
                           const SizedBox(
                             width: 10,
@@ -120,26 +119,16 @@ class _WorkItemDetailScreen extends StatelessWidget {
                   const SizedBox(
                     height: 8,
                   ),
-                  Row(
-                    children: [
-                      Text(
-                        'Area: ',
-                        style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                      ),
-                      Flexible(child: Text(detail.fields.systemAreaPath)),
-                    ],
+                  TextTitleDescription(
+                    title: 'Area:',
+                    description: detail.fields.systemAreaPath,
                   ),
                   const SizedBox(
                     height: 8,
                   ),
-                  Row(
-                    children: [
-                      Text(
-                        'Iteration: ',
-                        style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                      ),
-                      Flexible(child: Text(detail.fields.systemIterationPath)),
-                    ],
+                  TextTitleDescription(
+                    title: 'Iteration:',
+                    description: detail.fields.systemIterationPath,
                   ),
                   const SizedBox(
                     height: 20,
@@ -148,7 +137,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                     'Title',
                     style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                   ),
-                  Text(detail.fields.systemTitle),
+                  SelectableText(detail.fields.systemTitle),
                   if (detail.fields.systemTags != null) ...[
                     const SizedBox(
                       height: 20,
@@ -248,7 +237,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                     Row(
                       children: [
                         TextTitleDescription(
-                          title: 'Assigned to: ',
+                          title: 'Assigned to:',
                           description: detail.fields.systemAssignedTo!.displayName!,
                         ),
                         const SizedBox(
@@ -332,7 +321,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                                       ],
                                     )
                                   else
-                                    Text(textToShow!.toString().formatted),
+                                    SelectableText(textToShow!.toString().formatted),
                                 ],
                               );
                             },
@@ -343,14 +332,14 @@ class _WorkItemDetailScreen extends StatelessWidget {
                     height: 40,
                   ),
                   TextTitleDescription(
-                    title: 'Created at: ',
+                    title: 'Created at:',
                     description: detail.fields.systemCreatedDate!.toSimpleDate(),
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   TextTitleDescription(
-                    title: 'Change date: ',
+                    title: 'Change date:',
                     description: detail.fields.systemChangedDate.toSimpleDate(),
                   ),
                   const SizedBox(

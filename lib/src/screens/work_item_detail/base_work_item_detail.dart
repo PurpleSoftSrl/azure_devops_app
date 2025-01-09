@@ -25,6 +25,7 @@ import 'package:azure_devops/src/widgets/add_comment_field.dart';
 import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/html_widget.dart';
+import 'package:azure_devops/src/widgets/markdown_widget.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
 import 'package:azure_devops/src/widgets/popup_menu.dart';
 import 'package:azure_devops/src/widgets/project_and_repo_chips.dart';

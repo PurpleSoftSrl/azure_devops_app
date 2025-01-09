@@ -211,7 +211,7 @@ class _PullRequestOverview extends StatelessWidget {
                 'Title: ',
                 style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
               ),
-              Text(pr.title),
+              SelectableText(pr.title),
               const SizedBox(
                 height: 10,
               ),
@@ -220,7 +220,7 @@ class _PullRequestOverview extends StatelessWidget {
                   'Description: ',
                   style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                 ),
-                MarkdownBody(
+                AppMarkdownWidget(
                   data: '${pr.description}',
                   styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
                   onTapLink: ctrl.onTapMarkdownLink,
