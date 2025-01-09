@@ -17,31 +17,37 @@ class _WorkItemDetailScreen extends StatelessWidget {
           title: 'Work Item #${ctrl.args.id}',
           notifier: ctrl.itemDetail,
           actions: [
-            DevOpsPopupMenu(
-              tooltip: 'work item actions',
-              items: () => [
-                PopupItem(
-                  onTap: ctrl.shareWorkItem,
-                  text: 'Share',
-                  icon: DevOpsIcons.share,
-                ),
-                PopupItem(
-                  onTap: ctrl.editWorkItem,
-                  text: 'Edit',
-                  icon: DevOpsIcons.edit,
-                ),
-                PopupItem(
-                  onTap: ctrl.addAttachment,
-                  text: 'Add attachment',
-                  icon: DevOpsIcons.link,
-                ),
-                if (!['Test Suite', 'Test Plan'].contains(ctrl.itemDetail.value?.data?.item.fields.systemWorkItemType))
-                  PopupItem(
-                    onTap: ctrl.deleteWorkItem,
-                    text: 'Delete',
-                    icon: DevOpsIcons.failed,
-                  ),
-              ],
+            ListenableBuilder(
+              listenable: ctrl.itemDetail,
+              builder: (_, __) => ctrl.itemDetail.value?.data?.item == null
+                  ? const SizedBox()
+                  : DevOpsPopupMenu(
+                      tooltip: 'work item actions',
+                      items: () => [
+                        PopupItem(
+                          onTap: ctrl.shareWorkItem,
+                          text: 'Share',
+                          icon: DevOpsIcons.share,
+                        ),
+                        PopupItem(
+                          onTap: ctrl.editWorkItem,
+                          text: 'Edit',
+                          icon: DevOpsIcons.edit,
+                        ),
+                        PopupItem(
+                          onTap: ctrl.addAttachment,
+                          text: 'Add attachment',
+                          icon: DevOpsIcons.link,
+                        ),
+                        if (!['Test Suite', 'Test Plan']
+                            .contains(ctrl.itemDetail.value?.data?.item.fields.systemWorkItemType))
+                          PopupItem(
+                            onTap: ctrl.deleteWorkItem,
+                            text: 'Delete',
+                            icon: DevOpsIcons.failed,
+                          ),
+                      ],
+                    ),
             ),
             const SizedBox(
               width: 8,
