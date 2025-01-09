@@ -20,4 +20,6 @@ extension WorkItemRelationExt on Relation {
         comment: attributes?.comment ?? '',
         index: index,
       );
+
+  bool get isWorkItemLink => rel?.startsWith('System.LinkTypes.') ?? false;
 }
