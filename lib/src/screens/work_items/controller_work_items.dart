@@ -393,10 +393,6 @@ class _WorkItemsController with FilterMixin {
     showActiveIterations.value = !showActiveIterations.value;
   }
 
-  void showSearchField() {
-    isSearching.value = true;
-  }
-
   /// Search currently filtered work items by id or title.
   void _searchWorkItem(String query) {
     _currentSearchQuery = query.trim().toLowerCase();

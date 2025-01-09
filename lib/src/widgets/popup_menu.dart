@@ -35,9 +35,11 @@ class DevOpsPopupMenu extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    item.text,
-                    style: context.textTheme.titleSmall,
+                  Flexible(
+                    child: Text(
+                      item.text,
+                      style: context.textTheme.titleSmall,
+                    ),
                   ),
                   Icon(item.icon),
                 ],

@@ -179,6 +179,68 @@ class _WorkItemDetailScreen extends StatelessWidget {
                       ],
                     ),
                   ],
+                  if (detail.links.isNotEmpty) ...[
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Links',
+                      style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final link in detail.links)
+                          Builder(
+                            builder: (context) {
+                              final hasComment = (link.attributes?.comment ?? '').isNotEmpty;
+                              return GestureDetector(
+                                onTap: () => ctrl.goToWorkItemDetail(link),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: context.colorScheme.secondaryContainer,
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        link.toReadableString(),
+                                        style: context.textTheme.titleSmall!.copyWith(height: 1),
+                                      ),
+                                      if (hasComment) ...[
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        DevOpsPopupMenu(
+                                          tooltip: link.toReadableString(),
+                                          items: () => [
+                                            PopupItem(
+                                              text: link.attributes?.comment ?? '',
+                                              onTap: () {},
+                                            ),
+                                          ],
+                                          offset: Offset(0, 20),
+                                          child: Icon(
+                                            Icons.forum_outlined,
+                                            size: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                      ],
+                    ),
+                  ],
                   if (detail.fields.systemAssignedTo != null) ...[
                     const SizedBox(
                       height: 20,

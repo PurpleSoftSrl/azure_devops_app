@@ -52,6 +52,12 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   /// Tags added to this work item
   Set<String> _newWorkItemTags = {};
 
+  List<LinkType> _linkTypes = [];
+  Set<WorkItemLink> _initialWorkItemLinks = {};
+
+  /// Links added to this work item
+  Set<WorkItemLink> _newWorkItemLinks = {};
+
   bool get isEditing => args.id != null;
   WorkItem? editingWorkItem;
 
@@ -65,6 +71,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   final isGettingFields = ValueNotifier<bool>(false);
 
   Future<void> init() async {
+    final linkTypesRes = await apiService.getWorkItemLinkTypes();
+    _linkTypes = (linkTypesRes.data ?? []).sortedBy((t) => t.name);
+
     if (isEditing) {
       // edit existent work item
       final res = await apiService.getWorkItemDetail(projectName: args.project!, workItemId: args.id!);
@@ -128,6 +137,11 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     if (fields.systemTags != null) {
       _newWorkItemTags = fields.systemTags!.split(';').map((t) => t.trim()).toSet();
+    }
+
+    if (item.links.isNotEmpty) {
+      _newWorkItemLinks = item.links.map((l) => l.toWorkItemLink(index: item.links.indexOf(l))).toSet();
+      _initialWorkItemLinks = {..._newWorkItemLinks};
     }
   }
 
@@ -262,9 +276,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     if (res.isError) {
       final isInherited = ![null, 'system'].contains(newWorkItemType.customization);
       var description = 'Work item not ${isEditing ? 'edited' : 'created'}.';
-      if (isInherited) {
-        final responseBody = res.errorResponse?.body ?? '';
 
+      final responseBody = res.errorResponse?.body ?? '';
+
+      if (isInherited) {
         if (responseBody.isEmpty) {
           description += '\nInherited processes are not fully supported yet.';
         } else {
@@ -280,6 +295,16 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
           }
         }
       }
+
+      if (responseBody.isNotEmpty) {
+        final apiErrorMessage = jsonDecode(responseBody) as Map<String, dynamic>;
+        final type = apiErrorMessage['typeKey'] as String? ?? '';
+        if (['WorkItemLinkAddExtraParentException', 'WorkItemLinkCircularException'].contains(type)) {
+          final msg = apiErrorMessage['message'] as String? ?? '';
+          description += '\n${msg.split(':').lastOrNull?.trim()}';
+        }
+      }
+
       return OverlayService.error(
         'Error',
         description: description,
@@ -293,6 +318,12 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       AppRouter.pop();
     } else {
       _resetInitialStateAndFormFields();
+      final itemRes = await apiService.getWorkItemDetail(projectName: args.project!, workItemId: args.id!);
+      final item = itemRes.data?.item;
+      if (item == null) return;
+
+      _newWorkItemLinks = item.links.map((l) => l.toWorkItemLink(index: item.links.indexOf(l))).toSet();
+      _initialWorkItemLinks = {..._newWorkItemLinks};
     }
   }
 
@@ -356,6 +387,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       area: newWorkItemArea,
       iteration: newWorkItemIteration,
       tags: _newWorkItemTags.toList(),
+      links: _newWorkItemLinks.toList(),
       formFields: {for (final field in formFields.entries) field.key: field.value.text},
     );
     return res;
@@ -371,6 +403,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       area: newWorkItemArea,
       iteration: newWorkItemIteration,
       tags: _newWorkItemTags.toList(),
+      links: _newWorkItemLinks.toList(),
       formFields: {for (final field in formFields.entries) field.key: field.value.text},
     );
     return res;
@@ -638,6 +671,77 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     );
   }
 
+  Future<void> addLink() async {
+    var hasConfirmed = false;
+    final hasChanged = ValueNotifier<bool>(false);
+
+    final formKey = GlobalKey<FormState>();
+
+    final addedLink = WorkItemLink.withIndexOnly(index: _newWorkItemLinks.length);
+
+    await OverlayService.bottomsheet(
+      title: 'Add link',
+      heightPercentage: .9,
+      isScrollControlled: true,
+      topRight: ValueListenableBuilder<bool>(
+        valueListenable: hasChanged,
+        builder: (context, changed, __) => SizedBox(
+          width: 80,
+          height: 20,
+          child: !changed
+              ? Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: AppRouter.popRoute,
+                    child: Icon(Icons.close),
+                  ),
+                )
+              : TextButton(
+                  onPressed: () {
+                    if (!(formKey.currentState?.validate() ?? false)) return;
+
+                    hasConfirmed = true;
+                    AppRouter.popRoute();
+                  },
+                  style: ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.zero)),
+                  child: Text(
+                    'Confirm',
+                    style: context.textTheme.bodyMedium!.copyWith(color: context.colorScheme.primary),
+                  ),
+                ),
+        ),
+      ),
+      builder: (context) => _AddLinkBottomsheet(
+        hasChanged: hasChanged,
+        linkTypes: _linkTypes,
+        getWorkItems: _getWorkItemsToLink,
+        formKey: formKey,
+        addedLink: addedLink,
+      ),
+    );
+
+    if (!hasConfirmed || addedLink.linkTypeReferenceName.isEmpty || addedLink.linkedWorkItemId <= 0) return;
+
+    _addLink(addedLink);
+  }
+
+  Future<List<WorkItem>> _getWorkItemsToLink(String query) async {
+    final queryId = int.tryParse(query);
+
+    final loweredQuery = query.toLowerCase().trim();
+
+    if (loweredQuery.isEmpty && queryId == null) return [];
+
+    final itemsRes = await apiService.getWorkItems(
+      title: queryId == null ? loweredQuery : null,
+      id: queryId,
+    );
+
+    final workItems = itemsRes.data ?? [];
+
+    return workItems.take(100).sorted((a, b) => b.id.compareTo(a.id));
+  }
+
   Future<void> _getProjectTags() {
     return apiService.getProjectTags(projectName: newWorkItemProject.name!).then((res) {
       if (res.isError) {
@@ -651,11 +755,11 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     });
   }
 
-  void _addExistingTag(String t) {
-    if (_newWorkItemTags.contains(t)) {
-      _newWorkItemTags.remove(t);
+  void _addExistingTag(String tag) {
+    if (_newWorkItemTags.contains(tag)) {
+      _newWorkItemTags.remove(tag);
     } else {
-      _newWorkItemTags.add(t);
+      _newWorkItemTags.add(tag);
     }
 
     _projectTags.value = {..._projectTags.value!};
@@ -679,6 +783,21 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   void removeTag(String tag) {
     _newWorkItemTags.remove(tag);
+    _setHasChanged();
+  }
+
+  void _addLink(WorkItemLink link) {
+    _newWorkItemLinks.add(link);
+    _setHasChanged();
+  }
+
+  void removeLink(WorkItemLink link) {
+    if (_initialWorkItemLinks.contains(link)) {
+      link.isDeleted = true;
+    } else {
+      _newWorkItemLinks.remove(link);
+    }
+
     _setHasChanged();
   }
 }

@@ -267,4 +267,16 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
 
     AppRouter.goToWorkItemDetail(project: project, id: parsedId);
   }
+
+  void goToWorkItemDetail(Relation link) {
+    final url = link.url ?? '';
+    if (url.isEmpty) return;
+
+    final projectId = link.linkedWorkItemProjectId;
+    final id = link.linkedWorkItemId;
+
+    if (projectId.isEmpty || id <= 0) return;
+
+    AppRouter.goToWorkItemDetail(project: projectId, id: id);
+  }
 }

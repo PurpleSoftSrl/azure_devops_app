@@ -33,6 +33,7 @@ import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/user_entitlements.dart';
 import 'package:azure_devops/src/models/work_item_comments.dart';
 import 'package:azure_devops/src/models/work_item_fields.dart';
+import 'package:azure_devops/src/models/work_item_link_types.dart';
 import 'package:azure_devops/src/models/work_item_tags.dart';
 import 'package:azure_devops/src/models/work_item_type_rules.dart';
 import 'package:azure_devops/src/models/work_item_type_with_transitions.dart';
@@ -103,6 +104,8 @@ abstract class AzureApiService {
     Set<GraphUser>? assignedTo,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    int? id,
+    String? title,
   });
 
   Future<ApiResponse<List<WorkItem>>> getMyRecentWorkItems();
@@ -113,6 +116,8 @@ abstract class AzureApiService {
     required String projectName,
     required String workItemName,
   });
+
+  Future<ApiResponse<List<LinkType>>> getWorkItemLinkTypes();
 
   Future<ApiResponse<WorkItemWithUpdates>> getWorkItemDetail({
     required String projectName,
@@ -136,6 +141,7 @@ abstract class AzureApiService {
     AreaOrIteration? area,
     AreaOrIteration? iteration,
     List<String> tags = const [],
+    List<WorkItemLink> links = const [],
     required Map<String, String> formFields,
   });
 
@@ -150,6 +156,7 @@ abstract class AzureApiService {
     AreaOrIteration? area,
     AreaOrIteration? iteration,
     List<String> tags = const [],
+    List<WorkItemLink> links = const [],
     required Map<String, String> formFields,
   });
 
@@ -411,6 +418,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     'System.IterationPath',
     'Microsoft.VSTS.Common.ResolvedReason',
   ];
+
+  List<LinkType> _linkTypes = [];
 
   void dispose() {
     instance = null;
@@ -747,6 +756,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     Set<GraphUser>? assignedTo,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    int? id,
+    String? title,
   }) async {
     final query = <String>[];
 
@@ -779,6 +790,14 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     if (iteration != null) {
       query.add(" [System.IterationPath] = '${iteration.escapedIterationPath}' ");
+    }
+
+    if (title != null) {
+      query.add(" [System.Title] Contains '$title' ");
+    }
+
+    if (id != null) {
+      query.add(' [System.Id] = $id ');
     }
 
     var queryStr = '';
@@ -1034,12 +1053,31 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 
   @override
+  Future<ApiResponse<List<LinkType>>> getWorkItemLinkTypes() async {
+    if (_linkTypes.isNotEmpty) return ApiResponse.ok(_linkTypes);
+
+    final linkTypesRes = await _get('$_basePath/_apis/wit/workitemrelationtypes?$_apiVersion');
+    if (linkTypesRes.isError) return ApiResponse.error(linkTypesRes);
+    final linkTypes = WorkItemLinkTypesResponse.fromResponse(linkTypesRes);
+
+    final linkTypesToShow = linkTypes
+        .where(
+          (lt) => lt.attributes.usage == Usage.workItemLink && !lt.referenceName.startsWith(LinkType.namesToExclude),
+        )
+        .toList();
+
+    _linkTypes = linkTypesToShow;
+
+    return ApiResponse.ok(linkTypesToShow);
+  }
+
+  @override
   Future<ApiResponse<WorkItemWithUpdates>> getWorkItemDetail({
     required String projectName,
     required int workItemId,
   }) async {
     final workItemPath = '$_basePath/$projectName/_apis/wit/workitems/$workItemId';
-    final workItemRes = await _get('$workItemPath?$_apiVersion');
+    final workItemRes = await _get('$workItemPath?\$expand=relations&$_apiVersion');
     if (workItemRes.isError) return ApiResponse.error(workItemRes);
 
     final updatesRes = await _get('$workItemPath/updates?$_apiVersion');
@@ -1132,6 +1170,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     AreaOrIteration? area,
     AreaOrIteration? iteration,
     List<String> tags = const [],
+    List<WorkItemLink> links = const [],
     required Map<String, String> formFields,
   }) async {
     final createRes = await _postList(
@@ -1166,6 +1205,16 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
             'value': tags.join(';'),
             'path': '/fields/System.Tags',
           },
+        for (final link in links)
+          {
+            'op': 'add',
+            'path': '/relations/-',
+            'value': {
+              'rel': link.linkTypeReferenceName,
+              'url': '$_basePath/$projectName/_apis/wit/workItems/${link.linkedWorkItemId}',
+              if (link.comment.isNotEmpty) 'attributes': {'comment': link.comment},
+            },
+          },
         for (final field in formFields.entries)
           {
             'op': 'add',
@@ -1193,6 +1242,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     AreaOrIteration? area,
     AreaOrIteration? iteration,
     List<String> tags = const [],
+    List<WorkItemLink> links = const [],
     required Map<String, String> formFields,
   }) async {
     final editRes = await _patchList(
@@ -1239,6 +1289,22 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
           'value': tags.join(';'),
           'path': '/fields/System.Tags',
         },
+        for (final link in links)
+          if (link.isDeleted)
+            {
+              'op': 'remove',
+              'path': '/relations/${link.index}',
+            }
+          else
+            {
+              'op': 'add',
+              'path': '/relations/-',
+              'value': {
+                'rel': link.linkTypeReferenceName,
+                'url': '$_basePath/$projectName/_apis/wit/workItems/${link.linkedWorkItemId}',
+                if (link.comment.isNotEmpty) 'attributes': {'comment': link.comment},
+              },
+            },
         for (final field in formFields.entries)
           {
             'op': 'add',

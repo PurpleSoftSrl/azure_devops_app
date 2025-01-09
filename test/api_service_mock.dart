@@ -22,6 +22,7 @@ import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_member.dart' as t;
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/work_item_fields.dart';
+import 'package:azure_devops/src/models/work_item_link_types.dart';
 import 'package:azure_devops/src/models/work_item_tags.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
@@ -295,6 +296,8 @@ class AzureApiServiceMock implements AzureApiService {
     Set<GraphUser>? assignedTo,
     AreaOrIteration? area,
     AreaOrIteration? iteration,
+    int? id,
+    String? title,
   }) async {
     final emptyWorkItem = WorkItem.empty();
     final firstItem = emptyWorkItem.copyWith(
@@ -582,6 +585,7 @@ class AzureApiServiceMock implements AzureApiService {
     AreaOrIteration? area,
     AreaOrIteration? iteration,
     List<String> tags = const [],
+    List<WorkItemLink> links = const [],
     required Map<String, String> formFields,
   }) {
     throw UnimplementedError();
@@ -599,6 +603,7 @@ class AzureApiServiceMock implements AzureApiService {
     AreaOrIteration? area,
     AreaOrIteration? iteration,
     List<String> tags = const [],
+    List<WorkItemLink> links = const [],
     required Map<String, String> formFields,
   }) {
     throw UnimplementedError();
@@ -745,6 +750,11 @@ class AzureApiServiceMock implements AzureApiService {
     required pr.PrComment comment,
     required String text,
   }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<LinkType>>> getWorkItemLinkTypes() {
     throw UnimplementedError();
   }
 }

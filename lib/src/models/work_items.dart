@@ -67,12 +67,16 @@ class WorkItem {
     required this.id,
     this.rev,
     required this.fields,
+    this.links = const [],
   });
 
   factory WorkItem.fromJson(Map<String, dynamic> json) => WorkItem(
         id: json['id'] as int,
         rev: json['rev'] as int?,
         fields: ItemFields.fromJson(json['fields'] as Map<String, dynamic>),
+        links: (json['relations'] as List<dynamic>? ?? [])
+            .map((l) => Relation.fromJson(l as Map<String, dynamic>))
+            .toList(),
       );
 
   static WorkItem fromResponse(Response res) => WorkItem.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
@@ -80,6 +84,7 @@ class WorkItem {
   final int id;
   final int? rev;
   final ItemFields fields;
+  final List<Relation> links;
 
   @visibleForTesting
   static WorkItem empty() => WorkItem(
