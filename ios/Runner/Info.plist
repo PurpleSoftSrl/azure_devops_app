@@ -69,5 +69,7 @@
 			<string>msauthv2</string>
 			<string>msauthv3</string>
 		</array>
+		<key>GADApplicationIdentifier</key>
+		<string>$(ADMOB_APPID_IOS)</string>
 	</dict>
 </plist>

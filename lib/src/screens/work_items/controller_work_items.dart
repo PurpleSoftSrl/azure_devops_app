@@ -343,6 +343,7 @@ class _WorkItemsController with FilterMixin {
         iteration: iterationFilter?.path,
       ),
     );
+
     await init();
   }
 
