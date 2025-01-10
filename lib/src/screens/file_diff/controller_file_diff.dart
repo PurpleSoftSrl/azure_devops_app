@@ -178,6 +178,8 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
       AppRouter.pop();
     }
 
+    await _showInterstitialAd();
+
     await init();
   }
 
@@ -217,6 +219,9 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
     }
 
     AppRouter.pop();
+
+    await _showInterstitialAd();
+
     await init();
   }
 
@@ -244,6 +249,9 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
     }
 
     AppRouter.pop();
+
+    await _showInterstitialAd();
+
     await init();
   }
 
@@ -263,6 +271,13 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
     if (!(res.data ?? false)) return OverlayService.snackbar('Status not updated', isError: true);
 
     AppRouter.pop();
+
+    await _showInterstitialAd();
+
     await init();
+  }
+
+  Future<void> _showInterstitialAd() async {
+    await AdsService().showInterstitialAd();
   }
 }

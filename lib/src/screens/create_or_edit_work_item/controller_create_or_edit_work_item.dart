@@ -311,7 +311,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       );
     }
 
-    OverlayService.snackbar('Changes saved');
+    await AdsService().showInterstitialAd(
+      onDismiss: () => OverlayService.snackbar('Changes saved'),
+    );
+
     hasChanged.value = ApiResponse.ok(false);
 
     if (!isEditing) {

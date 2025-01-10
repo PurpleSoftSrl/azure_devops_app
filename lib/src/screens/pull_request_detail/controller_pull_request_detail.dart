@@ -373,6 +373,8 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       return;
     }
 
+    await _showInterstitialAd();
+
     await init();
   }
 
@@ -421,6 +423,8 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       await OverlayService.error('Error', description: errorMsg);
       return;
     }
+
+    await _showInterstitialAd();
 
     await init();
   }
@@ -643,6 +647,8 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       return OverlayService.error('Error', description: 'Comment not added');
     }
 
+    await _showInterstitialAd();
+
     await init();
   }
 
@@ -681,6 +687,8 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       return OverlayService.error('Error', description: 'Comment not edited');
     }
 
+    await _showInterstitialAd();
+
     await init();
   }
 
@@ -707,6 +715,8 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       return OverlayService.error('Error', description: 'Comment not deleted');
     }
 
+    await _showInterstitialAd();
+
     await init();
   }
 
@@ -726,6 +736,10 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     if (!(res.data ?? false)) return OverlayService.snackbar('Status not updated', isError: true);
 
     await init();
+  }
+
+  Future<void> _showInterstitialAd() async {
+    await AdsService().showInterstitialAd();
   }
 }
 

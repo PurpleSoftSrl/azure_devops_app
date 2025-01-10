@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:azure_devops/firebase_options.dart';
 import 'package:azure_devops/src/app.dart';
+import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,10 +13,14 @@ import 'package:purple_theme/purple_theme.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 const useFirebase = bool.fromEnvironment('FIREBASE');
+const sentryDns = String.fromEnvironment('SENTRY_DNS');
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (useFirebase) await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  if (useFirebase) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  }
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
@@ -23,7 +28,8 @@ Future<void> main() async {
 
   PurpleThemeHandler().init(defaultTheme: AppTheme.darkTheme, allThemes: AppTheme.allThemes);
 
-  const sentryDns = String.fromEnvironment('SENTRY_DNS');
+  // ignore: unawaited_futures, to speed up app start
+  AdsService().init();
 
   if (sentryDns.isEmpty || kDebugMode) {
     runApp(const AzureDevOps());

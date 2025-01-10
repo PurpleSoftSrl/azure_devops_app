@@ -116,6 +116,8 @@ class _PipelineDetailController with ShareMixin {
       return OverlayService.error('Build not canceled', description: 'Try again');
     }
 
+    await _showInterstitialAd();
+
     AppRouter.pop();
   }
 
@@ -135,6 +137,8 @@ class _PipelineDetailController with ShareMixin {
     if (res.isError) {
       return OverlayService.error('Build not rerun', description: 'Try again');
     }
+
+    await _showInterstitialAd();
 
     AppRouter.pop();
   }
@@ -215,6 +219,10 @@ class _PipelineDetailController with ShareMixin {
 
   void goToPreviousRuns() {
     AppRouter.goToPipelines(args: (definition: pipeline.definition!.id!, project: pipeline.project!, shortcut: null));
+  }
+
+  Future<void> _showInterstitialAd({VoidCallback? onDismiss}) async {
+    await AdsService().showInterstitialAd(onDismiss: onDismiss);
   }
 }
 
