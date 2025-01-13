@@ -316,14 +316,30 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     if (!isEditing) {
       AppRouter.pop();
-    } else {
-      _resetInitialStateAndFormFields();
-      final itemRes = await apiService.getWorkItemDetail(projectName: args.project!, workItemId: args.id!);
-      final item = itemRes.data?.item;
-      if (item == null) return;
+      return;
+    }
 
-      _newWorkItemLinks = _getWorkItemLinks(item);
-      _initialWorkItemLinks = {..._newWorkItemLinks};
+    _resetInitialStateAndFormFields();
+    final itemRes = await apiService.getWorkItemDetail(projectName: args.project!, workItemId: args.id!);
+    final item = itemRes.data?.item;
+    if (item == null) return;
+
+    _newWorkItemLinks = _getWorkItemLinks(item);
+    _initialWorkItemLinks = {..._newWorkItemLinks};
+
+    // update fields again because api might change them, especially html fields
+    for (final field in item.fields.jsonFields.entries) {
+      final fieldData = formFields[field.key];
+      if (fieldData == null) continue;
+
+      final text = field.value?.toString() ?? '';
+      fieldData.text = text;
+      fieldData.controller.text = text.formatted;
+      if (fieldData.editorController != null) {
+        _trySetText(fieldData, text);
+      }
+
+      _initialFormFields[field.key] = fieldData;
     }
   }
 
@@ -546,9 +562,15 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
           // reset field to previous value if it's editing mode, otherwise set it to empty string
           final initialValue = _initialFormFields[refName];
           if (initialValue != null) {
+            final fieldData = formFields[refName]!;
+
             final text = isEditing ? initialValue.text : '';
-            formFields[refName]!.text = text;
-            formFields[refName]!.controller.text = text.formatted;
+            fieldData.text = text;
+            fieldData.controller.text = text.formatted;
+
+            if (fieldData.editorController != null) {
+              _trySetText(fieldData, text);
+            }
           }
         }
 
@@ -564,6 +586,15 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     if (disallowedStates.isNotEmpty) {
       allWorkItemStates.removeWhere((s) => disallowedStates.contains(s.name));
+    }
+  }
+
+  /// Uses a try-catch block to avoid exceptions when entering the page because the editor is still loading
+  void _trySetText(DynamicFieldData fieldData, String text) {
+    try {
+      fieldData.editorController!.setText(text);
+    } catch (e) {
+      // ignore
     }
   }
 
