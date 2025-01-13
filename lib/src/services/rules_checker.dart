@@ -74,7 +74,13 @@ class RulesChecker {
     final rules = allRules[field.referenceName] ?? [];
     if (rules.isEmpty) return false;
 
-    final makeEmptyActions = rules.where((r) => r.action.actionType == ActionType.setValueToEmpty).toList();
+    final makeEmptyActions = rules
+        .where(
+          (r) =>
+              r.action.actionType == ActionType.setValueToEmpty ||
+              (r.action.actionType == ActionType.copyValue && r.action.value == ''),
+        )
+        .toList();
     if (makeEmptyActions.isEmpty) return false;
 
     return _checkIfMatchesRule(makeEmptyActions);

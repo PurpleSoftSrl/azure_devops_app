@@ -68,6 +68,7 @@ enum ActionType {
   makeRequired,
   setValueToEmpty,
   disallowValue,
+  copyValue,
   notSupported;
 
   static ActionType fromString(String str) {
@@ -80,6 +81,8 @@ enum ActionType {
         return ActionType.setValueToEmpty;
       case 'disallowValue':
         return ActionType.disallowValue;
+      case 'copyValue':
+        return ActionType.copyValue;
       default:
         return ActionType.notSupported;
     }
