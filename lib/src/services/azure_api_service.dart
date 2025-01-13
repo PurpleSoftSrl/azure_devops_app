@@ -530,11 +530,29 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       _isLoggingError = true;
       Timer(Duration(seconds: 2), () => _isLoggingError = false);
 
-      final title = '${res.statusCode} ${res.reasonPhrase} $url';
+      String title;
+      SentryLevel level;
+
+      if (res.statusCode == 400 && res.body.isNotEmpty) {
+        // bad request special handling
+        level = SentryLevel.error;
+        dynamic decodedRes;
+
+        try {
+          decodedRes = jsonDecode(res.body);
+        } catch (e, s) {
+          logError(e, s);
+        }
+
+        title = decodedRes['message'] as String? ?? '';
+      } else {
+        title = '${res.statusCode} ${res.reasonPhrase} $method $url';
+        level = SentryLevel.warning;
+      }
 
       Sentry.captureEvent(
         SentryEvent(
-          level: SentryLevel.warning,
+          level: level,
           message: SentryMessage(
             title,
             template: 'Response body: %s, \n Request body: %s',
