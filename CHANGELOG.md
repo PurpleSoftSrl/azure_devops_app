@@ -1,3 +1,9 @@
+## 2.6.1 - 2025-01-13
+- improve bad request error logs
+- rules_checker: handle copyValue rules with empty value
+- work_items: fix reset html readonly fields
+- #47 fix edit work item with attachments
+
 ## 2.6.0 - 2025-01-09
 - work_items: fix item null on three dots actions
 - file_diff: small UI improvements
