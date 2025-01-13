@@ -1,5 +1,6 @@
 import 'package:azure_devops/src/models/work_item_link_types.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
+import 'package:azure_devops/src/models/work_items.dart';
 
 extension WorkItemRelationExt on Relation {
   String toReadableString() {
@@ -22,4 +23,8 @@ extension WorkItemRelationExt on Relation {
       );
 
   bool get isWorkItemLink => rel?.startsWith('System.LinkTypes.') ?? false;
+}
+
+extension WorkItemExt on WorkItem {
+  List<Relation> get workItemLinks => links.where((l) => l.isWorkItemLink).toList();
 }

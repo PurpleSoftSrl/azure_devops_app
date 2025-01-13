@@ -139,8 +139,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       _newWorkItemTags = fields.systemTags!.split(';').map((t) => t.trim()).toSet();
     }
 
-    if (item.links.isNotEmpty) {
-      _newWorkItemLinks = item.links.map((l) => l.toWorkItemLink(index: item.links.indexOf(l))).toSet();
+    if (item.workItemLinks.isNotEmpty) {
+      _newWorkItemLinks = _getWorkItemLinks(item);
       _initialWorkItemLinks = {..._newWorkItemLinks};
     }
   }
@@ -322,10 +322,13 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       final item = itemRes.data?.item;
       if (item == null) return;
 
-      _newWorkItemLinks = item.links.map((l) => l.toWorkItemLink(index: item.links.indexOf(l))).toSet();
+      _newWorkItemLinks = _getWorkItemLinks(item);
       _initialWorkItemLinks = {..._newWorkItemLinks};
     }
   }
+
+  Set<WorkItemLink> _getWorkItemLinks(WorkItem item) =>
+      item.workItemLinks.map((l) => l.toWorkItemLink(index: item.workItemLinks.indexOf(l))).toSet();
 
   void _showFormValidationError(String fieldName) {
     OverlayService.snackbar("Field '$fieldName' is required", isError: true);

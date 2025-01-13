@@ -174,7 +174,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                       ],
                     ),
                   ],
-                  if (detail.links.where((l) => l.isWorkItemLink).isNotEmpty) ...[
+                  if (detail.workItemLinks.isNotEmpty) ...[
                     const SizedBox(
                       height: 20,
                     ),
@@ -189,7 +189,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        for (final link in detail.links.where((l) => l.isWorkItemLink))
+                        for (final link in detail.workItemLinks)
                           Builder(
                             builder: (context) {
                               final hasComment = (link.attributes?.comment ?? '').isNotEmpty;
