@@ -266,10 +266,11 @@ packages:
   flutter_html:
     dependency: "direct main"
     description:
-      name: flutter_html
-      sha256: "02ad69e813ecfc0728a455e4bf892b9379983e050722b1dce00192ee2e41d1ee"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: default-list-style-type
+      resolved-ref: "4dc81e179ea68414077e18678c08e501d01cc406"
+      url: "https://github.com/spectorasoftware/flutter_html"
+    source: git
     version: "3.0.0-beta.2"
   flutter_inappwebview:
     dependency: transitive

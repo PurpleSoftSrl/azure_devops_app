@@ -21,7 +21,10 @@ dependencies:
   cached_network_image: ^3.2.3
   package_info_plus: ^8.1.2
   flutter_markdown: ^0.7.4+3
-  flutter_html: 3.0.0-beta.2
+  flutter_html:
+    git:
+      url: https://github.com/spectorasoftware/flutter_html
+      ref: default-list-style-type
   flutter_highlighting:
     git:
       url: https://github.com/amake/dart-highlighting
