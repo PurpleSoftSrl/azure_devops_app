@@ -27,6 +27,8 @@ class _HomeController with AppLogger {
     final allProjectsRes = await apiService.getProjects();
     allProjects = allProjectsRes.data ?? [];
 
+    await PurchaseService().init(userId: apiService.user?.emailAddress);
+
     // avoid resetting projects if response is error (and thus contains zero projects)
     if (allProjectsRes.isError) {
       projects.value = allProjectsRes;
@@ -53,6 +55,11 @@ class _HomeController with AppLogger {
     await _maybeRequestReview();
 
     _logSession();
+
+    final hasSubscription = await PurchaseService().checkSubscription();
+    if (hasSubscription) {
+      _maybeShowSubscriptionBottomsheet();
+    }
   }
 
   Future<void> goToCommits() async {
@@ -230,5 +237,29 @@ class _HomeController with AppLogger {
     filtersService.deleteShortcut(shortcut);
 
     _getShortcuts();
+  }
+
+  void _maybeShowSubscriptionBottomsheet() {
+    if (storageService.hasSeenSubscriptionAddedBottomsheet) return;
+
+    // ignore: unawaited_futures
+    OverlayService.bottomsheet(
+      title: 'Developer notes',
+      isDismissible: false,
+      isScrollControlled: true,
+      builder: (_) => _SubscriptionAddedBottomsheet(
+        onRemoveAds: () {
+          AppRouter.popRoute();
+          _goToChooseSubscription();
+        },
+        onSkip: AppRouter.popRoute,
+      ),
+    );
+
+    storageService.setHasSeenSubscriptionAddedBottomsheet();
+  }
+
+  void _goToChooseSubscription() {
+    AppRouter.goToChooseSubscription();
   }
 }

@@ -164,6 +164,12 @@ PODS:
   - pointer_interceptor_ios (0.0.1):
     - Flutter
   - PromisesObjC (2.4.0)
+  - purchases_flutter (8.4.0):
+    - Flutter
+    - PurchasesHybridCommon (= 13.13.0)
+  - PurchasesHybridCommon (13.13.0):
+    - RevenueCat (= 5.14.0)
+  - RevenueCat (5.14.0)
   - SDWebImage (5.20.0):
     - SDWebImage/Core (= 5.20.0)
   - SDWebImage/Core (5.20.0)
@@ -201,6 +207,7 @@ DEPENDENCIES:
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - pointer_interceptor_ios (from `.symlinks/plugins/pointer_interceptor_ios/ios`)
+  - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
   - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
@@ -225,6 +232,8 @@ SPEC REPOS:
     - nanopb
     - OrderedSet
     - PromisesObjC
+    - PurchasesHybridCommon
+    - RevenueCat
     - SDWebImage
     - Sentry
     - SwiftyGif
@@ -256,6 +265,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   pointer_interceptor_ios:
     :path: ".symlinks/plugins/pointer_interceptor_ios/ios"
+  purchases_flutter:
+    :path: ".symlinks/plugins/purchases_flutter/ios"
   sentry_flutter:
     :path: ".symlinks/plugins/sentry_flutter/ios"
   share_plus:
@@ -298,6 +309,9 @@ SPEC CHECKSUMS:
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   pointer_interceptor_ios: 508241697ff0947f853c061945a8b822463947c1
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
+  purchases_flutter: 14969127a5cc8a1abe7addcf00cd0ee874877c38
+  PurchasesHybridCommon: a712dcce0d81fa39dada521292408816146ca58c
+  RevenueCat: 34f4147c8d26d2f3c691be4e3c9f033698e557f2
   SDWebImage: 73c6079366fea25fa4bb9640d5fb58f0893facd8
   Sentry: 38ed8bf38eab5812787274bf591e528074c19e02
   sentry_flutter: 7d1f1df30f3768c411603ed449519bbb90a7d87b

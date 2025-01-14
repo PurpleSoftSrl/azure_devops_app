@@ -49,6 +49,7 @@ dependencies:
     url: https://github.com/PurpleSoftSrl/flutter_theme_manager
     ref: main
   google_mobile_ads: ^5.2.0
+  purchases_flutter: ^8.4.0
 
 dev_dependencies:
   flutter_test: { sdk: flutter }

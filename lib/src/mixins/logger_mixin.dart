@@ -6,9 +6,16 @@ import 'package:flutter/foundation.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 mixin AppLogger {
+  String? _tag;
+
+  // ignore: use_setters_to_change_properties
+  void setTag(String tag) {
+    _tag = tag;
+  }
+
   /// Logs only if [kDebugMode]
   void logDebug(String msg) {
-    if (kDebugMode) log(msg);
+    if (kDebugMode) log(msg, name: _tag ?? '');
   }
 
   /// Logs on Sentry with level info only if ![kDebugMode]
@@ -20,7 +27,10 @@ mixin AppLogger {
 
   /// Logs on Sentry with level error only if ![kDebugMode]
   void logError(Object? exception, Object stacktrace) {
-    if (kDebugMode) return;
+    if (kDebugMode) {
+      logDebug('Error: $exception');
+      return;
+    }
 
     Sentry.captureException(exception, stackTrace: stacktrace);
   }

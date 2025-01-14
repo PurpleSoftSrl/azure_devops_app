@@ -46,6 +46,26 @@ class _SettingsScreen extends StatelessWidget {
             text: 'App management',
           ),
           NavigationButton(
+            onTap: ctrl.goToChooseSubscription,
+            child: Row(
+              children: [
+                Icon(Icons.subscriptions),
+                const SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  'Choose subscription',
+                  style: context.textTheme.bodyLarge,
+                ),
+                const Spacer(),
+                Icon(Icons.arrow_forward_ios),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          NavigationButton(
             onTap: ctrl.seeChosenProjects,
             child: Row(
               children: [

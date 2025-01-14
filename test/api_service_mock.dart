@@ -845,6 +845,12 @@ class StorageServiceMock implements StorageService {
 
   @override
   void deleteShortcut(SavedShortcut shortcut) {}
+
+  @override
+  bool get hasSeenSubscriptionAddedBottomsheet => true;
+
+  @override
+  void setHasSeenSubscriptionAddedBottomsheet() {}
 }
 
 extension on WorkItem {

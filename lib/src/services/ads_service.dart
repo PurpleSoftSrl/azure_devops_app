@@ -18,6 +18,8 @@ class AdsService with AppLogger {
 
   InterstitialAd? _interstitialAd;
 
+  bool _showAds = true;
+
   Future<void> init() async {
     await MobileAds.instance.initialize();
 
@@ -46,6 +48,11 @@ class AdsService with AppLogger {
   }
 
   Future<void> showInterstitialAd({VoidCallback? onDismiss}) async {
+    if (!_showAds) {
+      logDebug('[AdsService] Ads are disabled');
+      return;
+    }
+
     logDebug('[AdsService] showing intertitial ad');
 
     _interstitialAd?.fullScreenContentCallback = FullScreenContentCallback(
@@ -71,6 +78,16 @@ class AdsService with AppLogger {
     } catch (e) {
       logError('[AdsService] Failed to show interstitial ad', e);
     }
+  }
+
+  void removeAds() {
+    logDebug('[AdsService] Ads removed');
+    _showAds = false;
+  }
+
+  void reactivateAds() {
+    logDebug('[AdsService] Ads reactivated');
+    _showAds = true;
   }
 }
 

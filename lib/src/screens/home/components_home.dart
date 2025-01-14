@@ -172,3 +172,44 @@ class _ProjectsHeaderWithSearchField extends StatelessWidget {
     );
   }
 }
+
+class _SubscriptionAddedBottomsheet extends StatelessWidget {
+  const _SubscriptionAddedBottomsheet({required this.onRemoveAds, required this.onSkip});
+
+  final VoidCallback onRemoveAds;
+  final VoidCallback onSkip;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          '''
+Hi there! In this release we have added some ads to help us keep the lights on.
+
+We know ads can be annoying, so we have added a paid option to remove them.
+
+Would you like to remove them?
+You can always do it later in the settings.
+''',
+          style: context.textTheme.bodyLarge,
+        ),
+        const Spacer(),
+        LoadingButton(
+          onPressed: onRemoveAds,
+          text: 'Remove ads',
+        ),
+        const SizedBox(
+          height: 16,
+        ),
+        TextButton(
+          onPressed: onSkip,
+          child: Text('Later'),
+        ),
+        const SizedBox(
+          height: 48,
+        ),
+      ],
+    );
+  }
+}
