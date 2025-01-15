@@ -7,6 +7,7 @@ class _ChooseSubscriptionController {
 
   final products = ValueNotifier<ApiResponse<List<AppProduct>>?>(null);
 
+  final isPurchasing = ValueNotifier<bool>(false);
   final purchasingMap = <String, ValueNotifier<bool>>{};
 
   Future<void> init() async {
@@ -20,11 +21,13 @@ class _ChooseSubscriptionController {
   }
 
   Future<void> purchaseProduct(AppProduct product) async {
+    isPurchasing.value = true;
     purchasingMap[product.id]!.value = true;
 
     final res = await purchase.buySubscription(product);
 
     purchasingMap[product.id]!.value = false;
+    isPurchasing.value = false;
 
     switch (res) {
       case PurchaseResult.success:

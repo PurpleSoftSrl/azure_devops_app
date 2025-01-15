@@ -10,58 +10,65 @@ class _ChooseSubscriptionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage<List<AppProduct>>(
       init: ctrl.init,
-      title: 'Choose subscription',
+      title: 'Choose plan',
       notifier: ctrl.products,
       builder: (products) {
         final purchasedProducts = products.where((p) => ctrl.purchase.isSubscribed(p.id));
         final availableProducts = products.where((p) => !ctrl.purchase.isSubscribed(p.id));
-        final titleStyle = context.textTheme.bodyLarge;
+        final titleStyle = context.textTheme.titleLarge;
 
-        return Column(
-          children: [
-            if (purchasedProducts.isNotEmpty) ...[
-              Text(
-                'Purchased',
-                style: titleStyle,
-              ),
-              const SizedBox(height: 8),
-              ...purchasedProducts.map(
-                (p) => ValueListenableBuilder(
-                  valueListenable: ctrl.purchasingMap[p.id]!,
-                  builder: (_, isPurchasing, __) => _SubscriptionCard(
-                    product: p,
-                    onTap: (_) => OverlayService.snackbar('You are already subscribed to ${p.title}'),
-                    isPurchasing: isPurchasing,
+        return ValueListenableBuilder(
+          valueListenable: ctrl.isPurchasing,
+          builder: (_, isPurchasing, __) => IgnorePointer(
+            ignoring: isPurchasing,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (purchasedProducts.isNotEmpty) ...[
+                  Text(
+                    'Current Plan',
+                    style: titleStyle,
                   ),
-                ),
-              ),
-              const SizedBox(height: 32),
-            ],
-            if (availableProducts.isNotEmpty) ...[
-              Text(
-                'Available',
-                style: titleStyle,
-              ),
-              const SizedBox(height: 8),
-              ...availableProducts.map(
-                (p) => ValueListenableBuilder(
-                  valueListenable: ctrl.purchasingMap[p.id]!,
-                  builder: (_, isPurchasing, __) => _SubscriptionCard(
-                    product: p,
-                    onTap: ctrl.purchaseProduct,
-                    isPurchasing: isPurchasing,
+                  const SizedBox(height: 18),
+                  ...purchasedProducts.map(
+                    (p) => ValueListenableBuilder(
+                      valueListenable: ctrl.purchasingMap[p.id]!,
+                      builder: (_, isPurchasing, __) => _SubscriptionCard(
+                        product: p,
+                        onTap: (_) => OverlayService.snackbar('You are already subscribed to ${p.title}'),
+                        isPurchasingThisProduct: isPurchasing,
+                      ),
+                    ),
                   ),
+                  const SizedBox(height: 32),
+                ],
+                if (availableProducts.isNotEmpty) ...[
+                  Text(
+                    'Available',
+                    style: titleStyle,
+                  ),
+                  const SizedBox(height: 18),
+                  ...availableProducts.map(
+                    (p) => ValueListenableBuilder(
+                      valueListenable: ctrl.purchasingMap[p.id]!,
+                      builder: (_, isPurchasing, __) => _SubscriptionCard(
+                        product: p,
+                        onTap: ctrl.purchaseProduct,
+                        isPurchasingThisProduct: isPurchasing,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+                LoadingButton(
+                  onPressed: ctrl.restorePurchase,
+                  text: 'Restore purchase',
+                  backgroundColor: Colors.transparent,
+                  textColor: context.colorScheme.primary,
                 ),
-              ),
-              const SizedBox(height: 32),
-            ],
-            LoadingButton(
-              onPressed: ctrl.restorePurchase,
-              text: 'Restore purchase',
-              backgroundColor: Colors.transparent,
-              textColor: context.colorScheme.primary,
+              ],
             ),
-          ],
+          ),
         );
       },
     );

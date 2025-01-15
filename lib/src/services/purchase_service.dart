@@ -34,13 +34,16 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   List<String> _activeSubscriptions = [];
 
+  static const _defaultIosProductId = 'io.purplesoft.azuredevops.subs.noads.yearly';
+  static const _defaultAndroidProductId = 'azuredevops.subs.noads.yearly';
+
   late final _adsCallbacks = _SubscriptionCallbacks(onPurchased: _removeAds, onExpired: _reactivateAds);
 
   late final Map<String, _SubscriptionCallbacks> _purchaseCallbacks = {
     'io.purplesoft.azuredevops.subs.noads.monthly': _adsCallbacks,
-    'io.purplesoft.azuredevops.subs.noads.yearly': _adsCallbacks,
+    _defaultIosProductId: _adsCallbacks,
     'azuredevops.subs.noads.monthly': _adsCallbacks,
-    'azuredevops.subs.noads.yearly': _adsCallbacks,
+    _defaultAndroidProductId: _adsCallbacks,
     'rc_promo_noadsentitlement_monthly': _adsCallbacks,
     'rc_promo_noadsentitlement_yearly': _adsCallbacks,
   };
@@ -76,10 +79,10 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
     final products = await Purchases.getProducts([
       // iOS
       'io.purplesoft.azuredevops.subs.noads.monthly',
-      'io.purplesoft.azuredevops.subs.noads.yearly',
+      _defaultIosProductId,
       // Android
       'azuredevops.subs.noads.monthly',
-      'azuredevops.subs.noads.yearly',
+      _defaultAndroidProductId,
     ]);
 
     logDebug('Products: ${products.length}');
@@ -97,8 +100,10 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
             priceString: product.priceString,
             currencyCode: product.currencyCode,
             duration: product.subscriptionPeriod ?? '',
+            isDefault: [_defaultIosProductId, _defaultAndroidProductId].contains(product.identifier),
           ),
         )
+        .sorted((p1, p2) => p1.isDefault ? -1 : 1)
         .toList();
   }
 
@@ -192,6 +197,7 @@ class AppProduct {
     required this.priceString,
     required this.currencyCode,
     required this.duration,
+    required this.isDefault,
   });
 
   final String id;
@@ -201,6 +207,7 @@ class AppProduct {
   final String priceString;
   final String currencyCode;
   final String duration;
+  final bool isDefault;
 }
 
 enum PurchaseResult {

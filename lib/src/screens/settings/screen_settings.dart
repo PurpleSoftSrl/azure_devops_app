@@ -49,12 +49,12 @@ class _SettingsScreen extends StatelessWidget {
             onTap: ctrl.goToChooseSubscription,
             child: Row(
               children: [
-                Icon(Icons.subscriptions),
+                Icon(Icons.card_membership_outlined),
                 const SizedBox(
                   width: 20,
                 ),
                 Text(
-                  'Choose subscription',
+                  'Choose plan',
                   style: context.textTheme.bodyLarge,
                 ),
                 const Spacer(),
