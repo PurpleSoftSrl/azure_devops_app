@@ -147,6 +147,7 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
   Future<bool> hasSubscription() async {
     final info = await Purchases.getCustomerInfo();
     logDebug('activeSubscriptions: ${info.activeSubscriptions}');
+
     _activeSubscriptions = [...info.activeSubscriptions];
 
     info.entitlements.active.forEach((key, value) => logDebug('entitlements: $key, $value'));
