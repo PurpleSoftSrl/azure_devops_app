@@ -181,20 +181,28 @@ class _SubscriptionAddedBottomsheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
       children: [
+        Image.asset(
+          'assets/illustrations/crying_smiling_guy.png',
+          height: 200,
+        ),
+        const SizedBox(
+          height: 40,
+        ),
         Text(
           '''
-Hi there! In this release we have added some ads to help us keep the lights on.
+In this release, we've introduced ads to help support the app's ongoing development and keep things running smoothly.
 
-We know ads can be annoying, so we have added a paid option to remove them.
+We understand that ads can be disruptive, so we've also added an option for you to remove them with a paid subscription.
 
 Would you like to remove them?
-You can always do it later in the settings.
 ''',
           style: context.textTheme.bodyLarge,
         ),
-        const Spacer(),
+        const SizedBox(
+          height: 52,
+        ),
         LoadingButton(
           onPressed: onRemoveAds,
           text: 'Remove ads',

@@ -245,9 +245,10 @@ class _HomeController with AppLogger {
 
     // ignore: unawaited_futures
     OverlayService.bottomsheet(
-      title: 'Developer notes',
+      title: 'Hi there!',
       isDismissible: false,
       isScrollControlled: true,
+      heightPercentage: .9,
       builder: (_) => _SubscriptionAddedBottomsheet(
         onRemoveAds: () {
           AppRouter.popRoute();
