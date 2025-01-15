@@ -4,7 +4,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
   _FileDiffController._(this.apiService, this.args, this.ads);
 
   final AzureApiService apiService;
-  final IAdsService ads;
+  final AdsService ads;
   final FileDiffArgs args;
 
   final diff = ValueNotifier<ApiResponse<Diff?>?>(null);

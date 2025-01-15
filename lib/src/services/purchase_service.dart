@@ -11,7 +11,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 const _revenueCatApiKeyIos = String.fromEnvironment('REVENUE_CAT_API_KEY_IOS');
 const _revenueCatApiKeyAndroid = String.fromEnvironment('REVENUE_CAT_API_KEY_ANDROID');
 
-abstract interface class IPurchaseService {
+abstract interface class PurchaseService {
   Future<void> init({String? userId});
   Future<List<AppProduct>> getProducts();
   Future<PurchaseResult> buySubscription(AppProduct product);
@@ -21,12 +21,12 @@ abstract interface class IPurchaseService {
   Future<bool> checkSubscription();
 }
 
-class PurchaseService with AppLogger implements IPurchaseService {
-  factory PurchaseService({required AdsService ads}) => _instance ??= PurchaseService._internal(ads);
+class PurchaseServiceImpl with AppLogger implements PurchaseService {
+  factory PurchaseServiceImpl({required AdsService ads}) => _instance ??= PurchaseServiceImpl._internal(ads);
 
-  PurchaseService._internal(this.ads);
+  PurchaseServiceImpl._internal(this.ads);
 
-  static PurchaseService? _instance;
+  static PurchaseServiceImpl? _instance;
 
   static const _tag = 'PurchaseService';
 

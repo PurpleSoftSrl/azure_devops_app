@@ -11,5 +11,5 @@ extension PurpleContext on BuildContext {
   double get width => MediaQuery.of(this).size.width;
 
   PurchaseService get purchaseService => PurchaseServiceWidget.of(this).purchase;
-  IAdsService get adsService => AdsServiceWidget.of(this).ads;
+  AdsService get adsService => AdsServiceWidget.of(this).ads;
 }

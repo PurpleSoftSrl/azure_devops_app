@@ -20,9 +20,9 @@ class AzureDevOps extends StatelessWidget {
   Widget build(BuildContext context) {
     return PurpleTheme(
       child: AdsServiceWidget(
-        ads: AdsService(),
+        ads: AdsServiceImpl(),
         child: PurchaseServiceWidget(
-          purchase: PurchaseService(ads: AdsService()),
+          purchase: PurchaseServiceImpl(ads: AdsServiceImpl()),
           child: AzureApiServiceInherited(
             apiService: AzureApiServiceImpl(),
             child: StorageServiceInherited(

@@ -6,7 +6,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   final PullRequestDetailArgs args;
 
   final AzureApiService apiService;
-  final IAdsService ads;
+  final AdsService ads;
 
   final prDetail = ValueNotifier<ApiResponse<PullRequestWithDetails?>?>(null);
 

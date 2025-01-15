@@ -5,7 +5,7 @@ class _PipelineDetailController with ShareMixin {
 
   final ({String project, int id}) args;
   final AzureApiService apiService;
-  final IAdsService ads;
+  final AdsService ads;
 
   final buildDetail = ValueNotifier<ApiResponse<PipelineWithTimeline?>?>(null);
 

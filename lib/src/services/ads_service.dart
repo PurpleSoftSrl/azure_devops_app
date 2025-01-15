@@ -7,19 +7,19 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 const _androidInterstitialAdId = String.fromEnvironment('ADMOB_INTERSTITIAL_ADID_ANDROID');
 const _iosInterstitialAdId = String.fromEnvironment('ADMOB_INTERSTITIAL_ADID_IOS');
 
-abstract interface class IAdsService {
+abstract interface class AdsService {
   Future<void> init();
   Future<void> showInterstitialAd({VoidCallback? onDismiss});
   void removeAds();
   void reactivateAds();
 }
 
-class AdsService with AppLogger implements IAdsService {
-  factory AdsService() => _instance ??= AdsService._internal();
+class AdsServiceImpl with AppLogger implements AdsService {
+  factory AdsServiceImpl() => _instance ??= AdsServiceImpl._internal();
 
-  AdsService._internal();
+  AdsServiceImpl._internal();
 
-  static AdsService? _instance;
+  static AdsServiceImpl? _instance;
 
   static const _tag = 'AdsService';
 
@@ -119,7 +119,7 @@ class AdsServiceWidget extends InheritedWidget {
     required this.ads,
   });
 
-  final IAdsService ads;
+  final AdsService ads;
 
   static AdsServiceWidget of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<AdsServiceWidget>()!;

@@ -29,7 +29,7 @@ Future<void> main() async {
   PurpleThemeHandler().init(defaultTheme: AppTheme.darkTheme, allThemes: AppTheme.allThemes);
 
   // ignore: unawaited_futures, to speed up app start
-  AdsService().init();
+  AdsServiceImpl().init();
 
   if (sentryDns.isEmpty || kDebugMode) {
     runApp(const AzureDevOps());

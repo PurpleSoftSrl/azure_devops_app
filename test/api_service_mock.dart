@@ -855,7 +855,7 @@ class StorageServiceMock implements StorageService {
   void setHasSeenSubscriptionAddedBottomsheet() {}
 }
 
-class AdsServiceMock implements IAdsService {
+class AdsServiceMock implements AdsService {
   @override
   Future<void> init() async {}
 
@@ -869,7 +869,7 @@ class AdsServiceMock implements IAdsService {
   Future<void> showInterstitialAd({VoidCallback? onDismiss}) async {}
 }
 
-class PurchaseServiceMock implements IPurchaseService {
+class PurchaseServiceMock implements PurchaseService {
   @override
   Future<bool> checkSubscription() async {
     return true;

@@ -6,7 +6,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
   final WorkItemDetailArgs args;
   final AzureApiService apiService;
   final StorageService storageService;
-  final IAdsService ads;
+  final AdsService ads;
 
   final itemDetail = ValueNotifier<ApiResponse<WorkItemWithUpdates?>?>(null);
 

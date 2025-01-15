@@ -13,7 +13,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   final AzureApiService apiService;
   final StorageService storageService;
-  final IAdsService ads;
+  final AdsService ads;
   final CreateOrEditWorkItemArgs args;
 
   final hasChanged = ValueNotifier<ApiResponse<bool>?>(null);
