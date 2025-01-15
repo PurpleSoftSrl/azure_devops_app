@@ -293,7 +293,8 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   }
 
   Future<void> reactivate() async {
-    return _editPr(status: PullRequestStatus.active);
+    // sending isDraft in the request body causes a Bad Request error with an abandoned PR
+    return _editPr(status: PullRequestStatus.active, setIsDraft: false);
   }
 
   Future<void> _votePr({required int vote}) async {
@@ -322,14 +323,15 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     });
 
     if (res.isError) {
-      await OverlayService.error('Error', description: 'Pull request not edited');
+      final errorMsg = _getErrorMessage(res);
+      await OverlayService.error('Error', description: errorMsg);
       return;
     }
 
     await init();
   }
 
-  Future<void> _editPr({PullRequestStatus? status, bool? isDraft, bool? autocomplete}) async {
+  Future<void> _editPr({PullRequestStatus? status, bool? isDraft, bool? autocomplete, bool setIsDraft = true}) async {
     var confirmMessage = '';
     if (status != null) {
       confirmMessage = '${status.toVerb()} the pull request';
@@ -354,7 +356,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       repositoryId: args.repository,
       id: args.id,
       status: status,
-      isDraft: isDraft ?? prDetail.value!.data!.pr.isDraft,
+      isDraft: !setIsDraft ? null : (isDraft ?? prDetail.value!.data!.pr.isDraft),
       commitId: prDetail.value!.data!.changes.first.iteration.sourceRefCommit.commitId,
       autocomplete: autocomplete,
       completionOptions: completionOptions,
@@ -368,11 +370,26 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     });
 
     if (res.isError) {
-      await OverlayService.error('Error', description: 'Pull request not edited');
+      final errorMsg = _getErrorMessage(res);
+      await OverlayService.error('Error', description: errorMsg);
       return;
     }
 
     await init();
+  }
+
+  String _getErrorMessage(ApiResponse<bool> res) {
+    var errorMsg = 'Pull request not edited.';
+    try {
+      final responseBody = res.errorResponse?.body ?? '';
+      final apiErrorMessage = jsonDecode(responseBody) as Map<String, dynamic>;
+      final msg = apiErrorMessage['message'] as String? ?? '';
+
+      errorMsg += '\n${msg.split(':').lastOrNull?.trim()}';
+    } catch (e, s) {
+      logError(e, s);
+    }
+    return errorMsg;
   }
 
   // ignore: long-method
