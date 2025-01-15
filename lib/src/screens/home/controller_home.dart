@@ -58,7 +58,7 @@ class _HomeController with AppLogger {
     _logSession();
 
     final hasSubscription = await purchase.checkSubscription();
-    if (hasSubscription) {
+    if (!hasSubscription) {
       _maybeShowSubscriptionBottomsheet();
     }
   }
