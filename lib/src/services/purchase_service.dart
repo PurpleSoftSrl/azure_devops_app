@@ -33,12 +33,10 @@ class PurchaseService with AppLogger {
   };
 
   void _removeAds() {
-    logDebug('Removing ads');
     AdsService().removeAds();
   }
 
   void _reactivateAds() {
-    logDebug('Removing ads');
     AdsService().reactivateAds();
   }
 
@@ -101,6 +99,7 @@ class PurchaseService with AppLogger {
           product.currencyCode,
         ),
       );
+
       logDebug('Purchase result: $res');
       return res.activeSubscriptions.contains(product.id) ? PurchaseResult.success : PurchaseResult.failed;
     } catch (e, s) {
@@ -124,7 +123,9 @@ class PurchaseService with AppLogger {
   Future<bool> hasSubscription() async {
     final info = await Purchases.getCustomerInfo();
     logDebug('activeSubscriptions: ${info.activeSubscriptions}');
+
     _activeSubscriptions = [...info.activeSubscriptions];
+
     info.entitlements.active.forEach((key, value) {
       logDebug('entitlements: $key, $value');
     });
@@ -143,6 +144,7 @@ class PurchaseService with AppLogger {
         }
       }
     }
+
     return hasSub;
   }
 

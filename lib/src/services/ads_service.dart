@@ -14,6 +14,8 @@ class AdsService with AppLogger {
 
   static final AdsService _instance = AdsService._internal();
 
+  static const _tag = 'AdsService';
+
   final adUnitId = Platform.isAndroid ? _androidInterstitialAdId : _iosInterstitialAdId;
 
   InterstitialAd? _interstitialAd;
@@ -21,16 +23,18 @@ class AdsService with AppLogger {
   bool _showAds = true;
 
   Future<void> init() async {
+    setTag(_tag);
+
     await MobileAds.instance.initialize();
 
-    logDebug('[AdsService] initialized');
+    logDebug('initialized');
 
     await _loadInterstitialAd();
   }
 
   /// Loads an interstitial ad.
   Future<void> _loadInterstitialAd() async {
-    logDebug('[AdsService] loading interstitial ad: $adUnitId');
+    logDebug('loading interstitial ad: $adUnitId');
 
     await InterstitialAd.load(
       adUnitId: adUnitId,
@@ -38,10 +42,10 @@ class AdsService with AppLogger {
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
           _interstitialAd = ad;
-          logDebug('[AdsService] Loaded ad: ${ad.toPrintableString()}');
+          logDebug('Loaded ad: ${ad.toPrintableString()}');
         },
         onAdFailedToLoad: (error) {
-          logError('[AdsService] InterstitialAd failed to load: $error', error);
+          logError('InterstitialAd failed to load: $error', error);
         },
       ),
     );
@@ -49,24 +53,24 @@ class AdsService with AppLogger {
 
   Future<void> showInterstitialAd({VoidCallback? onDismiss}) async {
     if (!_showAds) {
-      logDebug('[AdsService] Ads are disabled');
+      logDebug('Ads are disabled');
       return;
     }
 
-    logDebug('[AdsService] showing intertitial ad');
+    logDebug('showing intertitial ad');
 
     _interstitialAd?.fullScreenContentCallback = FullScreenContentCallback(
       onAdFailedToShowFullScreenContent: (ad, error) {
-        logError('[AdsService] onAdFailedToShowFullScreenContent: ${ad.adUnitId}', error);
+        logError('onAdFailedToShowFullScreenContent: ${ad.adUnitId}', error);
         ad.dispose();
         _loadInterstitialAd();
         onDismiss?.call();
       },
       onAdImpression: (ad) {
-        logDebug('[AdsService] onAdImpression: ${ad.adUnitId}');
+        logDebug('onAdImpression: ${ad.adUnitId}');
       },
       onAdDismissedFullScreenContent: (ad) {
-        logDebug('[AdsService] onAdDismissedFullScreenContent: ${ad.adUnitId}');
+        logDebug('onAdDismissedFullScreenContent: ${ad.adUnitId}');
         ad.dispose();
         _loadInterstitialAd();
         onDismiss?.call();
@@ -76,17 +80,17 @@ class AdsService with AppLogger {
     try {
       await _interstitialAd?.show();
     } catch (e) {
-      logError('[AdsService] Failed to show interstitial ad', e);
+      logError('Failed to show interstitial ad', e);
     }
   }
 
   void removeAds() {
-    logDebug('[AdsService] Ads removed');
+    logDebug('Ads removed');
     _showAds = false;
   }
 
   void reactivateAds() {
-    logDebug('[AdsService] Ads reactivated');
+    logDebug('Ads reactivated');
     _showAds = true;
   }
 }
