@@ -1,11 +1,12 @@
 part of work_item_detail;
 
 class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
-  _WorkItemDetailController._(this.args, this.apiService, this.storageService);
+  _WorkItemDetailController._(this.args, this.apiService, this.storageService, this.ads);
 
   final WorkItemDetailArgs args;
   final AzureApiService apiService;
   final StorageService storageService;
+  final IAdsService ads;
 
   final itemDetail = ValueNotifier<ApiResponse<WorkItemWithUpdates?>?>(null);
 
@@ -293,6 +294,6 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
   }
 
   Future<void> _showInterstitialAd({VoidCallback? onDismiss}) async {
-    await AdsService().showInterstitialAd(onDismiss: onDismiss);
+    await ads.showInterstitialAd(onDismiss: onDismiss);
   }
 }

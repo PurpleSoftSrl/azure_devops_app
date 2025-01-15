@@ -1,11 +1,12 @@
 part of pull_request_detail;
 
 class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper {
-  _PullRequestDetailController._(this.args, this.apiService);
+  _PullRequestDetailController._(this.args, this.apiService, this.ads);
 
   final PullRequestDetailArgs args;
 
   final AzureApiService apiService;
+  final IAdsService ads;
 
   final prDetail = ValueNotifier<ApiResponse<PullRequestWithDetails?>?>(null);
 
@@ -739,7 +740,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   }
 
   Future<void> _showInterstitialAd() async {
-    await AdsService().showInterstitialAd();
+    await ads.showInterstitialAd();
   }
 }
 

@@ -27,8 +27,9 @@ class ChooseSubscriptionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final purchase = context.purchaseService;
     return AppBasePage(
-      initState: _ChooseSubscriptionController._,
+      initState: () => _ChooseSubscriptionController._(purchase),
       smartphone: (ctrl) => _ChooseSubscriptionScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _ChooseSubscriptionScreen(ctrl, _tabletParameters),
     );

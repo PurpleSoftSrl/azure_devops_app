@@ -41,8 +41,9 @@ class PipelineDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = AppRouter.getPipelineDetailArgs(context);
     final apiService = AzureApiServiceInherited.of(context).apiService;
+    final ads = context.adsService;
     return AppBasePage(
-      initState: () => _PipelineDetailController._(args, apiService),
+      initState: () => _PipelineDetailController._(args, apiService, ads),
       smartphone: (ctrl) => _PipelineDetailScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _PipelineDetailScreen(ctrl, _tabletParameters),
     );

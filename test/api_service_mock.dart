@@ -26,7 +26,9 @@ import 'package:azure_devops/src/models/work_item_link_types.dart';
 import 'package:azure_devops/src/models/work_item_tags.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
+import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
+import 'package:azure_devops/src/services/purchase_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -851,6 +853,55 @@ class StorageServiceMock implements StorageService {
 
   @override
   void setHasSeenSubscriptionAddedBottomsheet() {}
+}
+
+class AdsServiceMock implements IAdsService {
+  @override
+  Future<void> init() async {}
+
+  @override
+  void reactivateAds() {}
+
+  @override
+  void removeAds() {}
+
+  @override
+  Future<void> showInterstitialAd({VoidCallback? onDismiss}) async {}
+}
+
+class PurchaseServiceMock implements IPurchaseService {
+  @override
+  Future<bool> checkSubscription() async {
+    return true;
+  }
+
+  @override
+  Future<PurchaseResult> buySubscription(AppProduct product) async {
+    return PurchaseResult.success;
+  }
+
+  @override
+  Future<List<AppProduct>> getProducts() async {
+    return [];
+  }
+
+  @override
+  Future<bool> hasSubscription() async {
+    return true;
+  }
+
+  @override
+  Future<void> init({String? userId}) async {}
+
+  @override
+  bool isSubscribed(String productId) {
+    return true;
+  }
+
+  @override
+  Future<bool> restorePurchases() async {
+    return true;
+  }
 }
 
 extension on WorkItem {

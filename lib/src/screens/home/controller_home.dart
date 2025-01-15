@@ -1,10 +1,11 @@
 part of home;
 
 class _HomeController with AppLogger {
-  _HomeController._(this.apiService, this.storageService);
+  _HomeController._(this.apiService, this.storageService, this.purchase);
 
   final AzureApiService apiService;
   final StorageService storageService;
+  final PurchaseService purchase;
 
   final projects = ValueNotifier<ApiResponse<List<Project>>?>(null);
   List<Project> allProjects = [];
@@ -27,7 +28,7 @@ class _HomeController with AppLogger {
     final allProjectsRes = await apiService.getProjects();
     allProjects = allProjectsRes.data ?? [];
 
-    await PurchaseService().init(userId: apiService.user?.emailAddress);
+    await purchase.init(userId: apiService.user?.emailAddress);
 
     // avoid resetting projects if response is error (and thus contains zero projects)
     if (allProjectsRes.isError) {
@@ -56,7 +57,7 @@ class _HomeController with AppLogger {
 
     _logSession();
 
-    final hasSubscription = await PurchaseService().checkSubscription();
+    final hasSubscription = await purchase.checkSubscription();
     if (hasSubscription) {
       _maybeShowSubscriptionBottomsheet();
     }

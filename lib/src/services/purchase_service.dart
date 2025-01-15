@@ -4,20 +4,33 @@ import 'dart:io';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 const _revenueCatApiKeyIos = String.fromEnvironment('REVENUE_CAT_API_KEY_IOS');
 const _revenueCatApiKeyAndroid = String.fromEnvironment('REVENUE_CAT_API_KEY_ANDROID');
 
-class PurchaseService with AppLogger {
-  factory PurchaseService() => _instance;
+abstract interface class IPurchaseService {
+  Future<void> init({String? userId});
+  Future<List<AppProduct>> getProducts();
+  Future<PurchaseResult> buySubscription(AppProduct product);
+  Future<bool> restorePurchases();
+  Future<bool> hasSubscription();
+  bool isSubscribed(String productId);
+  Future<bool> checkSubscription();
+}
 
-  PurchaseService._internal();
+class PurchaseService with AppLogger implements IPurchaseService {
+  factory PurchaseService({required AdsService ads}) => _instance ??= PurchaseService._internal(ads);
 
-  static final PurchaseService _instance = PurchaseService._internal();
+  PurchaseService._internal(this.ads);
+
+  static PurchaseService? _instance;
 
   static const _tag = 'PurchaseService';
+
+  final AdsService ads;
 
   List<String> _activeSubscriptions = [];
 
@@ -33,13 +46,14 @@ class PurchaseService with AppLogger {
   };
 
   void _removeAds() {
-    AdsService().removeAds();
+    ads.removeAds();
   }
 
   void _reactivateAds() {
-    AdsService().reactivateAds();
+    ads.reactivateAds();
   }
 
+  @override
   Future<void> init({String? userId}) async {
     setTag(_tag);
     await _configureSDK(userId);
@@ -57,6 +71,7 @@ class PurchaseService with AppLogger {
     logDebug('Purchases configured with user id: $userId');
   }
 
+  @override
   Future<List<AppProduct>> getProducts() async {
     final products = await Purchases.getProducts([
       // iOS
@@ -87,6 +102,7 @@ class PurchaseService with AppLogger {
         .toList();
   }
 
+  @override
   Future<PurchaseResult> buySubscription(AppProduct product) async {
     try {
       final res = await Purchases.purchaseStoreProduct(
@@ -114,12 +130,14 @@ class PurchaseService with AppLogger {
     }
   }
 
+  @override
   Future<bool> restorePurchases() async {
     final info = await Purchases.restorePurchases();
     _activeSubscriptions = info.activeSubscriptions;
     return info.activeSubscriptions.isNotEmpty;
   }
 
+  @override
   Future<bool> hasSubscription() async {
     final info = await Purchases.getCustomerInfo();
     logDebug('activeSubscriptions: ${info.activeSubscriptions}');
@@ -148,8 +166,10 @@ class PurchaseService with AppLogger {
     return hasSub;
   }
 
+  @override
   bool isSubscribed(String productId) => _activeSubscriptions.contains(productId);
 
+  @override
   Future<bool> checkSubscription() {
     logDebug('Checking subscription');
     return hasSubscription();
@@ -187,4 +207,23 @@ enum PurchaseResult {
   success,
   cancelled,
   failed,
+}
+
+class PurchaseServiceWidget extends InheritedWidget {
+  const PurchaseServiceWidget({
+    super.key,
+    required super.child,
+    required this.purchase,
+  });
+
+  final PurchaseService purchase;
+
+  static PurchaseServiceWidget of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<PurchaseServiceWidget>()!;
+  }
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    return false;
+  }
 }

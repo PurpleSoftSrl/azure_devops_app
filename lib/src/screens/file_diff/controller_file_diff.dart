@@ -1,9 +1,10 @@
 part of file_diff;
 
 class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
-  _FileDiffController._(this.apiService, this.args);
+  _FileDiffController._(this.apiService, this.args, this.ads);
 
   final AzureApiService apiService;
+  final IAdsService ads;
   final FileDiffArgs args;
 
   final diff = ValueNotifier<ApiResponse<Diff?>?>(null);
@@ -278,6 +279,6 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
   }
 
   Future<void> _showInterstitialAd() async {
-    await AdsService().showInterstitialAd();
+    await ads.showInterstitialAd();
   }
 }

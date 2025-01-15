@@ -1,18 +1,25 @@
 import 'dart:io';
 
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 const _androidInterstitialAdId = String.fromEnvironment('ADMOB_INTERSTITIAL_ADID_ANDROID');
 const _iosInterstitialAdId = String.fromEnvironment('ADMOB_INTERSTITIAL_ADID_IOS');
 
-class AdsService with AppLogger {
-  factory AdsService() => _instance;
+abstract interface class IAdsService {
+  Future<void> init();
+  Future<void> showInterstitialAd({VoidCallback? onDismiss});
+  void removeAds();
+  void reactivateAds();
+}
+
+class AdsService with AppLogger implements IAdsService {
+  factory AdsService() => _instance ??= AdsService._internal();
 
   AdsService._internal();
 
-  static final AdsService _instance = AdsService._internal();
+  static AdsService? _instance;
 
   static const _tag = 'AdsService';
 
@@ -22,6 +29,7 @@ class AdsService with AppLogger {
 
   bool _showAds = true;
 
+  @override
   Future<void> init() async {
     setTag(_tag);
 
@@ -51,6 +59,7 @@ class AdsService with AppLogger {
     );
   }
 
+  @override
   Future<void> showInterstitialAd({VoidCallback? onDismiss}) async {
     if (!_showAds) {
       logDebug('Ads are disabled');
@@ -84,11 +93,13 @@ class AdsService with AppLogger {
     }
   }
 
+  @override
   void removeAds() {
     logDebug('Ads removed');
     _showAds = false;
   }
 
+  @override
   void reactivateAds() {
     logDebug('Ads reactivated');
     _showAds = true;
@@ -98,5 +109,24 @@ class AdsService with AppLogger {
 extension on InterstitialAd {
   String toPrintableString() {
     return 'InterstitialAd {adUnitId: $adUnitId, request: $request, responseInfo: $responseInfo}';
+  }
+}
+
+class AdsServiceWidget extends InheritedWidget {
+  const AdsServiceWidget({
+    super.key,
+    required super.child,
+    required this.ads,
+  });
+
+  final IAdsService ads;
+
+  static AdsServiceWidget of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<AdsServiceWidget>()!;
+  }
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    return false;
   }
 }

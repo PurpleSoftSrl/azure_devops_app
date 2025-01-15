@@ -1,14 +1,16 @@
 part of choose_subscription;
 
 class _ChooseSubscriptionController {
-  _ChooseSubscriptionController._();
+  _ChooseSubscriptionController._(this.purchase);
+
+  final PurchaseService purchase;
 
   final products = ValueNotifier<ApiResponse<List<AppProduct>>?>(null);
 
   final purchasingMap = <String, ValueNotifier<bool>>{};
 
   Future<void> init() async {
-    final productsRes = await PurchaseService().getProducts();
+    final productsRes = await purchase.getProducts();
 
     for (final product in productsRes) {
       purchasingMap[product.id] = ValueNotifier(false);
@@ -17,10 +19,10 @@ class _ChooseSubscriptionController {
     products.value = ApiResponse.ok(productsRes);
   }
 
-  Future<void> purchase(AppProduct product) async {
+  Future<void> purchaseProduct(AppProduct product) async {
     purchasingMap[product.id]!.value = true;
 
-    final res = await PurchaseService().buySubscription(product);
+    final res = await purchase.buySubscription(product);
 
     purchasingMap[product.id]!.value = false;
 
@@ -36,7 +38,7 @@ class _ChooseSubscriptionController {
   }
 
   Future<void> restorePurchase() async {
-    final res = await PurchaseService().restorePurchases();
+    final res = await purchase.restorePurchases();
     if (!res) {
       return OverlayService.error('Error', description: 'No previous subscription found');
     }

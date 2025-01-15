@@ -13,8 +13,8 @@ class _ChooseSubscriptionScreen extends StatelessWidget {
       title: 'Choose subscription',
       notifier: ctrl.products,
       builder: (products) {
-        final purchasedProducts = products.where((p) => PurchaseService().isSubscribed(p.id));
-        final availableProducts = products.where((p) => !PurchaseService().isSubscribed(p.id));
+        final purchasedProducts = products.where((p) => ctrl.purchase.isSubscribed(p.id));
+        final availableProducts = products.where((p) => !ctrl.purchase.isSubscribed(p.id));
         final titleStyle = context.textTheme.bodyLarge;
 
         return Column(
@@ -48,7 +48,7 @@ class _ChooseSubscriptionScreen extends StatelessWidget {
                   valueListenable: ctrl.purchasingMap[p.id]!,
                   builder: (_, isPurchasing, __) => _SubscriptionCard(
                     product: p,
-                    onTap: ctrl.purchase,
+                    onTap: ctrl.purchaseProduct,
                     isPurchasing: isPurchasing,
                   ),
                 ),

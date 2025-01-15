@@ -1,10 +1,11 @@
 part of pipeline_detail;
 
 class _PipelineDetailController with ShareMixin {
-  _PipelineDetailController._(this.args, this.apiService) : visibilityKey = GlobalKey();
+  _PipelineDetailController._(this.args, this.apiService, this.ads) : visibilityKey = GlobalKey();
 
   final ({String project, int id}) args;
   final AzureApiService apiService;
+  final IAdsService ads;
 
   final buildDetail = ValueNotifier<ApiResponse<PipelineWithTimeline?>?>(null);
 
@@ -222,7 +223,7 @@ class _PipelineDetailController with ShareMixin {
   }
 
   Future<void> _showInterstitialAd({VoidCallback? onDismiss}) async {
-    await AdsService().showInterstitialAd(onDismiss: onDismiss);
+    await ads.showInterstitialAd(onDismiss: onDismiss);
   }
 }
 

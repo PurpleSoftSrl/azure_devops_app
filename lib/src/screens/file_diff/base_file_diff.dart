@@ -40,8 +40,9 @@ class FileDiffPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final args = AppRouter.getCommitDiffArgs(context);
+    final ads = context.adsService;
     return AppBasePage(
-      initState: () => _FileDiffController._(apiService, args),
+      initState: () => _FileDiffController._(apiService, args, ads),
       smartphone: (ctrl) => _FileDiffScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _FileDiffScreen(ctrl, _tabletParameters),
     );
