@@ -449,9 +449,10 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
   }
 
   Future<void> _handleBadRequest(Response response) async {
-    final error = getErrorMessageAndType(response);
-    if (error.msg.startsWith('The project specified is not found in hierarchy')) {
-      final deletedProject = error.msg.split(' ').lastOrNull;
+    final objectName = getWorkItemErrorObjectName(response);
+
+    if (isWorkItemProjectNotFoundError(response.body)) {
+      final deletedProject = objectName;
       if (deletedProject != null) {
         final conf = await OverlayService.confirm(
           'Project not found',
@@ -465,6 +466,42 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
         final updatedProjectFilter = {...projectsFilter}..removeWhere((p) => p.name == deletedProject);
         filterByProjects(updatedProjectFilter);
       }
+
+      return;
+    }
+
+    if (isWorkItemIterationNotFoundError(response.body)) {
+      final deletedIteration = objectName;
+      if (deletedIteration != null) {
+        final conf = await OverlayService.confirm(
+          'Iteration not found',
+          description:
+              'It looks like the iteration "$deletedIteration" does not exist anymore. Do you want to remove it from the filters?',
+        );
+        if (!conf) return;
+
+        await apiService.getWorkItemTypes(force: true);
+        filterByIteration(null);
+      }
+
+      return;
+    }
+
+    if (isWorkItemAreaNotFoundError(response.body)) {
+      final deletedArea = objectName;
+      if (deletedArea != null) {
+        final conf = await OverlayService.confirm(
+          'Area not found',
+          description:
+              'It looks like the area "$deletedArea" does not exist anymore. Do you want to remove it from the filters?',
+        );
+        if (!conf) return;
+
+        await apiService.getWorkItemTypes(force: true);
+        filterByArea(null);
+      }
+
+      return;
     }
   }
 }
