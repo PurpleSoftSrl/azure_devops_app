@@ -32,23 +32,19 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   final AdsService ads;
 
-  List<String> _activeSubscriptions = [];
-
-  List<StoreProduct> _products = [];
-
   static const _noAdsYearly = 'azuredevops.subs.noads.yearly';
   static const _noAdsMonthly = 'azuredevops.subs.noads.monthly';
-  static const _noAdsEntitlementMonthly = 'rc_promo_noadsentitlement_monthly';
-  static const _noAdsEntitlementYearly = 'rc_promo_noadsentitlement_yearly';
+
+  static const _noAdsEntitlement = 'noadsentitlement';
 
   late final _adsCallbacks = _SubscriptionCallbacks(onPurchased: _removeAds, onExpired: _reactivateAds);
 
   late final Map<String, _SubscriptionCallbacks> _purchaseCallbacks = {
-    _noAdsMonthly: _adsCallbacks,
-    _noAdsYearly: _adsCallbacks,
-    _noAdsEntitlementMonthly: _adsCallbacks,
-    _noAdsEntitlementYearly: _adsCallbacks,
+    _noAdsEntitlement: _adsCallbacks,
   };
+
+  List<String> _activeSubscriptions = [];
+  List<StoreProduct> _products = [];
 
   void _removeAds() {
     ads.removeAds();
@@ -117,7 +113,7 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
       final res = await Purchases.purchaseStoreProduct(storeProduct);
 
       logDebug('Purchase result: $res');
-      return res.activeSubscriptions.contains(product.id) ? PurchaseResult.success : PurchaseResult.failed;
+      return res.activeSubscriptions.isNotEmpty ? PurchaseResult.success : PurchaseResult.failed;
     } catch (e, s) {
       if (e is PlatformException && e.details?['readableErrorCode'] == 'PURCHASE_CANCELLED') {
         logDebug('Purchase cancelled');
@@ -133,7 +129,7 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
   @override
   Future<bool> restorePurchases() async {
     final info = await Purchases.restorePurchases();
-    _activeSubscriptions = info.activeSubscriptions;
+    _activeSubscriptions = [...info.activeSubscriptions];
     return info.activeSubscriptions.isNotEmpty;
   }
 
@@ -141,19 +137,14 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
   Future<bool> hasSubscription() async {
     final info = await Purchases.getCustomerInfo();
     logDebug('activeSubscriptions: ${info.activeSubscriptions}');
-
     _activeSubscriptions = [...info.activeSubscriptions];
 
-    info.entitlements.active.forEach((key, value) {
-      logDebug('entitlements: $key, $value');
-    });
+    info.entitlements.active.forEach((key, value) => logDebug('entitlements: $key, $value'));
 
-    _activeSubscriptions.addAll(info.entitlements.active.keys);
-
-    final hasSub = _activeSubscriptions.isNotEmpty;
+    final hasSub = info.entitlements.active.containsKey(_noAdsEntitlement);
 
     if (hasSub) {
-      _purchaseCallbacks[info.activeSubscriptions.first]?.onPurchased.call();
+      _purchaseCallbacks[_noAdsEntitlement]?.onPurchased.call();
     } else {
       final expiredSubs = info.allExpirationDates.entries.sortedBy((e) => e.value ?? '').map((e) => e.key).toList();
       for (final callbacks in _purchaseCallbacks.entries) {
