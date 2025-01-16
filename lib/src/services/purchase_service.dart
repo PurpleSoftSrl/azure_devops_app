@@ -34,6 +34,8 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   List<String> _activeSubscriptions = [];
 
+  List<StoreProduct> _products = [];
+
   static const _noAdsYearly = 'azuredevops.subs.noads.yearly';
   static const _noAdsMonthly = 'azuredevops.subs.noads.monthly';
   static const _noAdsEntitlementMonthly = 'rc_promo_noadsentitlement_monthly';
@@ -84,14 +86,14 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   @override
   Future<List<AppProduct>> getProducts() async {
-    final products = await Purchases.getProducts([_noAdsMonthly, _noAdsYearly]);
+    _products = await Purchases.getProducts([_noAdsMonthly, _noAdsYearly]);
 
-    logDebug('Products: ${products.length}');
-    for (final product in products) {
+    logDebug('Products: ${_products.length}');
+    for (final product in _products) {
       logDebug('Product: ${product.title}, ${product.description}, ${product.price}, ${product.identifier}');
     }
 
-    return products
+    return _products
         .map(
           (product) => AppProduct(
             id: product.identifier,
@@ -111,21 +113,13 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
   @override
   Future<PurchaseResult> buySubscription(AppProduct product) async {
     try {
-      final res = await Purchases.purchaseStoreProduct(
-        StoreProduct(
-          product.id,
-          product.description,
-          product.title,
-          product.price,
-          product.priceString,
-          product.currencyCode,
-        ),
-      );
+      final storeProduct = _products.firstWhere((p) => p.identifier == product.id);
+      final res = await Purchases.purchaseStoreProduct(storeProduct);
 
       logDebug('Purchase result: $res');
       return res.activeSubscriptions.contains(product.id) ? PurchaseResult.success : PurchaseResult.failed;
     } catch (e, s) {
-      if (e is PlatformException && e.details['readableErrorCode'] == 'PURCHASE_CANCELLED') {
+      if (e is PlatformException && e.details?['readableErrorCode'] == 'PURCHASE_CANCELLED') {
         logDebug('Purchase cancelled');
         return PurchaseResult.cancelled;
       }
