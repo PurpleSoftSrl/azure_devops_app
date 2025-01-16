@@ -34,18 +34,18 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   List<String> _activeSubscriptions = [];
 
-  static const _defaultIosProductId = 'io.purplesoft.azuredevops.subs.noads.yearly';
-  static const _defaultAndroidProductId = 'azuredevops.subs.noads.yearly';
+  static const _noAdsYearly = 'azuredevops.subs.noads.yearly';
+  static const _noAdsMonthly = 'azuredevops.subs.noads.monthly';
+  static const _noAdsEntitlementMonthly = 'rc_promo_noadsentitlement_monthly';
+  static const _noAdsEntitlementYearly = 'rc_promo_noadsentitlement_yearly';
 
   late final _adsCallbacks = _SubscriptionCallbacks(onPurchased: _removeAds, onExpired: _reactivateAds);
 
   late final Map<String, _SubscriptionCallbacks> _purchaseCallbacks = {
-    'io.purplesoft.azuredevops.subs.noads.monthly': _adsCallbacks,
-    _defaultIosProductId: _adsCallbacks,
-    'azuredevops.subs.noads.monthly': _adsCallbacks,
-    _defaultAndroidProductId: _adsCallbacks,
-    'rc_promo_noadsentitlement_monthly': _adsCallbacks,
-    'rc_promo_noadsentitlement_yearly': _adsCallbacks,
+    _noAdsMonthly: _adsCallbacks,
+    _noAdsYearly: _adsCallbacks,
+    _noAdsEntitlementMonthly: _adsCallbacks,
+    _noAdsEntitlementYearly: _adsCallbacks,
   };
 
   void _removeAds() {
@@ -76,14 +76,7 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   @override
   Future<List<AppProduct>> getProducts() async {
-    final products = await Purchases.getProducts([
-      // iOS
-      'io.purplesoft.azuredevops.subs.noads.monthly',
-      _defaultIosProductId,
-      // Android
-      'azuredevops.subs.noads.monthly',
-      _defaultAndroidProductId,
-    ]);
+    final products = await Purchases.getProducts([_noAdsMonthly, _noAdsYearly]);
 
     logDebug('Products: ${products.length}');
     for (final product in products) {
@@ -100,7 +93,7 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
             priceString: product.priceString,
             currencyCode: product.currencyCode,
             duration: product.subscriptionPeriod ?? '',
-            isDefault: [_defaultIosProductId, _defaultAndroidProductId].contains(product.identifier),
+            isDefault: product.identifier == _noAdsYearly,
           ),
         )
         .sorted((p1, p2) => p1.isDefault ? -1 : 1)
