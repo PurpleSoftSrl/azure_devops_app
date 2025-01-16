@@ -47,7 +47,7 @@ class MsalService with AppLogger {
     try {
       if (_pca == null) await init();
 
-      final token = await _pca!.acquireToken(scopes: _scopes);
+      final token = await _pca!.acquireToken(scopes: _scopes, prompt: Prompt.selectAccount);
       _isLoggedIn = true;
       return token.accessToken;
     } on MsalException catch (e) {
