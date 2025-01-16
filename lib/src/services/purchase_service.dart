@@ -12,7 +12,7 @@ const _revenueCatApiKeyIos = String.fromEnvironment('REVENUE_CAT_API_KEY_IOS');
 const _revenueCatApiKeyAndroid = String.fromEnvironment('REVENUE_CAT_API_KEY_ANDROID');
 
 abstract interface class PurchaseService {
-  Future<void> init({String? userId});
+  Future<void> init({String? userId, String? userName});
   Future<List<AppProduct>> getProducts();
   Future<PurchaseResult> buySubscription(AppProduct product);
   Future<bool> restorePurchases();
@@ -57,12 +57,17 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
   }
 
   @override
-  Future<void> init({String? userId}) async {
+  Future<void> init({String? userId, String? userName}) async {
     setTag(_tag);
-    await _configureSDK(userId);
+
+    try {
+      await _configureSDK(userId, userName);
+    } catch (e, s) {
+      logError('Failed to configure Purchases SDK: $e', s);
+    }
   }
 
-  Future<void> _configureSDK(String? userId) async {
+  Future<void> _configureSDK(String? userId, String? userName) async {
     await Purchases.setLogLevel(LogLevel.debug);
 
     final configuration = PurchasesConfiguration(Platform.isIOS ? _revenueCatApiKeyIos : _revenueCatApiKeyAndroid)
@@ -70,6 +75,9 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
       ..purchasesAreCompletedBy = const PurchasesAreCompletedByRevenueCat();
 
     await Purchases.configure(configuration);
+
+    if (userId != null) await Purchases.setEmail(userId);
+    if (userName != null) await Purchases.setDisplayName(userName);
 
     logDebug('Purchases configured with user id: $userId');
   }

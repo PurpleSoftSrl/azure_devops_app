@@ -891,7 +891,7 @@ class PurchaseServiceMock implements PurchaseService {
   }
 
   @override
-  Future<void> init({String? userId}) async {}
+  Future<void> init({String? userId, String? userName}) async {}
 
   @override
   bool isSubscribed(String productId) {

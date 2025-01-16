@@ -28,7 +28,10 @@ class _HomeController with AppLogger {
     final allProjectsRes = await apiService.getProjects();
     allProjects = allProjectsRes.data ?? [];
 
-    await purchase.init(userId: apiService.user?.emailAddress);
+    await purchase.init(
+      userId: apiService.user?.emailAddress,
+      userName: apiService.user?.displayName,
+    );
 
     // avoid resetting projects if response is error (and thus contains zero projects)
     if (allProjectsRes.isError) {
