@@ -93,6 +93,8 @@ abstract class AzureApiService {
 
   void setChosenProjects(List<Project> chosenProjects);
 
+  void removeChosenProject(String projectName);
+
   Future<ApiResponse<List<Project>>> getProjects();
 
   Future<ApiResponse<ProjectDetail>> getProject({required String projectName});
@@ -668,6 +670,14 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     _chosenProjects = chosenProjects.toList();
 
     storageService.setChosenProjects(_chosenProjects!);
+  }
+
+  @override
+  void removeChosenProject(String projectName) {
+    final currentChosenProjects = storageService.getChosenProjects();
+    final updatedChosenProjects = currentChosenProjects.toList()..removeWhere((p) => p.name == projectName);
+
+    setChosenProjects(updatedChosenProjects);
   }
 
   @override

@@ -3,6 +3,7 @@ library work_items;
 import 'package:azure_devops/src/extensions/area_or_iteration_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
+import 'package:azure_devops/src/mixins/api_error_mixin.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/areas_and_iterations.dart';
 import 'package:azure_devops/src/models/processes.dart';
@@ -25,6 +26,7 @@ import 'package:azure_devops/src/widgets/work_item_area_filter.dart';
 import 'package:azure_devops/src/widgets/work_item_type_icon.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 part 'components_work_items.dart';
 part 'controller_work_items.dart';

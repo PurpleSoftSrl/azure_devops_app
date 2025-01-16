@@ -1,6 +1,6 @@
 part of project_detail;
 
-class _ProjectDetailController {
+class _ProjectDetailController with ApiErrorHelper {
   _ProjectDetailController._(this.apiService, this.projectName);
 
   final AzureApiService apiService;
@@ -26,6 +26,13 @@ class _ProjectDetailController {
     ]);
 
     final projectRes = await apiService.getProject(projectName: projectName);
+
+    if (projectRes.isError) {
+      if (projectRes.errorResponse?.statusCode == 404) {
+        // ignore: unawaited_futures, to refresh the page immediately
+        _handleBadRequest(projectRes.errorResponse!);
+      }
+    }
 
     final isAllErrors = allRes.every((r) => r.isError);
     project.value = projectRes.copyWith(isError: isAllErrors, errorResponse: allRes.first.errorResponse);
@@ -78,5 +85,24 @@ class _ProjectDetailController {
 
   void goToPullRequests() {
     AppRouter.goToPullRequests(args: (project: project.value?.data?.project, shortcut: null));
+  }
+
+  Future<void> _handleBadRequest(Response response) async {
+    final error = getErrorMessageAndType(response);
+    if (error.type == projectNotFoundException) {
+      final deletedProject = parseProjectNotFoundName(error.msg);
+      if (deletedProject != null) {
+        final conf = await OverlayService.confirm(
+          'Project not found',
+          description:
+              'It looks like the project "$deletedProject" does not exist anymore. Do you want to remove it from your selected projects?',
+        );
+        if (!conf) return;
+
+        apiService.removeChosenProject(deletedProject);
+
+        AppRouter.pop();
+      }
+    }
   }
 }

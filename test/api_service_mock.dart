@@ -376,6 +376,9 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
+  void removeChosenProject(String projectName) {}
+
+  @override
   Future<void> setOrganization(String org) {
     throw UnimplementedError();
   }

@@ -3,6 +3,7 @@ library pipelines;
 import 'dart:async';
 
 import 'package:azure_devops/src/extensions/pipeline_result_extension.dart';
+import 'package:azure_devops/src/mixins/api_error_mixin.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/project.dart';
@@ -19,6 +20,7 @@ import 'package:azure_devops/src/widgets/pipeline_list_tile.dart';
 import 'package:azure_devops/src/widgets/shortcut_label.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:http/src/response.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 part 'components_pipelines.dart';

@@ -1,6 +1,6 @@
 part of pipelines;
 
-class _PipelinesController with FilterMixin {
+class _PipelinesController with FilterMixin, ApiErrorHelper {
   _PipelinesController._(this.apiService, this.storageService, this.args) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
@@ -112,6 +112,15 @@ class _PipelinesController with FilterMixin {
       status: statusFilter,
       triggeredBy: isDefaultUsersFilter ? null : usersFilter.map((u) => u.mailAddress ?? '').toSet(),
     );
+
+    if (res.isError) {
+      pipelines.value = res;
+      if (res.errorResponse?.statusCode == 400) {
+        // ignore: unawaited_futures, to refresh the page immediately
+        _handleBadRequest(res.errorResponse!);
+      }
+      return;
+    }
 
     var pipes = res.data ?? [];
 
@@ -252,5 +261,25 @@ class _PipelinesController with FilterMixin {
     );
 
     OverlayService.snackbar(res.message, isError: !res.result);
+  }
+
+  Future<void> _handleBadRequest(Response response) async {
+    final error = getErrorMessageAndType(response);
+    if (error.type == projectNotFoundException) {
+      final deletedProject = parseProjectNotFoundName(error.msg);
+      if (deletedProject != null) {
+        final conf = await OverlayService.confirm(
+          'Project not found',
+          description:
+              'It looks like the project "$deletedProject" does not exist anymore. Do you want to remove it from your selected projects?',
+        );
+        if (!conf) return;
+
+        apiService.removeChosenProject(deletedProject);
+
+        final updatedProjectFilter = {...projectsFilter}..removeWhere((p) => p.name == deletedProject);
+        filterByProjects(updatedProjectFilter);
+      }
+    }
   }
 }

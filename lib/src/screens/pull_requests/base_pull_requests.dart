@@ -1,5 +1,6 @@
 library pull_requests;
 
+import 'package:azure_devops/src/mixins/api_error_mixin.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
@@ -16,6 +17,7 @@ import 'package:azure_devops/src/widgets/pull_request_list_tile.dart';
 import 'package:azure_devops/src/widgets/search_field.dart';
 import 'package:azure_devops/src/widgets/shortcut_label.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 part 'components_pull_requests.dart';
 part 'controller_pull_requests.dart';

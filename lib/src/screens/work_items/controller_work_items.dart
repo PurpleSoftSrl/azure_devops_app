@@ -1,6 +1,6 @@
 part of work_items;
 
-class _WorkItemsController with FilterMixin {
+class _WorkItemsController with FilterMixin, ApiErrorHelper {
   _WorkItemsController._(this.apiService, this.storageService, this.args) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
@@ -312,6 +312,11 @@ class _WorkItemsController with FilterMixin {
     if (_currentSearchQuery != null) {
       _searchWorkItem(_currentSearchQuery!);
     }
+
+    if (res.isError && res.errorResponse?.statusCode == 400) {
+      // ignore: unawaited_futures, to refresh the page immediately
+      _handleBadRequest(res.errorResponse!);
+    }
   }
 
   void resetFilters() {
@@ -441,5 +446,25 @@ class _WorkItemsController with FilterMixin {
     );
 
     OverlayService.snackbar(res.message, isError: !res.result);
+  }
+
+  Future<void> _handleBadRequest(Response response) async {
+    final error = getErrorMessageAndType(response);
+    if (error.msg.startsWith('The project specified is not found in hierarchy')) {
+      final deletedProject = error.msg.split(' ').lastOrNull;
+      if (deletedProject != null) {
+        final conf = await OverlayService.confirm(
+          'Project not found',
+          description:
+              'It looks like the project "$deletedProject" does not exist anymore. Do you want to remove it from your selected projects?',
+        );
+        if (!conf) return;
+
+        apiService.removeChosenProject(deletedProject);
+
+        final updatedProjectFilter = {...projectsFilter}..removeWhere((p) => p.name == deletedProject);
+        filterByProjects(updatedProjectFilter);
+      }
+    }
   }
 }

@@ -1,6 +1,7 @@
 library project_detail;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
+import 'package:azure_devops/src/mixins/api_error_mixin.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
 import 'package:azure_devops/src/models/repository.dart';
@@ -19,6 +20,7 @@ import 'package:azure_devops/src/widgets/work_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 part 'components_project_detail.dart';
 part 'controller_project_detail.dart';

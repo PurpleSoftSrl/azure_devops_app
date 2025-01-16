@@ -1,6 +1,6 @@
 part of pull_requests;
 
-class _PullRequestsController with FilterMixin {
+class _PullRequestsController with FilterMixin, ApiErrorHelper {
   _PullRequestsController._(this.apiService, this.storageService, this.args) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
@@ -133,6 +133,15 @@ class _PullRequestsController with FilterMixin {
       reviewers: reviewersFilter.isEmpty ? null : reviewersFilter,
     );
 
+    if (res.isError) {
+      pullRequests.value = res;
+      if (res.errorResponse?.statusCode == 404) {
+        // ignore: unawaited_futures, to refresh the page immediately
+        _handleBadRequest(res.errorResponse!);
+      }
+      return;
+    }
+
     pullRequests.value = res..data?.sort((a, b) => (b.creationDate).compareTo(a.creationDate));
     allPullRequests = pullRequests.value?.data ?? [];
 
@@ -189,5 +198,25 @@ class _PullRequestsController with FilterMixin {
     );
 
     OverlayService.snackbar(res.message, isError: !res.result);
+  }
+
+  Future<void> _handleBadRequest(Response response) async {
+    final error = getErrorMessageAndType(response);
+    if (error.type == projectNotFoundException) {
+      final deletedProject = parseProjectNotFoundName(error.msg);
+      if (deletedProject != null) {
+        final conf = await OverlayService.confirm(
+          'Project not found',
+          description:
+              'It looks like the project "$deletedProject" does not exist anymore. Do you want to remove it from your selected projects?',
+        );
+        if (!conf) return;
+
+        apiService.removeChosenProject(deletedProject);
+
+        final updatedProjectFilter = {...projectsFilter}..removeWhere((p) => p.name == deletedProject);
+        filterByProjects(updatedProjectFilter);
+      }
+    }
   }
 }

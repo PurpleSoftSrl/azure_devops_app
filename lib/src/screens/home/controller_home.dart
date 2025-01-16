@@ -75,8 +75,9 @@ class _HomeController with AppLogger {
     AppRouter.goToChooseProjects();
   }
 
-  void goToProjectDetail(Project p) {
-    AppRouter.goToProjectDetail(p.name!);
+  Future<void> goToProjectDetail(Project p) async {
+    await AppRouter.goToProjectDetail(p.name!);
+    await init();
   }
 
   void goToListPage(SavedShortcut shortcut) {

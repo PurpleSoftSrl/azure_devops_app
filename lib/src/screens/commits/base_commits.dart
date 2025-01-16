@@ -1,6 +1,7 @@
 library commits;
 
 import 'package:azure_devops/src/extensions/commit_extension.dart';
+import 'package:azure_devops/src/mixins/api_error_mixin.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commits_tags.dart';
@@ -18,6 +19,7 @@ import 'package:azure_devops/src/widgets/filter_menu.dart';
 import 'package:azure_devops/src/widgets/shortcut_label.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 part 'components_commits.dart';
 part 'controller_commits.dart';
