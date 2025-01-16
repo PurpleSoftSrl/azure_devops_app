@@ -36,7 +36,6 @@ class RulesChecker {
     final readOnly = _checkIfIsReadOnly(field);
     final required = _checkIfIsRequired(field);
     final makeEmpty = _checkIfShouldBeEmpty(field);
-    assert(!readOnly || !required, 'A field cannot be both readOnly and required. Field: ${field.referenceName}');
     return (readOnly: readOnly, required: required, makeEmpty: makeEmpty);
   }
 

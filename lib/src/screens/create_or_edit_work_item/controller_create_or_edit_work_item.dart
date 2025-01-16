@@ -486,12 +486,22 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
     allWorkItemStates = _getTransitionableStates(project: projectName, workItemType: newWorkItemType.name);
 
+    // Init [formFields] so that we can [_checkRules] before writing anything into them.
+    // This way we can avoid writing defaultValues into readOnly fields.
     for (final entry in fieldsToShow.entries) {
       for (final field in entry.value) {
         final refName = field.referenceName;
         formFields[refName] = DynamicFieldData(required: field.required);
+      }
+    }
 
-        if (field.defaultValue != null) {
+    _checkRules();
+
+    for (final entry in fieldsToShow.entries) {
+      for (final field in entry.value) {
+        final refName = field.referenceName;
+
+        if (field.defaultValue != null && !field.readOnly) {
           formFields[refName]!.controller.text = field.defaultValue!;
           formFields[refName]!.text = field.defaultValue!;
         }
@@ -509,7 +519,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
               text = '';
             }
           } else {
-            text = alreadyFilledValue?.toString() ?? field.defaultValue ?? '';
+            text = alreadyFilledValue?.toString() ?? (field.readOnly ? '' : field.defaultValue) ?? '';
           }
 
           onFieldChanged(text, refName, checkRules: false);
@@ -536,7 +546,6 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     }
 
     _resetInitialStateAndFormFields();
-    _checkRules();
   }
 
   void _checkRules() {

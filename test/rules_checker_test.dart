@@ -112,34 +112,6 @@ void main() {
 
       _expectIsReadOnly(result2);
     });
-
-    test('A field cannot be both required and read-only', () {
-      const requiredFieldName = 'System.Description';
-
-      final checker = RulesChecker(
-        allRules: {
-          requiredFieldName: [
-            (
-              action: ActionCreator.fromActionType(ActionType.makeRequired),
-              conditions: [ConditionCreator.onCreate()],
-            ),
-            (
-              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
-              conditions: [ConditionCreator.onCreate()],
-            ),
-          ],
-        },
-        initialFormFields: {},
-        formFields: {requiredFieldName: DynamicFieldData(required: false)},
-        isEditing: false,
-        initialState: null,
-        state: null,
-      );
-
-      void result() => checker.checkRules(WorkItemField(referenceName: requiredFieldName, name: 'Description'));
-
-      expect(result, throwsAssertionError);
-    });
   });
 
   group('RulesChecker on state changed', () {

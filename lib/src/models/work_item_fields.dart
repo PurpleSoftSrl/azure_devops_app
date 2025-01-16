@@ -75,7 +75,7 @@ class WorkItemField {
 
   @override
   String toString() {
-    return 'WorkItemField(referenceName: $referenceName, name: $name, required: $required, defaultValue: $defaultValue)';
+    return 'WorkItemField(referenceName: $referenceName, name: $name, required: $required, readOnly: $readOnly, defaultValue: $defaultValue)';
   }
 }
 
