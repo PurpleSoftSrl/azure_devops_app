@@ -42,6 +42,30 @@ class _SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
+          ValueListenableBuilder(
+            valueListenable: context.purchaseService.entitlementName,
+            builder: (_, entitlementName, __) => entitlementName.isNotEmpty
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Current plan',
+                        style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(entitlementName),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                    ],
+                  )
+                : const SizedBox(),
+          ),
           SectionHeader(
             text: 'App management',
           ),
@@ -49,7 +73,7 @@ class _SettingsScreen extends StatelessWidget {
             onTap: ctrl.goToChooseSubscription,
             child: Row(
               children: [
-                Icon(Icons.card_membership_outlined),
+                Icon(DevOpsIcons.crown_1),
                 const SizedBox(
                   width: 20,
                 ),

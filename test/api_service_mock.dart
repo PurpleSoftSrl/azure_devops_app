@@ -902,6 +902,9 @@ class PurchaseServiceMock implements PurchaseService {
   Future<bool> restorePurchases() async {
     return true;
   }
+
+  @override
+  ValueNotifier<String> get entitlementName => ValueNotifier('');
 }
 
 extension on WorkItem {

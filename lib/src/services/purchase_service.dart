@@ -12,6 +12,7 @@ const _revenueCatApiKeyIos = String.fromEnvironment('REVENUE_CAT_API_KEY_IOS');
 const _revenueCatApiKeyAndroid = String.fromEnvironment('REVENUE_CAT_API_KEY_ANDROID');
 
 abstract interface class PurchaseService {
+  ValueNotifier<String> get entitlementName;
   Future<void> init({String? userId, String? userName});
   Future<List<AppProduct>> getProducts();
   Future<PurchaseResult> buySubscription(AppProduct product);
@@ -37,7 +38,7 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   static const _noAdsEntitlement = 'noadsentitlement';
 
-  late final _adsCallbacks = _SubscriptionCallbacks(onPurchased: _removeAds, onExpired: _reactivateAds);
+  late final _adsCallbacks = _SubscriptionCallbacks(onPurchased: _removeAds, onExpired: _reactivateAds, name: 'No Ads');
 
   late final Map<String, _SubscriptionCallbacks> _purchaseCallbacks = {
     _noAdsEntitlement: _adsCallbacks,
@@ -45,6 +46,10 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   List<String> _activeSubscriptions = [];
   List<StoreProduct> _products = [];
+
+  @override
+  ValueNotifier<String> get entitlementName => _entitlementName;
+  final _entitlementName = ValueNotifier<String>('');
 
   void _removeAds() {
     ads.removeAds();
@@ -145,7 +150,9 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
     if (hasSub) {
       _purchaseCallbacks[_noAdsEntitlement]?.onPurchased.call();
+      _entitlementName.value = _purchaseCallbacks[_noAdsEntitlement]?.name ?? '';
     } else {
+      _entitlementName.value = '';
       final expiredSubs = info.allExpirationDates.entries.sortedBy((e) => e.value ?? '').map((e) => e.key).toList();
       for (final callbacks in _purchaseCallbacks.entries) {
         if (expiredSubs.contains(callbacks.key)) {
@@ -168,10 +175,15 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 }
 
 class _SubscriptionCallbacks {
-  _SubscriptionCallbacks({required this.onPurchased, required this.onExpired});
+  _SubscriptionCallbacks({
+    required this.onPurchased,
+    required this.onExpired,
+    required this.name,
+  });
 
   final VoidCallback onPurchased;
   final VoidCallback onExpired;
+  final String name;
 }
 
 class AppProduct {
