@@ -1,3 +1,12 @@
+## 2.7.0 - 2025-01-17
+- work_items: fix update identity fields after confirm edit
+- msal: show account picker on login
+- work_items: fix set default value to readonly fields
+- work_items: handle deleted area/iteration
+- handle deleted project error
+- pull_requests: improve PR actions handling
+- html: fix unhandled list style type
+
 ## 2.6.1 - 2025-01-13
 - improve bad request error logs
 - rules_checker: handle copyValue rules with empty value
