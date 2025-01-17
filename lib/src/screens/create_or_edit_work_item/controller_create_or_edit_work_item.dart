@@ -327,19 +327,22 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     _newWorkItemLinks = _getWorkItemLinks(item);
     _initialWorkItemLinks = {..._newWorkItemLinks};
 
-    // update fields again because api might change them, especially html fields
-    for (final field in item.fields.jsonFields.entries) {
-      final fieldData = formFields[field.key];
-      if (fieldData == null) continue;
+    // update html fields again because api might change them (often adding spaces inside the tags)
+    for (final htmlField in htmlFieldsToShow) {
+      final refName = htmlField.referenceName;
+      final fieldData = formFields[refName];
+      final jsonField = item.fields.jsonFields[refName];
 
-      final text = field.value?.toString() ?? '';
+      if (fieldData == null || jsonField == null) continue;
+
+      final text = jsonField?.toString() ?? '';
       fieldData.text = text;
       fieldData.controller.text = text.formatted;
       if (fieldData.editorController != null) {
         _trySetText(fieldData, text);
       }
 
-      _initialFormFields[field.key] = fieldData;
+      _initialFormFields[refName] = fieldData;
     }
   }
 
