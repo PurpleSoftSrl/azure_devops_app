@@ -30,8 +30,14 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
   final groupedConflictingFiles = <String, Set<ChangedFileDiff>>{};
 
+  static const _requireMergeStrategyId = 'fa4e907d-c16b-4a4c-9dfa-4916e5d171ab';
+
   bool get mustSatisfyPolicies =>
-      prDetail.value?.data?.policies.where((p) => p.status != 'approved').isNotEmpty ?? false;
+      prDetail.value?.data?.policies
+          // filter out the merge strategy policy to allow completing the PR
+          .where((p) => p.configuration?.type?.id != _requireMergeStrategyId && p.status != 'approved')
+          .isNotEmpty ??
+      false;
 
   bool get mustBeApproved => reviewers.where((p) => p.reviewer.isRequired && p.reviewer.vote < 5).isNotEmpty;
 
@@ -403,14 +409,26 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
   // ignore: long-method
   Future<PullRequestCompletionOptions?> _getCompletionOptions() async {
-    const mergeTypes = {
-      1: 'Merge (no fast forward)',
-      2: 'Squash commit',
-      3: 'Rebase and fast-forward',
-      4: 'Semi-linear merge',
+    final policies = prDetail.value?.data?.policies ?? [];
+    final mergeStrategyPolicy =
+        policies.where((p) => p.configuration?.type?.id == _requireMergeStrategyId).firstOrNull?.configuration;
+
+    final hasMergePolicy =
+        mergeStrategyPolicy != null && !mergeStrategyPolicy.isDeleted && mergeStrategyPolicy.isEnabled;
+
+    final mergeStrategySettings = hasMergePolicy ? mergeStrategyPolicy.settings : null;
+
+    final mergeTypes = {
+      1: (text: 'Merge (no fast forward)', isAllowed: mergeStrategySettings?.allowNoFastForward ?? true),
+      2: (text: 'Squash commit', isAllowed: mergeStrategySettings?.allowSquash ?? true),
+      3: (text: 'Rebase and fast-forward', isAllowed: mergeStrategySettings?.allowRebase ?? true),
+      4: (text: 'Semi-linear merge', isAllowed: mergeStrategySettings?.allowRebaseMerge ?? true),
     };
 
-    var mergeType = 1;
+    final allowedMergeType =
+        mergeTypes.entries.firstWhereOrNull((entry) => entry.value.isAllowed) ?? mergeTypes.entries.first;
+
+    var mergeType = allowedMergeType.key;
     var completeWorkItems = false;
     var deleteSourceBranch = false;
     var customizeCommitMessage = false;
@@ -420,7 +438,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     final branch = (branchesRes.data ?? []).firstWhereOrNull((b) => b.name == prDetail.value!.data!.pr.sourceBranch);
     final canDeleteBranch = !(branch?.isBaseVersion ?? false);
 
-    final mergeTypeFieldController = TextEditingController(text: mergeTypes.entries.first.value);
+    final mergeTypeFieldController = TextEditingController(text: allowedMergeType.value.text);
 
     var hasConfirmed = false;
 
@@ -445,9 +463,28 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
                 items: () => mergeTypes.entries
                     .map(
                       (entry) => PopupItem(
-                        text: entry.value,
+                        text: '',
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              entry.value.text,
+                              style: context.textTheme.titleSmall!.copyWith(
+                                color:
+                                    entry.value.isAllowed ? null : context.colorScheme.onPrimary.withValues(alpha: .4),
+                              ),
+                            ),
+                            if (!entry.value.isAllowed)
+                              Text(
+                                'Forbidden by policy',
+                                style: context.textTheme.labelSmall!.copyWith(color: context.colorScheme.error),
+                              ),
+                          ],
+                        ),
                         onTap: () {
-                          mergeTypeFieldController.text = entry.value;
+                          if (!entry.value.isAllowed) return;
+
+                          mergeTypeFieldController.text = entry.value.text;
                           mergeType = entry.key;
                         },
                       ),
