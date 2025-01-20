@@ -351,13 +351,15 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       if (completionOptions == null) return;
     }
 
+    final commitId = prDetail.value!.data!.changes.last.iteration.sourceRefCommit.commitId;
+
     final res = await apiService.editPullRequest(
       projectName: args.project,
       repositoryId: args.repository,
       id: args.id,
       status: status,
       isDraft: !setIsDraft ? null : (isDraft ?? prDetail.value!.data!.pr.isDraft),
-      commitId: prDetail.value!.data!.changes.first.iteration.sourceRefCommit.commitId,
+      commitId: commitId,
       autocomplete: autocomplete,
       completionOptions: completionOptions,
     );
@@ -380,15 +382,22 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
   String _getErrorMessage(ApiResponse<bool> res) {
     var errorMsg = 'Pull request not edited.';
+
     try {
       final responseBody = res.errorResponse?.body ?? '';
       final apiErrorMessage = jsonDecode(responseBody) as Map<String, dynamic>;
       final msg = apiErrorMessage['message'] as String? ?? '';
 
       errorMsg += '\n${msg.split(':').lastOrNull?.trim()}';
+
+      final type = apiErrorMessage['typeKey'] as String? ?? '';
+      if (type == 'GitPullRequestStaleException') {
+        errorMsg += '\n\nTry to refresh the page and edit the pull request again.';
+      }
     } catch (e, s) {
       logError(e, s);
     }
+
     return errorMsg;
   }
 
