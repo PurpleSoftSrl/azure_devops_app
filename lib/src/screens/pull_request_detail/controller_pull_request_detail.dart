@@ -43,6 +43,19 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
   bool get hasAutoCompleteOn => prDetail.value?.data?.pr.autoCompleteSetBy != null;
 
+  String get prStatus {
+    final pr = prDetail.value?.data?.pr;
+    if (pr == null) return '';
+
+    if (pr.mergeStatus == MergeStatus.queued) return 'Merging';
+
+    if (pr.isDraft && pr.status != PullRequestStatus.abandoned) return 'Draft';
+
+    return '${pr.status}${pr.isDraft ? ' (draft)' : ''}';
+  }
+
+  bool get isMerging => prDetail.value?.data?.pr.mergeStatus == MergeStatus.queued;
+
   bool canBeReactivated = true;
 
   final showCommentField = ValueNotifier<bool>(false);
@@ -50,7 +63,37 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
   var _isDisposed = false;
 
+  Timer? _timer;
+
+  void dispose() {
+    _isDisposed = true;
+    _stopTimer();
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
   Future<void> init() async {
+    await _init();
+
+    if (prDetail.value?.data == null) return;
+
+    final mergeStatus = prDetail.value!.data?.pr.mergeStatus;
+
+    // auto refresh page every 5 seconds until merge is completed
+    if (mergeStatus == MergeStatus.queued) {
+      _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
+        await _init();
+        if (prDetail.value!.data?.pr.mergeStatus != MergeStatus.queued) {
+          timer.cancel();
+        }
+      });
+    }
+  }
+
+  Future<void> _init() async {
     final res = await apiService.getPullRequest(
       projectName: args.project,
       repositoryId: args.repository,
@@ -86,10 +129,6 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     );
 
     prDetail.value = res.copyWith(data: res.data?.copyWith(pr: prAndThreads.pr, updates: prAndThreads.updates));
-  }
-
-  void dispose() {
-    _isDisposed = true;
   }
 
   void _getChangedFiles(List<CommitWithChangeEntry> changes) {
@@ -691,3 +730,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 }
 
 typedef _RevWithDescriptor = ({Reviewer reviewer, String descriptor});
+
+class MergeStatus {
+  static const queued = 'queued';
+}

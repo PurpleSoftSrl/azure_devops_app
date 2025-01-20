@@ -11,7 +11,7 @@ class _PullRequestActions extends StatelessWidget {
     final prStatus = pr.status;
     final isNotCompletedOrAbandoned = ![PullRequestStatus.completed, PullRequestStatus.abandoned].contains(prStatus);
     final isDraft = pr.isDraft;
-    final isMerging = pr.mergeStatus == 'queued';
+    final isMerging = pr.mergeStatus == MergeStatus.queued;
 
     return DevOpsPopupMenu(
       tooltip: 'pull request actions',
@@ -156,11 +156,19 @@ class _PullRequestOverview extends StatelessWidget {
                     style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                   ),
                   Text(
-                    pr.isDraft && pr.status != PullRequestStatus.abandoned
-                        ? 'Draft'
-                        : '${pr.status}${pr.isDraft ? ' (draft)' : ''}',
+                    ctrl.prStatus,
                     style: context.textTheme.titleSmall!.copyWith(color: pr.status.color),
                   ),
+                  if (ctrl.isMerging)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: InProgressPipelineIcon(
+                        child: Icon(
+                          Icons.refresh_rounded,
+                          color: pr.status.color,
+                        ),
+                      ),
+                    ),
                 ],
               ),
               const SizedBox(
@@ -218,7 +226,7 @@ class _PullRequestOverview extends StatelessWidget {
                 ),
               ],
               Text(
-                'Title: ',
+                'Title:',
                 style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
               ),
               SelectableText(pr.title),
@@ -227,7 +235,7 @@ class _PullRequestOverview extends StatelessWidget {
               ),
               if (pr.description != null && pr.description!.isNotEmpty) ...[
                 Text(
-                  'Description: ',
+                  'Description:',
                   style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                 ),
                 AppMarkdownWidget(
