@@ -1,12 +1,13 @@
 part of pipelines;
 
 class _PipelinesController with FilterMixin, ApiErrorHelper {
-  _PipelinesController._(this.apiService, this.storageService, this.args) {
+  _PipelinesController._(this.apiService, this.storageService, this.args, this.adsService) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
 
   final AzureApiService apiService;
   final StorageService storageService;
+  final AdsService adsService;
   final PipelinesArgs? args;
 
   final pipelines = ValueNotifier<ApiResponse<List<Pipeline>?>?>(null);
@@ -230,6 +231,10 @@ class _PipelinesController with FilterMixin, ApiErrorHelper {
       _stopTimer();
     } else if (info.visibleFraction > 0 && _hasStoppedTimer) {
       init();
+    }
+
+    if (info.visibleFraction <= 0) {
+      adsService.refreshNativeAds();
     }
   }
 

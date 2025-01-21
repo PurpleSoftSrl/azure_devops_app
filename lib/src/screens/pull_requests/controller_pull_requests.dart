@@ -1,12 +1,13 @@
 part of pull_requests;
 
 class _PullRequestsController with FilterMixin, ApiErrorHelper {
-  _PullRequestsController._(this.apiService, this.storageService, this.args) {
+  _PullRequestsController._(this.apiService, this.storageService, this.args, this.adsService) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
 
   final AzureApiService apiService;
   final StorageService storageService;
+  final AdsService adsService;
   final PullRequestArgs? args;
 
   final pullRequests = ValueNotifier<ApiResponse<List<PullRequest>?>?>(null);
@@ -28,6 +29,8 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper {
   bool get shouldPersistFilters => args?.project == null && !hasShortcut;
 
   bool get hasShortcut => args?.shortcut != null;
+
+  final visibilityKey = GlobalKey();
 
   Future<void> init() async {
     if (shouldPersistFilters) {
@@ -217,6 +220,12 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper {
         final updatedProjectFilter = {...projectsFilter}..removeWhere((p) => p.name == deletedProject);
         filterByProjects(updatedProjectFilter);
       }
+    }
+  }
+
+  void visibilityChanged(VisibilityInfo info) {
+    if (info.visibleFraction <= 0) {
+      adsService.refreshNativeAds();
     }
   }
 }
