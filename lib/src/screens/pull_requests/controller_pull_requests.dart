@@ -30,7 +30,7 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper {
 
   bool get hasShortcut => args?.shortcut != null;
 
-  final visibilityKey = GlobalKey();
+  List<AdWithKey> ads = [];
 
   Future<void> init() async {
     if (shouldPersistFilters) {
@@ -38,6 +38,8 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper {
     } else if (hasShortcut) {
       _fillShortcutFilters();
     }
+
+    await _getNativeAds();
 
     await _getData();
   }
@@ -223,9 +225,8 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper {
     }
   }
 
-  void visibilityChanged(VisibilityInfo info) {
-    if (info.visibleFraction <= 0) {
-      adsService.refreshNativeAds();
-    }
+  Future<void> _getNativeAds() async {
+    final ads2 = await adsService.getNewNativeAds();
+    ads = ads2.map((ad) => (ad: ad, key: GlobalKey())).toList();
   }
 }

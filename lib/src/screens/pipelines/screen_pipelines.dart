@@ -105,9 +105,9 @@ class _PipelinesScreen extends StatelessWidget {
                     isLast: p == pipelines.last,
                   );
 
-                  if (pipelines.indexOf(p) % 5 == 4 && p != pipelines.first) {
+                  if (pipelines.indexOf(p) % 5 == 4 && p != pipelines.first && adsIndex < ctrl.ads.length) {
                     yield NativeAdWidget(
-                      adsIndex: adsIndex++,
+                      ad: ctrl.ads[adsIndex++],
                     );
                   }
                 },

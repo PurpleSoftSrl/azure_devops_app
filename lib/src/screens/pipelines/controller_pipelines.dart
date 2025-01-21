@@ -39,6 +39,8 @@ class _PipelinesController with FilterMixin, ApiErrorHelper {
 
   bool get hasShortcut => args?.shortcut != null;
 
+  List<AdWithKey> ads = [];
+
   void dispose() {
     _stopTimer();
   }
@@ -54,6 +56,8 @@ class _PipelinesController with FilterMixin, ApiErrorHelper {
     } else if (hasShortcut) {
       _fillShortcutFilters();
     }
+
+    await _getNativeAds();
 
     await _getData();
 
@@ -232,10 +236,6 @@ class _PipelinesController with FilterMixin, ApiErrorHelper {
     } else if (info.visibleFraction > 0 && _hasStoppedTimer) {
       init();
     }
-
-    if (info.visibleFraction <= 0) {
-      adsService.refreshNativeAds();
-    }
   }
 
   List<String> getPipelineNames() {
@@ -286,5 +286,10 @@ class _PipelinesController with FilterMixin, ApiErrorHelper {
         filterByProjects(updatedProjectFilter);
       }
     }
+  }
+
+  Future<void> _getNativeAds() async {
+    final ads2 = await adsService.getNewNativeAds();
+    ads = ads2.map((ad) => (ad: ad, key: GlobalKey())).toList();
   }
 }

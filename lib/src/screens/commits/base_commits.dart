@@ -23,7 +23,6 @@ import 'package:azure_devops/src/widgets/shortcut_label.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 part 'components_commits.dart';
 part 'controller_commits.dart';

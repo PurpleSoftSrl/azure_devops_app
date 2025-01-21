@@ -21,7 +21,6 @@ import 'package:azure_devops/src/widgets/search_field.dart';
 import 'package:azure_devops/src/widgets/shortcut_label.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 part 'components_pull_requests.dart';
 part 'controller_pull_requests.dart';
