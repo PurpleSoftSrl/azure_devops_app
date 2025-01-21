@@ -82,27 +82,39 @@ class _PipelinesScreen extends StatelessWidget {
                   ),
                 ],
               ),
-        builder: (pipelines) => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 16,
-            ),
-            if (ctrl.inProgressPipelines > 0) Text('Running pipelines: ${ctrl.inProgressPipelines}'),
-            if (ctrl.queuedPipelines > 0) Text('Queued pipelines: ${ctrl.queuedPipelines}'),
-            if (ctrl.inProgressPipelines > 0 || ctrl.queuedPipelines > 0)
+        builder: (pipelines) {
+          var adsIndex = 0;
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               const SizedBox(
-                height: 24,
+                height: 16,
               ),
-            ...pipelines!.map(
-              (p) => PipelineListTile(
-                pipe: p,
-                onTap: () => ctrl.goToPipelineDetail(p),
-                isLast: p == pipelines.last,
+              if (ctrl.inProgressPipelines > 0) Text('Running pipelines: ${ctrl.inProgressPipelines}'),
+              if (ctrl.queuedPipelines > 0) Text('Queued pipelines: ${ctrl.queuedPipelines}'),
+              if (ctrl.inProgressPipelines > 0 || ctrl.queuedPipelines > 0)
+                const SizedBox(
+                  height: 24,
+                ),
+              ...pipelines!.expand(
+                (p) sync* {
+                  yield PipelineListTile(
+                    pipe: p,
+                    onTap: () => ctrl.goToPipelineDetail(p),
+                    isLast: p == pipelines.last,
+                  );
+
+                  if (pipelines.indexOf(p) % 5 == 4 && p != pipelines.first) {
+                    yield NativeAdWidget(
+                      adsIndex: adsIndex++,
+                    );
+                  }
+                },
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        },
       ),
     );
   }

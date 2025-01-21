@@ -1,4 +1,5 @@
 import 'package:azure_devops/src/screens/pipelines/base_pipelines.dart';
+import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +20,12 @@ void main() {
         theme: mockTheme,
         home: StorageServiceInherited(
           storageService: StorageServiceMock(),
-          child: AzureApiServiceInherited(
-            apiService: AzureApiServiceMock(),
-            child: PipelinesPage(),
+          child: AdsServiceWidget(
+            ads: AdsServiceMock(),
+            child: AzureApiServiceInherited(
+              apiService: AzureApiServiceMock(),
+              child: PipelinesPage(),
+            ),
           ),
         ),
       );
@@ -41,9 +45,12 @@ void main() {
         theme: mockTheme,
         home: StorageServiceInherited(
           storageService: StorageServiceMock(),
-          child: AzureApiServiceInherited(
-            apiService: AzureApiServiceMock(),
-            child: PipelinesPage(),
+          child: AdsServiceWidget(
+            ads: AdsServiceMock(),
+            child: AzureApiServiceInherited(
+              apiService: AzureApiServiceMock(),
+              child: PipelinesPage(),
+            ),
           ),
         ),
       );

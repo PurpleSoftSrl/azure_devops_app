@@ -1,13 +1,14 @@
 part of commits;
 
 class _CommitsController with FilterMixin, ApiErrorHelper {
-  _CommitsController._(this.apiService, this.storageService, this.args) {
+  _CommitsController._(this.apiService, this.storageService, this.args, this.adsService) {
     if (args?.project != null) projectsFilter = {args!.project!};
     if (args?.author != null) usersFilter = {args!.author!};
   }
 
   final AzureApiService apiService;
   final StorageService storageService;
+  final AdsService adsService;
   final CommitsArgs? args;
 
   final recentCommits = ValueNotifier<ApiResponse<List<Commit>?>?>(null);
@@ -21,6 +22,8 @@ class _CommitsController with FilterMixin, ApiErrorHelper {
   bool get shouldPersistFilters => args?.project == null && !hasShortcut;
 
   bool get hasShortcut => args?.shortcut != null;
+
+  final visibilityKey = GlobalKey();
 
   Future<void> init() async {
     if (shouldPersistFilters) {
@@ -165,6 +168,12 @@ class _CommitsController with FilterMixin, ApiErrorHelper {
         final updatedProjectFilter = {...projectsFilter}..removeWhere((p) => p.name == deletedProject);
         filterByProjects(updatedProjectFilter);
       }
+    }
+  }
+
+  void visibilityChanged(VisibilityInfo info) {
+    if (info.visibleFraction <= 0) {
+      adsService.refreshNativeAds();
     }
   }
 }

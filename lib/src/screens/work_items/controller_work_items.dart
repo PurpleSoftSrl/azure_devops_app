@@ -1,12 +1,13 @@
 part of work_items;
 
 class _WorkItemsController with FilterMixin, ApiErrorHelper {
-  _WorkItemsController._(this.apiService, this.storageService, this.args) {
+  _WorkItemsController._(this.apiService, this.storageService, this.args, this.adsService) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
 
   final AzureApiService apiService;
   final StorageService storageService;
+  final AdsService adsService;
   final WorkItemsArgs? args;
 
   final workItems = ValueNotifier<ApiResponse<List<WorkItem>?>?>(null);
@@ -514,6 +515,12 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
       }
 
       return;
+    }
+  }
+
+  void visibilityChanged(VisibilityInfo info) {
+    if (info.visibleFraction <= 0) {
+      adsService.refreshNativeAds();
     }
   }
 }
