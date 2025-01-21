@@ -1,6 +1,6 @@
 part of commits;
 
-class _CommitsController with FilterMixin, ApiErrorHelper {
+class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
   _CommitsController._(this.apiService, this.storageService, this.args, this.adsService) {
     if (args?.project != null) projectsFilter = {args!.project!};
     if (args?.author != null) usersFilter = {args!.author!};
@@ -23,8 +23,6 @@ class _CommitsController with FilterMixin, ApiErrorHelper {
 
   bool get hasShortcut => args?.shortcut != null;
 
-  List<AdWithKey> ads = [];
-
   Future<void> init() async {
     if (shouldPersistFilters) {
       _fillSavedFilters();
@@ -32,7 +30,7 @@ class _CommitsController with FilterMixin, ApiErrorHelper {
       _fillShortcutFilters();
     }
 
-    await _getNativeAds();
+    await getNewNativeAds(adsService);
 
     await _getData();
   }
@@ -171,10 +169,5 @@ class _CommitsController with FilterMixin, ApiErrorHelper {
         filterByProjects(updatedProjectFilter);
       }
     }
-  }
-
-  Future<void> _getNativeAds() async {
-    final ads2 = await adsService.getNewNativeAds();
-    ads = ads2.map((ad) => (ad: ad, key: GlobalKey())).toList();
   }
 }

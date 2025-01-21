@@ -4,6 +4,7 @@ import 'package:azure_devops/src/extensions/area_or_iteration_extension.dart';
 import 'package:azure_devops/src/extensions/child_query_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
+import 'package:azure_devops/src/mixins/ads_mixin.dart';
 import 'package:azure_devops/src/mixins/api_error_mixin.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/areas_and_iterations.dart';
