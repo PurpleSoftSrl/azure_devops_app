@@ -1,6 +1,6 @@
 part of profile;
 
-class _ProfileController with FilterMixin {
+class _ProfileController with FilterMixin, AdsMixin {
   _ProfileController._(this.apiService, this.storageService, this.adsService);
 
   final AzureApiService apiService;
@@ -27,8 +27,6 @@ class _ProfileController with FilterMixin {
 
   final myWorkItems = <WorkItem>[];
 
-  List<AdWithKey> ads = [];
-
   Future<void> init() async {
     gitUsername = apiService.user?.emailAddress ?? '';
     myWorkItems.clear();
@@ -45,7 +43,7 @@ class _ProfileController with FilterMixin {
     final myWorkItemsRes = await apiService.getMyRecentWorkItems();
     myWorkItems.addAll(myWorkItemsRes.data ?? []);
 
-    await _getNativeAds();
+    await getNewNativeAds(adsService);
 
     recentCommits.value = commits.copyWith(data: res);
   }
@@ -86,10 +84,5 @@ class _ProfileController with FilterMixin {
 
     final me = apiService.allUsers.firstWhereOrNull((u) => u.mailAddress == apiService.user?.emailAddress);
     AppRouter.goToCommits(project: project, author: me);
-  }
-
-  Future<void> _getNativeAds() async {
-    final ads2 = await adsService.getNewNativeAds();
-    ads = ads2.map((ad) => (ad: ad, key: GlobalKey())).toList();
   }
 }

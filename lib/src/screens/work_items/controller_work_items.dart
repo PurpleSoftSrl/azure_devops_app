@@ -1,6 +1,6 @@
 part of work_items;
 
-class _WorkItemsController with FilterMixin, ApiErrorHelper {
+class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
   _WorkItemsController._(this.apiService, this.storageService, this.args, this.adsService) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
@@ -41,8 +41,6 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
 
   bool get hasShortcut => args?.shortcut != null;
 
-  List<AdWithKey> ads = [];
-
   Future<void> init() async {
     WorkItemsFilters? savedFilters;
     if (shouldPersistFilters) {
@@ -69,7 +67,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
       }
     }
 
-    await _getNativeAds();
+    await getNewNativeAds(adsService);
 
     await _getData();
 
@@ -161,7 +159,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
 
   Future<void> goToWorkItemDetail(WorkItem item) async {
     await AppRouter.goToWorkItemDetail(project: item.fields.systemTeamProject, id: item.id);
-    await _getNativeAds();
+    await getNewNativeAds(adsService);
     await _getData();
   }
 
@@ -517,10 +515,5 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
 
       return;
     }
-  }
-
-  Future<void> _getNativeAds() async {
-    final ads2 = await adsService.getNewNativeAds();
-    ads = ads2.map((ad) => (ad: ad, key: GlobalKey())).toList();
   }
 }
