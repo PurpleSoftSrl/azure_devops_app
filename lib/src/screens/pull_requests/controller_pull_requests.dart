@@ -37,8 +37,11 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
       _fillShortcutFilters();
     }
 
-    await getNewNativeAds(adsService);
+    await _getDataAndAds();
+  }
 
+  Future<void> _getDataAndAds() async {
+    await getNewNativeAds(adsService);
     await _getData();
   }
 
@@ -85,7 +88,7 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pullRequests.value = null;
     statusFilter = status;
-    _getData();
+    _getDataAndAds();
 
     if (shouldPersistFilters) {
       filtersService.savePullRequestsStatusFilter(status.name);
@@ -97,7 +100,7 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pullRequests.value = null;
     usersFilter = users;
-    _getData();
+    _getDataAndAds();
 
     if (shouldPersistFilters) {
       filtersService.savePullRequestsOpenedByFilter(users.map((p) => p.mailAddress!).toSet());
@@ -109,7 +112,7 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pullRequests.value = null;
     reviewersFilter = users;
-    _getData();
+    _getDataAndAds();
 
     if (shouldPersistFilters) {
       filtersService.savePullRequestsAssignedToFilter(users.map((p) => p.mailAddress!).toSet());
@@ -121,7 +124,7 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pullRequests.value = null;
     projectsFilter = projects;
-    _getData();
+    _getDataAndAds();
 
     if (shouldPersistFilters) {
       filtersService.savePullRequestsProjectsFilter(projects.map((p) => p.name!).toSet());

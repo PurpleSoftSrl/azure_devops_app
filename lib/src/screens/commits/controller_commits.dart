@@ -30,8 +30,11 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
       _fillShortcutFilters();
     }
 
-    await getNewNativeAds(adsService);
+    await _getDataAndAds();
+  }
 
+  Future<void> _getDataAndAds() async {
+    await getNewNativeAds(adsService);
     await _getData();
   }
 
@@ -105,7 +108,7 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     recentCommits.value = null;
     projectsFilter = projects;
-    _getData();
+    _getDataAndAds();
 
     if (shouldPersistFilters) {
       filtersService.saveCommitsProjectsFilter(projects.map((p) => p.name!).toSet());
@@ -117,7 +120,7 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     recentCommits.value = null;
     usersFilter = users;
-    _getData();
+    _getDataAndAds();
 
     if (shouldPersistFilters) {
       filtersService.saveCommitsAuthorsFilter(users.map((p) => p.mailAddress!).toSet());
