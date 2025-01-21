@@ -953,10 +953,9 @@ class AdsServiceMock implements AdsService {
   Future<void> showInterstitialAd({VoidCallback? onDismiss}) async {}
 
   @override
-  ValueNotifier<List<NativeAd>> get nativeAds => throw UnimplementedError();
-
-  @override
-  void refreshNativeAds() {}
+  Future<List<AdWithView>> getNewNativeAds() async {
+    return [];
+  }
 }
 
 class PurchaseServiceMock implements PurchaseService {

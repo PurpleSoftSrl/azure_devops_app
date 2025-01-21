@@ -41,9 +41,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
 
   bool get hasShortcut => args?.shortcut != null;
 
-  bool get hasSavedQuery => args?.savedQuery != null;
-
-  final savedQuery = ValueNotifier<SavedQuery?>(null);
+  List<AdWithKey> ads = [];
 
   Future<void> init() async {
     WorkItemsFilters? savedFilters;
@@ -70,6 +68,8 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
         }
       }
     }
+
+    await _getNativeAds();
 
     await _getData();
 
@@ -161,6 +161,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
 
   Future<void> goToWorkItemDetail(WorkItem item) async {
     await AppRouter.goToWorkItemDetail(project: item.fields.systemTeamProject, id: item.id);
+    await _getNativeAds();
     await _getData();
   }
 
@@ -518,9 +519,8 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
     }
   }
 
-  void visibilityChanged(VisibilityInfo info) {
-    if (info.visibleFraction <= 0) {
-      adsService.refreshNativeAds();
-    }
+  Future<void> _getNativeAds() async {
+    final ads2 = await adsService.getNewNativeAds();
+    ads = ads2.map((ad) => (ad: ad, key: GlobalKey())).toList();
   }
 }
