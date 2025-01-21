@@ -55,9 +55,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
       _fillShortcutFilters();
     }
 
-    await getNewNativeAds(adsService);
-
-    await _getData();
+    await _getDataAndAds();
 
     if (pipelines.value != null) {
       final shouldRefresh = inProgressPipelines > 0 || queuedPipelines > 0 || cancellingPipelines > 0;
@@ -73,6 +71,11 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
         });
       }
     }
+  }
+
+  Future<void> _getDataAndAds() async {
+    await getNewNativeAds(adsService);
+    await _getData();
   }
 
   void _fillSavedFilters() {
@@ -155,7 +158,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pipelines.value = null;
     projectsFilter = projects;
-    _getData();
+    _getDataAndAds();
 
     if (shouldPersistFilters) {
       filtersService.savePipelinesProjectsFilter(projects.map((p) => p.name!).toSet());
@@ -167,7 +170,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pipelines.value = null;
     resultFilter = result;
-    _getData();
+    _getDataAndAds();
 
     if (shouldPersistFilters) {
       filtersService.savePipelinesResultFilter(result.stringValue);
@@ -179,7 +182,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pipelines.value = null;
     statusFilter = status;
-    _getData();
+    _getDataAndAds();
 
     if (shouldPersistFilters) {
       filtersService.savePipelinesStatusFilter(status.stringValue);
@@ -191,7 +194,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pipelines.value = null;
     usersFilter = users;
-    _getData();
+    _getDataAndAds();
 
     if (shouldPersistFilters) {
       filtersService.savePipelinesTriggeredByFilter(users.map((p) => p.mailAddress!).toSet());
@@ -203,7 +206,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pipelines.value = null;
     pipelineNamesFilter = names;
-    _getData();
+    _getDataAndAds();
 
     if (shouldPersistFilters) {
       filtersService.savePipelinesNamesFilter(names);
