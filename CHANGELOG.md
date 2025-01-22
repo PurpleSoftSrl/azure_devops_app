@@ -1,3 +1,9 @@
+## 3.0.0 - 2025-01-22
+- Add ads and subscription to remove them (#52)
+- pull_requests: handle 'Merging' status
+- pull_requests: handle 'Limit merge types' policy
+- pull_requests: fix complete PR
+
 ## 2.7.0 - 2025-01-17
 - work_items: fix update identity fields after confirm edit
 - msal: show account picker on login
