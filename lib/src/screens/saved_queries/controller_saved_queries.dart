@@ -15,6 +15,10 @@ class _SavedQueriesController {
 
   void goToQuery(ChildQuery query) {
     if (!query.isFolder) {
+      if (query.queryType != 'flat') {
+        return OverlayService.snackbar('Only flat list queries are supported', isError: true);
+      }
+
       AppRouter.goToWorkItems(args: (project: null, shortcut: null, savedQuery: query));
       return;
     }

@@ -781,6 +781,7 @@ class AzureApiServiceMock implements AzureApiService {
         hasChildren: false,
         children: [],
         wiql: '',
+        queryType: '',
       ),
     );
   }

@@ -26,6 +26,7 @@ class SavedQuery {
     required this.isFolder,
     required this.hasChildren,
     required this.children,
+    required this.queryType,
   });
 
   factory SavedQuery.fromJson(Map<String, dynamic> json) => SavedQuery(
@@ -38,6 +39,7 @@ class SavedQuery {
         children: List<ChildQuery>.from(
           (json['children'] as List<dynamic>? ?? []).map((x) => ChildQuery.fromJson(x as Map<String, dynamic>)),
         ),
+        queryType: json['queryType'] as String? ?? '',
       );
 
   static SavedQuery fromResponse(Response res) => SavedQuery.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
@@ -49,6 +51,7 @@ class SavedQuery {
   final bool isFolder;
   final bool hasChildren;
   final List<ChildQuery> children;
+  final String queryType;
 }
 
 class ChildQuery {
