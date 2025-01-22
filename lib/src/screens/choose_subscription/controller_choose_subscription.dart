@@ -41,7 +41,12 @@ class _ChooseSubscriptionController {
   }
 
   Future<void> restorePurchase() async {
+    isPurchasing.value = true;
+
     final res = await purchase.restorePurchases();
+
+    isPurchasing.value = false;
+
     if (!res) {
       return OverlayService.error('Error', description: 'No previous subscription found');
     }

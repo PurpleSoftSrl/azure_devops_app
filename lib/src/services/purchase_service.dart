@@ -133,9 +133,14 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   @override
   Future<bool> restorePurchases() async {
-    final info = await Purchases.restorePurchases();
-    _activeSubscriptions = [...info.activeSubscriptions];
-    return info.activeSubscriptions.isNotEmpty;
+    try {
+      final info = await Purchases.restorePurchases();
+      _activeSubscriptions = [...info.activeSubscriptions];
+      return info.activeSubscriptions.isNotEmpty;
+    } catch (e, s) {
+      logError('Failed to restore purchases: $e', s);
+      return false;
+    }
   }
 
   @override
