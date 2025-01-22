@@ -209,13 +209,13 @@ class OverlayService {
   /// Debouncer to avoid showing too many snackbars.
   static bool _isShowingSnackbar = false;
 
-  static void snackbar(String title, {bool isError = false, VoidCallback? onDismiss}) {
+  static void snackbar(String title, {bool isError = false}) {
     if (_isShowingSnackbar) return;
 
     _isShowingSnackbar = true;
     Timer(Duration(seconds: 2), () => _isShowingSnackbar = false);
 
-    final ctrl = scaffoldMessengerKey.currentState!.showMaterialBanner(
+    scaffoldMessengerKey.currentState!.showMaterialBanner(
       MaterialBanner(
         content: NavigationButton(
           onTap: scaffoldMessengerKey.currentState!.hideCurrentMaterialBanner,
@@ -242,9 +242,6 @@ class OverlayService {
         surfaceTintColor: Colors.transparent,
       ),
     );
-
-    // callback executed when the snackbar is dismissed
-    ctrl.closed.then((_) => onDismiss?.call());
   }
 
   static Future<String?> formBottomsheet({required String title, required String label, String? initialValue}) async {

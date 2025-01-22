@@ -184,13 +184,7 @@ class AppRouter {
   static Future<void> goToCreateOrEditWorkItem({CreateOrEditWorkItemArgs? args}) =>
       _goTo<CreateOrEditWorkItemArgs>(_createOrEditWorkItem, args: args);
 
-  static Future<void> goToChooseSubscription({bool removeRoutes = false}) async {
-    if (removeRoutes) {
-      return rootNavigator!.pushNamedAndRemoveUntil<void>(_chooseSubscription, (_) => false);
-    } else {
-      return _goTo(_chooseSubscription);
-    }
-  }
+  static Future<void> goToChooseSubscription() => _goTo(_chooseSubscription);
 
   static CreateOrEditWorkItemArgs getCreateOrEditWorkItemArgs(BuildContext context) => _getArgs(context);
 

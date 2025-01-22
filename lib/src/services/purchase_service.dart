@@ -89,7 +89,6 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
   Future<List<AppProduct>> getProducts() async {
     _products = await Purchases.getProducts([_noAdsMonthly, _noAdsYearly]);
 
-    logDebug('Products: ${_products.length}');
     for (final product in _products) {
       logDebug('Product: ${product.title}, ${product.description}, ${product.price}, ${product.identifier}');
     }
