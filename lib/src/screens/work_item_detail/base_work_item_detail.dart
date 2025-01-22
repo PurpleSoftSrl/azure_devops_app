@@ -16,6 +16,7 @@ import 'package:azure_devops/src/models/work_item_fields.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/router/router.dart';
+import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
@@ -60,8 +61,9 @@ class WorkItemDetailPage extends StatelessWidget {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final storageService = StorageServiceInherited.of(context).storageService;
     final args = AppRouter.getWorkItemDetailArgs(context);
+    final ads = context.adsService;
     return AppBasePage(
-      initState: () => _WorkItemDetailController._(args, apiService, storageService),
+      initState: () => _WorkItemDetailController._(args, apiService, storageService, ads),
       smartphone: (ctrl) => _WorkItemDetailScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _WorkItemDetailScreen(ctrl, _tabletParameters),
     );

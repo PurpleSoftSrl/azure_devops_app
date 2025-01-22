@@ -1,4 +1,5 @@
 import 'package:azure_devops/src/screens/work_item_detail/base_work_item_detail.dart';
+import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:flutter/material.dart';
@@ -16,16 +17,19 @@ void main() {
   testWidgets(
     'Page building test',
     (t) async {
-      final app = AzureApiServiceInherited(
-        apiService: AzureApiServiceMock(),
-        child: StorageServiceInherited(
-          storageService: StorageServiceMock(),
-          child: MaterialApp(
-            theme: mockTheme,
-            onGenerateRoute: (_) => MaterialPageRoute(
-              builder: (_) => WorkItemDetailPage(),
-              settings: RouteSettings(
-                arguments: (project: 'TestProject', id: 1234),
+      final app = AdsServiceWidget(
+        ads: AdsServiceMock(),
+        child: AzureApiServiceInherited(
+          apiService: AzureApiServiceMock(),
+          child: StorageServiceInherited(
+            storageService: StorageServiceMock(),
+            child: MaterialApp(
+              theme: mockTheme,
+              onGenerateRoute: (_) => MaterialPageRoute(
+                builder: (_) => WorkItemDetailPage(),
+                settings: RouteSettings(
+                  arguments: (project: 'TestProject', id: 1234),
+                ),
               ),
             ),
           ),

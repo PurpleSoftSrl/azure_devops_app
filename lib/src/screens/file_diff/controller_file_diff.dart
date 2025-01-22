@@ -1,9 +1,10 @@
 part of file_diff;
 
 class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
-  _FileDiffController._(this.apiService, this.args);
+  _FileDiffController._(this.apiService, this.args, this.ads);
 
   final AzureApiService apiService;
+  final AdsService ads;
   final FileDiffArgs args;
 
   final diff = ValueNotifier<ApiResponse<Diff?>?>(null);
@@ -178,6 +179,8 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
       AppRouter.pop();
     }
 
+    await _showInterstitialAd();
+
     await init();
   }
 
@@ -217,6 +220,9 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
     }
 
     AppRouter.pop();
+
+    await _showInterstitialAd();
+
     await init();
   }
 
@@ -244,6 +250,9 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
     }
 
     AppRouter.pop();
+
+    await _showInterstitialAd();
+
     await init();
   }
 
@@ -263,6 +272,13 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
     if (!(res.data ?? false)) return OverlayService.snackbar('Status not updated', isError: true);
 
     AppRouter.pop();
+
+    await _showInterstitialAd();
+
     await init();
+  }
+
+  Future<void> _showInterstitialAd() async {
+    await ads.showInterstitialAd();
   }
 }

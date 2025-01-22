@@ -8,6 +8,7 @@ mixin ApiErrorHelper {
   ({String msg, String type}) getErrorMessageAndType(Response res) {
     var errorMsg = '';
     var type = '';
+
     try {
       final responseBody = res.body;
       final apiErrorMessage = jsonDecode(responseBody) as Map<String, dynamic>;
@@ -15,9 +16,10 @@ mixin ApiErrorHelper {
       type = apiErrorMessage['typeKey'] as String? ?? '';
 
       errorMsg += msg.replaceAll(RegExp("['«».:]"), '').trim();
-    } catch (e) {
+    } catch (_) {
       // ignore
     }
+
     return (msg: errorMsg, type: type);
   }
 
@@ -52,10 +54,10 @@ mixin ApiErrorHelper {
 
       errorMsg = msg.splitMapJoin(
         RegExp("«'(.*)'»"),
-        onMatch: (p0) => p0.group(1) ?? '',
-        onNonMatch: (p0) => '',
+        onMatch: (m) => m.group(1) ?? '',
+        onNonMatch: (_) => '',
       );
-    } catch (e) {
+    } catch (_) {
       // ignore
     }
 

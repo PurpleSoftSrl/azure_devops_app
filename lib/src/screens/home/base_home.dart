@@ -11,10 +11,12 @@ import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/filters_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
+import 'package:azure_devops/src/services/purchase_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
+import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:azure_devops/src/widgets/navigation_button.dart';
 import 'package:azure_devops/src/widgets/popup_menu.dart';
 import 'package:azure_devops/src/widgets/search_field.dart';
@@ -42,8 +44,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final storageService = StorageServiceInherited.of(context).storageService;
+    final purchase = context.purchaseService;
     return AppBasePage(
-      initState: () => _HomeController._(apiService, storageService),
+      initState: () => _HomeController._(apiService, storageService, purchase),
       smartphone: (ctrl) => _HomeScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _HomeScreen(ctrl, _tabletParameters),
     );

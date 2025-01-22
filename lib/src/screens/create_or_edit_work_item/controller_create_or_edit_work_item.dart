@@ -3,7 +3,7 @@
 part of create_or_edit_work_item;
 
 class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
-  _CreateOrEditWorkItemController._(this.apiService, this.args, this.storageService) {
+  _CreateOrEditWorkItemController._(this.apiService, this.args, this.storageService, this.ads) {
     if (args.project != null) {
       newWorkItemProject = getProjects(storageService).firstWhereOrNull((p) => p.name == args.project) ?? projectAll;
     }
@@ -13,6 +13,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
 
   final AzureApiService apiService;
   final StorageService storageService;
+  final AdsService ads;
   final CreateOrEditWorkItemArgs args;
 
   final hasChanged = ValueNotifier<ApiResponse<bool>?>(null);
@@ -311,7 +312,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       );
     }
 
-    OverlayService.snackbar('Changes saved');
+    await ads.showInterstitialAd(
+      onDismiss: () => OverlayService.snackbar('Changes saved'),
+    );
+
     hasChanged.value = ApiResponse.ok(false);
 
     if (!isEditing) {

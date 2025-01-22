@@ -1,5 +1,5 @@
 name: 'azure_devops'
-version: 2.7.0+66
+version: 2.7.1+68
 description: 'Azure DevOps unofficial mobile app'
 homepage: 'homepage'
 publish_to: 'none'
@@ -48,6 +48,8 @@ dependencies:
    git:
     url: https://github.com/PurpleSoftSrl/flutter_theme_manager
     ref: main
+  google_mobile_ads: ^5.2.0
+  purchases_flutter: ^8.4.0
 
 dev_dependencies:
   flutter_test: { sdk: flutter }

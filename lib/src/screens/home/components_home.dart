@@ -172,3 +172,52 @@ class _ProjectsHeaderWithSearchField extends StatelessWidget {
     );
   }
 }
+
+class _SubscriptionAddedBottomsheet extends StatelessWidget {
+  const _SubscriptionAddedBottomsheet({required this.onRemoveAds, required this.onSkip});
+
+  final VoidCallback onRemoveAds;
+  final VoidCallback onSkip;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: [
+        Image.asset(
+          'assets/illustrations/crying_smiling_guy.png',
+          height: 200,
+        ),
+        const SizedBox(
+          height: 40,
+        ),
+        Text(
+          '''
+In this release, we've introduced ads to help support the app's ongoing development and keep things running smoothly.
+
+We understand that ads can be disruptive, so we've also added an option for you to remove them with a paid subscription.
+
+Would you like to remove them?
+''',
+          style: context.textTheme.bodyLarge,
+        ),
+        const SizedBox(
+          height: 52,
+        ),
+        LoadingButton(
+          onPressed: onRemoveAds,
+          text: 'Remove ads',
+        ),
+        const SizedBox(
+          height: 16,
+        ),
+        TextButton(
+          onPressed: onSkip,
+          child: Text('Later'),
+        ),
+        const SizedBox(
+          height: 48,
+        ),
+      ],
+    );
+  }
+}

@@ -151,6 +151,7 @@ class OverlayService {
       backgroundColor: context.themeExtension.background,
       useRootNavigator: true,
       isDismissible: isDismissible,
+      enableDrag: isDismissible,
       isScrollControlled: isScrollControlled,
       routeSettings: RouteSettings(name: 'bs_${name ?? title}'),
       builder: (ctx) => ClipRRect(

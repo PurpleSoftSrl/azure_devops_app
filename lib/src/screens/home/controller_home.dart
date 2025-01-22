@@ -1,10 +1,11 @@
 part of home;
 
 class _HomeController with AppLogger {
-  _HomeController._(this.apiService, this.storageService);
+  _HomeController._(this.apiService, this.storageService, this.purchase);
 
   final AzureApiService apiService;
   final StorageService storageService;
+  final PurchaseService purchase;
 
   final projects = ValueNotifier<ApiResponse<List<Project>>?>(null);
   List<Project> allProjects = [];
@@ -26,6 +27,11 @@ class _HomeController with AppLogger {
   Future<void> init() async {
     final allProjectsRes = await apiService.getProjects();
     allProjects = allProjectsRes.data ?? [];
+
+    await purchase.init(
+      userId: apiService.user?.emailAddress,
+      userName: apiService.user?.displayName,
+    );
 
     // avoid resetting projects if response is error (and thus contains zero projects)
     if (allProjectsRes.isError) {
@@ -53,6 +59,11 @@ class _HomeController with AppLogger {
     await _maybeRequestReview();
 
     _logSession();
+
+    final hasSubscription = await purchase.checkSubscription();
+    if (!hasSubscription) {
+      _maybeShowSubscriptionBottomsheet();
+    }
   }
 
   Future<void> goToCommits() async {
@@ -230,5 +241,30 @@ class _HomeController with AppLogger {
     filtersService.deleteShortcut(shortcut);
 
     _getShortcuts();
+  }
+
+  void _maybeShowSubscriptionBottomsheet() {
+    if (storageService.hasSeenSubscriptionAddedBottomsheet) return;
+
+    // ignore: unawaited_futures
+    OverlayService.bottomsheet(
+      title: 'Hi there!',
+      isDismissible: false,
+      isScrollControlled: true,
+      heightPercentage: .9,
+      builder: (_) => _SubscriptionAddedBottomsheet(
+        onRemoveAds: () {
+          AppRouter.popRoute();
+          _goToChooseSubscription();
+        },
+        onSkip: AppRouter.popRoute,
+      ),
+    );
+
+    storageService.setHasSeenSubscriptionAddedBottomsheet();
+  }
+
+  void _goToChooseSubscription() {
+    AppRouter.goToChooseSubscription();
   }
 }

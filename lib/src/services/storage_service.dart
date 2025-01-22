@@ -49,6 +49,9 @@ abstract class StorageService {
   void renameShortcut(SavedShortcut shortcut, String newLabel);
 
   void deleteShortcut(SavedShortcut shortcut);
+
+  bool get hasSeenSubscriptionAddedBottomsheet;
+  void setHasSeenSubscriptionAddedBottomsheet();
 }
 
 class StorageServiceCore implements StorageService {
@@ -260,6 +263,14 @@ class StorageServiceCore implements StorageService {
       otherShortcuts.map((f) => f.toJson()).toList(),
     );
   }
+
+  @override
+  bool get hasSeenSubscriptionAddedBottomsheet => _helper.getBool(_Keys.hasSeenSubscriptionAddedBottomsheet) ?? false;
+
+  @override
+  void setHasSeenSubscriptionAddedBottomsheet() {
+    _helper.setBool(_Keys.hasSeenSubscriptionAddedBottomsheet, value: true);
+  }
 }
 
 class _StorageServiceHelper {
@@ -302,6 +313,16 @@ class _StorageServiceHelper {
     return _instance!.getInt(key);
   }
 
+  void setBool(String key, {required bool value}) {
+    _assertIsInitialized();
+    _instance!.setBool(key, value);
+  }
+
+  bool? getBool(String key) {
+    _assertIsInitialized();
+    return _instance!.getBool(key);
+  }
+
   void setStringList(String key, List<String> value) {
     _assertIsInitialized();
     _instance!.setStringList(key, value);
@@ -340,6 +361,7 @@ class _Keys {
   static const numberOfSessions = 'numberOfSessions';
   static const filters = 'filters';
   static const shortcuts = 'shortcuts';
+  static const hasSeenSubscriptionAddedBottomsheet = 'hasSeenSubscriptionAddedBottomsheet';
 }
 
 class StorageServiceInherited extends InheritedWidget {

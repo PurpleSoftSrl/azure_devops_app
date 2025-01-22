@@ -13,6 +13,7 @@ import 'package:azure_devops/src/models/commit.dart' as c;
 import 'package:azure_devops/src/models/pull_request.dart';
 import 'package:azure_devops/src/models/pull_request_with_details.dart';
 import 'package:azure_devops/src/router/router.dart';
+import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
@@ -55,8 +56,9 @@ class PullRequestDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final args = AppRouter.getPullRequestDetailArgs(context);
+    final ads = context.adsService;
     return AppBasePage(
-      initState: () => _PullRequestDetailController._(args, apiService),
+      initState: () => _PullRequestDetailController._(args, apiService, ads),
       smartphone: (ctrl) => _PullRequestDetailScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _PullRequestDetailScreen(ctrl, _tabletParameters),
     );

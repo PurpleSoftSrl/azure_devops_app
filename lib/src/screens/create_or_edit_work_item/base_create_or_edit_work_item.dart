@@ -17,6 +17,7 @@ import 'package:azure_devops/src/models/work_item_fields.dart';
 import 'package:azure_devops/src/models/work_item_link_types.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/router/router.dart';
+import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/rules_checker.dart';
@@ -50,8 +51,9 @@ class CreateOrEditWorkItemPage extends StatelessWidget {
     final args = AppRouter.getCreateOrEditWorkItemArgs(context);
     final apiService = AzureApiServiceInherited.of(context).apiService;
     final storageService = StorageServiceInherited.of(context).storageService;
+    final ads = context.adsService;
     return AppBasePage(
-      initState: () => _CreateOrEditWorkItemController._(apiService, args, storageService),
+      initState: () => _CreateOrEditWorkItemController._(apiService, args, storageService, ads),
       smartphone: (ctrl) => _CreateOrEditWorkItemScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _CreateOrEditWorkItemScreen(ctrl, _tabletParameters),
     );

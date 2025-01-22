@@ -1,11 +1,12 @@
 part of work_item_detail;
 
 class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
-  _WorkItemDetailController._(this.args, this.apiService, this.storageService);
+  _WorkItemDetailController._(this.args, this.apiService, this.storageService, this.ads);
 
   final WorkItemDetailArgs args;
   final AzureApiService apiService;
   final StorageService storageService;
+  final AdsService ads;
 
   final itemDetail = ValueNotifier<ApiResponse<WorkItemWithUpdates?>?>(null);
 
@@ -71,6 +72,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
         iteration: null,
       ),
     );
+
     await init();
   }
 
@@ -83,6 +85,8 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
     if (!(res.data ?? false)) {
       return OverlayService.error('Error', description: 'Work item not deleted');
     }
+
+    await _showInterstitialAd();
 
     AppRouter.pop();
   }
@@ -172,6 +176,8 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
       return OverlayService.error('Error', description: 'Comment not added');
     }
 
+    await _showInterstitialAd();
+
     await init();
   }
 
@@ -195,6 +201,8 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not deleted');
     }
+
+    await _showInterstitialAd();
 
     await init();
   }
@@ -220,6 +228,8 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
       return OverlayService.error('Error', description: 'Comment not edited');
     }
 
+    await _showInterstitialAd();
+
     await init();
   }
 
@@ -239,7 +249,10 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
       return OverlayService.error('Error', description: 'Attachment not added');
     }
 
-    OverlayService.snackbar('Attachment successfully added');
+    await _showInterstitialAd(
+      onDismiss: () => OverlayService.snackbar('Attachment successfully added'),
+    );
+
     await init();
   }
 
@@ -278,5 +291,9 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
     if (projectId.isEmpty || id <= 0) return;
 
     AppRouter.goToWorkItemDetail(project: projectId, id: id);
+  }
+
+  Future<void> _showInterstitialAd({VoidCallback? onDismiss}) async {
+    await ads.showInterstitialAd(onDismiss: onDismiss);
   }
 }

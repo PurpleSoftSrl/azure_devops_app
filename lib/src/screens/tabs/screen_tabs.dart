@@ -28,14 +28,11 @@ class _TabsScreen extends StatelessWidget {
               items: ctrl.navPages
                   .map(
                     (p) => BottomNavigationBarItem(
-                      icon: ValueListenableBuilder<bool>(
-                        valueListenable: ctrl.tabState[p.pageName]!,
-                        builder: (_, isActive, __) => Padding(
-                          padding: const EdgeInsets.only(top: 5),
-                          child: Icon(
-                            p.icon,
-                            size: parameters.tabIconHeight,
-                          ),
+                      icon: Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Icon(
+                          p.icon,
+                          size: parameters.tabIconHeight,
                         ),
                       ),
                     ),

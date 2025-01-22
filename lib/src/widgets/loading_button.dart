@@ -4,13 +4,16 @@ import 'package:flutter/material.dart';
 
 class LoadingButton extends StatefulWidget {
   const LoadingButton({
-    super.key,
     required this.onPressed,
     required this.text,
+    this.backgroundColor,
+    this.textColor,
   });
 
   final dynamic Function() onPressed;
   final String text;
+  final Color? backgroundColor;
+  final Color? textColor;
 
   @override
   State<LoadingButton> createState() => _LoadingButtonState();
@@ -24,7 +27,7 @@ class _LoadingButtonState extends State<LoadingButton> with AppLogger {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: MaterialButton(
-        color: context.colorScheme.primary,
+        color: widget.backgroundColor ?? context.colorScheme.primary,
         minWidth: double.maxFinite,
         shape: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
         elevation: 0,
@@ -46,7 +49,7 @@ class _LoadingButtonState extends State<LoadingButton> with AppLogger {
               )
             : Text(
                 widget.text,
-                style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onPrimary),
+                style: context.textTheme.labelLarge!.copyWith(color: widget.textColor ?? context.colorScheme.onPrimary),
                 textAlign: TextAlign.center,
               ),
       ),

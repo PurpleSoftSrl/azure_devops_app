@@ -12,10 +12,6 @@ class _TabsController {
 
   final tabController = CupertinoTabController();
 
-  late final tabState = <String, ValueNotifier<bool>>{
-    for (final p in navPages) p.pageName: ValueNotifier(navPages.indexOf(p) == 0),
-  };
-
   Future<void> init() async {
     navPages = _getTabPages();
 
@@ -34,14 +30,6 @@ class _TabsController {
     if (page == index) popAll(navPages[index].key);
     page = index;
     AppRouter.index = index;
-
-    for (var i = 0; i < navPages.length; i++) {
-      if (i == index) continue;
-
-      tabState[navPages[i].pageName]!.value = false;
-    }
-
-    tabState[navPages[index].pageName]!.value = true;
   }
 
   void goToTab(int index) {

@@ -31,3 +31,5 @@ lib/firebase_options_private.dart
 dart-define-debug.json
 dart-define-production.json
 dart-define-production-local.json
+ios/Flutter/Environment*.xcconfig
+ios/prebuild.log

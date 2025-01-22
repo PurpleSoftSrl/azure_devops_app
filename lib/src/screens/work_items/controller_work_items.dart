@@ -348,6 +348,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
         iteration: iterationFilter?.path,
       ),
     );
+
     await init();
   }
 
