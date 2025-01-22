@@ -18,6 +18,7 @@ import 'package:azure_devops/src/models/pull_request_with_details.dart' as pr;
 import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
+import 'package:azure_devops/src/models/saved_query.dart';
 import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_member.dart' as t;
 import 'package:azure_devops/src/models/user.dart';
@@ -300,6 +301,7 @@ class AzureApiServiceMock implements AzureApiService {
     AreaOrIteration? iteration,
     int? id,
     String? title,
+    String? savedQuery,
   }) async {
     final emptyWorkItem = WorkItem.empty();
     final firstItem = emptyWorkItem.copyWith(
@@ -761,6 +763,26 @@ class AzureApiServiceMock implements AzureApiService {
   @override
   Future<ApiResponse<List<LinkType>>> getWorkItemLinkTypes() {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<List<SavedQuery>>> getProjectSavedQueries({required String projectName}) async {
+    return ApiResponse.ok([]);
+  }
+
+  @override
+  Future<ApiResponse<SavedQuery>> getProjectSavedQuery({required String projectName, required String queryId}) async {
+    return ApiResponse.ok(
+      SavedQuery(
+        id: '1',
+        name: 'query name',
+        path: 'query name',
+        isFolder: false,
+        hasChildren: false,
+        children: [],
+        wiql: '',
+      ),
+    );
   }
 }
 

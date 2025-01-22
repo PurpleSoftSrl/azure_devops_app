@@ -25,6 +25,15 @@ class _WorkItemsScreen extends StatelessWidget {
           );
         }
 
+        if (ctrl.hasSavedQuery) {
+          return ValueListenableBuilder(
+            valueListenable: ctrl.savedQuery,
+            builder: (_, query, __) => ShortcutLabel(
+              label: query?.name ?? '',
+            ),
+          );
+        }
+
         final areasToShow = ctrl.getAreasToShow();
         final iterationsToShow = ctrl.getIterationsToShow();
 

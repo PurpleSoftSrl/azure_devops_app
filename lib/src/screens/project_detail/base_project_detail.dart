@@ -5,6 +5,7 @@ import 'package:azure_devops/src/mixins/api_error_mixin.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
 import 'package:azure_devops/src/models/repository.dart';
+import 'package:azure_devops/src/models/saved_query.dart';
 import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_member.dart';
 import 'package:azure_devops/src/router/router.dart';

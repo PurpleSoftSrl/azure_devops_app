@@ -12,6 +12,7 @@ class _ProjectDetailController with ApiErrorHelper {
   List<TeamWithMembers> teamsWithMembers = <TeamWithMembers>[];
   List<GitRepository> repos = <GitRepository>[];
   List<LanguageBreakdown> languages = <LanguageBreakdown>[];
+  List<SavedQuery> savedQueries = <SavedQuery>[];
 
   Iterable<LanguageBreakdown> get meaningfulLanguages => languages
       .where((l) => l.languagePercentage != null && l.languagePercentage! > 1)
@@ -23,6 +24,7 @@ class _ProjectDetailController with ApiErrorHelper {
       _getLangs(),
       _getTeams(),
       _getRepos(),
+      _getQueries(),
     ]);
 
     final projectRes = await apiService.getProject(projectName: projectName);
@@ -49,6 +51,12 @@ class _ProjectDetailController with ApiErrorHelper {
     );
   }
 
+  void goToSavedQueryDetail(SavedQuery query) {
+    AppRouter.goToSavedQueries(
+      args: (project: projectName, path: query.path, queryId: query.id),
+    );
+  }
+
   void goToMemberDetail(TeamMember member) {
     AppRouter.goToMemberDetail(member.identity!.descriptor!);
   }
@@ -71,6 +79,12 @@ class _ProjectDetailController with ApiErrorHelper {
     return reposRes;
   }
 
+  Future<ApiResponse<List<SavedQuery>>> _getQueries() async {
+    final queriesRes = await apiService.getProjectSavedQueries(projectName: projectName);
+    savedQueries = queriesRes.data ?? [];
+    return queriesRes;
+  }
+
   void goToCommits() {
     AppRouter.goToCommits(project: project.value?.data?.project);
   }
@@ -80,7 +94,7 @@ class _ProjectDetailController with ApiErrorHelper {
   }
 
   void goToWorkItems() {
-    AppRouter.goToWorkItems(args: (project: project.value?.data?.project, shortcut: null));
+    AppRouter.goToWorkItems(args: (project: project.value?.data?.project, shortcut: null, savedQuery: null));
   }
 
   void goToPullRequests() {
