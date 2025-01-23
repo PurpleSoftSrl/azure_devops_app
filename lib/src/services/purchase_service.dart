@@ -119,7 +119,8 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
       logDebug('Purchase result: $res');
       return res.activeSubscriptions.isNotEmpty ? PurchaseResult.success : PurchaseResult.failed;
     } catch (e, s) {
-      if (e is PlatformException && e.details?['readableErrorCode'] == 'PURCHASE_CANCELLED') {
+      if (e is PlatformException &&
+          ['PURCHASE_CANCELLED', 'PurchaseCancelledError'].contains(e.details?['readableErrorCode'])) {
         logDebug('Purchase cancelled');
         return PurchaseResult.cancelled;
       }
