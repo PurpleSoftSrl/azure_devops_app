@@ -243,6 +243,32 @@ class _SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
+          SectionHeader(
+            text: 'Policies',
+          ),
+          NavigationButton(
+            onTap: ctrl.openPrivacyPolicy,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text('Privacy policy'),
+                Icon(DevOpsIcons.link),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          NavigationButton(
+            onTap: ctrl.openTermsAndConditions,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text('Terms and Use'),
+                Icon(DevOpsIcons.link),
+              ],
+            ),
+          ),
           const SizedBox(
             height: 40,
           ),

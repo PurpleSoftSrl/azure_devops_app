@@ -132,6 +132,14 @@ class _SettingsController with ShareMixin, AppLogger {
       ),
     );
   }
+
+  void openPrivacyPolicy() {
+    launchUrlString('https://www.iubenda.com/privacy-policy/92670429/legal');
+  }
+
+  void openTermsAndConditions() {
+    launchUrlString('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/');
+  }
 }
 
 class _H2PaddingBuilder extends MarkdownPaddingBuilder {
