@@ -19,20 +19,22 @@ class AzureDevOps extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PurpleTheme(
-      child: AdsServiceWidget(
-        ads: AdsServiceImpl(),
-        child: PurchaseServiceWidget(
-          purchase: PurchaseServiceImpl(ads: AdsServiceImpl()),
-          child: AzureApiServiceInherited(
-            apiService: AzureApiServiceImpl(),
-            child: StorageServiceInherited(
-              storageService: StorageServiceCore(),
-              // LifecycleListener must be below AzureApiServiceInherited because it depends on it
-              child: LifecycleListener(
-                child: Builder(
-                  builder: (_) {
-                    // builder is needed to switch theme
-                    return GestureDetector(
+      child: Builder(
+        // builder is needed to switch theme
+        builder: (context) {
+          // rebuilds the app when the brightness changes
+          MediaQuery.platformBrightnessOf(context);
+          return AdsServiceWidget(
+            ads: AdsServiceImpl(),
+            child: PurchaseServiceWidget(
+              purchase: PurchaseServiceImpl(ads: AdsServiceImpl()),
+              child: AzureApiServiceInherited(
+                apiService: AzureApiServiceImpl(),
+                child: StorageServiceInherited(
+                  storageService: StorageServiceCore(),
+                  // LifecycleListener must be below AzureApiServiceInherited because it depends on it
+                  child: LifecycleListener(
+                    child: GestureDetector(
                       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
                       child: MaterialApp(
                         navigatorKey: AppRouter.navigatorKey,
@@ -51,13 +53,13 @@ class AzureDevOps extends StatelessWidget {
                         ],
                         home: const SplashPage(),
                       ),
-                    );
-                  },
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

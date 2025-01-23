@@ -44,8 +44,9 @@ class AppTheme {
 
   static int tabletBreakpoint = 600;
 
-  static bool isTablet =
-      (MediaQueryData.fromView(PlatformDispatcher.instance.views.first).size.width) >= tabletBreakpoint;
+  static MediaQueryData get _platformMediaQuery => MediaQueryData.fromView(PlatformDispatcher.instance.views.first);
+
+  static bool isTablet = _platformMediaQuery.size.width >= tabletBreakpoint;
 
   static StorageService get storageService => StorageServiceCore();
 
@@ -61,12 +62,22 @@ class AppTheme {
     return 'Light';
   }
 
+  static Brightness get _platformBrightness => _platformMediaQuery.platformBrightness;
+
+  static bool get _isPlatformBrightnessLight => _platformBrightness == Brightness.light;
+
   /// Returns theme saved in local storage if any, otherwise defaults to dark theme.
   static ThemeData get darkTheme {
+    if (isSystemTheme) {
+      return _getCustomTheme(_isPlatformBrightnessLight ? _lightColorScheme : _darkColorScheme);
+    }
     return _getCustomTheme(isLightTheme ? _lightColorScheme : _darkColorScheme);
   }
 
   static ThemeData get lightTheme {
+    if (isSystemTheme) {
+      return _getCustomTheme(_isPlatformBrightnessLight ? _lightColorScheme : _darkColorScheme);
+    }
     return _getCustomTheme(isDarkTheme ? _darkColorScheme : _lightColorScheme);
   }
 
@@ -80,10 +91,7 @@ class AppTheme {
   static ThemeData _getCustomTheme(ColorScheme colorScheme) {
     final textTheme = _getTextTheme(colorScheme.brightness);
 
-    final themeExtension = AppColorsExtension(
-      background: isLightTheme ? _lightBackground : _darkBackground,
-      onBackground: isLightTheme ? _lightOnBackground : _darkOnBackground,
-    );
+    final themeExtension = _getThemeExtension();
 
     return ThemeData(
       useMaterial3: true,
@@ -150,6 +158,20 @@ class AppTheme {
       fontSize: fsMultiplier * fs,
       height: height == null ? null : height / (fsMultiplier * fs),
       letterSpacing: letterSpacing,
+    );
+  }
+
+  static AppColorsExtension _getThemeExtension() {
+    if (isSystemTheme) {
+      return AppColorsExtension(
+        background: _isPlatformBrightnessLight ? _lightBackground : _darkBackground,
+        onBackground: _isPlatformBrightnessLight ? _lightOnBackground : _darkOnBackground,
+      );
+    }
+
+    return AppColorsExtension(
+      background: isLightTheme ? _lightBackground : _darkBackground,
+      onBackground: isLightTheme ? _lightOnBackground : _darkOnBackground,
     );
   }
 
