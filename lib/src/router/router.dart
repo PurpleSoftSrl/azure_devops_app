@@ -34,7 +34,7 @@ import 'package:flutter/services.dart';
 typedef WorkItemsArgs = ({Project? project, SavedShortcut? shortcut, ChildQuery? savedQuery});
 typedef WorkItemDetailArgs = ({String project, int id});
 typedef CreateOrEditWorkItemArgs = ({String? project, int? id, String? area, String? iteration});
-typedef SavedQueriesArgs = ({String? project, String? path, String? queryId});
+typedef SavedQueriesArgs = ({String project, String path, String queryId});
 typedef PullRequestArgs = ({Project? project, SavedShortcut? shortcut});
 typedef PullRequestDetailArgs = ({String project, String repository, int id});
 typedef CommitsArgs = ({Project? project, GraphUser? author, SavedShortcut? shortcut});
@@ -193,9 +193,10 @@ class AppRouter {
 
   static CreateOrEditWorkItemArgs getCreateOrEditWorkItemArgs(BuildContext context) => _getArgs(context);
 
-  static Future<void> goToSavedQueries({SavedQueriesArgs? args}) => _goTo<SavedQueriesArgs?>(_savedQueries, args: args);
+  static Future<void> goToSavedQueries({required SavedQueriesArgs args}) =>
+      _goTo<SavedQueriesArgs>(_savedQueries, args: args);
 
-  static SavedQueriesArgs? getSavedQueriesArgs(BuildContext context) => _getArgs(context);
+  static SavedQueriesArgs getSavedQueriesArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToPullRequests({PullRequestArgs? args}) => _goTo(_pullRequests, args: args);
 

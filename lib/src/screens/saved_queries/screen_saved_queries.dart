@@ -10,7 +10,7 @@ class _SavedQueriesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage(
       init: ctrl.init,
-      title: ctrl.args!.path ?? 'Saved Queries',
+      title: ctrl.args.path,
       notifier: ctrl.savedQueries,
       builder: (query) => switch (query) {
         _ when query.isFolder && query.children.isEmpty => SizedBox(
@@ -31,7 +31,7 @@ class _SavedQueriesScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              q.path.replaceFirst('${ctrl.args!.path}/', ''),
+                              q.path.replaceFirst('${ctrl.args.path}/', ''),
                               style: context.textTheme.titleSmall!.copyWith(
                                 decoration: q.isFolder ? null : TextDecoration.underline,
                               ),
