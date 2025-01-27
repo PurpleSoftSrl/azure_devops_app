@@ -116,6 +116,8 @@ class AdsServiceImpl with AppLogger implements AdsService {
 
   @override
   Future<List<AdWithView>> getNewNativeAds() async {
+    if (!_showAds) return [];
+
     final ctx = AppRouter.navigatorKey.currentContext!;
 
     final newNativeAds = <AdWithView>[];
