@@ -42,7 +42,7 @@ class AdsServiceImpl with AppLogger implements AdsService {
 
   /// Loads an interstitial ad.
   Future<void> _loadInterstitialAd() async {
-    logDebug('loading interstitial ad: $adUnitId');
+    logDebug('Loading interstitial ad: $adUnitId');
 
     await InterstitialAd.load(
       adUnitId: adUnitId,
@@ -50,7 +50,7 @@ class AdsServiceImpl with AppLogger implements AdsService {
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
           _interstitialAd = ad;
-          logDebug('Loaded ad: ${ad.toPrintableString()}');
+          logDebug('Loaded interstitial ad');
         },
         onAdFailedToLoad: (error) {
           logError('InterstitialAd failed to load: $error', error);
@@ -70,16 +70,16 @@ class AdsServiceImpl with AppLogger implements AdsService {
 
     _interstitialAd?.fullScreenContentCallback = FullScreenContentCallback(
       onAdFailedToShowFullScreenContent: (ad, error) {
-        logError('onAdFailedToShowFullScreenContent: ${ad.adUnitId}', error);
+        logError('Interstitial onAdFailedToShowFullScreenContent: $error', error);
         ad.dispose();
         _loadInterstitialAd();
         onDismiss?.call();
       },
       onAdImpression: (ad) {
-        logDebug('onAdImpression: ${ad.adUnitId}');
+        logDebug('Interstitial onAdImpression');
       },
       onAdDismissedFullScreenContent: (ad) {
-        logDebug('onAdDismissedFullScreenContent: ${ad.adUnitId}');
+        logDebug('Interstitial onAdDismissedFullScreenContent');
         ad.dispose();
         _loadInterstitialAd();
         onDismiss?.call();
@@ -88,8 +88,8 @@ class AdsServiceImpl with AppLogger implements AdsService {
 
     try {
       await _interstitialAd?.show();
-    } catch (e) {
-      logError('Failed to show interstitial ad', e);
+    } catch (e, s) {
+      logError('Failed to show interstitial ad: $e', s);
     }
   }
 
@@ -103,12 +103,6 @@ class AdsServiceImpl with AppLogger implements AdsService {
   void reactivateAds() {
     logDebug('Ads reactivated');
     _showAds = true;
-  }
-}
-
-extension on InterstitialAd {
-  String toPrintableString() {
-    return 'InterstitialAd {adUnitId: $adUnitId, request: $request, responseInfo: $responseInfo}';
   }
 }
 

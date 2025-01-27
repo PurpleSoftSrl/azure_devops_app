@@ -232,6 +232,9 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   }
 
   Future<void> confirm() async {
+    // hide confirm button to avoid multiple confirmations
+    hasChanged.value = ApiResponse.ok(false);
+
     if (!titleFieldKey.currentState!.validate()) {
       _showFormValidationError('Title');
       return;
