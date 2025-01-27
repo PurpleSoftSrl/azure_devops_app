@@ -40,8 +40,10 @@ class _LifecycleListenerState extends State<LifecycleListener> with WidgetsBindi
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    final user = AzureApiServiceInherited.of(context).apiService.user;
+
     if (state == AppLifecycleState.inactive && _previousState != AppLifecycleState.paused) {
-      if (AzureApiServiceInherited.of(context).apiService.user != null && !_hasAlreadyLogged) {
+      if (user != null && !_hasAlreadyLogged) {
         logInfo('Session finished');
         _hasAlreadyLogged = true;
         _inactiveTimer = Timer(Duration(seconds: 300), () => _hasAlreadyLogged = false);
@@ -50,7 +52,7 @@ class _LifecycleListenerState extends State<LifecycleListener> with WidgetsBindi
       final now = DateTime.now();
       final shouldCheck = now.difference(_lastSubscriptionCheck) > Duration(hours: 1);
 
-      if (shouldCheck) {
+      if (shouldCheck && user != null) {
         logDebug('Session resumed');
         _checkSubscription();
         _lastSubscriptionCheck = now;
