@@ -785,6 +785,20 @@ class AzureApiServiceMock implements AzureApiService {
       ),
     );
   }
+
+  @override
+  Future<ApiResponse<bool>> renameSavedQuery({
+    required String projectName,
+    required String queryId,
+    required String name,
+  }) async {
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> deleteSavedQuery({required String projectName, required String queryId}) async {
+    return ApiResponse.ok(true);
+  }
 }
 
 class StorageServiceMock implements StorageService {

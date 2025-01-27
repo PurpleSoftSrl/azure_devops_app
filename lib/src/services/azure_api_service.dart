@@ -346,6 +346,14 @@ abstract class AzureApiService {
   Future<ApiResponse<List<SavedQuery>>> getProjectSavedQueries({required String projectName});
 
   Future<ApiResponse<SavedQuery>> getProjectSavedQuery({required String projectName, required String queryId});
+
+  Future<ApiResponse<bool>> renameSavedQuery({
+    required String projectName,
+    required String queryId,
+    required String name,
+  });
+
+  Future<ApiResponse<bool>> deleteSavedQuery({required String projectName, required String queryId});
 }
 
 class AzureApiServiceImpl with AppLogger implements AzureApiService {
@@ -1542,6 +1550,31 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (queryRes.isError) return ApiResponse.error(queryRes);
 
     return ApiResponse.ok(SavedQuery.fromResponse(queryRes));
+  }
+
+  @override
+  Future<ApiResponse<bool>> renameSavedQuery({
+    required String projectName,
+    required String queryId,
+    required String name,
+  }) async {
+    final renameRes = await _patch(
+      '$_basePath/$projectName/_apis/wit/queries/$queryId?$_apiVersion-preview',
+      body: {'name': name},
+    );
+    if (renameRes.isError) return ApiResponse.error(renameRes);
+
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> deleteSavedQuery({required String projectName, required String queryId}) async {
+    final deleteRes = await _delete(
+      '$_basePath/$projectName/_apis/wit/queries/$queryId?$_apiVersion-preview',
+    );
+    if (deleteRes.isError) return ApiResponse.error(deleteRes);
+
+    return ApiResponse.ok(true);
   }
 
   @override

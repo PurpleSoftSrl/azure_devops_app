@@ -37,7 +37,24 @@ class _SavedQueriesScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Icon(Icons.arrow_forward_ios),
+                          if (q.isFolder)
+                            const Icon(Icons.arrow_forward_ios)
+                          else
+                            DevOpsPopupMenu(
+                              tooltip: 'saved query actions',
+                              items: () => [
+                                PopupItem(
+                                  text: 'Rename',
+                                  icon: DevOpsIcons.edit,
+                                  onTap: () => ctrl.renameQuery(q),
+                                ),
+                                PopupItem(
+                                  text: 'Delete',
+                                  icon: DevOpsIcons.failed,
+                                  onTap: () => ctrl.deleteQuery(q),
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                     ),
