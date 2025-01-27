@@ -41,6 +41,10 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
   bool get hasShortcut => args?.shortcut != null;
 
+  bool get hasSavedQuery => args?.savedQuery != null;
+
+  final savedQuery = ValueNotifier<SavedQuery?>(null);
+
   Future<void> init() async {
     WorkItemsFilters? savedFilters;
     if (shouldPersistFilters) {
