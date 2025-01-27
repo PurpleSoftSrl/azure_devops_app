@@ -40,6 +40,10 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
 
   bool get hasShortcut => args?.shortcut != null;
 
+  bool get hasSavedQuery => args?.savedQuery != null;
+
+  final savedQuery = ValueNotifier<SavedQuery?>(null);
+
   Future<void> init() async {
     WorkItemsFilters? savedFilters;
     if (shouldPersistFilters) {
@@ -297,6 +301,14 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
           .toSet();
     }
 
+    if (hasSavedQuery) {
+      final savedQueryRes = await apiService.getProjectSavedQuery(
+        projectName: args!.savedQuery!.projectId,
+        queryId: args!.savedQuery!.id,
+      );
+      savedQuery.value = savedQueryRes.data;
+    }
+
     final res = await apiService.getWorkItems(
       projects: isDefaultProjectsFilter ? null : projectsFilter,
       types: typesFilter.isEmpty ? null : typesFilter,
@@ -304,6 +316,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
       assignedTo: assignedTo?.map((u) => u.displayName == 'Unassigned' ? u.copyWith(mailAddress: '') : u).toSet(),
       area: areaFilter,
       iteration: iterationFilter,
+      savedQuery: savedQuery.value?.wiql,
     );
 
     allWorkItems = res.data ?? [];

@@ -98,7 +98,7 @@ class _HomeController with AppLogger {
       case FilterAreas.pipelines:
         AppRouter.goToPipelines(args: (definition: null, project: null, shortcut: shortcut));
       case FilterAreas.workItems:
-        AppRouter.goToWorkItems(args: (project: null, shortcut: shortcut));
+        AppRouter.goToWorkItems(args: (project: null, shortcut: shortcut, savedQuery: null));
       case FilterAreas.pullRequests:
         AppRouter.goToPullRequests(args: (project: null, shortcut: shortcut));
     }

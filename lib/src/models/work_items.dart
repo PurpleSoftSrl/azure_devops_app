@@ -11,7 +11,7 @@ class GetWorkItemIds {
 
   factory GetWorkItemIds.fromJson(Map<String, dynamic> json) => GetWorkItemIds(
         workItems: List<_WorkItemId>.from(
-          (json['workItems'] as List<dynamic>).map((w) => _WorkItemId.fromJson(w as Map<String, dynamic>)),
+          (json['workItems'] as List<dynamic>? ?? []).map((w) => _WorkItemId.fromJson(w as Map<String, dynamic>)),
         ),
       );
 

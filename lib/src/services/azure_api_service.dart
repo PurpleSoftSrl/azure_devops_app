@@ -26,6 +26,7 @@ import 'package:azure_devops/src/models/pull_request_with_details.dart';
 import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
+import 'package:azure_devops/src/models/saved_query.dart';
 import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_member.dart' show GetTeamMembersResponse;
 import 'package:azure_devops/src/models/timeline.dart';
@@ -108,6 +109,7 @@ abstract class AzureApiService {
     AreaOrIteration? iteration,
     int? id,
     String? title,
+    String? savedQuery,
   });
 
   Future<ApiResponse<List<WorkItem>>> getMyRecentWorkItems();
@@ -340,6 +342,18 @@ abstract class AzureApiService {
   });
 
   Future<void> logout();
+
+  Future<ApiResponse<List<SavedQuery>>> getProjectSavedQueries({required String projectName});
+
+  Future<ApiResponse<SavedQuery>> getProjectSavedQuery({required String projectName, required String queryId});
+
+  Future<ApiResponse<bool>> renameSavedQuery({
+    required String projectName,
+    required String queryId,
+    required String name,
+  });
+
+  Future<ApiResponse<bool>> deleteSavedQuery({required String projectName, required String queryId});
 }
 
 class AzureApiServiceImpl with AppLogger implements AzureApiService {
@@ -786,6 +800,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     AreaOrIteration? iteration,
     int? id,
     String? title,
+    String? savedQuery,
   }) async {
     final query = <String>[];
 
@@ -834,9 +849,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       queryStr = ' Where $queryStr ';
     }
 
+    final effectiveQuery =
+        savedQuery ?? 'Select [System.Id] From WorkItems $queryStr Order By [System.ChangedDate] desc';
+
     final workItemIdsRes = await _post(
       '$_basePath/_apis/wit/wiql?\$top=200&$_apiVersion',
-      body: {'query': 'Select [System.Id] From WorkItems $queryStr Order By [System.ChangedDate] desc'},
+      body: {'query': effectiveQuery},
     );
     if (workItemIdsRes.isError) return ApiResponse.error(workItemIdsRes);
 
@@ -1515,6 +1533,48 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (repositoriesRes.isError) return ApiResponse.error(repositoriesRes);
 
     return ApiResponse.ok(GetRepositoriesResponse.fromResponse(repositoriesRes));
+  }
+
+  @override
+  Future<ApiResponse<List<SavedQuery>>> getProjectSavedQueries({required String projectName}) async {
+    final queriesRes = await _get('$_basePath/$projectName/_apis/wit/queries?\$depth=1&$_apiVersion');
+    if (queriesRes.isError) return ApiResponse.error(queriesRes);
+
+    return ApiResponse.ok(SavedQueriesResponse.fromResponse(queriesRes));
+  }
+
+  @override
+  Future<ApiResponse<SavedQuery>> getProjectSavedQuery({required String projectName, required String queryId}) async {
+    final queryRes =
+        await _get('$_basePath/$projectName/_apis/wit/queries/$queryId?\$depth=1&\$expand=wiql&$_apiVersion');
+    if (queryRes.isError) return ApiResponse.error(queryRes);
+
+    return ApiResponse.ok(SavedQuery.fromResponse(queryRes));
+  }
+
+  @override
+  Future<ApiResponse<bool>> renameSavedQuery({
+    required String projectName,
+    required String queryId,
+    required String name,
+  }) async {
+    final renameRes = await _patch(
+      '$_basePath/$projectName/_apis/wit/queries/$queryId?$_apiVersion-preview',
+      body: {'name': name},
+    );
+    if (renameRes.isError) return ApiResponse.error(renameRes);
+
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> deleteSavedQuery({required String projectName, required String queryId}) async {
+    final deleteRes = await _delete(
+      '$_basePath/$projectName/_apis/wit/queries/$queryId?$_apiVersion-preview',
+    );
+    if (deleteRes.isError) return ApiResponse.error(deleteRes);
+
+    return ApiResponse.ok(true);
   }
 
   @override

@@ -5,6 +5,7 @@ class SectionHeader extends StatelessWidget {
   const SectionHeader({
     required this.text,
     this.textHeight,
+    this.iconSize,
   })  : icon = null,
         marginTop = 24;
 
@@ -13,16 +14,19 @@ class SectionHeader extends StatelessWidget {
     required this.icon,
     this.marginTop = 24,
     this.textHeight,
+    this.iconSize,
   });
 
   const SectionHeader.noMargin({
     required this.text,
     this.icon,
     this.textHeight,
+    this.iconSize,
   }) : marginTop = 0;
 
   final String text;
   final IconData? icon;
+  final double? iconSize;
   final double marginTop;
 
   /// Used to align [SectionHeader] inside a row
@@ -39,7 +43,10 @@ class SectionHeader extends StatelessWidget {
     if (icon != null) {
       body = Row(
         children: [
-          Icon(icon),
+          Icon(
+            icon,
+            size: iconSize,
+          ),
           const SizedBox(
             width: 12,
           ),

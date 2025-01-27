@@ -1,5 +1,6 @@
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/project.dart';
+import 'package:azure_devops/src/models/saved_query.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/screens/choose_projects/base_choose_projects.dart';
 import 'package:azure_devops/src/screens/choose_subscription/base_choose_subscription.dart';
@@ -19,6 +20,7 @@ import 'package:azure_devops/src/screens/project_detail/base_project_detail.dart
 import 'package:azure_devops/src/screens/pull_request_detail/base_pull_request_detail.dart';
 import 'package:azure_devops/src/screens/pull_requests/base_pull_requests.dart';
 import 'package:azure_devops/src/screens/repository_detail/base_repository_detail.dart';
+import 'package:azure_devops/src/screens/saved_queries/base_saved_queries.dart';
 import 'package:azure_devops/src/screens/settings/base_settings.dart';
 import 'package:azure_devops/src/screens/tabs/base_tabs.dart';
 import 'package:azure_devops/src/screens/work_item_detail/base_work_item_detail.dart';
@@ -29,9 +31,10 @@ import 'package:azure_devops/src/widgets/error_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-typedef WorkItemsArgs = ({Project? project, SavedShortcut? shortcut});
+typedef WorkItemsArgs = ({Project? project, SavedShortcut? shortcut, ChildQuery? savedQuery});
 typedef WorkItemDetailArgs = ({String project, int id});
 typedef CreateOrEditWorkItemArgs = ({String? project, int? id, String? area, String? iteration});
+typedef SavedQueriesArgs = ({String project, String path, String queryId});
 typedef PullRequestArgs = ({Project? project, SavedShortcut? shortcut});
 typedef PullRequestDetailArgs = ({String project, String repository, int id});
 typedef CommitsArgs = ({Project? project, GraphUser? author, SavedShortcut? shortcut});
@@ -68,6 +71,7 @@ class AppRouter {
   static const _pullRequestDetail = '/pullrequest-detail';
   static const _createOrEditWorkItem = '/create-or-edit-workitem';
   static const _chooseSubscription = '/choose-subscription';
+  static const _savedQueries = '/saved-queries';
   static const _error = '/error';
 
   static int index = 0;
@@ -111,6 +115,7 @@ class AppRouter {
     _pullRequestDetail: (_) => PullRequestDetailPage(),
     _createOrEditWorkItem: (_) => CreateOrEditWorkItemPage(),
     _chooseSubscription: (_) => ChooseSubscriptionPage(),
+    _savedQueries: (_) => SavedQueriesPage(),
     _error: (_) => ErrorPage(description: 'Something went wrong', onRetry: goToSplash),
   };
 
@@ -187,6 +192,11 @@ class AppRouter {
   static Future<void> goToChooseSubscription() => _goTo(_chooseSubscription);
 
   static CreateOrEditWorkItemArgs getCreateOrEditWorkItemArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToSavedQueries({required SavedQueriesArgs args}) =>
+      _goTo<SavedQueriesArgs>(_savedQueries, args: args);
+
+  static SavedQueriesArgs getSavedQueriesArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToPullRequests({PullRequestArgs? args}) => _goTo(_pullRequests, args: args);
 

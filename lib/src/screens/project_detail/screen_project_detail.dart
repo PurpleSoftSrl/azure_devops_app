@@ -299,6 +299,27 @@ class _ProjectDetailScreen extends StatelessWidget {
                 ),
               ),
             ],
+            if (ctrl.savedQueries.isNotEmpty) ...[
+              SectionHeader.withIcon(
+                text: 'Saved Queries',
+                icon: Icons.manage_search_rounded,
+                iconSize: 24,
+              ),
+              ...ctrl.savedQueries.map(
+                (q) => NavigationButton(
+                  onTap: () => ctrl.goToSavedQueryDetail(q),
+                  margin: q == ctrl.savedQueries.first ? EdgeInsets.zero : const EdgeInsets.only(top: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(child: Text(q.name)),
+                      Icon(Icons.arrow_forward_ios),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ],
         );
       },
