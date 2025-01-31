@@ -41,6 +41,7 @@ class BoardDetail {
     required this.name,
     required this.columns,
     required this.allowedMappings,
+    required this.fields,
   });
 
   factory BoardDetail.fromJson(Map<String, dynamic> json) => BoardDetail(
@@ -50,6 +51,7 @@ class BoardDetail {
           (json['columns'] as List<dynamic>? ?? []).map((x) => BoardColumn.fromJson(x as Map<String, dynamic>)),
         ),
         allowedMappings: AllowedMappings.fromJson(json['allowedMappings'] as Map<String, dynamic>? ?? {}),
+        fields: BoardFields.fromJson(json['fields'] as Map<String, dynamic>? ?? {}),
       );
 
   static BoardDetail fromResponse(Response res) => BoardDetail.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
@@ -58,6 +60,7 @@ class BoardDetail {
   final String name;
   final List<BoardColumn> columns;
   final AllowedMappings allowedMappings;
+  final BoardFields fields;
 }
 
 class AllowedMappings {
@@ -127,6 +130,26 @@ class BoardColumn {
   int get hashCode {
     return id.hashCode;
   }
+}
+
+class BoardFields {
+  BoardFields({required this.columnField});
+
+  factory BoardFields.fromJson(Map<String, dynamic> json) => BoardFields(
+        columnField: BoardField.fromJson(json['columnField'] as Map<String, dynamic>? ?? {}),
+      );
+
+  final BoardField columnField;
+}
+
+class BoardField {
+  BoardField({required this.referenceName});
+
+  factory BoardField.fromJson(Map<String, dynamic> json) => BoardField(
+        referenceName: json['referenceName'] as String? ?? '',
+      );
+
+  final String referenceName;
 }
 
 class BoardDetailWithItems {
