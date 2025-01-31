@@ -36,7 +36,6 @@ import 'package:flutter/services.dart';
 
 typedef WorkItemsArgs = ({Project? project, SavedShortcut? shortcut, ChildQuery? savedQuery});
 typedef WorkItemDetailArgs = ({String project, int id});
-typedef CreateOrEditWorkItemArgs = ({String? project, int? id, String? area, String? iteration});
 typedef SavedQueriesArgs = ({String project, String path, String queryId});
 typedef BoardDetailArgs = ({String project, String teamId, String boardId, String backlogId});
 typedef PullRequestArgs = ({Project? project, SavedShortcut? shortcut});
@@ -311,4 +310,22 @@ class RepoDetailArgs {
       branch: branch ?? this.branch,
     );
   }
+}
+
+class CreateOrEditWorkItemArgs {
+  CreateOrEditWorkItemArgs({
+    this.project,
+    this.id,
+    this.area,
+    this.iteration,
+    this.isAreaVisible = true,
+    this.allowedTypes,
+  });
+
+  final String? project;
+  final int? id;
+  final String? area;
+  final String? iteration;
+  final bool isAreaVisible;
+  final Set<String>? allowedTypes;
 }

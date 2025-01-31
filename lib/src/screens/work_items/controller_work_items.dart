@@ -353,14 +353,12 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper {
   }
 
   Future<void> createWorkItem() async {
-    await AppRouter.goToCreateOrEditWorkItem(
-      args: (
-        project: projectsFilter.length != 1 ? null : projectsFilter.first.name,
-        id: null,
-        area: areaFilter?.path,
-        iteration: iterationFilter?.path,
-      ),
+    final createItemArgs = CreateOrEditWorkItemArgs(
+      project: projectsFilter.length != 1 ? null : projectsFilter.first.name,
+      area: areaFilter?.path,
+      iteration: iterationFilter?.path,
     );
+    await AppRouter.goToCreateOrEditWorkItem(args: createItemArgs);
 
     await init();
   }
