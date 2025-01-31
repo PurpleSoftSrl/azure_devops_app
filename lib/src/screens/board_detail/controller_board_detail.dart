@@ -23,7 +23,10 @@ class _BoardDetailController {
       columnItems[column] = [];
 
       final columnName = column.name;
-      final itemsToAdd = data.items.where((item) => item.fields.boardColumn == columnName);
+      final itemsToAdd = data.items
+          .where((item) => item.fields.boardColumn == columnName)
+          .sortedBy((item) => item.fields.systemChangedDate)
+          .reversed;
 
       columnItems[column]!.addAll(itemsToAdd);
     }
