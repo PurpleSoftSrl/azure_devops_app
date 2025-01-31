@@ -87,8 +87,8 @@ class _HomeScreen extends StatelessWidget {
               )
             else
               ...projects.map(
-                (p) => _ProjectCard(
-                  parameters: parameters,
+                (p) => ProjectCard(
+                  height: parameters.projectCardHeight,
                   project: p,
                   onTap: ctrl.goToProjectDetail,
                 ),

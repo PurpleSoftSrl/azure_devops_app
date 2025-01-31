@@ -64,14 +64,8 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
     // wait for popup menu to close
     await Future<void>.delayed(Duration(milliseconds: 100));
 
-    await AppRouter.goToCreateOrEditWorkItem(
-      args: (
-        project: args.project,
-        id: args.id,
-        area: null,
-        iteration: null,
-      ),
-    );
+    final editItemArgs = CreateOrEditWorkItemArgs(project: args.project, id: args.id);
+    await AppRouter.goToCreateOrEditWorkItem(args: editItemArgs);
 
     await init();
   }
