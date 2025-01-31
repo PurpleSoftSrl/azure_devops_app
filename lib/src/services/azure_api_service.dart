@@ -10,6 +10,8 @@ import 'package:azure_devops/src/extensions/reponse_extension.dart';
 import 'package:azure_devops/src/extensions/work_item_update_extension.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/models/areas_and_iterations.dart';
+import 'package:azure_devops/src/models/backlog.dart';
+import 'package:azure_devops/src/models/board.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:azure_devops/src/models/commits_tags.dart';
@@ -29,6 +31,7 @@ import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/saved_query.dart';
 import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_member.dart' show GetTeamMembersResponse;
+import 'package:azure_devops/src/models/team_settings.dart';
 import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/models/user_entitlements.dart';
@@ -354,6 +357,14 @@ abstract class AzureApiService {
   });
 
   Future<ApiResponse<bool>> deleteSavedQuery({required String projectName, required String queryId});
+
+  Future<ApiResponse<Map<Team, List<Board>>>> getProjectBoards({required String projectName});
+
+  Future<ApiResponse<BoardDetailWithItems>> getProjectBoard({
+    required String projectName,
+    required String teamId,
+    required String backlogId,
+  });
 }
 
 class AzureApiServiceImpl with AppLogger implements AzureApiService {
@@ -863,9 +874,17 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final workItemIds = GetWorkItemIds.fromResponse(workItemIdsRes);
     if (workItemIds.isEmpty) return ApiResponse.ok([]);
 
-    final ids = workItemIds.map((e) => e.id).join(',');
+    final ids = workItemIds.map((e) => e.id);
 
-    final allWorkItemsRes = await _get('$_basePath/_apis/wit/workitems?ids=$ids&$_apiVersion');
+    final allWorkItemsRes = await _getWorkItemsBatch(ids);
+    if (allWorkItemsRes.isError) return ApiResponse.error(allWorkItemsRes.errorResponse);
+
+    return ApiResponse.ok(allWorkItemsRes.data);
+  }
+
+  Future<ApiResponse<List<WorkItem>>> _getWorkItemsBatch(Iterable<int> ids) async {
+    final batch = ids.join(',');
+    final allWorkItemsRes = await _get('$_basePath/_apis/wit/workitems?ids=$batch&$_apiVersion');
 
     if (allWorkItemsRes.isError) return ApiResponse.error(allWorkItemsRes);
 
@@ -1580,18 +1599,93 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 
   @override
+  Future<ApiResponse<Map<Team, List<Board>>>> getProjectBoards({required String projectName}) async {
+    final boardsRes = await _get('$_basePath/$projectName/_apis/work/boards?$_apiVersion');
+    if (boardsRes.isError) return ApiResponse.error(boardsRes);
+
+    final boards = BoardsResponse.fromResponse(boardsRes);
+
+    final teamsRes = await _getTeams(projectId: projectName);
+    final teams = teamsRes.data ?? [];
+    if (teams.isEmpty) return ApiResponse.error(teamsRes.errorResponse);
+
+    final visibleBoards = <String, List<({String backlogId, String backlogname})>>{};
+
+    for (final team in teams) {
+      final backlogsRes = await _get('$_basePath/$projectName/${team.id}/_apis/work/backlogs?$_apiVersion');
+      final backlogs = BacklogsResponse.fromResponse(backlogsRes);
+
+      final teamSettingsRes = await _get('$_basePath/$projectName/${team.id}/_apis/work/teamsettings?$_apiVersion');
+      final teamSettings = TeamSettingsResponse.fromResponse(teamSettingsRes);
+
+      final visibleBacklogs = backlogs.where((b) => teamSettings.backlogVisibilities[b.id] ?? false).toList();
+      for (final backlog in visibleBacklogs) {
+        visibleBoards.putIfAbsent(team.id, () => []);
+        visibleBoards[team.id]!.add((backlogId: backlog.id, backlogname: backlog.name));
+      }
+    }
+
+    final mappedVisibleBoards = <Team, List<Board>>{
+      for (final team in teams)
+        team: (visibleBoards[team.id] ?? <({String backlogId, String backlogname})>[]).map((back) {
+          final board = boards.firstWhereOrNull((b) => b.name == back.backlogname) ?? boards.first;
+          return board..backlogId = back.backlogId;
+        }).toList(),
+    };
+
+    return ApiResponse.ok(mappedVisibleBoards);
+  }
+
+  @override
+  Future<ApiResponse<BoardDetailWithItems>> getProjectBoard({
+    required String projectName,
+    required String teamId,
+    required String backlogId,
+  }) async {
+    final boardRes = await _get('$_basePath/$projectName/_apis/work/boards/$backlogId?$_apiVersion');
+    if (boardRes.isError) return ApiResponse.error(boardRes);
+
+    final itemsRes = await _post(
+      '$_basePath/_apis/contribution/hierarchyQuery?$_apiVersion-preview',
+      body: {
+        'contributionIds': ['ms.vss-work-web.kanban-board-content-data-provider'],
+        'dataProviderContext': {
+          'properties': {
+            'sourcePage': {
+              'routeValues': {
+                'project': projectName,
+                'teamName': teamId,
+                'backlogLevel': backlogId,
+              },
+            },
+          },
+        },
+      },
+    );
+
+    if (itemsRes.isError) return ApiResponse.error(itemsRes);
+
+    final board = BoardDetail.fromResponse(boardRes);
+
+    final itemIds = BoardItemsResponse.fromResponse(itemsRes).data.content.boardModel.itemSource.payload.rows;
+    if (itemIds.isEmpty) return ApiResponse.ok(BoardDetailWithItems(board: board, items: []));
+
+    final items = await _getWorkItemsBatch(itemIds);
+    if (items.isError) return ApiResponse.error(items.errorResponse);
+
+    return ApiResponse.ok(BoardDetailWithItems(board: board, items: items.data!));
+  }
+
+  @override
   Future<ApiResponse<List<TeamWithMembers>>> getProjectTeams({required String projectId}) async {
-    final teamsRes = await _get('$_basePath/_apis/projects/$projectId/teams?$_apiVersion-preview');
-    if (teamsRes.isError) return ApiResponse.error(teamsRes);
-
-    final teams = GetTeamsResponse.fromResponse(teamsRes);
-
-    if (teams.isEmpty) return ApiResponse.error(teamsRes);
+    final teamsRes = await _getTeams(projectId: projectId);
+    final teams = teamsRes.data ?? [];
+    if (teams.isEmpty) return ApiResponse.error(teamsRes.errorResponse);
 
     final teamsWithMembers = <TeamWithMembers>[];
 
     for (final team in teams) {
-      final membersRes = await _get('$_basePath/_apis/projects/$projectId/teams/${team!.id}/members?$_apiVersion');
+      final membersRes = await _get('$_basePath/_apis/projects/$projectId/teams/${team.id}/members?$_apiVersion');
       if (membersRes.isError) return ApiResponse.error(membersRes);
 
       final members = GetTeamMembersResponse.fromResponse(membersRes)!;
@@ -1599,6 +1693,13 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     }
 
     return ApiResponse.ok(teamsWithMembers);
+  }
+
+  Future<ApiResponse<List<Team>>> _getTeams({required String projectId}) async {
+    final teamsRes = await _get('$_basePath/_apis/projects/$projectId/teams?$_apiVersion-preview');
+    if (teamsRes.isError) return ApiResponse.error(teamsRes);
+
+    return ApiResponse.ok(GetTeamsResponse.fromResponse(teamsRes));
   }
 
   @override

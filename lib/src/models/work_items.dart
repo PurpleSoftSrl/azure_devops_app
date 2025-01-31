@@ -128,6 +128,7 @@ class ItemFields {
     this.microsoftVstsCommonResolvedDate,
     this.systemHistory,
     this.systemTags,
+    this.boardColumn,
     this.jsonFields = const {},
   });
 
@@ -173,6 +174,7 @@ class ItemFields {
             : DateTime.parse(json['Microsoft.VSTS.Common.ResolvedDate']!.toString()).toLocal(),
         systemHistory: json['System.History'] as String?,
         systemTags: json['System.Tags'] as String?,
+        boardColumn: json['System.BoardColumn'] as String?,
         jsonFields: json,
       );
 
@@ -200,6 +202,7 @@ class ItemFields {
   final DateTime? microsoftVstsCommonResolvedDate;
   final String? systemHistory;
   final String? systemTags;
+  final String? boardColumn;
 
   /// Used to show work item fields dynamically to support all processes
   final Map<String, dynamic> jsonFields;
