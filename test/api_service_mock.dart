@@ -814,6 +814,7 @@ class AzureApiServiceMock implements AzureApiService {
           name: 'name',
           columns: [],
           allowedMappings: AllowedMappings(incoming: {}, inProgress: {}, outgoing: {}),
+          fields: BoardFields(columnField: BoardField(referenceName: '')),
         ),
         items: [],
       ),

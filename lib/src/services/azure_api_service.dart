@@ -1642,7 +1642,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     required String teamId,
     required String backlogId,
   }) async {
-    final boardRes = await _get('$_basePath/$projectName/_apis/work/boards/$backlogId?$_apiVersion');
+    final boardRes = await _get('$_basePath/$projectName/_apis/work/boards/$backlogId?expand=all&$_apiVersion');
     if (boardRes.isError) return ApiResponse.error(boardRes);
 
     final itemsRes = await _post(

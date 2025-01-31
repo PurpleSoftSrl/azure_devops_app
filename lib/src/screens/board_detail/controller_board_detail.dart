@@ -65,5 +65,43 @@ class _BoardDetailController {
     await init();
   }
 
-  void moveToColumn(WorkItem item) {}
+  Future<void> moveToColumn(WorkItem item) async {
+    final columns = columnItems.keys.map((c) => c.name).where((c) => c != item.fields.boardColumn);
+
+    String? column;
+
+    await OverlayService.bottomsheet(
+      title: 'Choose a column',
+      builder: (context) => Column(
+        children: columns
+            .map(
+              (c) => NavigationButton(
+                margin: const EdgeInsets.all(8),
+                onTap: () {
+                  column = c;
+                  AppRouter.popRoute();
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [Text(c)],
+                ),
+              ),
+            )
+            .toList(),
+      ),
+    );
+
+    if (column == null) return;
+
+    final res = await api.editWorkItem(
+      projectName: args.project,
+      id: item.id,
+      formFields: {boardWithItems.value!.data!.board.fields.columnField.referenceName: column!},
+    );
+
+    if (res.isError) return OverlayService.error('Error', description: 'Item not updated');
+
+    OverlayService.snackbar('Item successfully moved to column $column');
+    await init();
+  }
 }
