@@ -4,6 +4,7 @@ import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
+import 'package:azure_devops/src/widgets/popup_menu.dart';
 import 'package:azure_devops/src/widgets/work_item_type_icon.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +14,13 @@ class WorkItemListTile extends StatelessWidget {
     required this.item,
     required this.onTap,
     required this.isLast,
+    this.actions,
   });
 
   final VoidCallback onTap;
   final WorkItem item;
   final bool isLast;
+  final List<PopupItem> Function()? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +63,13 @@ class WorkItemListTile extends StatelessWidget {
                     color: state == null ? null : Color(int.parse(state.color, radix: 16)).withValues(alpha: 1),
                   ),
                 ),
+                if (actions != null) ...[
+                  const SizedBox(width: 8),
+                  DevOpsPopupMenu(
+                    tooltip: 'Work item board actions',
+                    items: actions!,
+                  ),
+                ],
               ],
             ),
             subtitle: Column(
