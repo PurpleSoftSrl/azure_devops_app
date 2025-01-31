@@ -13,7 +13,6 @@ class _ProjectDetailController with ApiErrorHelper {
   List<GitRepository> repos = <GitRepository>[];
   List<LanguageBreakdown> languages = <LanguageBreakdown>[];
   List<SavedQuery> savedQueries = <SavedQuery>[];
-  Map<Team, List<Board>> teamBoards = <Team, List<Board>>{};
 
   Iterable<LanguageBreakdown> get meaningfulLanguages => languages
       .where((l) => l.languagePercentage != null && l.languagePercentage! > 1)
@@ -37,8 +36,6 @@ class _ProjectDetailController with ApiErrorHelper {
       }
     }
 
-    await _getBoards();
-
     final isAllErrors = allRes.every((r) => r.isError);
     project.value = projectRes.copyWith(isError: isAllErrors, errorResponse: allRes.first.errorResponse);
   }
@@ -60,10 +57,8 @@ class _ProjectDetailController with ApiErrorHelper {
     );
   }
 
-  void goToBoardDetail(Team team, Board board) {
-    AppRouter.goToBoardDetail(
-      args: (project: projectName, teamId: team.id, boardId: board.name, backlogId: board.backlogId!),
-    );
+  void goToBoards() {
+    AppRouter.goToProjectBoards(projectId: projectName);
   }
 
   void goToMemberDetail(TeamMember member) {
@@ -92,12 +87,6 @@ class _ProjectDetailController with ApiErrorHelper {
     final queriesRes = await apiService.getProjectSavedQueries(projectName: projectName);
     savedQueries = queriesRes.data ?? [];
     return queriesRes;
-  }
-
-  Future<ApiResponse<Map<Team, List<Board>>>> _getBoards() async {
-    final boardsRes = await apiService.getProjectBoards(projectName: projectName);
-    teamBoards = boardsRes.data ?? {};
-    return boardsRes;
   }
 
   void goToCommits() {

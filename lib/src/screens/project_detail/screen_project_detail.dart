@@ -279,6 +279,22 @@ class _ProjectDetailScreen extends StatelessWidget {
                 );
               },
             ),
+            SectionHeader.withIcon(
+              text: 'Boards',
+              icon: DevOpsIcons.task,
+            ),
+            NavigationButton(
+              onTap: ctrl.goToBoards,
+              margin: EdgeInsets.zero,
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Expanded(child: Text('View all boards')),
+                  Icon(Icons.arrow_forward_ios),
+                ],
+              ),
+            ),
             if (ctrl.repos.isNotEmpty) ...[
               SectionHeader.withIcon(
                 text: 'Repositories',
@@ -317,44 +333,6 @@ class _ProjectDetailScreen extends StatelessWidget {
                       Icon(Icons.arrow_forward_ios),
                     ],
                   ),
-                ),
-              ),
-            ],
-            if (ctrl.teamBoards.isNotEmpty) ...[
-              SectionHeader.withIcon(
-                text: 'Boards',
-                icon: Icons.manage_search_rounded,
-                iconSize: 24,
-              ),
-              ...ctrl.teamBoards.entries.map(
-                (teamBoards) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      teamBoards.key.name,
-                      style: context.textTheme.bodyMedium,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    ...teamBoards.value.map(
-                      (board) => NavigationButton(
-                        onTap: () => ctrl.goToBoardDetail(teamBoards.key, board),
-                        margin: board == teamBoards.value.first ? EdgeInsets.zero : const EdgeInsets.only(top: 8),
-                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(child: Text(board.name)),
-                            Icon(Icons.arrow_forward_ios),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                  ],
                 ),
               ),
             ],
