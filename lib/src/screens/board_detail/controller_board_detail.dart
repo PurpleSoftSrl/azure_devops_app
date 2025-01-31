@@ -12,6 +12,9 @@ class _BoardDetailController {
 
   final columnItems = <BoardColumn, List<WorkItem>>{};
 
+  Set<String> get _allowedTypes =>
+      boardWithItems.value?.data?.board.columns.firstOrNull?.stateMappings.keys.toSet() ?? {};
+
   Future<void> init() async {
     final res = await api.getProjectBoard(projectName: args.project, teamId: args.teamId, backlogId: args.backlogId);
     boardWithItems.value = res;
@@ -37,10 +40,28 @@ class _BoardDetailController {
     await init();
   }
 
-  Future<void> addNewItem() async {}
+  Future<void> addNewItem() async {
+    final areaPath = boardWithItems.value?.data?.items.firstOrNull?.fields.systemAreaPath;
+    if (areaPath == null) return;
+
+    final addItemArgs = CreateOrEditWorkItemArgs(
+      area: areaPath,
+      project: args.project,
+      isAreaVisible: false,
+      allowedTypes: _allowedTypes,
+    );
+    await AppRouter.goToCreateOrEditWorkItem(args: addItemArgs);
+    await init();
+  }
 
   Future<void> editItem(WorkItem item) async {
-    await AppRouter.goToCreateOrEditWorkItem(args: (area: null, iteration: null, project: args.project, id: item.id));
+    final editItemArgs = CreateOrEditWorkItemArgs(
+      project: args.project,
+      id: item.id,
+      isAreaVisible: false,
+      allowedTypes: _allowedTypes,
+    );
+    await AppRouter.goToCreateOrEditWorkItem(args: editItemArgs);
     await init();
   }
 
