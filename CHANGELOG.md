@@ -1,3 +1,13 @@
+## 3.1.0 - 2025-01-31
+- Add support for saved queries (#53)
+- immediately hide confirm button on create/edit work item
+- check user subscription only if logged in
+
+## 3.0.0+69 - 2025-01-23
+- theme: fix UI with systemMode and platform light mode
+- settings: add privacy policy and terms of use links
+- purchase: fix handle cancelled purchase on Android
+
 ## 3.0.0 - 2025-01-22
 - Add ads and subscription to remove them (#52)
 - pull_requests: handle 'Merging' status
