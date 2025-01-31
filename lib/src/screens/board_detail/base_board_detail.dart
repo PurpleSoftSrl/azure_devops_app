@@ -10,6 +10,7 @@ import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/popup_menu.dart';
 import 'package:azure_devops/src/widgets/work_item_tile.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 part 'components_board_detail.dart';
