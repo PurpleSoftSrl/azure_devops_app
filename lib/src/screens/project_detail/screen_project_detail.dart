@@ -51,12 +51,12 @@ class _ProjectDetailScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SectionHeader.noMargin(
-                      text: team.team.name ?? '-',
+                      text: team.team.name,
                       icon: DevOpsIcons.users,
                     ),
-                    if (team.team.description?.isNotEmpty ?? false) ...[
+                    if (team.team.description.isNotEmpty) ...[
                       Text(
-                        team.team.description ?? '',
+                        team.team.description,
                         style: context.textTheme.labelMedium,
                       ),
                       const SizedBox(
@@ -317,6 +317,44 @@ class _ProjectDetailScreen extends StatelessWidget {
                       Icon(Icons.arrow_forward_ios),
                     ],
                   ),
+                ),
+              ),
+            ],
+            if (ctrl.teamBoards.isNotEmpty) ...[
+              SectionHeader.withIcon(
+                text: 'Boards',
+                icon: Icons.manage_search_rounded,
+                iconSize: 24,
+              ),
+              ...ctrl.teamBoards.entries.map(
+                (teamBoards) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      teamBoards.key.name,
+                      style: context.textTheme.bodyMedium,
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    ...teamBoards.value.map(
+                      (board) => NavigationButton(
+                        onTap: () => ctrl.goToBoardDetail(teamBoards.key, board),
+                        margin: board == teamBoards.value.first ? EdgeInsets.zero : const EdgeInsets.only(top: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(child: Text(board.name)),
+                            Icon(Icons.arrow_forward_ios),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                  ],
                 ),
               ),
             ],

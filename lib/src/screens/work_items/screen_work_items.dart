@@ -143,7 +143,7 @@ class _WorkItemsScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: items!
             .map(
-              (i) => _WorkItemListTile(
+              (i) => WorkItemListTile(
                 item: i,
                 onTap: () => ctrl.goToWorkItemDetail(i),
                 isLast: i == items.last,

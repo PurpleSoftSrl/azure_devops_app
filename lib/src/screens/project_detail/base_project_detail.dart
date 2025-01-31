@@ -2,6 +2,7 @@ library project_detail;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/api_error_mixin.dart';
+import 'package:azure_devops/src/models/board.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
 import 'package:azure_devops/src/models/repository.dart';

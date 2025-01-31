@@ -3,6 +3,7 @@
 import 'dart:typed_data';
 
 import 'package:azure_devops/src/models/areas_and_iterations.dart';
+import 'package:azure_devops/src/models/board.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:azure_devops/src/models/commits_tags.dart';
@@ -798,6 +799,30 @@ class AzureApiServiceMock implements AzureApiService {
   @override
   Future<ApiResponse<bool>> deleteSavedQuery({required String projectName, required String queryId}) async {
     return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<BoardDetailWithItems>> getProjectBoard({
+    required String projectName,
+    required String teamId,
+    required String backlogId,
+  }) async {
+    return ApiResponse.ok(
+      BoardDetailWithItems(
+        board: BoardDetail(
+          id: '1',
+          name: 'name',
+          columns: [],
+          allowedMappings: AllowedMappings(incoming: {}, inProgress: {}, outgoing: {}),
+        ),
+        items: [],
+      ),
+    );
+  }
+
+  @override
+  Future<ApiResponse<Map<Team, List<Board>>>> getProjectBoards({required String projectName}) async {
+    return ApiResponse.ok({});
   }
 }
 
