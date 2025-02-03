@@ -44,6 +44,7 @@ class Sprint {
   final SprintAttributes attributes;
 
   Iterable<BoardColumn>? columns;
+  String? teamDefaultArea;
 }
 
 class SprintAttributes {

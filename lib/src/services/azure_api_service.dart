@@ -31,6 +31,7 @@ import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/saved_query.dart';
 import 'package:azure_devops/src/models/sprint.dart';
 import 'package:azure_devops/src/models/team.dart';
+import 'package:azure_devops/src/models/team_areas.dart';
 import 'package:azure_devops/src/models/team_member.dart' show GetTeamMembersResponse;
 import 'package:azure_devops/src/models/team_settings.dart';
 import 'package:azure_devops/src/models/timeline.dart';
@@ -1730,11 +1731,17 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     );
     if (itemsRes.isError) return ApiResponse.error(itemsRes);
 
+    final teamAreasRes =
+        await _get('$_basePath/$projectName/$teamId/_apis/work/teamsettings/teamfieldvalues?$_apiVersion');
+
     final sprint = Sprint.fromResponse(sprintRes);
 
     final states = SprintStatesResponse.fromResponse(columnsRes);
+    final teamDefaultArea = teamAreasRes.isError ? null : TeamAreasResponse.fromResponse(teamAreasRes).defaultValue;
 
-    sprint.columns = states.map((s) => BoardColumn.fromState(state: s));
+    sprint
+      ..columns = states.map((s) => BoardColumn.fromState(state: s))
+      ..teamDefaultArea = teamDefaultArea;
 
     final itemIds = SprintItemsResponse.fromResponse(itemsRes).map((i) => i.target.id);
     if (itemIds.isEmpty) return ApiResponse.ok(SprintDetailWithItems(sprint: sprint, items: []));

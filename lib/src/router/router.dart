@@ -39,7 +39,7 @@ typedef WorkItemsArgs = ({Project? project, SavedShortcut? shortcut, ChildQuery?
 typedef WorkItemDetailArgs = ({String project, int id});
 typedef SavedQueriesArgs = ({String project, String path, String queryId});
 typedef BoardDetailArgs = ({String project, String teamId, String boardId, String backlogId});
-typedef SprintDetailArgs = ({String project, String sprintId, String teamId, String sprintName});
+typedef SprintDetailArgs = ({String project, String teamId, String teamName, String sprintId, String sprintName});
 typedef PullRequestArgs = ({Project? project, SavedShortcut? shortcut});
 typedef PullRequestDetailArgs = ({String project, String repository, int id});
 typedef CommitsArgs = ({Project? project, GraphUser? author, SavedShortcut? shortcut});
@@ -328,6 +328,7 @@ class CreateOrEditWorkItemArgs {
     this.area,
     this.iteration,
     this.isAreaVisible = true,
+    this.isIterationVisible = true,
     this.allowedTypes,
   });
 
@@ -336,5 +337,6 @@ class CreateOrEditWorkItemArgs {
   final String? area;
   final String? iteration;
   final bool isAreaVisible;
+  final bool isIterationVisible;
   final Set<String>? allowedTypes;
 }

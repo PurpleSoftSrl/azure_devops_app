@@ -165,7 +165,7 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          if (ctrl.newWorkItemProject != ctrl.projectAll || ctrl.isEditing)
+          if (ctrl.shouldShowIteration())
             Row(
               children: [
                 Text(

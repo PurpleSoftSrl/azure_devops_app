@@ -59,7 +59,7 @@ class _ProjectBoardsController {
 
   void goToSprintDetail(Team team, Sprint sprint) {
     AppRouter.goToSprintDetail(
-      args: (project: projectName, teamId: team.id, sprintId: sprint.id, sprintName: sprint.name),
+      args: (project: projectName, teamId: team.id, teamName: team.name, sprintId: sprint.id, sprintName: sprint.name),
     );
   }
 }

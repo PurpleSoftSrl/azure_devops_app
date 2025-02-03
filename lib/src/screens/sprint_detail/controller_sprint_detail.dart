@@ -34,4 +34,26 @@ class _SprintDetailController {
     await AppRouter.goToWorkItemDetail(project: args.project, id: item.id);
     await init();
   }
+
+  Future<void> addNewItem() async {
+    final sprint = sprintWithItems.value?.data?.sprint;
+
+    final areaPath = sprint?.teamDefaultArea;
+    if (areaPath == null) return;
+
+    final iterationPath = sprint?.path;
+    if (iterationPath == null) return;
+
+    final addItemArgs = CreateOrEditWorkItemArgs(
+      area: areaPath,
+      iteration: iterationPath,
+      project: args.project,
+      isAreaVisible: false,
+      isIterationVisible: false,
+      allowedTypes: {'Task', 'Bug', 'User Story'},
+    );
+
+    await AppRouter.goToCreateOrEditWorkItem(args: addItemArgs);
+    await init();
+  }
 }

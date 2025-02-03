@@ -865,6 +865,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
   bool shouldShowArea() {
     return args.isAreaVisible && (newWorkItemProject != projectAll || isEditing);
   }
+
+  bool shouldShowIteration() {
+    return args.isIterationVisible && (newWorkItemProject != projectAll || isEditing);
+  }
 }
 
 extension on WorkItemField {
