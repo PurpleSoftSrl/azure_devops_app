@@ -361,7 +361,9 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     return instance ??= AzureApiServiceImpl._();
   }
 
-  AzureApiServiceImpl._();
+  AzureApiServiceImpl._() {
+    setTag('ApiService');
+  }
 
   static AzureApiServiceImpl? instance;
 
@@ -585,7 +587,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       final newToken = await MsalService().loginSilently();
       _accessToken = newToken ?? _accessToken;
       final retry = await req();
-      logDebug('@@ retry: ${retry.statusCode}');
+      logDebug('Retry after token expired: ${retry.statusCode}');
       return retry;
     }
     return res;

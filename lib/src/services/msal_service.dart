@@ -21,6 +21,8 @@ class MsalService with AppLogger {
   }
 
   Future<void> init() async {
+    setTag('MsalService');
+
     const msalClientId = String.fromEnvironment('MSAL_CLIENT_ID');
     const msalRedirectUri = String.fromEnvironment('MSAL_REDIRECT_URI');
 
@@ -39,7 +41,7 @@ class MsalService with AppLogger {
 
       await _pca!.signOut();
     } on MsalException catch (e) {
-      logDebug('MSAL logout exception: ${e.message}');
+      logDebug('Logout exception: ${e.message}');
     }
   }
 
@@ -51,7 +53,7 @@ class MsalService with AppLogger {
       _isLoggedIn = true;
       return token.accessToken;
     } on MsalException catch (e) {
-      logDebug('MSAL login exception: ${e.message}');
+      logDebug('Login exception: ${e.message}');
       return null;
     }
   }
@@ -64,7 +66,7 @@ class MsalService with AppLogger {
       _isLoggedIn = true;
       return token.accessToken;
     } on MsalException catch (e) {
-      logDebug('MSAL loginSilently exception: ${e.message}');
+      logDebug('LoginSilently exception: ${e.message}');
       return null;
     }
   }
