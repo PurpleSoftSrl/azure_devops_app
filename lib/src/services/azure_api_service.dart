@@ -29,6 +29,7 @@ import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/saved_query.dart';
+import 'package:azure_devops/src/models/sprint.dart';
 import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_member.dart' show GetTeamMembersResponse;
 import 'package:azure_devops/src/models/team_settings.dart';
@@ -364,6 +365,14 @@ abstract class AzureApiService {
     required String projectName,
     required String teamId,
     required String backlogId,
+  });
+
+  Future<ApiResponse<Map<Team, List<Sprint>>>> getProjectSprints({required String projectName});
+
+  Future<ApiResponse<SprintDetailWithItems>> getProjectSprint({
+    required String projectName,
+    required String teamId,
+    required String sprintId,
   });
 }
 
@@ -1674,6 +1683,66 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (items.isError) return ApiResponse.error(items.errorResponse);
 
     return ApiResponse.ok(BoardDetailWithItems(board: board, items: items.data!));
+  }
+
+  @override
+  Future<ApiResponse<Map<Team, List<Sprint>>>> getProjectSprints({required String projectName}) async {
+    final sprintsRes = await _get('$_basePath/$projectName/_apis/work/teamsettings/iterations?$_apiVersion');
+    if (sprintsRes.isError) return ApiResponse.error(sprintsRes);
+
+    final teamsRes = await _getTeams(projectId: projectName);
+    final teams = teamsRes.data ?? [];
+    if (teams.isEmpty) return ApiResponse.error(teamsRes.errorResponse);
+
+    final teamSprints = <Team, List<Sprint>>{};
+
+    for (final team in teams) {
+      final teamSprintsRes =
+          await _get('$_basePath/$projectName/${team.id}/_apis/work/teamsettings/iterations?$_apiVersion');
+      if (teamSprintsRes.isError) return ApiResponse.error(teamSprintsRes);
+
+      final sprints = SprintsResponse.fromResponse(teamSprintsRes);
+
+      if (sprints.isEmpty) continue;
+
+      teamSprints.putIfAbsent(team, () => []);
+      teamSprints[team]!.addAll(sprints);
+    }
+
+    return ApiResponse.ok(teamSprints);
+  }
+
+  @override
+  Future<ApiResponse<SprintDetailWithItems>> getProjectSprint({
+    required String projectName,
+    required String teamId,
+    required String sprintId,
+  }) async {
+    final sprintRes =
+        await _get('$_basePath/$projectName/$teamId/_apis/work/teamsettings/iterations/$sprintId?$_apiVersion');
+    if (sprintRes.isError) return ApiResponse.error(sprintRes);
+
+    final columnsRes = await _get('$_basePath/$projectName/_sprints?__rt=fps&__ver=2');
+    if (columnsRes.isError) return ApiResponse.error(columnsRes);
+
+    final itemsRes = await _get(
+      '$_basePath/$projectName/$teamId/_apis/work/teamsettings/iterations/$sprintId/workitems?$_apiVersion',
+    );
+    if (itemsRes.isError) return ApiResponse.error(itemsRes);
+
+    final sprint = Sprint.fromResponse(sprintRes);
+
+    final states = SprintStatesResponse.fromResponse(columnsRes);
+
+    sprint.columns = states.map((s) => BoardColumn.fromState(state: s));
+
+    final itemIds = SprintItemsResponse.fromResponse(itemsRes).map((i) => i.target.id);
+    if (itemIds.isEmpty) return ApiResponse.ok(SprintDetailWithItems(sprint: sprint, items: []));
+
+    final items = await _getWorkItemsBatch(itemIds);
+    if (items.isError) return ApiResponse.error(items.errorResponse);
+
+    return ApiResponse.ok(SprintDetailWithItems(sprint: sprint, items: items.data!));
   }
 
   @override

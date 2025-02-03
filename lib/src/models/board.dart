@@ -111,6 +111,16 @@ class BoardColumn {
         description: json['description'] as String? ?? '',
       );
 
+  factory BoardColumn.fromState({required String state}) => BoardColumn(
+        id: state,
+        name: state,
+        itemLimit: 0,
+        stateMappings: {},
+        columnType: '',
+        isSplit: false,
+        description: '',
+      );
+
   final String id;
   final String name;
   final int itemLimit;

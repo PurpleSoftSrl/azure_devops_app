@@ -20,6 +20,7 @@ import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/saved_query.dart';
+import 'package:azure_devops/src/models/sprint.dart';
 import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_member.dart' as t;
 import 'package:azure_devops/src/models/user.dart';
@@ -824,6 +825,25 @@ class AzureApiServiceMock implements AzureApiService {
   @override
   Future<ApiResponse<Map<Team, List<Board>>>> getProjectBoards({required String projectName}) async {
     return ApiResponse.ok({});
+  }
+
+  @override
+  Future<ApiResponse<Map<Team, List<Sprint>>>> getProjectSprints({required String projectName}) async {
+    return ApiResponse.ok({});
+  }
+
+  @override
+  Future<ApiResponse<SprintDetailWithItems>> getProjectSprint({
+    required String projectName,
+    required String teamId,
+    required String sprintId,
+  }) async {
+    return ApiResponse.ok(
+      SprintDetailWithItems(
+        sprint: Sprint(id: '', name: '', path: '', attributes: SprintAttributes(timeFrame: 'current')),
+        items: [],
+      ),
+    );
   }
 }
 

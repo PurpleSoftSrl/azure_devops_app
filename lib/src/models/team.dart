@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'dart:convert';
 
 import 'package:azure_devops/src/models/team_member.dart';
@@ -44,4 +42,16 @@ class Team {
   final String description;
   final String projectName;
   final String projectId;
+
+  @override
+  bool operator ==(covariant Team other) {
+    if (identical(this, other)) return true;
+
+    return other.id == id && other.projectId == projectId;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^ projectId.hashCode;
+  }
 }

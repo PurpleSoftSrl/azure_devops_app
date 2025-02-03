@@ -7,9 +7,7 @@ class _BoardDetailController {
   final BoardDetailArgs args;
 
   final boardWithItems = ValueNotifier<ApiResponse<BoardDetailWithItems>?>(null);
-
   final pageController = PageController(viewportFraction: .9);
-
   final columnItems = <BoardColumn, List<WorkItem>>{};
 
   Set<String> get _allowedTypes =>

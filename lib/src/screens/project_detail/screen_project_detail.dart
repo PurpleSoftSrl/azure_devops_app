@@ -290,7 +290,7 @@ class _ProjectDetailScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: const [
-                  Expanded(child: Text('View all boards')),
+                  Expanded(child: Text('View all boards and sprints')),
                   Icon(Icons.arrow_forward_ios),
                 ],
               ),

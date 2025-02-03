@@ -25,6 +25,7 @@ import 'package:azure_devops/src/screens/pull_requests/base_pull_requests.dart';
 import 'package:azure_devops/src/screens/repository_detail/base_repository_detail.dart';
 import 'package:azure_devops/src/screens/saved_queries/base_saved_queries.dart';
 import 'package:azure_devops/src/screens/settings/base_settings.dart';
+import 'package:azure_devops/src/screens/sprint_detail/base_sprint_detail.dart';
 import 'package:azure_devops/src/screens/tabs/base_tabs.dart';
 import 'package:azure_devops/src/screens/work_item_detail/base_work_item_detail.dart';
 import 'package:azure_devops/src/screens/work_items/base_work_items.dart';
@@ -38,6 +39,7 @@ typedef WorkItemsArgs = ({Project? project, SavedShortcut? shortcut, ChildQuery?
 typedef WorkItemDetailArgs = ({String project, int id});
 typedef SavedQueriesArgs = ({String project, String path, String queryId});
 typedef BoardDetailArgs = ({String project, String teamId, String boardId, String backlogId});
+typedef SprintDetailArgs = ({String project, String sprintId, String teamId, String sprintName});
 typedef PullRequestArgs = ({Project? project, SavedShortcut? shortcut});
 typedef PullRequestDetailArgs = ({String project, String repository, int id});
 typedef CommitsArgs = ({Project? project, GraphUser? author, SavedShortcut? shortcut});
@@ -78,6 +80,7 @@ class AppRouter {
   static const _savedQueries = '/saved-queries';
   static const _projectBoards = '/project-boards';
   static const _boardDetail = '/board-detail';
+  static const _sprintDetail = '/sprint-detail';
   static const _error = '/error';
 
   static int index = 0;
@@ -124,6 +127,7 @@ class AppRouter {
     _chooseSubscription: (_) => ChooseSubscriptionPage(),
     _savedQueries: (_) => SavedQueriesPage(),
     _boardDetail: (_) => BoardDetailPage(),
+    _sprintDetail: (_) => SprintDetailPage(),
     _projectBoards: (_) => ProjectBoardsPage(),
     _error: (_) => ErrorPage(description: 'Something went wrong', onRetry: goToSplash),
   };
@@ -215,6 +219,11 @@ class AppRouter {
       _goTo<BoardDetailArgs>(_boardDetail, args: args);
 
   static BoardDetailArgs getBoardDetailArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToSprintDetail({required SprintDetailArgs args}) =>
+      _goTo<SprintDetailArgs>(_sprintDetail, args: args);
+
+  static SprintDetailArgs getSprintDetailArgs(BuildContext context) => _getArgs(context);
 
   static Future<void> goToPullRequests({PullRequestArgs? args}) => _goTo(_pullRequests, args: args);
 
