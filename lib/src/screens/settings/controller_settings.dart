@@ -41,6 +41,9 @@ class _SettingsController with ShareMixin, AppLogger {
     await apiService.logout();
     await MsalService().logout();
 
+    // Rebuild app to reset dependencies. This is needed to fix user null error after logout and login
+    rebuildApp();
+
     unawaited(AppRouter.goToLogin());
   }
 
