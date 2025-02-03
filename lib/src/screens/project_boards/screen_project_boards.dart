@@ -18,7 +18,8 @@ class _ProjectBoardsScreen extends StatelessWidget {
         };
 
         final teamSprints = {
-          for (final teamSprint in boards.entries) teamSprint.key: teamSprint.value.sprints,
+          for (final teamSprint in boards.entries.where((e) => e.value.sprints.isNotEmpty))
+            teamSprint.key: teamSprint.value.sprints,
         };
 
         return Column(
