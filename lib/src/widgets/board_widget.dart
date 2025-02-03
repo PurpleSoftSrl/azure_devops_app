@@ -57,19 +57,22 @@ class BoardWidget extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 200),
-                    children: columnItems
-                        .map(
-                          (i) => WorkItemListTile(
-                            item: i,
-                            onTap: () => onTapItem(i),
-                            isLast: false,
-                            actions: actions != null ? () => actions!(i) : null,
-                          ),
-                        )
-                        .toList(),
-                  ),
+                  child: switch (columnItems) {
+                    [] => Center(child: Text('No ${column.name} items')),
+                    _ => ListView(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 200),
+                        children: columnItems
+                            .map(
+                              (i) => WorkItemListTile(
+                                item: i,
+                                onTap: () => onTapItem(i),
+                                isLast: false,
+                                actions: actions != null ? () => actions!(i) : null,
+                              ),
+                            )
+                            .toList(),
+                      ),
+                  },
                 ),
               ],
             );
