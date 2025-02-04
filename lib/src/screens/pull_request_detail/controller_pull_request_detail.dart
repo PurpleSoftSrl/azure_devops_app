@@ -435,6 +435,8 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
     try {
       final responseBody = res.errorResponse?.body ?? '';
+      if (responseBody.isEmpty) return errorMsg;
+
       final apiErrorMessage = jsonDecode(responseBody) as Map<String, dynamic>;
       final msg = apiErrorMessage['message'] as String? ?? '';
 
