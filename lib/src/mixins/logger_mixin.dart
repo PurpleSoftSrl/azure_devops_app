@@ -32,7 +32,13 @@ mixin AppLogger {
       return;
     }
 
-    Sentry.captureException(exception, stackTrace: stacktrace);
+    if (exception is Exception) {
+      Sentry.captureException(exception, stackTrace: stacktrace);
+    } else {
+      final tagStr = (_tag ?? '').isNotEmpty ? '[$_tag] ' : '';
+      final errorMessage = '${tagStr}Error: $exception';
+      Sentry.captureMessage(errorMessage, level: SentryLevel.error);
+    }
   }
 
   /// Logs on Firebase Analytics only if [useFirebase] is true
