@@ -86,7 +86,9 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
       return OverlayService.error('Error', description: 'Work item not deleted');
     }
 
-    await _showInterstitialAd();
+    await _showInterstitialAd(
+      onDismiss: () => OverlayService.snackbar('Work item successfully deleted'),
+    );
 
     AppRouter.pop();
   }
