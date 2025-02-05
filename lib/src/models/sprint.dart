@@ -76,32 +76,32 @@ class SprintItemsResponse {
   SprintItemsResponse({required this.workItemRelations});
 
   factory SprintItemsResponse.fromJson(Map<String, dynamic> json) => SprintItemsResponse(
-        workItemRelations: List<WorkItemRelation>.from(
+        workItemRelations: List<_WorkItemRelation>.from(
           (json['workItemRelations'] as List<dynamic>? ?? [])
-              .map((x) => WorkItemRelation.fromJson(x as Map<String, dynamic>? ?? {})),
+              .map((x) => _WorkItemRelation.fromJson(x as Map<String, dynamic>? ?? {})),
         ),
       );
 
-  static List<WorkItemRelation> fromResponse(Response res) =>
+  static List<_WorkItemRelation> fromResponse(Response res) =>
       SprintItemsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).workItemRelations;
 
-  final List<WorkItemRelation> workItemRelations;
+  final List<_WorkItemRelation> workItemRelations;
 }
 
-class WorkItemRelation {
-  WorkItemRelation({required this.target});
+class _WorkItemRelation {
+  _WorkItemRelation({required this.target});
 
-  factory WorkItemRelation.fromJson(Map<String, dynamic> json) => WorkItemRelation(
-        target: Target.fromJson(json['target'] as Map<String, dynamic>? ?? {}),
+  factory _WorkItemRelation.fromJson(Map<String, dynamic> json) => _WorkItemRelation(
+        target: _Target.fromJson(json['target'] as Map<String, dynamic>? ?? {}),
       );
 
-  final Target target;
+  final _Target target;
 }
 
-class Target {
-  Target({required this.id});
+class _Target {
+  _Target({required this.id});
 
-  factory Target.fromJson(Map<String, dynamic> json) => Target(
+  factory _Target.fromJson(Map<String, dynamic> json) => _Target(
         id: json['id'] as int? ?? 0,
       );
 
@@ -112,7 +112,7 @@ class SprintStatesResponse {
   SprintStatesResponse({required this.fps});
 
   factory SprintStatesResponse.fromJson(Map<String, dynamic> json) => SprintStatesResponse(
-        fps: Fps.fromJson(json['fps'] as Map<String, dynamic>? ?? {}),
+        fps: _Fps.fromJson(json['fps'] as Map<String, dynamic>? ?? {}),
       );
 
   static List<String> fromResponse(Response res) =>
@@ -124,58 +124,56 @@ class SprintStatesResponse {
           .taskboardModel
           .states;
 
-  final Fps fps;
+  final _Fps fps;
 }
 
-class Fps {
-  Fps({required this.dataProviders});
+class _Fps {
+  _Fps({required this.dataProviders});
 
-  factory Fps.fromJson(Map<String, dynamic> json) => Fps(
-        dataProviders: DataProviders.fromJson(json['dataProviders'] as Map<String, dynamic>? ?? {}),
+  factory _Fps.fromJson(Map<String, dynamic> json) => _Fps(
+        dataProviders: _DataProviders.fromJson(json['dataProviders'] as Map<String, dynamic>? ?? {}),
       );
 
-  final DataProviders dataProviders;
+  final _DataProviders dataProviders;
 }
 
-class DataProviders {
-  DataProviders({required this.data});
+class _DataProviders {
+  _DataProviders({required this.data});
 
-  factory DataProviders.fromJson(Map<String, dynamic> json) => DataProviders(
-        data: DataProvidersData.fromJson(json['data'] as Map<String, dynamic>? ?? {}),
+  factory _DataProviders.fromJson(Map<String, dynamic> json) => _DataProviders(
+        data: _DataProvidersData.fromJson(json['data'] as Map<String, dynamic>? ?? {}),
       );
 
-  final DataProvidersData data;
+  final _DataProvidersData data;
 }
 
-class DataProvidersData {
-  DataProvidersData({required this.taskboardData});
+class _DataProvidersData {
+  _DataProvidersData({required this.taskboardData});
 
-  factory DataProvidersData.fromJson(Map<String, dynamic> json) => DataProvidersData(
-        taskboardData: MsVssWorkWebNewSprintsHubTaskboardDataProvider.fromJson(
+  factory _DataProvidersData.fromJson(Map<String, dynamic> json) => _DataProvidersData(
+        taskboardData: _MsVssWorkWebNewSprintsHubTaskboardDataProvider.fromJson(
           json['ms.vss-work-web.new-sprints-hub-taskboard-data-provider'] as Map<String, dynamic>? ?? {},
         ),
       );
 
-  final MsVssWorkWebNewSprintsHubTaskboardDataProvider taskboardData;
+  final _MsVssWorkWebNewSprintsHubTaskboardDataProvider taskboardData;
 }
 
-class MsVssWorkWebNewSprintsHubTaskboardDataProvider {
-  MsVssWorkWebNewSprintsHubTaskboardDataProvider({required this.taskboardModel});
+class _MsVssWorkWebNewSprintsHubTaskboardDataProvider {
+  _MsVssWorkWebNewSprintsHubTaskboardDataProvider({required this.taskboardModel});
 
-  factory MsVssWorkWebNewSprintsHubTaskboardDataProvider.fromJson(Map<String, dynamic> json) =>
-      MsVssWorkWebNewSprintsHubTaskboardDataProvider(
-        taskboardModel: TaskboardModel.fromJson(json['taskboardModel'] as Map<String, dynamic>? ?? {}),
+  factory _MsVssWorkWebNewSprintsHubTaskboardDataProvider.fromJson(Map<String, dynamic> json) =>
+      _MsVssWorkWebNewSprintsHubTaskboardDataProvider(
+        taskboardModel: _TaskboardModel.fromJson(json['taskboardModel'] as Map<String, dynamic>? ?? {}),
       );
 
-  final TaskboardModel taskboardModel;
+  final _TaskboardModel taskboardModel;
 }
 
-class TaskboardModel {
-  TaskboardModel({
-    required this.states,
-  });
+class _TaskboardModel {
+  _TaskboardModel({required this.states});
 
-  factory TaskboardModel.fromJson(Map<String, dynamic> json) => TaskboardModel(
+  factory _TaskboardModel.fromJson(Map<String, dynamic> json) => _TaskboardModel(
         states: List<String>.from(json['states'] as List<dynamic>? ?? []),
       );
 

@@ -176,67 +176,67 @@ class BoardItemsResponse {
   BoardItemsResponse({required this.data});
 
   factory BoardItemsResponse.fromJson(Map<String, dynamic> json) => BoardItemsResponse(
-        data: DataProvidersData.fromJson(json['dataProviders'] as Map<String, dynamic>? ?? {}),
+        data: _DataProvidersData.fromJson(json['dataProviders'] as Map<String, dynamic>? ?? {}),
       );
 
   static BoardItemsResponse fromResponse(Response res) =>
       BoardItemsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
-  final DataProvidersData data;
+  final _DataProvidersData data;
 }
 
-class DataProvidersData {
-  DataProvidersData({required this.content});
+class _DataProvidersData {
+  _DataProvidersData({required this.content});
 
-  factory DataProvidersData.fromJson(Map<String, dynamic> json) => DataProvidersData(
-        content: MsVssWorkWebKanbanBoardContentDataProvider.fromJson(
+  factory _DataProvidersData.fromJson(Map<String, dynamic> json) => _DataProvidersData(
+        content: _MsVssWorkWebKanbanBoardContentDataProvider.fromJson(
           json['ms.vss-work-web.kanban-board-content-data-provider'] as Map<String, dynamic>? ?? {},
         ),
       );
 
-  final MsVssWorkWebKanbanBoardContentDataProvider content;
+  final _MsVssWorkWebKanbanBoardContentDataProvider content;
 }
 
-class MsVssWorkWebKanbanBoardContentDataProvider {
-  MsVssWorkWebKanbanBoardContentDataProvider({
+class _MsVssWorkWebKanbanBoardContentDataProvider {
+  _MsVssWorkWebKanbanBoardContentDataProvider({
     required this.boardModel,
   });
 
-  factory MsVssWorkWebKanbanBoardContentDataProvider.fromJson(Map<String, dynamic> json) =>
-      MsVssWorkWebKanbanBoardContentDataProvider(
-        boardModel: BoardModel.fromJson(json['boardModel'] as Map<String, dynamic>? ?? {}),
+  factory _MsVssWorkWebKanbanBoardContentDataProvider.fromJson(Map<String, dynamic> json) =>
+      _MsVssWorkWebKanbanBoardContentDataProvider(
+        boardModel: _BoardModel.fromJson(json['boardModel'] as Map<String, dynamic>? ?? {}),
       );
 
-  final BoardModel boardModel;
+  final _BoardModel boardModel;
 }
 
-class BoardModel {
-  BoardModel({required this.itemSource});
+class _BoardModel {
+  _BoardModel({required this.itemSource});
 
-  factory BoardModel.fromJson(Map<String, dynamic> json) => BoardModel(
-        itemSource: ItemSource.fromJson(json['itemSource'] as Map<String, dynamic>? ?? {}),
+  factory _BoardModel.fromJson(Map<String, dynamic> json) => _BoardModel(
+        itemSource: _ItemSource.fromJson(json['itemSource'] as Map<String, dynamic>? ?? {}),
       );
 
-  final ItemSource itemSource;
+  final _ItemSource itemSource;
 }
 
-class ItemSource {
-  ItemSource({required this.payload});
+class _ItemSource {
+  _ItemSource({required this.payload});
 
-  factory ItemSource.fromJson(Map<String, dynamic> json) => ItemSource(
-        payload: Payload.fromJson(json['payload'] as Map<String, dynamic>? ?? {}),
+  factory _ItemSource.fromJson(Map<String, dynamic> json) => _ItemSource(
+        payload: _Payload.fromJson(json['payload'] as Map<String, dynamic>? ?? {}),
       );
 
-  final Payload payload;
+  final _Payload payload;
 }
 
-class Payload {
-  Payload({
+class _Payload {
+  _Payload({
     required this.rows,
     required this.orderedOutgoingIds,
   });
 
-  factory Payload.fromJson(Map<String, dynamic> json) => Payload(
+  factory _Payload.fromJson(Map<String, dynamic> json) => _Payload(
         rows: List<int>.from(
           (json['rows'] as List<dynamic>? ?? [])
               .map((x) => List<dynamic>.from(x as List<dynamic>? ?? []))

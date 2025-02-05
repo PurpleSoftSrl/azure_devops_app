@@ -10,8 +10,8 @@ class TeamAreasResponse {
 
   factory TeamAreasResponse.fromJson(Map<String, dynamic> json) => TeamAreasResponse(
         defaultValue: json['defaultValue'] as String? ?? '',
-        values: List<TeamArea>.from(
-          (json['values'] as List<dynamic>? ?? []).map((x) => TeamArea.fromJson(x as Map<String, dynamic>? ?? {})),
+        values: List<_TeamArea>.from(
+          (json['values'] as List<dynamic>? ?? []).map((x) => _TeamArea.fromJson(x as Map<String, dynamic>? ?? {})),
         ),
       );
 
@@ -19,16 +19,16 @@ class TeamAreasResponse {
       TeamAreasResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
   final String defaultValue;
-  final List<TeamArea> values;
+  final List<_TeamArea> values;
 }
 
-class TeamArea {
-  TeamArea({
+class _TeamArea {
+  _TeamArea({
     required this.value,
     required this.includeChildren,
   });
 
-  factory TeamArea.fromJson(Map<String, dynamic> json) => TeamArea(
+  factory _TeamArea.fromJson(Map<String, dynamic> json) => _TeamArea(
         value: json['value'] as String? ?? '',
         includeChildren: json['includeChildren'] as bool? ?? false,
       );
