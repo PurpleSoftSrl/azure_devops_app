@@ -1,7 +1,7 @@
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:collection/collection.dart';
 
-typedef ResultWithMessage = ({bool result, String message});
+typedef _ResultWithMessage = ({bool result, String message});
 
 /// This class is responsible for persisting filters to and retrieving them
 /// from local storage by using [storageService].
@@ -180,7 +180,7 @@ class FiltersService {
     );
   }
 
-  ResultWithMessage saveCommitsShortcut(String label, {required CommitsFilters filters}) {
+  _ResultWithMessage saveCommitsShortcut(String label, {required CommitsFilters filters}) {
     return _saveShortcut(FilterAreas.commits, label, filters.toMap());
   }
 
@@ -196,7 +196,7 @@ class FiltersService {
     );
   }
 
-  ResultWithMessage savePipelinesShortcut(String label, {required PipelinesFilters filters}) {
+  _ResultWithMessage savePipelinesShortcut(String label, {required PipelinesFilters filters}) {
     return _saveShortcut(FilterAreas.pipelines, label, filters.toMap());
   }
 
@@ -211,7 +211,7 @@ class FiltersService {
     );
   }
 
-  ResultWithMessage savePullRequestsShortcut(String label, {required PullRequestsFilters filters}) {
+  _ResultWithMessage savePullRequestsShortcut(String label, {required PullRequestsFilters filters}) {
     return _saveShortcut(FilterAreas.pullRequests, label, filters.toMap());
   }
 
@@ -229,11 +229,11 @@ class FiltersService {
     );
   }
 
-  ResultWithMessage saveWorkItemsShortcut(String label, {required WorkItemsFilters filters}) {
+  _ResultWithMessage saveWorkItemsShortcut(String label, {required WorkItemsFilters filters}) {
     return _saveShortcut(FilterAreas.workItems, label, filters.toMap());
   }
 
-  ResultWithMessage _saveShortcut(String area, String label, Map<String, Set<String>> filters) {
+  _ResultWithMessage _saveShortcut(String area, String label, Map<String, Set<String>> filters) {
     final savedShortcuts = storageService.getSavedShortcuts();
 
     final hasShortcutWithSameLabel = savedShortcuts.any((s) => s.organization == organization && s.label == label);

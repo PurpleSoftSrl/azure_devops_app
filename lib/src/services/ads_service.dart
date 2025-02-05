@@ -23,7 +23,7 @@ class AdsServiceImpl with AppLogger implements AdsService {
 
   static const _tag = 'AdsService';
 
-  final adUnitId = Platform.isAndroid ? _androidInterstitialAdId : _iosInterstitialAdId;
+  final _adUnitId = Platform.isAndroid ? _androidInterstitialAdId : _iosInterstitialAdId;
 
   InterstitialAd? _interstitialAd;
 
@@ -42,10 +42,10 @@ class AdsServiceImpl with AppLogger implements AdsService {
 
   /// Loads an interstitial ad.
   Future<void> _loadInterstitialAd() async {
-    logDebug('Loading interstitial ad: $adUnitId');
+    logDebug('Loading interstitial ad: $_adUnitId');
 
     await InterstitialAd.load(
-      adUnitId: adUnitId,
+      adUnitId: _adUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {

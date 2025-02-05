@@ -39,7 +39,8 @@ class AreaOrIteration {
                 .map((c) => AreaOrIteration.fromJson(c as Map<String, dynamic>))
                 .toList(),
         path: json['path'] as String,
-        attributes: json['attributes'] == null ? null : Attributes.fromJson(json['attributes'] as Map<String, dynamic>),
+        attributes:
+            json['attributes'] == null ? null : _Attributes.fromJson(json['attributes'] as Map<String, dynamic>),
       );
 
   /// Used to reset area filter
@@ -66,7 +67,7 @@ class AreaOrIteration {
   final bool hasChildren;
   final List<AreaOrIteration>? children;
   final String path;
-  final Attributes? attributes;
+  final _Attributes? attributes;
 
   @override
   String toString() {
@@ -74,13 +75,13 @@ class AreaOrIteration {
   }
 }
 
-class Attributes {
-  Attributes({
+class _Attributes {
+  _Attributes({
     required this.startDate,
     required this.finishDate,
   });
 
-  factory Attributes.fromJson(Map<String, dynamic> json) => Attributes(
+  factory _Attributes.fromJson(Map<String, dynamic> json) => _Attributes(
         startDate: DateTime.parse(json['startDate']!.toString()).toLocal(),
         finishDate: DateTime.parse(json['finishDate']!.toString()).toLocal(),
       );

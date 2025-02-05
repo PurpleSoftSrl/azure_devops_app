@@ -15,20 +15,20 @@ class WorkItemCommentRes {
   factory WorkItemCommentRes.fromJson(Map<String, dynamic> json) => WorkItemCommentRes(
         totalCount: json['totalCount'] as int,
         count: json['count'] as int,
-        comments: List<Comment>.from(
+        comments: List<_Comment>.from(
           (json['comments'] as List<dynamic>).map(
-            (c) => Comment.fromJson(c as Map<String, dynamic>),
+            (c) => _Comment.fromJson(c as Map<String, dynamic>),
           ),
         ),
       );
 
   final int totalCount;
   final int count;
-  final List<Comment> comments;
+  final List<_Comment> comments;
 }
 
-class Comment {
-  Comment({
+class _Comment {
+  _Comment({
     required this.workItemId,
     required this.id,
     required this.version,
@@ -40,14 +40,14 @@ class Comment {
     required this.format,
   });
 
-  factory Comment.fromJson(Map<String, dynamic> json) => Comment(
+  factory _Comment.fromJson(Map<String, dynamic> json) => _Comment(
         workItemId: json['workItemId'] as int,
         id: json['id'] as int,
         version: json['version'] as int,
         text: json['text'] as String,
-        createdBy: EdBy.fromJson(json['createdBy'] as Map<String, dynamic>),
+        createdBy: _EdBy.fromJson(json['createdBy'] as Map<String, dynamic>),
         createdDate: DateTime.parse(json['createdDate']!.toString()).toLocal(),
-        modifiedBy: EdBy.fromJson(json['modifiedBy'] as Map<String, dynamic>),
+        modifiedBy: _EdBy.fromJson(json['modifiedBy'] as Map<String, dynamic>),
         modifiedDate: DateTime.parse(json['modifiedDate']!.toString()).toLocal(),
         format: json['format'] as String,
       );
@@ -56,22 +56,22 @@ class Comment {
   final int id;
   final int version;
   final String text;
-  final EdBy createdBy;
+  final _EdBy createdBy;
   final DateTime createdDate;
-  final EdBy modifiedBy;
+  final _EdBy modifiedBy;
   final DateTime modifiedDate;
   final String format;
 }
 
-class EdBy {
-  EdBy({
+class _EdBy {
+  _EdBy({
     required this.id,
     required this.uniqueName,
     required this.descriptor,
     required this.displayName,
   });
 
-  factory EdBy.fromJson(Map<String, dynamic> json) => EdBy(
+  factory _EdBy.fromJson(Map<String, dynamic> json) => _EdBy(
         id: json['id'] as String,
         uniqueName: json['uniqueName'] as String,
         descriptor: json['descriptor'] as String,

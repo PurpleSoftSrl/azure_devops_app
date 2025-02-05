@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'dart:convert';
 
 import 'package:http/http.dart';
@@ -171,35 +169,35 @@ class CommitsAndWorkItems {
       CommitsAndWorkItems.fromJson(json.decode(res.body) as Map<String, dynamic>);
 
   factory CommitsAndWorkItems.fromJson(Map<String, dynamic> json) => CommitsAndWorkItems(
-        dataProviders: DataProviders.fromJson(json['dataProviders'] as Map<String, dynamic>),
+        dataProviders: _DataProviders.fromJson(json['dataProviders'] as Map<String, dynamic>),
       );
 
-  final DataProviders dataProviders;
+  final _DataProviders dataProviders;
 }
 
-class DataProviders {
-  DataProviders({
+class _DataProviders {
+  _DataProviders({
     required this.workItemsSummary,
     required this.commitsSummary,
   });
 
-  factory DataProviders.fromJson(Map<String, dynamic> json) {
+  factory _DataProviders.fromJson(Map<String, dynamic> json) {
     final workItems = json['ms.vss-work-web.work-item-metrics-data-provider-verticals'];
     final commits = json['ms.vss-code-web.code-metrics-data-provider-verticals'];
-    return DataProviders(
-      workItemsSummary: workItems == null ? null : WorkItemsSummary.fromJson(workItems as Map<String, dynamic>),
-      commitsSummary: commits == null ? null : CommitsSummary.fromJson(commits as Map<String, dynamic>),
+    return _DataProviders(
+      workItemsSummary: workItems == null ? null : _WorkItemsSummary.fromJson(workItems as Map<String, dynamic>),
+      commitsSummary: commits == null ? null : _CommitsSummary.fromJson(commits as Map<String, dynamic>),
     );
   }
 
-  final WorkItemsSummary? workItemsSummary;
-  final CommitsSummary? commitsSummary;
+  final _WorkItemsSummary? workItemsSummary;
+  final _CommitsSummary? commitsSummary;
 }
 
-class CommitsSummary {
-  CommitsSummary({this.gitmetrics});
+class _CommitsSummary {
+  _CommitsSummary({this.gitmetrics});
 
-  factory CommitsSummary.fromJson(Map<String, dynamic> json) => CommitsSummary(
+  factory _CommitsSummary.fromJson(Map<String, dynamic> json) => _CommitsSummary(
         gitmetrics: json['gitmetrics'] == null ? null : Gitmetrics.fromJson(json['gitmetrics'] as Map<String, dynamic>),
       );
 
@@ -227,10 +225,10 @@ class Gitmetrics {
   final int authorsCount;
 }
 
-class WorkItemsSummary {
-  WorkItemsSummary({this.workMetrics});
+class _WorkItemsSummary {
+  _WorkItemsSummary({this.workMetrics});
 
-  factory WorkItemsSummary.fromJson(Map<String, dynamic> json) => WorkItemsSummary(
+  factory _WorkItemsSummary.fromJson(Map<String, dynamic> json) => _WorkItemsSummary(
         workMetrics:
             json['workMetrics'] == null ? null : WorkMetrics.fromJson(json['workMetrics'] as Map<String, dynamic>),
       );
@@ -260,21 +258,22 @@ class PipelinesSummary {
       PipelinesSummary.fromJson(json.decode(res.body) as Map<String, dynamic>);
 
   factory PipelinesSummary.fromJson(Map<String, dynamic> json) => PipelinesSummary(
-        metrics:
-            List<Metric>.from((json['value'] as List<dynamic>).map((p) => Metric.fromJson(p as Map<String, dynamic>))),
+        metrics: List<_Metric>.from(
+          (json['value'] as List<dynamic>).map((p) => _Metric.fromJson(p as Map<String, dynamic>)),
+        ),
       );
 
-  final List<Metric> metrics;
+  final List<_Metric> metrics;
 }
 
-class Metric {
-  Metric({
+class _Metric {
+  _Metric({
     required this.name,
     required this.intValue,
     this.date,
   });
 
-  factory Metric.fromJson(Map<String, dynamic> json) => Metric(
+  factory _Metric.fromJson(Map<String, dynamic> json) => _Metric(
         name: json['name'] as String,
         intValue: json['intValue'] as int? ?? 0,
         date: json['date'] == null ? null : DateTime.parse(json['date']!.toString()),

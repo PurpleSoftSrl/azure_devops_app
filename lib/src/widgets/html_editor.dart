@@ -75,11 +75,11 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
     widget.editorController.insertHtml(mention);
   }
 
-  void enable() {
+  void _enable() {
     widget.editorController.enable();
   }
 
-  void disable() {
+  void _disable() {
     widget.editorController.disable();
   }
 
@@ -87,9 +87,9 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
   void didUpdateWidget(DevOpsHtmlEditor oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.readOnly && !oldWidget.readOnly) {
-      disable();
+      _disable();
     } else if (!widget.readOnly && oldWidget.readOnly) {
-      enable();
+      _enable();
     }
   }
 
@@ -103,7 +103,7 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
           widget.editorController.setFullScreen();
           if (widget.autofocus) widget.editorController.setFocus();
 
-          if (widget.readOnly) disable();
+          if (widget.readOnly) _disable();
         },
         onFocus: _ensureEditorIsVisible,
         onKeyUp: widget.onKeyUp,

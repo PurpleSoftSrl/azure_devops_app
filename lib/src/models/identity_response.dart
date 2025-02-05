@@ -6,24 +6,24 @@ class IdentityResponse {
   IdentityResponse({required this.results});
 
   factory IdentityResponse.fromJson(Map<String, dynamic> json) => IdentityResponse(
-        results: List<IdentityResult>.from(
-          (json['results'] as List<dynamic>).map((r) => IdentityResult.fromJson(r as Map<String, dynamic>)),
+        results: List<_IdentityResult>.from(
+          (json['results'] as List<dynamic>).map((r) => _IdentityResult.fromJson(r as Map<String, dynamic>)),
         ),
       );
 
-  static List<IdentityResult> fromResponse(Response res) =>
+  static List<_IdentityResult> fromResponse(Response res) =>
       IdentityResponse.fromJson(json.decode(res.body) as Map<String, dynamic>).results;
 
-  final List<IdentityResult> results;
+  final List<_IdentityResult> results;
 }
 
-class IdentityResult {
-  IdentityResult({
+class _IdentityResult {
+  _IdentityResult({
     required this.queryToken,
     required this.identities,
   });
 
-  factory IdentityResult.fromJson(Map<String, dynamic> json) => IdentityResult(
+  factory _IdentityResult.fromJson(Map<String, dynamic> json) => _IdentityResult(
         queryToken: json['queryToken'] as String,
         identities: List<Identity>.from(
           (json['identities'] as List<dynamic>).map((i) => Identity.fromJson(i as Map<String, dynamic>)),

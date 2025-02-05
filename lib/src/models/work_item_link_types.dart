@@ -25,12 +25,12 @@ class LinkType {
   });
 
   factory LinkType.fromJson(Map<String, dynamic> json) => LinkType(
-        attributes: Attributes.fromJson(json['attributes'] as Map<String, dynamic>),
+        attributes: _Attributes.fromJson(json['attributes'] as Map<String, dynamic>),
         referenceName: json['referenceName'] as String? ?? '',
         name: json['name'] as String? ?? '',
       );
 
-  final Attributes attributes;
+  final _Attributes attributes;
   final String referenceName;
   final String name;
 
@@ -38,14 +38,14 @@ class LinkType {
       RegExp('Microsoft.VSTS.TestCase.|Microsoft.VSTS.Common.Affects-|System.LinkTypes.Remote.');
 }
 
-class Attributes {
-  Attributes({
+class _Attributes {
+  _Attributes({
     required this.usage,
     required this.enabled,
     required this.remote,
   });
 
-  factory Attributes.fromJson(Map<String, dynamic> json) => Attributes(
+  factory _Attributes.fromJson(Map<String, dynamic> json) => _Attributes(
         usage: Usage.fromString(json['usage'] as String? ?? ''),
         enabled: json['enabled'] as bool? ?? false,
         remote: json['remote'] as bool? ?? false,

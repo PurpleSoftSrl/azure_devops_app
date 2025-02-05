@@ -523,7 +523,7 @@ class WorkItemTypeFilterMenu extends FilterMenu<WorkItemType> {
     required super.widgetBuilder,
     super.formatLabel,
   }) : super(
-          values: values.where((t) => !typesToSkip.contains(t.name)).toList(),
+          values: values.where((t) => !_typesToSkip.contains(t.name)).toList(),
         );
 
   WorkItemTypeFilterMenu.multiple({
@@ -535,9 +535,9 @@ class WorkItemTypeFilterMenu extends FilterMenu<WorkItemType> {
     required super.widgetBuilder,
     super.formatLabel,
   }) : super.multiple(
-          values: values.where((t) => !typesToSkip.contains(t.name)).toList(),
+          values: values.where((t) => !_typesToSkip.contains(t.name)).toList(),
         );
 
   // skip test types to align with devops website
-  static const typesToSkip = ['Test Plan', 'Test Suite'];
+  static const _typesToSkip = ['Test Plan', 'Test Suite'];
 }

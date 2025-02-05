@@ -6,19 +6,19 @@ class TagsResponse {
   TagsResponse({required this.data});
 
   factory TagsResponse.fromJson(Map<String, dynamic> json) => TagsResponse(
-        data: TagsDataProvider.fromJson(json['dataProviders'] as Map<String, dynamic>),
+        data: _TagsDataProvider.fromJson(json['dataProviders'] as Map<String, dynamic>),
       );
 
   static TagsData? fromResponse(Response res) =>
       TagsResponse.fromJson(json.decode(res.body) as Map<String, dynamic>).data.tagsData;
 
-  final TagsDataProvider data;
+  final _TagsDataProvider data;
 }
 
-class TagsDataProvider {
-  TagsDataProvider({required this.tagsData});
+class _TagsDataProvider {
+  _TagsDataProvider({required this.tagsData});
 
-  factory TagsDataProvider.fromJson(Map<String, dynamic> json) => TagsDataProvider(
+  factory _TagsDataProvider.fromJson(Map<String, dynamic> json) => _TagsDataProvider(
         tagsData: TagsData.fromJson(
           json['ms.vss-code-web.commits-data-provider'] as Map<String, dynamic>,
         ),
@@ -55,24 +55,24 @@ class Tag {
   factory Tag.fromJson(Map<String, dynamic> json) => Tag(
         name: json['name'] as String,
         comment: json['comment'] as String?,
-        tagger: json['tagger'] == null ? null : Tagger.fromJson(json['tagger'] as Map<String, dynamic>),
+        tagger: json['tagger'] == null ? null : _Tagger.fromJson(json['tagger'] as Map<String, dynamic>),
         resolvedCommitId: json['resolvedCommitId'] as String,
       );
 
   final String name;
   final String? comment;
-  final Tagger? tagger;
+  final _Tagger? tagger;
   final String resolvedCommitId;
 }
 
-class Tagger {
-  Tagger({
+class _Tagger {
+  _Tagger({
     required this.name,
     required this.email,
     required this.date,
   });
 
-  factory Tagger.fromJson(Map<String, dynamic> json) => Tagger(
+  factory _Tagger.fromJson(Map<String, dynamic> json) => _Tagger(
         name: json['name'] as String?,
         email: json['email'] as String?,
         date: json['date'] == null ? null : DateTime.parse(json['date'] as String),

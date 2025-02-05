@@ -1,1 +1,5 @@
 include: package:purple_lints/all.yaml
+
+analyzer:
+  errors:
+    library_private_types_in_public_api: ignore

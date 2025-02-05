@@ -13,7 +13,6 @@ mixin FilterMixin {
   bool get isDefaultProjectsFilter => projectsFilter.isEmpty;
 
   final userAll = GraphUser.all();
-  late GraphUser userFilter = userAll;
   Set<GraphUser> usersFilter = {};
 
   bool get isDefaultUsersFilter => usersFilter.isEmpty;

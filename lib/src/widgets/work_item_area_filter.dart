@@ -26,7 +26,7 @@ class AreaFilterBody extends StatelessWidget {
     return ListView(
       children: [
         if (showAllFilter) ...[
-          ProjectAreas(
+          _ProjectAreas(
             area: AreaOrIteration.all(),
             currentFilter: currentFilter,
             onTap: (a) {
@@ -40,7 +40,7 @@ class AreaFilterBody extends StatelessWidget {
           ),
         ],
         ...areasToShow.sortedBy((a) => a.path.toLowerCase()).map(
-              (a) => ProjectAreas(
+              (a) => _ProjectAreas(
                 area: a,
                 currentFilter: currentFilter,
                 onTap: (a) {
@@ -55,8 +55,8 @@ class AreaFilterBody extends StatelessWidget {
   }
 }
 
-class ProjectAreas extends StatelessWidget {
-  const ProjectAreas({required this.area, required this.onTap, this.currentFilter, required this.showActive});
+class _ProjectAreas extends StatelessWidget {
+  const _ProjectAreas({required this.area, required this.onTap, this.currentFilter, required this.showActive});
 
   final AreaOrIteration area;
   final AreaOrIteration? currentFilter;
@@ -96,7 +96,7 @@ class ProjectAreas extends StatelessWidget {
         ...(area.children ?? []).map(
           (c) => Padding(
             padding: EdgeInsets.only(left: 16, bottom: c == area.children!.last ? 16 : 0),
-            child: ProjectAreas(
+            child: _ProjectAreas(
               area: c,
               onTap: onTap,
               currentFilter: currentFilter,

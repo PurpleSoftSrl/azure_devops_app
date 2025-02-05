@@ -64,7 +64,7 @@ class DevOpsSearchField extends StatefulWidget {
 }
 
 class _DevOpsSearchFieldState extends State<DevOpsSearchField> {
-  late final controller = TextEditingController(text: widget.initialValue);
+  late final _controller = TextEditingController(text: widget.initialValue);
 
   @override
   Widget build(BuildContext context) {
@@ -72,15 +72,15 @@ class _DevOpsSearchFieldState extends State<DevOpsSearchField> {
       autofocus: widget.autofocus,
       onChanged: (s) {
         widget.onChanged.call(s);
-        controller.text = s;
+        _controller.text = s;
       },
       hint: widget.hint,
       maxLines: 1,
-      controller: controller,
+      controller: _controller,
       validator: (_) => null,
       suffix: GestureDetector(
         onTap: () {
-          controller.clear();
+          _controller.clear();
           widget.onResetSearch();
         },
         child: Icon(

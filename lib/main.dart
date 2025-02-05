@@ -13,7 +13,7 @@ import 'package:purple_theme/purple_theme.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 const useFirebase = bool.fromEnvironment('FIREBASE');
-const sentryDns = String.fromEnvironment('SENTRY_DNS');
+const _sentryDns = String.fromEnvironment('SENTRY_DNS');
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,13 +31,13 @@ Future<void> main() async {
   // ignore: unawaited_futures, to speed up app start
   AdsServiceImpl().init();
 
-  if (sentryDns.isEmpty || kDebugMode) {
+  if (_sentryDns.isEmpty || kDebugMode) {
     runApp(const AzureDevOps());
   } else {
     await SentryFlutter.init(
       (options) {
         options
-          ..dsn = sentryDns
+          ..dsn = _sentryDns
           ..reportSilentFlutterErrors = true
           ..debug = false
           ..enableAppLifecycleBreadcrumbs = true

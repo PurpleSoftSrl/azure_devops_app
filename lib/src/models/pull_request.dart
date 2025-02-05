@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'dart:convert';
 
 import 'package:azure_devops/src/models/shared.dart';
@@ -68,7 +66,7 @@ class PullRequest {
         labels: (json['labels'] as List<dynamic>?)?.map((e) => _Label.fromJson(e as Map<String, dynamic>)).toList(),
         autoCompleteSetBy: json['autoCompleteSetBy'] == null
             ? null
-            : AutoCompleteSetBy.fromJson(json['autoCompleteSetBy'] as Map<String, dynamic>),
+            : _AutoCompleteSetBy.fromJson(json['autoCompleteSetBy'] as Map<String, dynamic>),
       );
 
   static PullRequest fromResponse(Response res) => PullRequest.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
@@ -88,7 +86,7 @@ class PullRequest {
   final String mergeId;
   final List<Reviewer> reviewers;
   final List<_Label>? labels;
-  final AutoCompleteSetBy? autoCompleteSetBy;
+  final _AutoCompleteSetBy? autoCompleteSetBy;
 
   @visibleForTesting
   static PullRequest empty() => PullRequest(
@@ -207,15 +205,15 @@ class PullRequest {
   }
 }
 
-class AutoCompleteSetBy {
-  AutoCompleteSetBy({
+class _AutoCompleteSetBy {
+  _AutoCompleteSetBy({
     required this.displayName,
     required this.id,
     required this.uniqueName,
     required this.descriptor,
   });
 
-  factory AutoCompleteSetBy.fromJson(Map<String, dynamic> json) => AutoCompleteSetBy(
+  factory _AutoCompleteSetBy.fromJson(Map<String, dynamic> json) => _AutoCompleteSetBy(
         descriptor: json['descriptor'] as String,
         displayName: json['displayName'] as String,
         id: json['id'] as String,
@@ -376,21 +374,6 @@ enum PullRequestStatus {
         return 'None';
       case PullRequestStatus.all:
         return 'All';
-    }
-  }
-
-  Icon get icon {
-    switch (this) {
-      case PullRequestStatus.abandoned:
-        return Icon(Icons.circle, color: color, size: 15);
-      case PullRequestStatus.active:
-        return Icon(Icons.circle, color: color, size: 15);
-      case PullRequestStatus.completed:
-        return Icon(Icons.circle, color: color, size: 15);
-      case PullRequestStatus.notSet:
-        return Icon(Icons.circle, color: color, size: 15);
-      default:
-        return Icon(Icons.circle, color: color, size: 15);
     }
   }
 

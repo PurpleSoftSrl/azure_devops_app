@@ -148,20 +148,6 @@ class WorkItemType {
   }
 }
 
-class GetWorkItemStatesResponse {
-  GetWorkItemStatesResponse({required this.count, required this.states});
-
-  factory GetWorkItemStatesResponse.fromJson(Map<String, dynamic> json) => GetWorkItemStatesResponse(
-        count: json['count'] as int,
-        states: List<WorkItemState>.from(
-          (json['value'] as List<dynamic>).map((s) => WorkItemState.fromJson(s as Map<String, dynamic>)),
-        ),
-      );
-
-  final int count;
-  final List<WorkItemState> states;
-}
-
 class WorkItemState {
   WorkItemState({required this.id, required this.name, required this.color, this.stateCategory = ''});
 

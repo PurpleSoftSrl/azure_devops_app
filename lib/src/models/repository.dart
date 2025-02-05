@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'dart:convert';
 
 import 'package:http/http.dart';
@@ -179,7 +177,6 @@ class _TeamProjectReference {
     this.lastUpdateTime,
     this.name,
     this.revision,
-    this.state,
     this.url,
     this.visibility,
   });
@@ -191,7 +188,6 @@ class _TeamProjectReference {
   DateTime? lastUpdateTime;
   String? name;
   int? revision;
-  _TeamProjectReferenceStateEnum? state;
   String? url;
   _TeamProjectReferenceVisibilityEnum? visibility;
 
@@ -206,7 +202,6 @@ class _TeamProjectReference {
           other.lastUpdateTime == lastUpdateTime &&
           other.name == name &&
           other.revision == revision &&
-          other.state == state &&
           other.url == url &&
           other.visibility == visibility;
 
@@ -219,13 +214,12 @@ class _TeamProjectReference {
       (lastUpdateTime == null ? 0 : lastUpdateTime!.hashCode) +
       (name == null ? 0 : name!.hashCode) +
       (revision == null ? 0 : revision!.hashCode) +
-      (state == null ? 0 : state!.hashCode) +
       (url == null ? 0 : url!.hashCode) +
       (visibility == null ? 0 : visibility!.hashCode);
 
   @override
   String toString() =>
-      'TeamProjectReference[abbreviation=$abbreviation, defaultTeamImageUrl=$defaultTeamImageUrl, description=$description, id=$id, lastUpdateTime=$lastUpdateTime, name=$name, revision=$revision, state=$state, url=$url, visibility=$visibility]';
+      'TeamProjectReference[abbreviation=$abbreviation, defaultTeamImageUrl=$defaultTeamImageUrl, description=$description, id=$id, lastUpdateTime=$lastUpdateTime, name=$name, revision=$revision, url=$url, visibility=$visibility]';
 
   static _TeamProjectReference? fromJson(dynamic value) {
     if (value is Map) {
@@ -240,71 +234,12 @@ class _TeamProjectReference {
             json['lastUpdateTime'] == null ? null : DateTime.parse(json['lastUpdateTime'].toString()).toLocal(),
         name: json['name'] as String,
         revision: json['revision'] as int?,
-        state: _TeamProjectReferenceStateEnum.fromJson(json['state']),
         url: json['url'] as String?,
         visibility: _TeamProjectReferenceVisibilityEnum.fromJson(json['visibility']),
       );
     }
     return null;
   }
-}
-
-// ignore: use_enums
-class _TeamProjectReferenceStateEnum {
-  const _TeamProjectReferenceStateEnum._(this.value);
-
-  final String value;
-
-  @override
-  String toString() => value;
-
-  static const deleting = _TeamProjectReferenceStateEnum._('deleting');
-  static const new_ = _TeamProjectReferenceStateEnum._('new');
-  static const wellFormed = _TeamProjectReferenceStateEnum._('wellFormed');
-  static const createPending = _TeamProjectReferenceStateEnum._('createPending');
-  static const all = _TeamProjectReferenceStateEnum._('all');
-  static const unchanged = _TeamProjectReferenceStateEnum._('unchanged');
-  static const deleted = _TeamProjectReferenceStateEnum._('deleted');
-
-  static _TeamProjectReferenceStateEnum? fromJson(dynamic value) =>
-      _TeamProjectReferenceStateEnumTypeTransformer().decode(value);
-}
-
-class _TeamProjectReferenceStateEnumTypeTransformer {
-  factory _TeamProjectReferenceStateEnumTypeTransformer() =>
-      _instance ??= const _TeamProjectReferenceStateEnumTypeTransformer._();
-
-  const _TeamProjectReferenceStateEnumTypeTransformer._();
-
-  String encode(_TeamProjectReferenceStateEnum data) => data.value;
-
-  _TeamProjectReferenceStateEnum? decode(dynamic data, {bool allowNull = true}) {
-    if (data != null) {
-      switch (data) {
-        case 'deleting':
-          return _TeamProjectReferenceStateEnum.deleting;
-        case 'new':
-          return _TeamProjectReferenceStateEnum.new_;
-        case 'wellFormed':
-          return _TeamProjectReferenceStateEnum.wellFormed;
-        case 'createPending':
-          return _TeamProjectReferenceStateEnum.createPending;
-        case 'all':
-          return _TeamProjectReferenceStateEnum.all;
-        case 'unchanged':
-          return _TeamProjectReferenceStateEnum.unchanged;
-        case 'deleted':
-          return _TeamProjectReferenceStateEnum.deleted;
-        default:
-          if (!allowNull) {
-            throw ArgumentError('Unknown enum value to decode: $data');
-          }
-      }
-    }
-    return null;
-  }
-
-  static _TeamProjectReferenceStateEnumTypeTransformer? _instance;
 }
 
 // ignore: use_enums
