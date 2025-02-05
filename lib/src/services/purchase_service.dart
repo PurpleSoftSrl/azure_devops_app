@@ -103,7 +103,7 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
             priceString: product.priceString,
             currencyCode: product.currencyCode,
             duration: product.subscriptionPeriod ?? '',
-            isDefault: product.identifier == _noAdsYearly,
+            isDefault: product.identifier.startsWith(_noAdsYearly),
           ),
         )
         .sorted((p1, p2) => p1.isDefault ? -1 : 1)
