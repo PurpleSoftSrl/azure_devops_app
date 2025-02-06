@@ -70,8 +70,8 @@ class Iteration {
         author: _Author.fromJson(json['author'] as Map<String, dynamic>),
         createdDate: DateTime.parse(json['createdDate']!.toString()).toLocal(),
         updatedDate: DateTime.parse(json['updatedDate']!.toString()).toLocal(),
-        sourceRefCommit: _RefCommit.fromJson(json['sourceRefCommit'] as Map<String, dynamic>),
-        commonRefCommit: _RefCommit.fromJson(json['commonRefCommit'] as Map<String, dynamic>),
+        sourceRefCommit: _RefCommit.fromJson(json['sourceRefCommit'] as Map<String, dynamic>? ?? {}),
+        commonRefCommit: _RefCommit.fromJson(json['commonRefCommit'] as Map<String, dynamic>? ?? {}),
         commits: (json['commits'] as List<dynamic>?)?.map((e) => Commit.fromJson(e as Map<String, dynamic>)).toList(),
       );
 
@@ -109,7 +109,7 @@ class _Author {
 class _RefCommit {
   _RefCommit({required this.commitId});
 
-  factory _RefCommit.fromJson(Map<String, dynamic> json) => _RefCommit(commitId: json['commitId'] as String);
+  factory _RefCommit.fromJson(Map<String, dynamic> json) => _RefCommit(commitId: json['commitId'] as String? ?? '');
 
   final String commitId;
 }
