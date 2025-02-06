@@ -152,7 +152,9 @@ class _DataProvidersData {
 
   factory _DataProvidersData.fromJson(Map<String, dynamic> json) => _DataProvidersData(
         taskboardData: _MsVssWorkWebNewSprintsHubTaskboardDataProvider.fromJson(
-          json['ms.vss-work-web.new-sprints-hub-taskboard-data-provider'] as Map<String, dynamic>? ?? {},
+          json['ms.vss-work-web.new-sprints-hub-taskboard-data-provider'] as Map<String, dynamic>? ??
+              json['ms.vss-work-web.sprints-hub-taskboard-data-provider'] as Map<String, dynamic>? ??
+              {},
         ),
       );
 
