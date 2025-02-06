@@ -45,7 +45,7 @@ class _TabsController {
       ),
       _TabPage(
         pageName: AppRouter.boards,
-        icon: DevOpsIcons.task,
+        icon: DevOpsIcons.board,
         key: GlobalKey<NavigatorState>(),
       ),
       _TabPage(

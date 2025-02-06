@@ -281,7 +281,7 @@ class _ProjectDetailScreen extends StatelessWidget {
             ),
             SectionHeader.withIcon(
               text: 'Boards',
-              icon: DevOpsIcons.task,
+              icon: DevOpsIcons.board,
             ),
             NavigationButton(
               onTap: ctrl.goToBoards,

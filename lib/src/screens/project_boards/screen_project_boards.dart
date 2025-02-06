@@ -24,9 +24,11 @@ class _ProjectBoardsScreen extends StatelessWidget {
 
         return Column(
           children: [
-            Text(
-              'Boards',
-              style: context.textTheme.headlineSmall,
+            SectionHeader.withIcon(
+              text: 'Boards',
+              icon: DevOpsIcons.board,
+              mainAxisAlignment: MainAxisAlignment.center,
+              marginTop: 0,
             ),
             const SizedBox(
               height: 8,
@@ -37,7 +39,7 @@ class _ProjectBoardsScreen extends StatelessWidget {
                 children: [
                   Text(
                     tb.key.name,
-                    style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                    style: context.textTheme.bodyMedium,
                   ),
                   const SizedBox(
                     height: 8,
@@ -62,13 +64,14 @@ class _ProjectBoardsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(
-              height: 32,
-            ),
             if (teamSprints.isNotEmpty) ...[
-              Text(
-                'Sprints',
-                style: context.textTheme.headlineSmall,
+              SectionHeader.withIcon(
+                text: 'Sprints',
+                icon: DevOpsIcons.sprint,
+                mainAxisAlignment: MainAxisAlignment.center,
+              ),
+              const SizedBox(
+                height: 8,
               ),
               ...teamSprints.entries.where((ts) => ts.value.isNotEmpty).map(
                     (ts) => Column(
@@ -76,7 +79,7 @@ class _ProjectBoardsScreen extends StatelessWidget {
                       children: [
                         Text(
                           ts.key.name,
-                          style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                          style: context.textTheme.bodyMedium,
                         ),
                         const SizedBox(
                           height: 4,
@@ -93,7 +96,7 @@ class _ProjectBoardsScreen extends StatelessWidget {
                                   ),
                                   Text(
                                     entry.key.titleCase,
-                                    style: context.textTheme.bodyMedium,
+                                    style: context.textTheme.labelMedium,
                                   ),
                                   const SizedBox(
                                     height: 4,
