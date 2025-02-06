@@ -51,12 +51,12 @@ class _ProjectDetailScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SectionHeader.noMargin(
-                      text: team.team.name ?? '-',
+                      text: team.team.name,
                       icon: DevOpsIcons.users,
                     ),
-                    if (team.team.description?.isNotEmpty ?? false) ...[
+                    if (team.team.description.isNotEmpty) ...[
                       Text(
-                        team.team.description ?? '',
+                        team.team.description,
                         style: context.textTheme.labelMedium,
                       ),
                       const SizedBox(
@@ -278,6 +278,22 @@ class _ProjectDetailScreen extends StatelessWidget {
                   ],
                 );
               },
+            ),
+            SectionHeader.withIcon(
+              text: 'Boards',
+              icon: DevOpsIcons.board,
+            ),
+            NavigationButton(
+              onTap: ctrl.goToBoards,
+              margin: EdgeInsets.zero,
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Expanded(child: Text('View all boards and sprints')),
+                  Icon(Icons.arrow_forward_ios),
+                ],
+              ),
             ),
             if (ctrl.repos.isNotEmpty) ...[
               SectionHeader.withIcon(

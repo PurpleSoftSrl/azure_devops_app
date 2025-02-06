@@ -57,6 +57,10 @@ class _ProjectDetailController with ApiErrorHelper {
     );
   }
 
+  void goToBoards() {
+    AppRouter.goToProjectBoards(projectId: projectName);
+  }
+
   void goToMemberDetail(TeamMember member) {
     AppRouter.goToMemberDetail(member.identity!.descriptor!);
   }

@@ -73,7 +73,7 @@ class _SettingsScreen extends StatelessWidget {
             onTap: ctrl.goToChooseSubscription,
             child: Row(
               children: [
-                Icon(DevOpsIcons.crown_1),
+                Icon(DevOpsIcons.crown),
                 const SizedBox(
                   width: 20,
                 ),

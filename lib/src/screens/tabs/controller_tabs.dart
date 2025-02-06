@@ -44,6 +44,11 @@ class _TabsController {
         key: GlobalKey<NavigatorState>(),
       ),
       _TabPage(
+        pageName: AppRouter.boards,
+        icon: DevOpsIcons.board,
+        key: GlobalKey<NavigatorState>(),
+      ),
+      _TabPage(
         pageName: AppRouter.profile,
         icon: DevOpsIcons.profile,
         key: GlobalKey<NavigatorState>(),

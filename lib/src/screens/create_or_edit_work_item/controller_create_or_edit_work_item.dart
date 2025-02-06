@@ -105,6 +105,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     final workItemType = fields.systemWorkItemType;
 
     projectWorkItemTypes = apiService.workItemTypes[project] ?? <WorkItemType>[];
+    if (args.allowedTypes != null) {
+      projectWorkItemTypes = projectWorkItemTypes.where((t) => args.allowedTypes!.contains(t.name)).toList();
+    }
+
     allWorkItemStates = _getTransitionableStates(project: project, workItemType: workItemType);
 
     newWorkItemTitle = fields.systemTitle;
@@ -174,6 +178,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     if (!isEditing && newWorkItemProject != projectAll) {
       projectWorkItemTypes =
           allProjectsWorkItemTypes[newWorkItemProject.name]?.where((t) => t != WorkItemType.all).toList() ?? [];
+
+      if (args.allowedTypes != null) {
+        projectWorkItemTypes = projectWorkItemTypes.where((t) => args.allowedTypes!.contains(t.name)).toList();
+      }
 
       if (!projectWorkItemTypes.contains(newWorkItemType) && projectWorkItemTypes.isNotEmpty) {
         newWorkItemType = projectWorkItemTypes.first;
@@ -852,6 +860,14 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
     }
 
     _setHasChanged();
+  }
+
+  bool shouldShowArea() {
+    return args.isAreaVisible && (newWorkItemProject != projectAll || isEditing);
+  }
+
+  bool shouldShowIteration() {
+    return args.isIterationVisible && (newWorkItemProject != projectAll || isEditing);
   }
 }
 

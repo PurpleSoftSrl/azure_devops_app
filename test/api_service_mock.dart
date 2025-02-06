@@ -3,6 +3,7 @@
 import 'dart:typed_data';
 
 import 'package:azure_devops/src/models/areas_and_iterations.dart';
+import 'package:azure_devops/src/models/board.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:azure_devops/src/models/commits_tags.dart';
@@ -19,6 +20,7 @@ import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/saved_query.dart';
+import 'package:azure_devops/src/models/sprint.dart';
 import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_member.dart' as t;
 import 'package:azure_devops/src/models/user.dart';
@@ -798,6 +800,50 @@ class AzureApiServiceMock implements AzureApiService {
   @override
   Future<ApiResponse<bool>> deleteSavedQuery({required String projectName, required String queryId}) async {
     return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<BoardDetailWithItems>> getProjectBoard({
+    required String projectName,
+    required String teamId,
+    required String backlogId,
+  }) async {
+    return ApiResponse.ok(
+      BoardDetailWithItems(
+        board: BoardDetail(
+          id: '1',
+          name: 'name',
+          columns: [],
+          allowedMappings: AllowedMappings(incoming: {}, inProgress: {}, outgoing: {}),
+          fields: BoardFields(columnField: BoardField(referenceName: '')),
+        ),
+        items: [],
+      ),
+    );
+  }
+
+  @override
+  Future<ApiResponse<Map<Team, List<Board>>>> getProjectBoards({required String projectName}) async {
+    return ApiResponse.ok({});
+  }
+
+  @override
+  Future<ApiResponse<Map<Team, List<Sprint>>>> getProjectSprints({required String projectName}) async {
+    return ApiResponse.ok({});
+  }
+
+  @override
+  Future<ApiResponse<SprintDetailWithItems>> getProjectSprint({
+    required String projectName,
+    required String teamId,
+    required String sprintId,
+  }) async {
+    return ApiResponse.ok(
+      SprintDetailWithItems(
+        sprint: Sprint(id: '', name: '', path: '', attributes: SprintAttributes(timeFrame: 'current')),
+        items: [],
+      ),
+    );
   }
 }
 
