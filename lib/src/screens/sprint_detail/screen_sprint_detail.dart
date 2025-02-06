@@ -20,11 +20,16 @@ class _SprintDetailScreen extends StatelessWidget {
             onPressed: ctrl.addNewItem,
           ),
         ],
-        builder: (_) => BoardWidget(
-          maxHeight: constraints.maxHeight,
-          pageController: ctrl.pageController,
-          columnItems: ctrl.columnItems,
-          onTapItem: ctrl.goToDetail,
+        builder: (_) => DefaultTabController(
+          length: ctrl.columnItems.length,
+          child: Builder(
+            builder: (ctx) => BoardWidget(
+              maxHeight: constraints.maxHeight,
+              tabController: DefaultTabController.of(ctx),
+              columnItems: ctrl.columnItems,
+              onTapItem: ctrl.goToDetail,
+            ),
+          ),
         ),
       ),
     );

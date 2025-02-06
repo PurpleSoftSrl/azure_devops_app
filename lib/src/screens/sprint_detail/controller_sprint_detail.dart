@@ -7,7 +7,6 @@ class _SprintDetailController {
   final SprintDetailArgs args;
 
   final sprintWithItems = ValueNotifier<ApiResponse<SprintDetailWithItems>?>(null);
-  final pageController = PageController(viewportFraction: .9);
   final columnItems = <BoardColumn, List<WorkItem>>{};
 
   Future<void> init() async {

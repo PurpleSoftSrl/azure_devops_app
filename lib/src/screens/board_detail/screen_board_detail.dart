@@ -20,15 +20,20 @@ class _BoardDetailScreen extends StatelessWidget {
             onPressed: ctrl.addNewItem,
           ),
         ],
-        builder: (_) => BoardWidget(
-          maxHeight: constraints.maxHeight,
-          pageController: ctrl.pageController,
-          columnItems: ctrl.columnItems,
-          onTapItem: ctrl.goToDetail,
-          actions: (item) => [
-            PopupItem(text: 'Edit', onTap: () => ctrl.editItem(item)),
-            PopupItem(text: 'Move to column', onTap: () => ctrl.moveToColumn(item)),
-          ],
+        builder: (_) => DefaultTabController(
+          length: ctrl.columnItems.length,
+          child: Builder(
+            builder: (ctx) => BoardWidget(
+              maxHeight: constraints.maxHeight,
+              columnItems: ctrl.columnItems,
+              onTapItem: ctrl.goToDetail,
+              tabController: DefaultTabController.of(ctx),
+              actions: (item) => [
+                PopupItem(text: 'Edit', onTap: () => ctrl.editItem(item)),
+                PopupItem(text: 'Move to column', onTap: () => ctrl.moveToColumn(item)),
+              ],
+            ),
+          ),
         ),
       ),
     );
