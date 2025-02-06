@@ -16,6 +16,12 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 class AzureDevOps extends StatelessWidget {
   const AzureDevOps({super.key});
 
+  void _closeKeyboard(BuildContext context) {
+    if ((MediaQuery.maybeViewInsetsOf(context)?.bottom ?? 0) > 0) {
+      FocusManager.instance.primaryFocus?.unfocus();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PurpleTheme(
@@ -35,7 +41,7 @@ class AzureDevOps extends StatelessWidget {
                   // LifecycleListener must be below AzureApiServiceInherited because it depends on it
                   child: LifecycleListener(
                     child: GestureDetector(
-                      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                      onTap: () => _closeKeyboard(context),
                       child: MaterialApp(
                         navigatorKey: AppRouter.navigatorKey,
                         routes: AppRouter.routes,
