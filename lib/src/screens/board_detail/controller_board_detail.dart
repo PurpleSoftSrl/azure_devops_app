@@ -101,7 +101,7 @@ class _BoardDetailController with ApiErrorHelper {
       final errorMessage = getErrorMessageAndType(res.errorResponse!);
       return OverlayService.error('Error', description: 'Item not updated.\n${errorMessage.msg}');
     }
-    
+
     await _showInterstitialAd(
       onDismiss: () => OverlayService.snackbar('Item successfully moved to column $column'),
     );
