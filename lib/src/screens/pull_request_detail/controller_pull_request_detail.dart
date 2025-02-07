@@ -738,6 +738,8 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
     if (!(res.data ?? false)) return OverlayService.snackbar('Status not updated', isError: true);
 
+    await showInterstitialAd(ads);
+
     await init();
   }
 }
