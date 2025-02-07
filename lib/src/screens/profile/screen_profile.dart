@@ -158,7 +158,7 @@ class _ProfileScreen extends StatelessWidget {
                     isLast: c == commits.last,
                   );
 
-                  if (commits.indexOf(c) % 5 == 4 && c != commits.first && adsIndex < ctrl.ads.length) {
+                  if (ctrl.shouldShowNativeAd(commits, c, adsIndex)) {
                     yield NativeAdWidget(
                       ad: ctrl.ads[adsIndex++],
                     );

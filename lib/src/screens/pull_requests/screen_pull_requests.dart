@@ -95,7 +95,7 @@ class _PullRequestsScreen extends StatelessWidget {
                 isLast: pr == prs.last,
               );
 
-              if (prs.indexOf(pr) % 5 == 4 && pr != prs.first && adsIndex < ctrl.ads.length) {
+              if (ctrl.shouldShowNativeAd(prs, pr, adsIndex)) {
                 yield NativeAdWidget(
                   ad: ctrl.ads[adsIndex++],
                 );

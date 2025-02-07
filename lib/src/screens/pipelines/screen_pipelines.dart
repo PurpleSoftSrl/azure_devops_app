@@ -105,7 +105,7 @@ class _PipelinesScreen extends StatelessWidget {
                     isLast: p == pipelines.last,
                   );
 
-                  if (pipelines.indexOf(p) % 5 == 4 && p != pipelines.first && adsIndex < ctrl.ads.length) {
+                  if (ctrl.shouldShowNativeAd(pipelines, p, adsIndex)) {
                     yield NativeAdWidget(
                       ad: ctrl.ads[adsIndex++],
                     );

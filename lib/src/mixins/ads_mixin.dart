@@ -7,7 +7,11 @@ mixin AdsMixin {
 
   /// Load new native ads and map them to [AdWithKey] objects with a new global key to force refresh the UI.
   Future<void> getNewNativeAds(AdsService adsService) async {
-    final ads2 = await adsService.getNewNativeAds();
-    ads = ads2.map((ad) => (ad: ad, key: GlobalKey())).toList();
+    final newAds = await adsService.getNewNativeAds();
+    ads = newAds.map((ad) => (ad: ad, key: GlobalKey())).toList();
   }
+
+  /// Whether to show a native ad at the given [index] inside [items] list.
+  bool shouldShowNativeAd<T>(List<T> items, T item, int index) =>
+      items.indexOf(item) % 5 == 4 && item != items.first && index < ads.length;
 }
