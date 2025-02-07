@@ -1,9 +1,11 @@
 library board_detail;
 
+import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/api_error_mixin.dart';
 import 'package:azure_devops/src/models/board.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/router/router.dart';
+import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
@@ -31,8 +33,9 @@ class BoardDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final api = AzureApiServiceInherited.of(context).apiService;
     final args = AppRouter.getBoardDetailArgs(context);
+    final ads = context.adsService;
     return AppBasePage(
-      initState: () => _BoardDetailController._(api, args),
+      initState: () => _BoardDetailController._(api, args, ads),
       smartphone: (ctrl) => _BoardDetailScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _BoardDetailScreen(ctrl, _tabletParameters),
     );
