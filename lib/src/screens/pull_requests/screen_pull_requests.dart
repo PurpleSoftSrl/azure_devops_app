@@ -82,18 +82,28 @@ class _PullRequestsScreen extends StatelessWidget {
                 ),
               ],
             ),
-      builder: (prs) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: prs!
-            .map(
-              (pr) => PullRequestListTile(
+      builder: (prs) {
+        var adsIndex = 0;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: prs!.expand(
+            (pr) sync* {
+              yield PullRequestListTile(
                 pr: pr,
                 onTap: () => ctrl.goToPullRequestDetail(pr),
                 isLast: pr == prs.last,
-              ),
-            )
-            .toList(),
-      ),
+              );
+
+              if (ctrl.shouldShowNativeAd(prs, pr, adsIndex)) {
+                yield NativeAdWidget(
+                  ad: ctrl.ads[adsIndex++],
+                );
+              }
+            },
+          ).toList(),
+        );
+      },
     );
   }
 }

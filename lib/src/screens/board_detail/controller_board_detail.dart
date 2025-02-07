@@ -1,9 +1,10 @@
 part of board_detail;
 
 class _BoardDetailController with ApiErrorHelper {
-  _BoardDetailController._(this.api, this.args);
+  _BoardDetailController._(this.api, this.args, this.ads);
 
   final AzureApiService api;
+  final AdsService ads;
   final BoardDetailArgs args;
 
   final boardWithItems = ValueNotifier<ApiResponse<BoardDetailWithItems>?>(null);
@@ -101,7 +102,14 @@ class _BoardDetailController with ApiErrorHelper {
       return OverlayService.error('Error', description: 'Item not updated.\n${errorMessage.msg}');
     }
 
-    OverlayService.snackbar('Item successfully moved to column $column');
+    await _showInterstitialAd(
+      onDismiss: () => OverlayService.snackbar('Item successfully moved to column $column'),
+    );
+
     await init();
+  }
+
+  Future<void> _showInterstitialAd({VoidCallback? onDismiss}) async {
+    await ads.showInterstitialAd(onDismiss: onDismiss);
   }
 }

@@ -48,18 +48,28 @@ class _CommitsScreen extends StatelessWidget {
                 ),
               ],
             ),
-      builder: (commits) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: commits!
-            .map(
-              (c) => CommitListTile(
+      builder: (commits) {
+        var adsIndex = 0;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: commits!.expand(
+            (c) sync* {
+              yield CommitListTile(
                 commit: c,
                 onTap: () => ctrl.goToCommitDetail(c),
                 isLast: c == commits.last,
-              ),
-            )
-            .toList(),
-      ),
+              );
+
+              if (ctrl.shouldShowNativeAd(commits, c, adsIndex)) {
+                yield NativeAdWidget(
+                  ad: ctrl.ads[adsIndex++],
+                );
+              }
+            },
+          ).toList(),
+        );
+      },
     );
   }
 }

@@ -1,10 +1,11 @@
 part of profile;
 
-class _ProfileController with FilterMixin {
-  _ProfileController._(this.apiService, this.storageService);
+class _ProfileController with FilterMixin, AdsMixin {
+  _ProfileController._(this.apiService, this.storageService, this.adsService);
 
   final AzureApiService apiService;
   final StorageService storageService;
+  final AdsService adsService;
 
   final recentCommits = ValueNotifier<ApiResponse<List<Commit>?>?>(null);
 
@@ -41,6 +42,8 @@ class _ProfileController with FilterMixin {
 
     final myWorkItemsRes = await apiService.getMyRecentWorkItems();
     myWorkItems.addAll(myWorkItemsRes.data ?? []);
+
+    await getNewNativeAds(adsService);
 
     recentCommits.value = commits.copyWith(data: res);
   }

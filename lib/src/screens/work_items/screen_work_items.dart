@@ -139,18 +139,27 @@ class _WorkItemsScreen extends StatelessWidget {
           ],
         );
       },
-      builder: (items) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: items!
-            .map(
-              (i) => WorkItemListTile(
+      builder: (items) {
+        var adsIndex = 0;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: items!.expand((i) sync* {
+            yield SizedBox(
+              child: WorkItemListTile(
                 item: i,
                 onTap: () => ctrl.goToWorkItemDetail(i),
                 isLast: i == items.last,
               ),
-            )
-            .toList(),
-      ),
+            );
+
+            if (ctrl.shouldShowNativeAd(items, i, adsIndex)) {
+              yield NativeAdWidget(
+                ad: ctrl.ads[adsIndex++],
+              );
+            }
+          }).toList(),
+        );
+      },
     );
   }
 }
