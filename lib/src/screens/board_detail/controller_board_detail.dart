@@ -1,6 +1,6 @@
 part of board_detail;
 
-class _BoardDetailController {
+class _BoardDetailController with ApiErrorHelper {
   _BoardDetailController._(this.api, this.args);
 
   final AzureApiService api;
@@ -96,7 +96,10 @@ class _BoardDetailController {
       formFields: {boardWithItems.value!.data!.board.fields.columnField.referenceName: column!},
     );
 
-    if (res.isError) return OverlayService.error('Error', description: 'Item not updated');
+    if (res.isError) {
+      final errorMessage = getErrorMessageAndType(res.errorResponse!);
+      return OverlayService.error('Error', description: 'Item not updated.\n${errorMessage.msg}');
+    }
 
     OverlayService.snackbar('Item successfully moved to column $column');
     await init();

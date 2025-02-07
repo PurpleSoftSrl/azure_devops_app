@@ -1,5 +1,6 @@
 library board_detail;
 
+import 'package:azure_devops/src/mixins/api_error_mixin.dart';
 import 'package:azure_devops/src/models/board.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/router/router.dart';
