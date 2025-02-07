@@ -145,7 +145,7 @@ class _WorkItemsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: items!.expand((i) sync* {
             yield SizedBox(
-              child: _WorkItemListTile(
+              child: WorkItemListTile(
                 item: i,
                 onTap: () => ctrl.goToWorkItemDetail(i),
                 isLast: i == items.last,
