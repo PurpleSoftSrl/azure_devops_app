@@ -30,10 +30,9 @@ class ProjectBoardsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final api = AzureApiServiceInherited.of(context).apiService;
     final projectName = AppRouter.getProjectBoardsArgs(context);
     return AppBasePage(
-      initState: () => _ProjectBoardsController._(api, projectName),
+      initState: () => _ProjectBoardsController._(context.api, projectName),
       smartphone: (ctrl) => _ProjectBoardsScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _ProjectBoardsScreen(ctrl, _tabletParameters),
     );

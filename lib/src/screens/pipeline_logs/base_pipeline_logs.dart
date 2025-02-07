@@ -24,9 +24,8 @@ class PipelineLogsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final args = AppRouter.getPipelineLogsArgs(context);
-    final apiService = AzureApiServiceInherited.of(context).apiService;
     return AppBasePage(
-      initState: () => _PipelineLogsController._(apiService, args),
+      initState: () => _PipelineLogsController._(context.api, args),
       smartphone: (ctrl) => _PipelineLogsScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _PipelineLogsScreen(ctrl, _tabletParameters),
     );

@@ -40,12 +40,9 @@ class PipelinesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = AzureApiServiceInherited.of(context).apiService;
-    final storageService = StorageServiceInherited.of(context).storageService;
-    final ads = context.adsService;
     final args = AppRouter.getPipelinesArgs(context);
     return AppBasePage(
-      initState: () => _PipelinesController._(apiService, storageService, args, ads),
+      initState: () => _PipelinesController._(context.api, context.storage, args, context.ads),
       smartphone: (ctrl) => _PipelinesScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _PipelinesScreen(ctrl, _tabletParameters),
     );

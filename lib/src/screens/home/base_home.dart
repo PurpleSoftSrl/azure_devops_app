@@ -42,11 +42,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = AzureApiServiceInherited.of(context).apiService;
-    final storageService = StorageServiceInherited.of(context).storageService;
-    final purchase = context.purchaseService;
     return AppBasePage(
-      initState: () => _HomeController._(apiService, storageService, purchase),
+      initState: () => _HomeController._(context.api, context.storage, context.purchase),
       smartphone: (ctrl) => _HomeScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _HomeScreen(ctrl, _tabletParameters),
     );

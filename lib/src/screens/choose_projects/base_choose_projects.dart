@@ -32,10 +32,8 @@ class ChooseProjectsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final removeRoutes = AppRouter.getChooseProjectArgs(context);
-    final apiService = AzureApiServiceInherited.of(context).apiService;
-    final storageService = StorageServiceInherited.of(context).storageService;
     return AppBasePage(
-      initState: () => _ChooseProjectsController._(apiService, removeRoutes, storageService),
+      initState: () => _ChooseProjectsController._(context.api, removeRoutes, context.storage),
       smartphone: (ctrl) => _ChooseProjectsScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _ChooseProjectsScreen(ctrl, _tabletParameters),
     );

@@ -44,12 +44,9 @@ class WorkItemsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = AzureApiServiceInherited.of(context).apiService;
-    final storageService = StorageServiceInherited.of(context).storageService;
-    final ads = context.adsService;
     final args = AppRouter.getWorkItemsArgs(context);
     return AppBasePage(
-      initState: () => _WorkItemsController._(apiService, storageService, args, ads),
+      initState: () => _WorkItemsController._(context.api, context.storage, args, context.ads),
       smartphone: (ctrl) => _WorkItemsScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _WorkItemsScreen(ctrl, _tabletParameters),
     );

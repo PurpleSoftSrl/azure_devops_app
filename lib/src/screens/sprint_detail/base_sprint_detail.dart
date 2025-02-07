@@ -1,5 +1,6 @@
 library sprint_detail;
 
+import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/models/board.dart';
 import 'package:azure_devops/src/models/sprint.dart';
 import 'package:azure_devops/src/models/work_items.dart';
@@ -26,10 +27,9 @@ class SprintDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final api = AzureApiServiceInherited.of(context).apiService;
     final args = AppRouter.getSprintDetailArgs(context);
     return AppBasePage(
-      initState: () => _SprintDetailController._(api, args),
+      initState: () => _SprintDetailController._(context.api, args),
       smartphone: (ctrl) => _SprintDetailScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _SprintDetailScreen(ctrl, _tabletParameters),
     );

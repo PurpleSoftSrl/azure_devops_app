@@ -1,6 +1,7 @@
 library member_detail;
 
 import 'package:azure_devops/src/extensions/commit_extension.dart';
+import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/router/router.dart';
@@ -29,9 +30,8 @@ class MemberDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final member = AppRouter.getMemberDetailArgs(context);
-    final apiService = AzureApiServiceInherited.of(context).apiService;
     return AppBasePage(
-      initState: () => _MemberDetailController._(member, apiService),
+      initState: () => _MemberDetailController._(member, context.api),
       smartphone: (ctrl) => _MemberDetailScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _MemberDetailScreen(ctrl, _tabletParameters),
     );

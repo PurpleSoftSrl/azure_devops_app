@@ -95,7 +95,7 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = AzureApiServiceInherited.of(context).apiService;
+    final apiService = context.api;
     return HtmlEditor(
       controller: widget.editorController,
       callbacks: Callbacks(

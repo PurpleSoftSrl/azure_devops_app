@@ -31,9 +31,8 @@ class FileDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final args = AppRouter.getFileDetailArgs(context);
-    final apiService = AzureApiServiceInherited.of(context).apiService;
     return AppBasePage(
-      initState: () => _FileDetailController._(apiService, args),
+      initState: () => _FileDetailController._(context.api, args),
       smartphone: (ctrl) => _FileDetailScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _FileDetailScreen(ctrl, _tabletParameters),
     );

@@ -49,11 +49,8 @@ class CreateOrEditWorkItemPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final args = AppRouter.getCreateOrEditWorkItemArgs(context);
-    final apiService = AzureApiServiceInherited.of(context).apiService;
-    final storageService = StorageServiceInherited.of(context).storageService;
-    final ads = context.adsService;
     return AppBasePage(
-      initState: () => _CreateOrEditWorkItemController._(apiService, args, storageService, ads),
+      initState: () => _CreateOrEditWorkItemController._(context.api, args, context.storage, context.ads),
       smartphone: (ctrl) => _CreateOrEditWorkItemScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _CreateOrEditWorkItemScreen(ctrl, _tabletParameters),
     );

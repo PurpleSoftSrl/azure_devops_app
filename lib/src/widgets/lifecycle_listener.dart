@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
-import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:flutter/material.dart';
 
 class LifecycleListener extends StatefulWidget {
@@ -40,7 +39,7 @@ class _LifecycleListenerState extends State<LifecycleListener> with WidgetsBindi
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    final user = AzureApiServiceInherited.of(context).apiService.user;
+    final user = context.api.user;
 
     if (state == AppLifecycleState.inactive && _previousState != AppLifecycleState.paused) {
       if (user != null && !_hasAlreadyLogged) {
@@ -63,7 +62,7 @@ class _LifecycleListenerState extends State<LifecycleListener> with WidgetsBindi
   }
 
   void _checkSubscription() {
-    context.purchaseService.checkSubscription();
+    context.purchase.checkSubscription();
   }
 
   @override

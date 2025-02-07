@@ -26,9 +26,8 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = AzureApiServiceInherited.of(context).apiService;
     return AppBasePage(
-      initState: () => _SplashController._(apiService),
+      initState: () => _SplashController._(context.api),
       smartphone: (ctrl) => _SplashScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _SplashScreen(ctrl, _tabletParameters),
     );

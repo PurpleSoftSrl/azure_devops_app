@@ -43,7 +43,7 @@ class _SettingsScreen extends StatelessWidget {
             ),
           ),
           ValueListenableBuilder(
-            valueListenable: context.purchaseService.entitlementName,
+            valueListenable: context.purchase.entitlementName,
             builder: (_, entitlementName, __) => entitlementName.isNotEmpty
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

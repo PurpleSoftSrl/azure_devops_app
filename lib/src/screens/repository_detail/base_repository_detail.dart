@@ -29,9 +29,8 @@ class RepositoryDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final args = AppRouter.getRepositoryDetailArgs(context);
-    final apiService = AzureApiServiceInherited.of(context).apiService;
     return AppBasePage(
-      initState: () => _RepositoryDetailController._(apiService, args),
+      initState: () => _RepositoryDetailController._(context.api, args),
       smartphone: (ctrl) => _RepositoryDetailScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _RepositoryDetailScreen(ctrl, _tabletParameters),
     );

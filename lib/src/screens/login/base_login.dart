@@ -27,9 +27,8 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = AzureApiServiceInherited.of(context).apiService;
     return AppBasePage(
-      initState: () => _LoginController._(apiService),
+      initState: () => _LoginController._(context.api),
       smartphone: (ctrl) => _LoginScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _LoginScreen(ctrl, _tabletParameters),
     );

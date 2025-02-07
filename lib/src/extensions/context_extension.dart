@@ -1,5 +1,7 @@
 import 'package:azure_devops/src/services/ads_service.dart';
+import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/purchase_service.dart';
+import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +12,8 @@ extension PurpleContext on BuildContext {
   double get height => MediaQuery.of(this).size.height;
   double get width => MediaQuery.of(this).size.width;
 
-  PurchaseService get purchaseService => PurchaseServiceWidget.of(this).purchase;
-  AdsService get adsService => AdsServiceWidget.of(this).ads;
+  AzureApiService get api => AzureApiServiceInherited.of(this).apiService;
+  PurchaseService get purchase => PurchaseServiceWidget.of(this).purchase;
+  AdsService get ads => AdsServiceWidget.of(this).ads;
+  StorageService get storage => StorageServiceInherited.of(this).storageService;
 }

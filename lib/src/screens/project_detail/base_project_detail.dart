@@ -37,9 +37,8 @@ class ProjectDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final project = AppRouter.getProjectDetailArgs(context);
-    final apiService = AzureApiServiceInherited.of(context).apiService;
     return AppBasePage(
-      initState: () => _ProjectDetailController._(apiService, project),
+      initState: () => _ProjectDetailController._(context.api, project),
       smartphone: (ctrl) => _ProjectDetailScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _ProjectDetailScreen(ctrl, _tabletParameters),
     );

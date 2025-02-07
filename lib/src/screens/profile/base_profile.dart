@@ -38,11 +38,8 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = AzureApiServiceInherited.of(context).apiService;
-    final storageService = StorageServiceInherited.of(context).storageService;
-    final ads = context.adsService;
     return AppBasePage(
-      initState: () => _ProfileController._(apiService, storageService, ads),
+      initState: () => _ProfileController._(context.api, context.storage, context.ads),
       smartphone: (ctrl) => _ProfileScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _ProfileScreen(ctrl, _tabletParameters),
     );

@@ -1,6 +1,5 @@
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/router/router.dart';
-import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/form_field.dart';
@@ -51,7 +50,7 @@ class _AddCommentFieldState extends State<AddCommentField> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    final apiService = AzureApiServiceInherited.of(context).apiService;
+    final apiService = context.api;
     final me = apiService.allUsers.firstWhereOrNull((u) => u.mailAddress == apiService.user!.emailAddress);
     return SlideTransition(
       position: _animation,

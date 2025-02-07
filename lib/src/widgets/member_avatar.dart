@@ -1,5 +1,5 @@
+import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/router/router.dart';
-import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +25,7 @@ class MemberAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     if (imageUrl == null && (userDescriptor == null || userDescriptor!.isEmpty)) return const SizedBox();
 
-    final apiService = AzureApiServiceInherited.of(context).apiService;
+    final apiService = context.api;
     final url = imageUrl ?? apiService.getUserAvatarUrl(userDescriptor!);
     return InkWell(
       onTap: tappable ? _goToMemberDetail : null,

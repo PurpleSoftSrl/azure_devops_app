@@ -1,7 +1,6 @@
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/models/work_items.dart';
-import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
 import 'package:azure_devops/src/widgets/popup_menu.dart';
@@ -25,7 +24,7 @@ class WorkItemListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtitleStyle = context.textTheme.bodySmall!;
-    final apiService = AzureApiServiceInherited.of(context).apiService;
+    final apiService = context.api;
     final wt = apiService.workItemTypes[item.fields.systemTeamProject]
         ?.firstWhereOrNull((t) => t.name == item.fields.systemWorkItemType);
     final state = apiService.workItemStates[item.fields.systemTeamProject]?[item.fields.systemWorkItemType]

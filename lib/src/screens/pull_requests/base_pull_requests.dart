@@ -36,12 +36,9 @@ class PullRequestsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = AzureApiServiceInherited.of(context).apiService;
-    final storageService = StorageServiceInherited.of(context).storageService;
-    final ads = context.adsService;
     final args = AppRouter.getPullRequestsArgs(context);
     return AppBasePage(
-      initState: () => _PullRequestsController._(apiService, storageService, args, ads),
+      initState: () => _PullRequestsController._(context.api, context.storage, args, context.ads),
       smartphone: (ctrl) => _PullRequestsScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _PullRequestsScreen(ctrl, _tabletParameters),
     );

@@ -29,10 +29,8 @@ class SavedQueriesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final args = AppRouter.getSavedQueriesArgs(context);
-    final api = AzureApiServiceInherited.of(context).apiService;
-    final ads = context.adsService;
     return AppBasePage(
-      initState: () => _SavedQueriesController._(args, api, ads),
+      initState: () => _SavedQueriesController._(args, context.api, context.ads),
       smartphone: (ctrl) => _SavedQueriesScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _SavedQueriesScreen(ctrl, _tabletParameters),
     );

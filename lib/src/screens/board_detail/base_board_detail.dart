@@ -31,11 +31,9 @@ class BoardDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final api = AzureApiServiceInherited.of(context).apiService;
     final args = AppRouter.getBoardDetailArgs(context);
-    final ads = context.adsService;
     return AppBasePage(
-      initState: () => _BoardDetailController._(api, args, ads),
+      initState: () => _BoardDetailController._(context.api, args, context.ads),
       smartphone: (ctrl) => _BoardDetailScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _BoardDetailScreen(ctrl, _tabletParameters),
     );

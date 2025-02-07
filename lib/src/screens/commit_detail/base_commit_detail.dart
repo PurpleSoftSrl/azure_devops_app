@@ -32,10 +32,9 @@ class CommitDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = AzureApiServiceInherited.of(context).apiService;
     final args = AppRouter.getCommitDetailArgs(context);
     return AppBasePage(
-      initState: () => _CommitDetailController._(args, apiService),
+      initState: () => _CommitDetailController._(args, context.api),
       smartphone: (ctrl) => _CommitDetailScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _CommitDetailScreen(ctrl, _tabletParameters),
     );

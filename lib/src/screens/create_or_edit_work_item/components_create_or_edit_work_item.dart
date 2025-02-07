@@ -408,7 +408,7 @@ class _AddLinkBottomsheetState extends State<_AddLinkBottomsheet> {
                     itemBuilder: (context, index) {
                       final item = items[index];
 
-                      final apiService = AzureApiServiceInherited.of(context).apiService;
+                      final apiService = context.api;
                       final wt = apiService.workItemTypes[item.fields.systemTeamProject]
                           ?.firstWhereOrNull((t) => t.name == item.fields.systemWorkItemType);
 

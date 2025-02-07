@@ -1,5 +1,6 @@
 library boards;
 
+import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
@@ -22,9 +23,8 @@ class BoardsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final api = AzureApiServiceInherited.of(context).apiService;
     return AppBasePage(
-      initState: () => _BoardsController._(api),
+      initState: () => _BoardsController._(context.api),
       smartphone: (ctrl) => _BoardsScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _BoardsScreen(ctrl, _tabletParameters),
     );

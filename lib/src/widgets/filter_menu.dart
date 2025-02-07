@@ -3,7 +3,6 @@ import 'package:azure_devops/src/models/processes.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/router/router.dart';
-import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
@@ -498,7 +497,7 @@ class ProjectFilterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = AzureApiServiceInherited.of(context).apiService;
+    final apiService = context.api;
     return ClipRRect(
       borderRadius: BorderRadius.circular(100),
       child: project.defaultTeamImageUrl == null || apiService.isImageUnauthorized

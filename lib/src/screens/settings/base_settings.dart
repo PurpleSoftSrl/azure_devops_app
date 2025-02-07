@@ -43,10 +43,8 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final storageService = StorageServiceInherited.of(context).storageService;
-    final apiService = AzureApiServiceInherited.of(context).apiService;
     return AppBasePage(
-      initState: () => _SettingsController._(apiService, storageService),
+      initState: () => _SettingsController._(context.api, context.storage),
       smartphone: (ctrl) => _SettingsScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _SettingsScreen(ctrl, _tabletParameters),
     );

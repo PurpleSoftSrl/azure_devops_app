@@ -1,5 +1,5 @@
+import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/models/project.dart';
-import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/widgets/navigation_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -18,7 +18,7 @@ class ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = AzureApiServiceInherited.of(context).apiService;
+    final apiService = context.api;
     return SizedBox(
       height: height,
       child: NavigationButton(
