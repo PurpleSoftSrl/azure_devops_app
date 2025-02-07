@@ -1,6 +1,6 @@
 part of saved_queries;
 
-class _SavedQueriesController {
+class _SavedQueriesController with AdsMixin {
   _SavedQueriesController._(this.args, this.api, this.ads);
 
   final SavedQueriesArgs args;
@@ -41,7 +41,8 @@ class _SavedQueriesController {
       return OverlayService.error('Error', description: 'Query not renamed');
     }
 
-    await _showInterstitialAd(
+    await showInterstitialAd(
+      ads,
       onDismiss: () => OverlayService.snackbar('Query successfully renamed'),
     );
 
@@ -61,14 +62,11 @@ class _SavedQueriesController {
       return OverlayService.error('Error', description: 'Query not deleted');
     }
 
-    await _showInterstitialAd(
+    await showInterstitialAd(
+      ads,
       onDismiss: () => OverlayService.snackbar('Query successfully deleted'),
     );
 
     await init();
-  }
-
-  Future<void> _showInterstitialAd({VoidCallback? onDismiss}) async {
-    await ads.showInterstitialAd(onDismiss: onDismiss);
   }
 }

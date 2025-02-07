@@ -2,7 +2,7 @@
 
 part of create_or_edit_work_item;
 
-class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
+class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
   _CreateOrEditWorkItemController._(this.apiService, this.args, this.storageService, this.ads) {
     if (args.project != null) {
       newWorkItemProject = getProjects(storageService).firstWhereOrNull((p) => p.name == args.project) ?? projectAll;
@@ -323,7 +323,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
       );
     }
 
-    await ads.showInterstitialAd(
+    await showInterstitialAd(
+      ads,
       onDismiss: () => OverlayService.snackbar('Changes saved'),
     );
 

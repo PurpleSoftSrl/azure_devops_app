@@ -154,7 +154,7 @@ class _WorkItemsScreen extends StatelessWidget {
 
             if (ctrl.shouldShowNativeAd(items, i, adsIndex)) {
               yield NativeAdWidget(
-                ad: ctrl.ads[adsIndex++],
+                ad: ctrl.nativeAds[adsIndex++],
               );
             }
           }).toList(),

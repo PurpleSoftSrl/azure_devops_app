@@ -1,6 +1,6 @@
 part of pipeline_detail;
 
-class _PipelineDetailController with ShareMixin {
+class _PipelineDetailController with ShareMixin, AdsMixin {
   _PipelineDetailController._(this.args, this.apiService, this.ads) : visibilityKey = GlobalKey();
 
   final ({String project, int id}) args;
@@ -117,7 +117,7 @@ class _PipelineDetailController with ShareMixin {
       return OverlayService.error('Build not canceled', description: 'Try again');
     }
 
-    await _showInterstitialAd();
+    await showInterstitialAd(ads);
 
     AppRouter.pop();
   }
@@ -139,7 +139,7 @@ class _PipelineDetailController with ShareMixin {
       return OverlayService.error('Build not rerun', description: 'Try again');
     }
 
-    await _showInterstitialAd();
+    await showInterstitialAd(ads);
 
     AppRouter.pop();
   }
@@ -220,10 +220,6 @@ class _PipelineDetailController with ShareMixin {
 
   void goToPreviousRuns() {
     AppRouter.goToPipelines(args: (definition: pipeline.definition!.id!, project: pipeline.project!, shortcut: null));
-  }
-
-  Future<void> _showInterstitialAd({VoidCallback? onDismiss}) async {
-    await ads.showInterstitialAd(onDismiss: onDismiss);
   }
 }
 

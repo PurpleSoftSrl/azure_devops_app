@@ -160,7 +160,7 @@ class _ProfileScreen extends StatelessWidget {
 
                   if (ctrl.shouldShowNativeAd(commits, c, adsIndex)) {
                     yield NativeAdWidget(
-                      ad: ctrl.ads[adsIndex++],
+                      ad: ctrl.nativeAds[adsIndex++],
                     );
                   }
                 },

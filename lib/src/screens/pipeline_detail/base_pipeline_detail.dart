@@ -7,6 +7,7 @@ import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/extensions/duration_extension.dart';
 import 'package:azure_devops/src/extensions/pipeline_extension.dart';
 import 'package:azure_devops/src/extensions/pipeline_result_extension.dart';
+import 'package:azure_devops/src/mixins/ads_mixin.dart';
 import 'package:azure_devops/src/mixins/share_mixin.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/timeline.dart';

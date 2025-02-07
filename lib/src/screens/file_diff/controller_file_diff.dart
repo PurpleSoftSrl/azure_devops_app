@@ -1,6 +1,6 @@
 part of file_diff;
 
-class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
+class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixin {
   _FileDiffController._(this.apiService, this.args, this.ads);
 
   final AzureApiService apiService;
@@ -179,7 +179,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
       AppRouter.pop();
     }
 
-    await _showInterstitialAd();
+    await showInterstitialAd(ads);
 
     await init();
   }
@@ -221,7 +221,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
 
     AppRouter.pop();
 
-    await _showInterstitialAd();
+    await showInterstitialAd(ads);
 
     await init();
   }
@@ -251,7 +251,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
 
     AppRouter.pop();
 
-    await _showInterstitialAd();
+    await showInterstitialAd(ads);
 
     await init();
   }
@@ -273,12 +273,8 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
 
     AppRouter.pop();
 
-    await _showInterstitialAd();
+    await showInterstitialAd(ads);
 
     await init();
-  }
-
-  Future<void> _showInterstitialAd() async {
-    await ads.showInterstitialAd();
   }
 }

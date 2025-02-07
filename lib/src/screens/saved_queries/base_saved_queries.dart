@@ -1,6 +1,7 @@
 library saved_queries;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
+import 'package:azure_devops/src/mixins/ads_mixin.dart';
 import 'package:azure_devops/src/models/saved_query.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/ads_service.dart';

@@ -1,6 +1,6 @@
 part of work_item_detail;
 
-class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
+class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixin {
   _WorkItemDetailController._(this.args, this.apiService, this.storageService, this.ads);
 
   final WorkItemDetailArgs args;
@@ -80,7 +80,8 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
       return OverlayService.error('Error', description: 'Work item not deleted');
     }
 
-    await _showInterstitialAd(
+    await showInterstitialAd(
+      ads,
       onDismiss: () => OverlayService.snackbar('Work item successfully deleted'),
     );
 
@@ -172,7 +173,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
       return OverlayService.error('Error', description: 'Comment not added');
     }
 
-    await _showInterstitialAd();
+    await showInterstitialAd(ads);
 
     await init();
   }
@@ -198,7 +199,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
       return OverlayService.error('Error', description: 'Comment not deleted');
     }
 
-    await _showInterstitialAd();
+    await showInterstitialAd(ads);
 
     await init();
   }
@@ -224,7 +225,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
       return OverlayService.error('Error', description: 'Comment not edited');
     }
 
-    await _showInterstitialAd();
+    await showInterstitialAd(ads);
 
     await init();
   }
@@ -245,7 +246,8 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
       return OverlayService.error('Error', description: 'Attachment not added');
     }
 
-    await _showInterstitialAd(
+    await showInterstitialAd(
+      ads,
       onDismiss: () => OverlayService.snackbar('Attachment successfully added'),
     );
 
@@ -287,9 +289,5 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
     if (projectId.isEmpty || id <= 0) return;
 
     AppRouter.goToWorkItemDetail(project: projectId, id: id);
-  }
-
-  Future<void> _showInterstitialAd({VoidCallback? onDismiss}) async {
-    await ads.showInterstitialAd(onDismiss: onDismiss);
   }
 }
