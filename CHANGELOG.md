@@ -1,3 +1,23 @@
+## 3.2.0 - 2025-02-07
+- refactoring: make WorkItemListTile private
+- refactoring: renamings
+- ads: show interstitial ad on PR thread status update
+- refactoring: move showInterstitialAd in AdsMixin
+- refactoring: get dependencies with context extensions
+- Add native ads in list pages (#55)
+- board_detail: show move to column api error message
+- Add support for boards and sprints (#54)
+- fix unnecessary rebuild when tapping screen
+- pull_requests: fix Iteration deserialization error
+- purchase: fix highlight default plan on Android
+- upgrade dependencies
+- refactoring: remove unused code and make elements private
+- work_items: show success snackbar on delete item
+- pull_requests: don't try to decode empty api error message
+- improve error logs
+- improve logs
+- fix user null after logout and login again
+
 ## 3.1.0 - 2025-01-31
 - Add support for saved queries (#53)
 - immediately hide confirm button on create/edit work item
