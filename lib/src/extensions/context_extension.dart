@@ -12,8 +12,8 @@ extension PurpleContext on BuildContext {
   double get height => MediaQuery.of(this).size.height;
   double get width => MediaQuery.of(this).size.width;
 
-  AzureApiService get api => AzureApiServiceInherited.of(this).apiService;
+  AzureApiService get api => AzureApiServiceWidget.of(this).api;
   PurchaseService get purchase => PurchaseServiceWidget.of(this).purchase;
   AdsService get ads => AdsServiceWidget.of(this).ads;
-  StorageService get storage => StorageServiceInherited.of(this).storageService;
+  StorageService get storage => StorageServiceWidget.of(this).storage;
 }

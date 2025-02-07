@@ -364,13 +364,13 @@ class _Keys {
   static const hasSeenSubscriptionAddedBottomsheet = 'hasSeenSubscriptionAddedBottomsheet';
 }
 
-class StorageServiceInherited extends InheritedWidget {
-  const StorageServiceInherited({super.key, required this.storageService, required super.child});
+class StorageServiceWidget extends InheritedWidget {
+  const StorageServiceWidget({super.key, required this.storage, required super.child});
 
-  final StorageService storageService;
+  final StorageService storage;
 
-  static StorageServiceInherited of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<StorageServiceInherited>()!;
+  static StorageServiceWidget of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<StorageServiceWidget>()!;
   }
 
   @override

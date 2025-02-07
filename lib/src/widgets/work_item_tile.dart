@@ -24,10 +24,10 @@ class WorkItemListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtitleStyle = context.textTheme.bodySmall!;
-    final apiService = context.api;
-    final wt = apiService.workItemTypes[item.fields.systemTeamProject]
+    final api = context.api;
+    final wt = api.workItemTypes[item.fields.systemTeamProject]
         ?.firstWhereOrNull((t) => t.name == item.fields.systemWorkItemType);
-    final state = apiService.workItemStates[item.fields.systemTeamProject]?[item.fields.systemWorkItemType]
+    final state = api.workItemStates[item.fields.systemTeamProject]?[item.fields.systemWorkItemType]
         ?.firstWhereOrNull((t) => t.name == item.fields.systemState);
 
     final hasAssignee = item.fields.systemAssignedTo?.descriptor != null;

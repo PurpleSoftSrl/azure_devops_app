@@ -34,10 +34,10 @@ class AzureDevOps extends StatelessWidget {
             ads: AdsServiceImpl(),
             child: PurchaseServiceWidget(
               purchase: PurchaseServiceImpl(ads: AdsServiceImpl()),
-              child: AzureApiServiceInherited(
-                apiService: AzureApiServiceImpl(),
-                child: StorageServiceInherited(
-                  storageService: StorageServiceCore(),
+              child: AzureApiServiceWidget(
+                api: AzureApiServiceImpl(),
+                child: StorageServiceWidget(
+                  storage: StorageServiceCore(),
                   // LifecycleListener must be below AzureApiServiceInherited because it depends on it
                   child: LifecycleListener(
                     child: GestureDetector(

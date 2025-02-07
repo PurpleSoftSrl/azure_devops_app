@@ -11,10 +11,10 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Page building test', (t) async {
-    final app = AzureApiServiceInherited(
-      apiService: AzureApiServiceMock(),
-      child: StorageServiceInherited(
-        storageService: StorageServiceMock(),
+    final app = AzureApiServiceWidget(
+      api: AzureApiServiceMock(),
+      child: StorageServiceWidget(
+        storage: StorageServiceMock(),
         child: MaterialApp(
           navigatorKey: AppRouter.navigatorKey,
           routes: AppRouter.routes,
@@ -34,8 +34,8 @@ void main() {
     final app = MaterialApp(
       navigatorKey: AppRouter.navigatorKey,
       theme: mockTheme,
-      home: AzureApiServiceInherited(
-        apiService: AzureApiServiceMock(),
+      home: AzureApiServiceWidget(
+        api: AzureApiServiceMock(),
         child: LoginPage(),
       ),
     );
@@ -64,8 +64,8 @@ void main() {
     final app = MaterialApp(
       navigatorKey: AppRouter.navigatorKey,
       theme: mockTheme,
-      home: AzureApiServiceInherited(
-        apiService: AzureApiServiceMock(),
+      home: AzureApiServiceWidget(
+        api: AzureApiServiceMock(),
         child: LoginPage(),
       ),
     );
@@ -91,10 +91,10 @@ void main() {
   });
 
   testWidgets("Login with valid token brings user to 'Choose project' page", (t) async {
-    final app = AzureApiServiceInherited(
-      apiService: AzureApiServiceMock(),
-      child: StorageServiceInherited(
-        storageService: StorageServiceMock(),
+    final app = AzureApiServiceWidget(
+      api: AzureApiServiceMock(),
+      child: StorageServiceWidget(
+        storage: StorageServiceMock(),
         child: MaterialApp(
           navigatorKey: AppRouter.navigatorKey,
           routes: AppRouter.routes,

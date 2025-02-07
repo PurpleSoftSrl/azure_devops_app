@@ -17,16 +17,16 @@ mixin FilterMixin {
 
   bool get isDefaultUsersFilter => usersFilter.isEmpty;
 
-  bool hasManyUsers(AzureApiService apiService) => getSortedUsers(apiService, withUserAll: false).length > 10;
+  bool hasManyUsers(AzureApiService api) => getSortedUsers(api, withUserAll: false).length > 10;
 
-  List<GraphUser> getSortedUsers(AzureApiService apiService, {bool withUserAll = true}) {
-    final users = apiService.allUsers
+  List<GraphUser> getSortedUsers(AzureApiService api, {bool withUserAll = true}) {
+    final users = api.allUsers
         .where((u) => u.domain != 'Build' && u.domain != 'AgentPool' && u.domain != 'LOCAL AUTHORITY')
         .toSet()
         .sorted((a, b) => a.displayName!.toLowerCase().compareTo(b.displayName!.toLowerCase()))
         .toList();
 
-    final me = apiService.allUsers.firstWhereOrNull((u) => u.mailAddress == apiService.user?.emailAddress);
+    final me = api.allUsers.firstWhereOrNull((u) => u.mailAddress == api.user?.emailAddress);
 
     final otherUsers = users.where((u) => u != me);
 
@@ -37,14 +37,14 @@ mixin FilterMixin {
     ];
   }
 
-  List<GraphUser> searchUser(String query, AzureApiService apiService) {
+  List<GraphUser> searchUser(String query, AzureApiService api) {
     final loweredQuery = query.toLowerCase().trim();
-    final users = getSortedUsers(apiService, withUserAll: false);
+    final users = getSortedUsers(api, withUserAll: false);
     return users.where((u) => u.displayName != null && u.displayName!.toLowerCase().contains(loweredQuery)).toList();
   }
 
-  String getFormattedUser(GraphUser user, AzureApiService apiService) {
-    final users = getSortedUsers(apiService);
+  String getFormattedUser(GraphUser user, AzureApiService api) {
+    final users = getSortedUsers(api);
     final hasHomonyms = users
             .where((u) => user.displayName != null && u.displayName?.toLowerCase() == user.displayName?.toLowerCase())
             .length >
@@ -55,16 +55,15 @@ mixin FilterMixin {
     return user.displayName ?? '';
   }
 
-  bool hasManyProjects(StorageService storageService) =>
-      storageService.getChosenProjects().length > projectsCountThreshold;
+  bool hasManyProjects(StorageService storage) => storage.getChosenProjects().length > projectsCountThreshold;
 
-  List<Project> getProjects(StorageService storageService, {bool withProjectAll = true}) {
-    return [if (withProjectAll) projectAll, ...storageService.getChosenProjects()];
+  List<Project> getProjects(StorageService storage, {bool withProjectAll = true}) {
+    return [if (withProjectAll) projectAll, ...storage.getChosenProjects()];
   }
 
-  List<Project> searchProject(String query, StorageService storageService) {
+  List<Project> searchProject(String query, StorageService storage) {
     final loweredQuery = query.toLowerCase().trim();
-    final projects = getProjects(storageService);
+    final projects = getProjects(storage);
     return projects.where((p) => p.name != null && p.name!.toLowerCase().contains(loweredQuery)).toList();
   }
 }

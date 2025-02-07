@@ -497,14 +497,14 @@ class ProjectFilterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = context.api;
+    final api = context.api;
     return ClipRRect(
       borderRadius: BorderRadius.circular(100),
-      child: project.defaultTeamImageUrl == null || apiService.isImageUnauthorized
+      child: project.defaultTeamImageUrl == null || api.isImageUnauthorized
           ? const SizedBox()
           : CachedNetworkImage(
               imageUrl: project.defaultTeamImageUrl!,
-              httpHeaders: apiService.headers,
+              httpHeaders: api.headers,
               errorWidget: (_, __, ___) => Icon(DevOpsIcons.project),
             ),
     );

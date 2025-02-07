@@ -17,7 +17,7 @@ class HtmlWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = context.api;
+    final api = context.api;
     final defaultTextStyle = context.textTheme.labelMedium!;
     final effectiveStyle = style ?? defaultTextStyle;
     final htmlTextStyle = Style.fromTextStyle(effectiveStyle).copyWith(
@@ -60,7 +60,7 @@ class HtmlWidget extends StatelessWidget {
               if (isNetworkImage) {
                 image = CachedNetworkImage(
                   imageUrl: src,
-                  httpHeaders: apiService.headers,
+                  httpHeaders: api.headers,
                   fit: BoxFit.contain,
                   height: double.tryParse(ctx.attributes['height'] ?? ''),
                   width: double.tryParse(ctx.attributes['width'] ?? ''),
@@ -136,7 +136,7 @@ class HtmlWidget extends StatelessWidget {
                 return GestureDetector(
                   onTap: () async {
                     final name = innerHtml.substring(1);
-                    final user = await apiService.getUserFromDisplayName(name: name);
+                    final user = await api.getUserFromDisplayName(name: name);
                     if (user.isError) return;
 
                     unawaited(AppRouter.goToMemberDetail(user.data!.descriptor!));

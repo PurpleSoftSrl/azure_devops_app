@@ -60,7 +60,7 @@ class _PipelineDetailScreen extends StatelessWidget {
                 Row(
                   children: [
                     SelectableText(pipeline.requestedFor!.displayName!),
-                    if (pipeline.requestedFor?.imageUrl != null && ctrl.apiService.organization.isNotEmpty) ...[
+                    if (pipeline.requestedFor?.imageUrl != null && ctrl.api.organization.isNotEmpty) ...[
                       const SizedBox(
                         width: 10,
                       ),

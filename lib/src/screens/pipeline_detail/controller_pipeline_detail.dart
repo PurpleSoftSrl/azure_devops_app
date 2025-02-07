@@ -1,10 +1,10 @@
 part of pipeline_detail;
 
 class _PipelineDetailController with ShareMixin, AdsMixin {
-  _PipelineDetailController._(this.args, this.apiService, this.ads) : visibilityKey = GlobalKey();
+  _PipelineDetailController._(this.args, this.api, this.ads) : visibilityKey = GlobalKey();
 
   final ({String project, int id}) args;
-  final AzureApiService apiService;
+  final AzureApiService api;
   final AdsService ads;
 
   final buildDetail = ValueNotifier<ApiResponse<PipelineWithTimeline?>?>(null);
@@ -46,7 +46,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
   }
 
   Future<void> _init() async {
-    final res = await apiService.getPipeline(projectName: args.project, id: args.id);
+    final res = await api.getPipeline(projectName: args.project, id: args.id);
     buildDetail.value = res;
 
     if (buildDetail.value?.isError ?? true) return;
@@ -111,7 +111,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
     );
     if (!confirm) return;
 
-    final res = await apiService.cancelPipeline(buildId: args.id, projectId: pipeline.project!.id!);
+    final res = await api.cancelPipeline(buildId: args.id, projectId: pipeline.project!.id!);
 
     if (res.isError) {
       return OverlayService.error('Build not canceled', description: 'Try again');
@@ -129,7 +129,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
     );
     if (!confirm) return;
 
-    final res = await apiService.rerunPipeline(
+    final res = await api.rerunPipeline(
       definitionId: pipeline.definition!.id!,
       projectId: pipeline.project!.id!,
       branch: pipeline.sourceBranch!,
@@ -145,7 +145,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
   }
 
   String getBuildWebUrl() {
-    return '${apiService.basePath}/${pipeline.project!.name}/_build/results?buildId=${args.id}&view=results';
+    return '${api.basePath}/${pipeline.project!.name}/_build/results?buildId=${args.id}&view=results';
   }
 
   void shareBuild() {

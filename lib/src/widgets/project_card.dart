@@ -18,7 +18,7 @@ class ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiService = context.api;
+    final api = context.api;
     return SizedBox(
       height: height,
       child: NavigationButton(
@@ -30,7 +30,7 @@ class ProjectCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(100),
-              child: apiService.isImageUnauthorized
+              child: api.isImageUnauthorized
                   ? SizedBox(
                       height: 30,
                       width: 30,
@@ -38,7 +38,7 @@ class ProjectCard extends StatelessWidget {
                     )
                   : CachedNetworkImage(
                       imageUrl: project.defaultTeamImageUrl!,
-                      httpHeaders: apiService.headers,
+                      httpHeaders: api.headers,
                       errorWidget: (_, __, ___) => Icon(DevOpsIcons.project),
                       width: 30,
                       height: 30,

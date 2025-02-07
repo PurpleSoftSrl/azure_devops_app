@@ -1,9 +1,9 @@
 part of file_diff;
 
 class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixin {
-  _FileDiffController._(this.apiService, this.args, this.ads);
+  _FileDiffController._(this.api, this.args, this.ads);
 
-  final AzureApiService apiService;
+  final AzureApiService api;
   final AdsService ads;
   final FileDiffArgs args;
 
@@ -20,7 +20,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
   bool get isImageDiff => imageDiffContent != null || previousImageDiffContent != null;
 
   Future<void> init() async {
-    final res = await apiService.getCommitDiff(
+    final res = await api.getCommitDiff(
       commit: args.commit,
       filePath: args.filePath,
       isAdded: args.isAdded,
@@ -47,7 +47,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
 
     if (isImage) {
       if (!args.isDeleted) {
-        final imageRes = await apiService.getFileDetail(
+        final imageRes = await api.getFileDetail(
           projectName: args.commit.projectName,
           repoName: args.commit.repositoryName,
           path: args.filePath,
@@ -58,7 +58,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
       }
 
       if (!args.isAdded) {
-        final previousImageRes = await apiService.getFileDetail(
+        final previousImageRes = await api.getFileDetail(
           projectName: args.commit.projectName,
           repoName: args.commit.repositoryName,
           path: args.filePath,
@@ -78,17 +78,17 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
   }
 
   Future<void> _getPullRequestComments() async {
-    final res = await apiService.getPullRequest(
+    final res = await api.getPullRequest(
       projectName: args.commit.projectName,
       repositoryId: args.commit.repositoryId,
       id: args.pullRequestId!,
     );
 
     final prAndThreads = await getReplacedPrAndThreads(
-      basePath: apiService.basePath,
+      basePath: api.basePath,
       projectId: args.commit.projectId,
       data: res.data,
-      getIdentity: (mention) => apiService.getIdentityFromGuid(guid: mention),
+      getIdentity: (mention) => api.getIdentityFromGuid(guid: mention),
     );
 
     prThreads = prAndThreads.updates
@@ -107,7 +107,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
   }
 
   void shareDiff() {
-    final baseUrl = '${apiService.basePath}/${args.commit.projectName}/_git/${args.commit.repositoryName}';
+    final baseUrl = '${api.basePath}/${args.commit.projectName}/_git/${args.commit.repositoryName}';
 
     final diffUrl = args.pullRequestId != null
         ? '$baseUrl/pullrequest/${args.pullRequestId}?_a=files&path=${args.filePath}'
@@ -150,7 +150,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
 
     final newComment = translateMentionsFromHtmlToMarkdown(comment);
 
-    final res = await apiService.addPullRequestComment(
+    final res = await api.addPullRequestComment(
       projectName: args.commit.projectName,
       repositoryId: args.commit.repositoryId,
       pullRequestId: args.pullRequestId!,
@@ -201,7 +201,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
 
     final newComment = translateMentionsFromHtmlToMarkdown(text);
 
-    final res = await apiService.editPullRequestComment(
+    final res = await api.editPullRequestComment(
       projectName: args.commit.projectName,
       repositoryId: args.commit.repositoryId,
       pullRequestId: args.pullRequestId!,
@@ -233,7 +233,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
     );
     if (!confirm) return;
 
-    final res = await apiService.deletePullRequestComment(
+    final res = await api.deletePullRequestComment(
       projectName: args.commit.projectName,
       repositoryId: args.commit.repositoryId,
       pullRequestId: args.pullRequestId!,
@@ -257,11 +257,11 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
   }
 
   bool canEditPrComment(PrComment c) {
-    return apiService.user?.emailAddress == c.author.uniqueName;
+    return api.user?.emailAddress == c.author.uniqueName;
   }
 
   Future<void> setStatus(ThreadUpdate thread, ThreadStatus s) async {
-    final res = await apiService.editPullRequestThreadStatus(
+    final res = await api.editPullRequestThreadStatus(
       projectName: args.commit.projectId,
       repositoryId: args.commit.repositoryId,
       pullRequestId: args.pullRequestId!,

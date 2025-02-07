@@ -43,15 +43,14 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 ),
                 FilterMenu<Project>(
                   title: 'Project',
-                  values: ctrl.getProjects(ctrl.storageService).where((p) => p != ctrl.projectAll).toList(),
+                  values: ctrl.getProjects(ctrl.storage).where((p) => p != ctrl.projectAll).toList(),
                   currentFilter: ctrl.newWorkItemProject,
                   onSelected: ctrl.setProject,
                   formatLabel: (p) => p.name!,
                   isDefaultFilter: ctrl.newWorkItemProject == ctrl.projectAll,
                   widgetBuilder: (p) => ProjectFilterWidget(project: p),
-                  onSearchChanged: ctrl.hasManyProjects(ctrl.storageService)
-                      ? (s) => ctrl.searchProject(s, ctrl.storageService)
-                      : null,
+                  onSearchChanged:
+                      ctrl.hasManyProjects(ctrl.storage) ? (s) => ctrl.searchProject(s, ctrl.storage) : null,
                 ),
               ],
             ),
@@ -125,10 +124,10 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                   values: ctrl.getAssignees(),
                   currentFilter: ctrl.newWorkItemAssignedTo,
                   onSelected: ctrl.setAssignee,
-                  formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.apiService),
+                  formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.api),
                   isDefaultFilter: ctrl.newWorkItemAssignedTo.displayName == 'Unassigned',
                   widgetBuilder: (u) => UserFilterWidget(user: u),
-                  onSearchChanged: ctrl.hasManyUsers(ctrl.apiService) ? ctrl.searchAssignee : null,
+                  onSearchChanged: ctrl.hasManyUsers(ctrl.api) ? ctrl.searchAssignee : null,
                 ),
               ),
             ],

@@ -1,15 +1,15 @@
 part of file_detail;
 
 class _FileDetailController with ShareMixin {
-  _FileDetailController._(this.apiService, this.args);
+  _FileDetailController._(this.api, this.args);
 
-  final AzureApiService apiService;
+  final AzureApiService api;
   final RepoDetailArgs args;
 
   final fileContent = ValueNotifier<ApiResponse<FileDetailResponse?>?>(null);
 
   Future<void> init() async {
-    final fileRes = await apiService.getFileDetail(
+    final fileRes = await api.getFileDetail(
       projectName: args.projectName,
       repoName: args.repositoryName,
       path: args.filePath ?? '/',
@@ -29,7 +29,7 @@ class _FileDetailController with ShareMixin {
   }
 
   String get _fileUrl =>
-      '${apiService.basePath}/${args.projectName}/_git/${args.repositoryName}?path=${args.filePath}&version=GB${args.branch}';
+      '${api.basePath}/${args.projectName}/_git/${args.repositoryName}?path=${args.filePath}&version=GB${args.branch}';
 }
 
 /// Map file extension to highlighting package language id

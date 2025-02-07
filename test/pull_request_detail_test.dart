@@ -19,10 +19,10 @@ void main() {
     (t) async {
       final app = AdsServiceWidget(
         ads: AdsServiceMock(),
-        child: AzureApiServiceInherited(
-          apiService: AzureApiServiceMock(),
-          child: StorageServiceInherited(
-            storageService: StorageServiceMock(),
+        child: AzureApiServiceWidget(
+          api: AzureApiServiceMock(),
+          child: StorageServiceWidget(
+            storage: StorageServiceMock(),
             child: MaterialApp(
               theme: mockTheme,
               onGenerateRoute: (_) => MaterialPageRoute(

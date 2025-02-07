@@ -1,9 +1,9 @@
 part of project_detail;
 
 class _ProjectDetailController with ApiErrorHelper {
-  _ProjectDetailController._(this.apiService, this.projectName);
+  _ProjectDetailController._(this.api, this.projectName);
 
-  final AzureApiService apiService;
+  final AzureApiService api;
 
   final String projectName;
 
@@ -27,7 +27,7 @@ class _ProjectDetailController with ApiErrorHelper {
       _getQueries(),
     ]);
 
-    final projectRes = await apiService.getProject(projectName: projectName);
+    final projectRes = await api.getProject(projectName: projectName);
 
     if (projectRes.isError) {
       if (projectRes.errorResponse?.statusCode == 404) {
@@ -66,25 +66,25 @@ class _ProjectDetailController with ApiErrorHelper {
   }
 
   Future<ApiResponse<List<LanguageBreakdown>>> _getLangs() async {
-    final langs = await apiService.getProjectLanguages(projectName: projectName);
+    final langs = await api.getProjectLanguages(projectName: projectName);
     languages = langs.data ?? [];
     return langs;
   }
 
   Future<ApiResponse<List<TeamWithMembers>>> _getTeams() async {
-    final membersRes = await apiService.getProjectTeams(projectId: projectName);
+    final membersRes = await api.getProjectTeams(projectId: projectName);
     teamsWithMembers = membersRes.data ?? [];
     return membersRes;
   }
 
   Future<ApiResponse<List<GitRepository>>> _getRepos() async {
-    final reposRes = await apiService.getProjectRepositories(projectName: projectName);
+    final reposRes = await api.getProjectRepositories(projectName: projectName);
     repos = reposRes.data ?? [];
     return reposRes;
   }
 
   Future<ApiResponse<List<SavedQuery>>> _getQueries() async {
-    final queriesRes = await apiService.getProjectSavedQueries(projectName: projectName);
+    final queriesRes = await api.getProjectSavedQueries(projectName: projectName);
     savedQueries = queriesRes.data ?? [];
     return queriesRes;
   }
@@ -117,7 +117,7 @@ class _ProjectDetailController with ApiErrorHelper {
         );
         if (!conf) return;
 
-        apiService.removeChosenProject(deletedProject);
+        api.removeChosenProject(deletedProject);
 
         AppRouter.pop();
       }

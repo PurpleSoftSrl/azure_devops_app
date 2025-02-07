@@ -1,18 +1,18 @@
 part of member_detail;
 
 class _MemberDetailController {
-  _MemberDetailController._(this.userDescriptor, this.apiService);
+  _MemberDetailController._(this.userDescriptor, this.api);
 
   final String userDescriptor;
 
-  final AzureApiService apiService;
+  final AzureApiService api;
 
   final recentCommits = ValueNotifier<List<Commit>?>(null);
 
   final user = ValueNotifier<ApiResponse<GraphUser>?>(null);
 
   Future<void> init() async {
-    final userRes = await apiService.getUserFromDescriptor(descriptor: userDescriptor);
+    final userRes = await api.getUserFromDescriptor(descriptor: userDescriptor);
 
     if (userRes.isError || userRes.data == null) {
       recentCommits.value = [];
@@ -22,7 +22,7 @@ class _MemberDetailController {
 
     user.value = userRes;
 
-    final res = await apiService.getRecentCommits(authors: {user.value!.data!.mailAddress ?? ''}, maxCount: 20);
+    final res = await api.getRecentCommits(authors: {user.value!.data!.mailAddress ?? ''}, maxCount: 20);
     res.data?.sort((a, b) => b.author!.date!.compareTo(a.author!.date!));
 
     final commits = res.data?.take(10);

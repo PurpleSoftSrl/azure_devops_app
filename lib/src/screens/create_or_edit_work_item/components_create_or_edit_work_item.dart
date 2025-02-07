@@ -93,7 +93,7 @@ class _UserFormField extends StatelessWidget {
             u.mailAddress == null ? '' : '${u.displayName} <${u.mailAddress}>',
             field.referenceName,
           ),
-          formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.apiService),
+          formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.api),
           isDefaultFilter: true,
           widgetBuilder: (u) => UserFilterWidget(user: u),
         ),
@@ -408,8 +408,7 @@ class _AddLinkBottomsheetState extends State<_AddLinkBottomsheet> {
                     itemBuilder: (context, index) {
                       final item = items[index];
 
-                      final apiService = context.api;
-                      final wt = apiService.workItemTypes[item.fields.systemTeamProject]
+                      final wt = context.api.workItemTypes[item.fields.systemTeamProject]
                           ?.firstWhereOrNull((t) => t.name == item.fields.systemWorkItemType);
 
                       return GestureDetector(

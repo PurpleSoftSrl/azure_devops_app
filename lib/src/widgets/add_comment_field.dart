@@ -50,8 +50,8 @@ class _AddCommentFieldState extends State<AddCommentField> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    final apiService = context.api;
-    final me = apiService.allUsers.firstWhereOrNull((u) => u.mailAddress == apiService.user!.emailAddress);
+    final api = context.api;
+    final me = api.allUsers.firstWhereOrNull((u) => u.mailAddress == api.user!.emailAddress);
     return SlideTransition(
       position: _animation,
       child: DecoratedBox(

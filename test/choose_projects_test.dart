@@ -11,10 +11,10 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Page building test', (t) async {
-    final app = AzureApiServiceInherited(
-      apiService: AzureApiServiceMock(),
-      child: StorageServiceInherited(
-        storageService: StorageServiceMock(),
+    final app = AzureApiServiceWidget(
+      api: AzureApiServiceMock(),
+      child: StorageServiceWidget(
+        storage: StorageServiceMock(),
         child: MaterialApp(
           navigatorKey: AppRouter.navigatorKey,
           theme: mockTheme,
@@ -33,10 +33,10 @@ void main() {
     expect(find.byType(ChooseProjectsPage), findsOneWidget);
   });
   testWidgets('All projects are selected by default', (t) async {
-    final app = AzureApiServiceInherited(
-      apiService: AzureApiServiceMock(),
-      child: StorageServiceInherited(
-        storageService: StorageServiceMock(),
+    final app = AzureApiServiceWidget(
+      api: AzureApiServiceMock(),
+      child: StorageServiceWidget(
+        storage: StorageServiceMock(),
         child: MaterialApp(
           navigatorKey: AppRouter.navigatorKey,
           theme: mockTheme,

@@ -3,16 +3,16 @@
 part of create_or_edit_work_item;
 
 class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
-  _CreateOrEditWorkItemController._(this.apiService, this.args, this.storageService, this.ads) {
+  _CreateOrEditWorkItemController._(this.api, this.args, this.storage, this.ads) {
     if (args.project != null) {
-      newWorkItemProject = getProjects(storageService).firstWhereOrNull((p) => p.name == args.project) ?? projectAll;
+      newWorkItemProject = getProjects(storage).firstWhereOrNull((p) => p.name == args.project) ?? projectAll;
     }
     if (args.area != null) newWorkItemArea = AreaOrIteration.onlyPath(path: args.area!);
     if (args.iteration != null) newWorkItemIteration = AreaOrIteration.onlyPath(path: args.iteration!);
   }
 
-  final AzureApiService apiService;
-  final StorageService storageService;
+  final AzureApiService api;
+  final StorageService storage;
   final AdsService ads;
   final CreateOrEditWorkItemArgs args;
 
@@ -72,18 +72,18 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
   final isGettingFields = ValueNotifier<bool>(false);
 
   Future<void> init() async {
-    final linkTypesRes = await apiService.getWorkItemLinkTypes();
+    final linkTypesRes = await api.getWorkItemLinkTypes();
     _linkTypes = (linkTypesRes.data ?? []).sortedBy((t) => t.name);
 
     if (isEditing) {
       // edit existent work item
-      final res = await apiService.getWorkItemDetail(projectName: args.project!, workItemId: args.id!);
+      final res = await api.getWorkItemDetail(projectName: args.project!, workItemId: args.id!);
       if (!res.isError) {
         _setFields(res.data!.item);
       }
     }
 
-    final types = await apiService.getWorkItemTypes();
+    final types = await api.getWorkItemTypes();
     if (!types.isError) {
       allWorkItemTypes.addAll(types.data!.values.expand((ts) => ts).toSet());
       allProjectsWorkItemTypes = types.data!;
@@ -104,7 +104,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
     final project = fields.systemTeamProject;
     final workItemType = fields.systemWorkItemType;
 
-    projectWorkItemTypes = apiService.workItemTypes[project] ?? <WorkItemType>[];
+    projectWorkItemTypes = api.workItemTypes[project] ?? <WorkItemType>[];
     if (args.allowedTypes != null) {
       projectWorkItemTypes = projectWorkItemTypes.where((t) => args.allowedTypes!.contains(t.name)).toList();
     }
@@ -116,7 +116,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
 
     if (fields.systemAssignedTo != null) {
       newWorkItemAssignedTo =
-          getSortedUsers(apiService).firstWhereOrNull((u) => u.mailAddress == fields.systemAssignedTo?.uniqueName) ??
+          getSortedUsers(api).firstWhereOrNull((u) => u.mailAddress == fields.systemAssignedTo?.uniqueName) ??
               unassigned;
     }
 
@@ -130,7 +130,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
         );
 
     _initialWorkItemState = newWorkItemState =
-        apiService.workItemStates[project]?[workItemType]?.firstWhereOrNull((s) => s.name == fields.systemState) ??
+        api.workItemStates[project]?[workItemType]?.firstWhereOrNull((s) => s.name == fields.systemState) ??
             WorkItemState(
               id: '',
               name: fields.systemState,
@@ -336,7 +336,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
     }
 
     _resetInitialStateAndFormFields();
-    final itemRes = await apiService.getWorkItemDetail(projectName: args.project!, workItemId: args.id!);
+    final itemRes = await api.getWorkItemDetail(projectName: args.project!, workItemId: args.id!);
     final item = itemRes.data?.item;
     if (item == null) return;
 
@@ -414,7 +414,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
   }
 
   Future<ApiResponse<WorkItem>> _editWorkItem(GraphUser? assignedTo) async {
-    final res = await apiService.editWorkItem(
+    final res = await api.editWorkItem(
       projectName: args.project!,
       id: args.id!,
       type: newWorkItemType,
@@ -432,7 +432,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
   }
 
   Future<ApiResponse<WorkItem>> _createWorkItem(GraphUser? assignedTo) async {
-    final res = await apiService.createWorkItem(
+    final res = await api.createWorkItem(
       projectName: newWorkItemProject.name!,
       type: newWorkItemType,
       title: newWorkItemTitle,
@@ -448,29 +448,29 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
   }
 
   Future<void> addMention(GraphUser u, String fieldRefName) async {
-    final res = await apiService.getUserToMention(email: u.mailAddress!);
+    final res = await api.getUserToMention(email: u.mailAddress!);
     if (res.isError || res.data == null) {
       return OverlayService.snackbar('Could not find user', isError: true);
     }
 
     // remove `(me)` from user name if it's me
-    final name = u.mailAddress == apiService.user!.emailAddress ? apiService.user!.displayName : u.displayName;
+    final name = u.mailAddress == api.user!.emailAddress ? api.user!.displayName : u.displayName;
     final mention = '<a href="#" data-vss-mention="version:2.0,${res.data}">@$name</a>';
     formFields[fieldRefName]?.editorController?.insertHtml(mention);
   }
 
   List<GraphUser> getAssignees() {
-    final users = getSortedUsers(apiService).whereNot((u) => u == userAll).toList()..insert(0, unassigned);
+    final users = getSortedUsers(api).whereNot((u) => u == userAll).toList()..insert(0, unassigned);
     return users;
   }
 
   List<AreaOrIteration> getAreasToShow() {
-    final areas = apiService.workItemAreas;
+    final areas = api.workItemAreas;
     return areas[isEditing ? editingWorkItem!.fields.systemTeamProject : newWorkItemProject.name!] ?? [];
   }
 
   List<AreaOrIteration> getIterationsToShow() {
-    final areas = apiService.workItemIterations;
+    final areas = api.workItemIterations;
     return areas[isEditing ? editingWorkItem!.fields.systemTeamProject : newWorkItemProject.name!] ?? [];
   }
 
@@ -487,7 +487,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
 
     isGettingFields.value = true;
 
-    final res = await apiService.getWorkItemTypeFields(
+    final res = await api.getWorkItemTypeFields(
       projectName: projectName,
       workItemName: newWorkItemType.name,
     );
@@ -699,7 +699,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
   }
 
   List<WorkItemState> _getTransitionableStates({required String project, required String workItemType}) {
-    final allStates = apiService.workItemStates[project]?[workItemType] ?? [];
+    final allStates = api.workItemStates[project]?[workItemType] ?? [];
 
     if (newWorkItemState == null) return allStates;
 
@@ -794,7 +794,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
 
     if (loweredQuery.isEmpty && queryId == null) return [];
 
-    final itemsRes = await apiService.getWorkItems(
+    final itemsRes = await api.getWorkItems(
       title: queryId == null ? loweredQuery : null,
       id: queryId,
     );
@@ -805,7 +805,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
   }
 
   Future<void> _getProjectTags() {
-    return apiService.getProjectTags(projectName: newWorkItemProject.name!).then((res) {
+    return api.getProjectTags(projectName: newWorkItemProject.name!).then((res) {
       if (res.isError) {
         return OverlayService.snackbar('Could not get tags for project ${newWorkItemProject.name}', isError: true);
       }

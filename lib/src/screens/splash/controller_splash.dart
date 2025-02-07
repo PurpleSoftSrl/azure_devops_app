@@ -1,9 +1,9 @@
 part of splash;
 
 class _SplashController {
-  _SplashController._(this.apiService);
+  _SplashController._(this.api);
 
-  final AzureApiService apiService;
+  final AzureApiService api;
 
   static const _splashMinDuration = Duration(milliseconds: 1200);
 
@@ -25,7 +25,7 @@ class _SplashController {
 
   Future<void> _login(String token) async {
     try {
-      _isLogged = await apiService.login(token);
+      _isLogged = await api.login(token);
     } on SocketException catch (_) {
       _isLogged = LoginStatus.failed;
       _errorMessage = 'Check your internet connection';
@@ -43,7 +43,7 @@ class _SplashController {
     if (_isLogged == LoginStatus.unauthorized) {
       // token is expired
       await OverlayService.error('Error', description: 'Token expired');
-      await apiService.logout();
+      await api.logout();
       await MsalService().logout();
       unawaited(AppRouter.goToLogin());
       return;

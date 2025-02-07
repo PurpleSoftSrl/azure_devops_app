@@ -21,12 +21,12 @@ void main() {
       final app = MaterialApp(
         navigatorKey: AppRouter.navigatorKey,
         theme: mockTheme,
-        home: StorageServiceInherited(
-          storageService: StorageServiceMock(),
+        home: StorageServiceWidget(
+          storage: StorageServiceMock(),
           child: AdsServiceWidget(
             ads: AdsServiceMock(),
-            child: AzureApiServiceInherited(
-              apiService: AzureApiServiceMock(),
+            child: AzureApiServiceWidget(
+              api: AzureApiServiceMock(),
               child: PullRequestsPage(),
             ),
           ),
@@ -47,12 +47,12 @@ void main() {
       final workitemsPage = MaterialApp(
         navigatorKey: AppRouter.navigatorKey,
         theme: mockTheme,
-        home: StorageServiceInherited(
-          storageService: StorageServiceMock(),
+        home: StorageServiceWidget(
+          storage: StorageServiceMock(),
           child: AdsServiceWidget(
             ads: AdsServiceMock(),
-            child: AzureApiServiceInherited(
-              apiService: AzureApiServiceMock(),
+            child: AzureApiServiceWidget(
+              api: AzureApiServiceMock(),
               child: PullRequestsPage(),
             ),
           ),

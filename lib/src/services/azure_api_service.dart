@@ -427,7 +427,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   List<Project> _projects = [];
   Iterable<Project>? _chosenProjects;
 
-  StorageService get storageService => StorageServiceCore.instance!;
+  StorageService get storage => StorageServiceCore.instance!;
 
   @override
   Map<String, List<WorkItemType>> get workItemTypes => _workItemTypes;
@@ -631,7 +631,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     var profileEndpoint = '$_usersBasePath/_apis/profile/profiles/me?$_apiVersion-preview';
 
-    _organization = storageService.getOrganization();
+    _organization = storage.getOrganization();
 
     if (_organization.isNotEmpty) {
       profileEndpoint = '$_usersBasePath/$_organization/_apis/profile/profiles/me?$_apiVersion-preview';
@@ -651,12 +651,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       return LoginStatus.failed;
     }
 
-    storageService.setToken(accessToken);
+    storage.setToken(accessToken);
 
     final user = UserMe.fromJson(jsonDecode(accountsRes.body) as Map<String, dynamic>);
     _user = user;
 
-    _organization = storageService.getOrganization();
+    _organization = storage.getOrganization();
 
     if (_organization.isEmpty) {
       return LoginStatus.orgNotSet;
@@ -664,7 +664,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     unawaited(_getUsers());
 
-    _chosenProjects = storageService.getChosenProjects();
+    _chosenProjects = storage.getChosenProjects();
 
     if (_chosenProjects!.isEmpty) {
       return LoginStatus.projectsNotSet;
@@ -676,14 +676,14 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   @override
   Future<void> setOrganization(String org) async {
     _organization = org.endsWith('/') ? org.substring(0, org.length - 1) : org;
-    storageService.setOrganization(_organization);
+    storage.setOrganization(_organization);
 
     if (user != null) unawaited(_getUsers());
   }
 
   @override
   void switchOrganization(String org) {
-    storageService.setOrganization(org);
+    storage.setOrganization(org);
     setChosenProjects([]);
     _workItemTypes.clear();
     _workItemStates.clear();
@@ -706,12 +706,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   void setChosenProjects(List<Project> chosenProjects) {
     _chosenProjects = chosenProjects.toList();
 
-    storageService.setChosenProjects(_chosenProjects!);
+    storage.setChosenProjects(_chosenProjects!);
   }
 
   @override
   void removeChosenProject(String projectName) {
-    final currentChosenProjects = storageService.getChosenProjects();
+    final currentChosenProjects = storage.getChosenProjects();
     final updatedChosenProjects = currentChosenProjects.toList()..removeWhere((p) => p.name == projectName);
 
     setChosenProjects(updatedChosenProjects);
@@ -719,7 +719,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   @override
   Future<ApiResponse<List<Project>>> getProjects() async {
-    _chosenProjects = storageService.getChosenProjects();
+    _chosenProjects = storage.getChosenProjects();
 
     final projectsRes = await _get('$_basePath/_apis/projects?$_apiVersion&getDefaultTeamImageUrl=true');
     if (projectsRes.isError) return ApiResponse.error(projectsRes);
@@ -2477,7 +2477,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   @override
   Future<void> logout() async {
-    storageService.clear();
+    storage.clear();
     _organization = '';
     _chosenProjects = null;
     _allUsers.clear();
@@ -2530,17 +2530,17 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 }
 
-class AzureApiServiceInherited extends InheritedWidget {
-  const AzureApiServiceInherited({
+class AzureApiServiceWidget extends InheritedWidget {
+  const AzureApiServiceWidget({
     super.key,
     required super.child,
-    required this.apiService,
+    required this.api,
   });
 
-  final AzureApiService apiService;
+  final AzureApiService api;
 
-  static AzureApiServiceInherited of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<AzureApiServiceInherited>()!;
+  static AzureApiServiceWidget of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<AzureApiServiceWidget>()!;
   }
 
   @override

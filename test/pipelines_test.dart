@@ -18,12 +18,12 @@ void main() {
     (t) async {
       final app = MaterialApp(
         theme: mockTheme,
-        home: StorageServiceInherited(
-          storageService: StorageServiceMock(),
+        home: StorageServiceWidget(
+          storage: StorageServiceMock(),
           child: AdsServiceWidget(
             ads: AdsServiceMock(),
-            child: AzureApiServiceInherited(
-              apiService: AzureApiServiceMock(),
+            child: AzureApiServiceWidget(
+              api: AzureApiServiceMock(),
               child: PipelinesPage(),
             ),
           ),
@@ -43,12 +43,12 @@ void main() {
     (t) async {
       final pipelinesPage = MaterialApp(
         theme: mockTheme,
-        home: StorageServiceInherited(
-          storageService: StorageServiceMock(),
+        home: StorageServiceWidget(
+          storage: StorageServiceMock(),
           child: AdsServiceWidget(
             ads: AdsServiceMock(),
-            child: AzureApiServiceInherited(
-              apiService: AzureApiServiceMock(),
+            child: AzureApiServiceWidget(
+              api: AzureApiServiceMock(),
               child: PipelinesPage(),
             ),
           ),

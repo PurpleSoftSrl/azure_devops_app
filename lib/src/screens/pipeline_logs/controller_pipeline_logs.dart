@@ -1,15 +1,15 @@
 part of pipeline_logs;
 
 class _PipelineLogsController with ShareMixin {
-  _PipelineLogsController._(this.apiService, this.args);
+  _PipelineLogsController._(this.api, this.args);
 
-  final AzureApiService apiService;
+  final AzureApiService api;
   final PipelineLogsArgs args;
 
   final logs = ValueNotifier<ApiResponse<String?>?>(null);
 
   Future<void> init() async {
-    final res = await apiService.getPipelineTaskLogs(
+    final res = await api.getPipelineTaskLogs(
       projectName: args.project,
       pipelineId: args.pipelineId,
       logId: args.logId,
@@ -37,7 +37,7 @@ class _PipelineLogsController with ShareMixin {
   }
 
   String _getBuildWebUrl() {
-    return '${apiService.basePath}/${args.project}/_build/results?buildId=${args.pipelineId}&view=logs&j=${args.parentTaskId}&t=${args.taskId}';
+    return '${api.basePath}/${args.project}/_build/results?buildId=${args.pipelineId}&view=logs&j=${args.parentTaskId}&t=${args.taskId}';
   }
 
   void shareLogs() {

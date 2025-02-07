@@ -55,10 +55,9 @@ class _WorkItemDetailScreen extends StatelessWidget {
           ],
           builder: (detWithUpdates) {
             final detail = detWithUpdates!.item;
-            final wType = ctrl.apiService.workItemTypes[detail.fields.systemTeamProject]
+            final wType = ctrl.api.workItemTypes[detail.fields.systemTeamProject]
                 ?.firstWhereOrNull((t) => t.name == detail.fields.systemWorkItemType);
-            final state = ctrl
-                .apiService.workItemStates[detail.fields.systemTeamProject]?[detail.fields.systemWorkItemType]
+            final state = ctrl.api.workItemStates[detail.fields.systemTeamProject]?[detail.fields.systemWorkItemType]
                 ?.firstWhereOrNull((t) => t.name == detail.fields.systemState);
 
             return DefaultTextStyle(
@@ -99,7 +98,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                           title: 'Created by:',
                           description: detail.fields.systemCreatedBy!.displayName!,
                         ),
-                        if (ctrl.apiService.organization.isNotEmpty) ...[
+                        if (ctrl.api.organization.isNotEmpty) ...[
                           const SizedBox(
                             width: 10,
                           ),

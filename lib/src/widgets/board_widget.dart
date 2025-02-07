@@ -106,8 +106,7 @@ class _WorkItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtitleStyle = context.textTheme.bodySmall!;
-    final apiService = context.api;
-    final wt = apiService.workItemTypes[item.fields.systemTeamProject]
+    final wt = context.api.workItemTypes[item.fields.systemTeamProject]
         ?.firstWhereOrNull((t) => t.name == item.fields.systemWorkItemType);
 
     final hasAssignee = item.fields.systemAssignedTo?.descriptor != null;

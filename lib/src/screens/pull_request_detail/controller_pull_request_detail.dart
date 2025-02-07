@@ -1,11 +1,11 @@
 part of pull_request_detail;
 
 class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper, AdsMixin {
-  _PullRequestDetailController._(this.args, this.apiService, this.ads);
+  _PullRequestDetailController._(this.args, this.api, this.ads);
 
   final PullRequestDetailArgs args;
 
-  final AzureApiService apiService;
+  final AzureApiService api;
   final AdsService ads;
 
   final prDetail = ValueNotifier<ApiResponse<PullRequestWithDetails?>?>(null);
@@ -95,7 +95,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   }
 
   Future<void> _init() async {
-    final res = await apiService.getPullRequest(
+    final res = await api.getPullRequest(
       projectName: args.project,
       repositoryId: args.repository,
       id: args.id,
@@ -123,10 +123,10 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     }
 
     final prAndThreads = await getReplacedPrAndThreads(
-      basePath: apiService.basePath,
+      basePath: api.basePath,
       projectId: args.project,
       data: res.data,
-      getIdentity: (mention) => apiService.getIdentityFromGuid(guid: mention),
+      getIdentity: (mention) => api.getIdentityFromGuid(guid: mention),
     );
 
     prDetail.value = res.copyWith(data: res.data?.copyWith(pr: prAndThreads.pr, updates: prAndThreads.updates));
@@ -199,7 +199,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   /// An abandoned PR can be reactivated only if sourceBranch has not been deleted
   Future<bool> _checkIfCanBeReactivated(PullRequest pr) async {
     final sourceBranch = pr.sourceBranch;
-    final res = await apiService.getRepositoryBranches(
+    final res = await api.getRepositoryBranches(
       projectName: pr.repository.project.id,
       repoName: pr.repository.name,
     );
@@ -228,7 +228,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     final project = pr.repository.project.name;
     final repository = pr.repository.name;
     final id = pr.pullRequestId;
-    final prWebUrl = '${apiService.basePath}/$project/_git/$repository/pullrequest/$id';
+    final prWebUrl = '${api.basePath}/$project/_git/$repository/pullrequest/$id';
 
     shareUrl(prWebUrl);
   }
@@ -244,7 +244,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   }
 
   Future<String?> _getReviewerDescriptor(Reviewer r) async {
-    final res = await apiService.getUserFromEmail(email: r.uniqueName);
+    final res = await api.getUserFromEmail(email: r.uniqueName);
     return res.data?.descriptor ?? '';
   }
 
@@ -281,7 +281,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     final commitId = diff?.commitId ?? latestCommit?.commitId;
     final parent = diff?.parentCommitId ?? latestCommit?.parents?.firstOrNull ?? secondLatestCommit?.commitId;
 
-    final basePath = '${apiService.basePath}/${args.project}';
+    final basePath = '${api.basePath}/${args.project}';
     final repository = args.repository;
 
     final commit = c.Commit(
@@ -344,7 +344,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   }
 
   Future<void> _votePr({required int vote}) async {
-    final user = apiService.user!;
+    final user = api.user!;
     final reviewer = prDetail.value!.data!.pr.reviewers.firstWhereOrNull((r) => r.uniqueName == user.emailAddress) ??
         Reviewer(
           vote: vote,
@@ -356,7 +356,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
           uniqueName: user.emailAddress!,
         );
 
-    final res = await apiService.votePullRequest(
+    final res = await api.votePullRequest(
       projectName: args.project,
       repositoryId: args.repository,
       id: args.id,
@@ -401,7 +401,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
     final commitId = prDetail.value!.data!.changes.last.iteration.sourceRefCommit.commitId;
 
-    final res = await apiService.editPullRequest(
+    final res = await api.editPullRequest(
       projectName: args.project,
       repositoryId: args.repository,
       id: args.id,
@@ -480,7 +480,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     var customizeCommitMessage = false;
     String? commitMessage;
 
-    final branchesRes = await apiService.getRepositoryBranches(projectName: args.project, repoName: args.repository);
+    final branchesRes = await api.getRepositoryBranches(projectName: args.project, repoName: args.repository);
     final branch = (branchesRes.data ?? []).firstWhereOrNull((b) => b.name == prDetail.value!.data!.pr.sourceBranch);
     final canDeleteBranch = !(branch?.isBaseVersion ?? false);
 
@@ -632,7 +632,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
     final newComment = translateMentionsFromHtmlToMarkdown(comment);
 
-    final res = await apiService.addPullRequestComment(
+    final res = await api.addPullRequestComment(
       projectName: args.project,
       pullRequestId: args.id,
       threadId: threadId,
@@ -672,7 +672,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
     final newComment = translateMentionsFromHtmlToMarkdown(text);
 
-    final res = await apiService.editPullRequestComment(
+    final res = await api.editPullRequestComment(
       projectName: args.project,
       repositoryId: args.repository,
       pullRequestId: args.id,
@@ -702,7 +702,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     );
     if (!confirm) return;
 
-    final res = await apiService.deletePullRequestComment(
+    final res = await api.deletePullRequestComment(
       projectName: args.project,
       repositoryId: args.repository,
       pullRequestId: args.id,
@@ -724,11 +724,11 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   }
 
   bool canEditPrComment(PrComment c) {
-    return apiService.user?.emailAddress == c.author.uniqueName;
+    return api.user?.emailAddress == c.author.uniqueName;
   }
 
   Future<void> setStatus(ThreadUpdate thread, ThreadStatus s) async {
-    final res = await apiService.editPullRequestThreadStatus(
+    final res = await api.editPullRequestThreadStatus(
       projectName: args.project,
       repositoryId: args.repository,
       pullRequestId: args.id,

@@ -12,8 +12,8 @@ void main() {
   testWidgets(
     'Page building test',
     (t) async {
-      final app = AzureApiServiceInherited(
-        apiService: AzureApiServiceMock(),
+      final app = AzureApiServiceWidget(
+        api: AzureApiServiceMock(),
         child: MaterialApp(
           theme: mockTheme,
           onGenerateRoute: (_) => MaterialPageRoute(

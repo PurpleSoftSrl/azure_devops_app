@@ -1,16 +1,16 @@
 part of work_item_detail;
 
 class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixin {
-  _WorkItemDetailController._(this.args, this.apiService, this.storageService, this.ads);
+  _WorkItemDetailController._(this.args, this.api, this.storage, this.ads);
 
   final WorkItemDetailArgs args;
-  final AzureApiService apiService;
-  final StorageService storageService;
+  final AzureApiService api;
+  final StorageService storage;
   final AdsService ads;
 
   final itemDetail = ValueNotifier<ApiResponse<WorkItemWithUpdates?>?>(null);
 
-  String get itemWebUrl => '${apiService.basePath}/${args.project}/_workitems/edit/${args.id}';
+  String get itemWebUrl => '${api.basePath}/${args.project}/_workitems/edit/${args.id}';
 
   List<WorkItemState> statuses = [];
 
@@ -29,10 +29,10 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
   var _isDisposed = false;
 
   Future<void> init() async {
-    final res = await apiService.getWorkItemDetail(projectName: args.project, workItemId: args.id);
+    final res = await api.getWorkItemDetail(projectName: args.project, workItemId: args.id);
 
     if (!res.isError) {
-      final fieldsRes = await apiService.getWorkItemTypeFields(
+      final fieldsRes = await api.getWorkItemTypeFields(
         projectName: args.project,
         workItemName: res.data!.item.fields.systemWorkItemType,
       );
@@ -75,7 +75,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
     if (!conf) return;
 
     final type = itemDetail.value!.data!.item.fields.systemWorkItemType;
-    final res = await apiService.deleteWorkItem(projectName: args.project, id: args.id, type: type);
+    final res = await api.deleteWorkItem(projectName: args.project, id: args.id, type: type);
     if (!(res.data ?? false)) {
       return OverlayService.error('Error', description: 'Work item not deleted');
     }
@@ -115,7 +115,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
     isDownloadingAttachment.value = {attributes.id!: true};
 
     final attachmentId = attachment.url!.split('/').last;
-    final res = await apiService.getWorkItemAttachment(
+    final res = await api.getWorkItemAttachment(
       projectName: args.project,
       attachmentId: attachmentId,
       fileName: fileName,
@@ -157,7 +157,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
     final comment = await getTextFromEditor(editorController);
     if (comment == null) return;
 
-    final res = await apiService.addWorkItemComment(
+    final res = await api.addWorkItemComment(
       projectName: args.project,
       id: args.id,
       text: comment,
@@ -193,7 +193,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
     );
     if (!confirm) return;
 
-    final res = await apiService.deleteWorkItemComment(projectName: args.project, update: update);
+    final res = await api.deleteWorkItemComment(projectName: args.project, update: update);
 
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not deleted');
@@ -219,7 +219,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
     final comment = await getTextFromEditor(editorController);
     if (comment == null) return;
 
-    final res = await apiService.editWorkItemComment(projectName: args.project, update: update, text: comment);
+    final res = await api.editWorkItemComment(projectName: args.project, update: update, text: comment);
 
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not edited');
@@ -236,7 +236,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
 
     final file = File(result!.files.single.path!);
 
-    final res = await apiService.addWorkItemAttachment(
+    final res = await api.addWorkItemAttachment(
       projectName: args.project,
       fileName: file.path.split('/').last,
       filePath: file.path,

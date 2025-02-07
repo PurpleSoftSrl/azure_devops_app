@@ -25,19 +25,19 @@ class MemberAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     if (imageUrl == null && (userDescriptor == null || userDescriptor!.isEmpty)) return const SizedBox();
 
-    final apiService = context.api;
-    final url = imageUrl ?? apiService.getUserAvatarUrl(userDescriptor!);
+    final api = context.api;
+    final url = imageUrl ?? api.getUserAvatarUrl(userDescriptor!);
     return InkWell(
       onTap: tappable ? _goToMemberDetail : null,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100),
-        child: apiService.organization.isEmpty
+        child: api.organization.isEmpty
             ? const SizedBox()
             : CachedNetworkImage(
                 imageUrl: url,
                 height: radius,
                 width: radius,
-                httpHeaders: apiService.headers,
+                httpHeaders: api.headers,
                 errorWidget: (_, __, ___) => const SizedBox(),
                 fit: BoxFit.cover,
               ),

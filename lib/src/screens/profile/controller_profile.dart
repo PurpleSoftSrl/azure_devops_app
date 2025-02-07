@@ -1,11 +1,11 @@
 part of profile;
 
 class _ProfileController with FilterMixin, AdsMixin {
-  _ProfileController._(this.apiService, this.storageService, this.adsService);
+  _ProfileController._(this.api, this.storage, this.ads);
 
-  final AzureApiService apiService;
-  final StorageService storageService;
-  final AdsService adsService;
+  final AzureApiService api;
+  final StorageService storage;
+  final AdsService ads;
 
   final recentCommits = ValueNotifier<ApiResponse<List<Commit>?>?>(null);
 
@@ -28,22 +28,22 @@ class _ProfileController with FilterMixin, AdsMixin {
   final myWorkItems = <WorkItem>[];
 
   Future<void> init() async {
-    gitUsername = apiService.user?.emailAddress ?? '';
+    gitUsername = api.user?.emailAddress ?? '';
     myWorkItems.clear();
 
     final commits = await _getData();
 
-    final authorRes = await apiService.getUserFromEmail(email: apiService.user!.emailAddress!);
+    final authorRes = await api.getUserFromEmail(email: api.user!.emailAddress!);
     author = authorRes.data;
 
     commits.data?.sort((a, b) => b.author!.date!.compareTo(a.author!.date!));
 
     final res = commits.data?.take(100).toList();
 
-    final myWorkItemsRes = await apiService.getMyRecentWorkItems();
+    final myWorkItemsRes = await api.getMyRecentWorkItems();
     myWorkItems.addAll(myWorkItemsRes.data ?? []);
 
-    await getNewNativeAds(adsService);
+    await getNewNativeAds(ads);
 
     recentCommits.value = commits.copyWith(data: res);
   }
@@ -57,7 +57,7 @@ class _ProfileController with FilterMixin, AdsMixin {
   }
 
   Future<ApiResponse<List<Commit>>> _getData() async {
-    return apiService.getRecentCommits(authors: {gitUsername});
+    return api.getRecentCommits(authors: {gitUsername});
   }
 
   String getCommitsSummary() {
@@ -80,9 +80,9 @@ class _ProfileController with FilterMixin, AdsMixin {
   }
 
   void goToCommits(Commit commit) {
-    final project = getProjects(storageService).firstWhereOrNull((p) => p.id == commit.projectId);
+    final project = getProjects(storage).firstWhereOrNull((p) => p.id == commit.projectId);
 
-    final me = apiService.allUsers.firstWhereOrNull((u) => u.mailAddress == apiService.user?.emailAddress);
+    final me = api.allUsers.firstWhereOrNull((u) => u.mailAddress == api.user?.emailAddress);
     AppRouter.goToCommits(project: project, author: me);
   }
 }

@@ -1,21 +1,21 @@
 part of commits;
 
 class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
-  _CommitsController._(this.apiService, this.storageService, this.args, this.adsService) {
+  _CommitsController._(this.api, this.storage, this.args, this.ads) {
     if (args?.project != null) projectsFilter = {args!.project!};
     if (args?.author != null) usersFilter = {args!.author!};
   }
 
-  final AzureApiService apiService;
-  final StorageService storageService;
-  final AdsService adsService;
+  final AzureApiService api;
+  final StorageService storage;
+  final AdsService ads;
   final CommitsArgs? args;
 
   final recentCommits = ValueNotifier<ApiResponse<List<Commit>?>?>(null);
 
   late final filtersService = FiltersService(
-    storageService: storageService,
-    organization: apiService.organization,
+    storage: storage,
+    organization: api.organization,
   );
 
   /// Read/write filters from local storage only if user is not coming from project page or from shortcut
@@ -34,7 +34,7 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
   }
 
   Future<void> _getDataAndAds() async {
-    await getNewNativeAds(adsService);
+    await getNewNativeAds(ads);
     await _getData();
   }
 
@@ -50,16 +50,16 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
   void _fillFilters(CommitsFilters savedFilters) {
     if (savedFilters.projects.isNotEmpty) {
-      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+      projectsFilter = getProjects(storage).where((p) => savedFilters.projects.contains(p.name)).toSet();
     }
 
     if (savedFilters.authors.isNotEmpty) {
-      usersFilter = getSortedUsers(apiService).where((p) => savedFilters.authors.contains(p.mailAddress)).toSet();
+      usersFilter = getSortedUsers(api).where((p) => savedFilters.authors.contains(p.mailAddress)).toSet();
     }
   }
 
   Future<void> _getData() async {
-    final res = await apiService.getRecentCommits(
+    final res = await api.getRecentCommits(
       projects: isDefaultProjectsFilter ? null : projectsFilter,
       authors: isDefaultUsersFilter ? null : usersFilter.map((u) => u.mailAddress ?? '').toSet(),
     );
@@ -80,7 +80,7 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
     final projectRepos = groupBy(commits, (c) => '${c.projectId}_${c.repositoryId}');
     final allTags = <TagsData?>[
       ...await Future.wait([
-        for (final repoEntry in projectRepos.entries) apiService.getTags(repoEntry.value),
+        for (final repoEntry in projectRepos.entries) api.getTags(repoEntry.value),
       ]),
     ]..removeWhere((data) => data == null || data.tags.isEmpty);
 
@@ -166,7 +166,7 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
         );
         if (!conf) return;
 
-        apiService.removeChosenProject(deletedProject);
+        api.removeChosenProject(deletedProject);
 
         final updatedProjectFilter = {...projectsFilter}..removeWhere((p) => p.name == deletedProject);
         filterByProjects(updatedProjectFilter);

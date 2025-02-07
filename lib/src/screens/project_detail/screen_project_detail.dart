@@ -19,13 +19,13 @@ class _ProjectDetailScreen extends StatelessWidget {
           child: ValueListenableBuilder(
             valueListenable: ctrl.project,
             builder: (_, project, __) =>
-                project?.data?.project.defaultTeam?.id != null && ctrl.apiService.organization.isNotEmpty
+                project?.data?.project.defaultTeam?.id != null && ctrl.api.organization.isNotEmpty
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(100),
                         child: CachedNetworkImage(
                           imageUrl:
-                              '${ctrl.apiService.basePath}/_apis/GraphProfile/MemberAvatars/${project!.data!.project.defaultTeam!.id}?overrideDisplayName=${project.data!.project.name}&size=large',
-                          httpHeaders: ctrl.apiService.headers,
+                              '${ctrl.api.basePath}/_apis/GraphProfile/MemberAvatars/${project!.data!.project.defaultTeam!.id}?overrideDisplayName=${project.data!.project.name}&size=large',
+                          httpHeaders: ctrl.api.headers,
                           errorWidget: (_, __, ___) => const SizedBox(),
                         ),
                       )

@@ -436,7 +436,7 @@ class _PullRequestCommits extends StatelessWidget {
                 onTap: () => ctrl.goToCommitDetail(commit.commitId!),
                 commit: commit.copyWith(
                   remoteUrl:
-                      '${ctrl.apiService.basePath}/${prWithDetails.pr.repository.project.name}/_git/${prWithDetails.pr.repository.name}/commit/${commit.commitId}',
+                      '${ctrl.api.basePath}/${prWithDetails.pr.repository.project.name}/_git/${prWithDetails.pr.repository.name}/commit/${commit.commitId}',
                 ),
                 isLast: commit == commits.last,
               ),

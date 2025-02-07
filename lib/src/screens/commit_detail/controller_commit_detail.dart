@@ -1,10 +1,10 @@
 part of commit_detail;
 
 class _CommitDetailController with ShareMixin {
-  _CommitDetailController._(this.args, this.apiService);
+  _CommitDetailController._(this.args, this.api);
 
   final CommitDetailArgs args;
-  final AzureApiService apiService;
+  final AzureApiService api;
 
   final commitChanges = ValueNotifier<ApiResponse<CommitWithChanges?>?>(null);
 
@@ -27,7 +27,7 @@ class _CommitDetailController with ShareMixin {
   final groupedDeletedFiles = <String, Set<ChangedFileDiff>>{};
 
   Future<void> init() async {
-    final detailRes = await apiService.getCommitDetail(
+    final detailRes = await api.getCommitDetail(
       projectId: args.project,
       repositoryId: args.repository,
       commitId: args.commitId,
@@ -73,7 +73,7 @@ class _CommitDetailController with ShareMixin {
   }
 
   String get diffUrl =>
-      '${apiService.basePath}/${commit!.projectName}/_git/${commit!.repositoryName}/commit/${commit!.commitId}';
+      '${api.basePath}/${commit!.projectName}/_git/${commit!.repositoryName}/commit/${commit!.commitId}';
 
   void goToProject() {
     AppRouter.goToProjectDetail(commit!.projectName);

@@ -1,13 +1,13 @@
 part of pull_requests;
 
 class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
-  _PullRequestsController._(this.apiService, this.storageService, this.args, this.adsService) {
+  _PullRequestsController._(this.api, this.storage, this.args, this.ads) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
 
-  final AzureApiService apiService;
-  final StorageService storageService;
-  final AdsService adsService;
+  final AzureApiService api;
+  final StorageService storage;
+  final AdsService ads;
   final PullRequestArgs? args;
 
   final pullRequests = ValueNotifier<ApiResponse<List<PullRequest>?>?>(null);
@@ -21,8 +21,8 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
   String? _currentSearchQuery;
 
   late final filtersService = FiltersService(
-    storageService: storageService,
-    organization: apiService.organization,
+    storage: storage,
+    organization: api.organization,
   );
 
   /// Read/write filters from local storage only if user is not coming from project page or from shortcut
@@ -41,7 +41,7 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
   }
 
   Future<void> _getDataAndAds() async {
-    await getNewNativeAds(adsService);
+    await getNewNativeAds(ads);
     await _getData();
   }
 
@@ -57,7 +57,7 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
   void _fillFilters(PullRequestsFilters savedFilters) {
     if (savedFilters.projects.isNotEmpty) {
-      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+      projectsFilter = getProjects(storage).where((p) => savedFilters.projects.contains(p.name)).toSet();
     }
 
     if (savedFilters.status.isNotEmpty) {
@@ -65,12 +65,11 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
     }
 
     if (savedFilters.openedBy.isNotEmpty) {
-      usersFilter = getSortedUsers(apiService).where((p) => savedFilters.openedBy.contains(p.mailAddress)).toSet();
+      usersFilter = getSortedUsers(api).where((p) => savedFilters.openedBy.contains(p.mailAddress)).toSet();
     }
 
     if (savedFilters.assignedTo.isNotEmpty) {
-      reviewersFilter =
-          getSortedUsers(apiService).where((p) => savedFilters.assignedTo.contains(p.mailAddress)).toSet();
+      reviewersFilter = getSortedUsers(api).where((p) => savedFilters.assignedTo.contains(p.mailAddress)).toSet();
     }
   }
 
@@ -132,7 +131,7 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
   }
 
   Future<void> _getData() async {
-    final res = await apiService.getPullRequests(
+    final res = await api.getPullRequests(
       status: statusFilter,
       creators: isDefaultUsersFilter ? null : usersFilter,
       projects: isDefaultProjectsFilter ? null : projectsFilter,
@@ -218,7 +217,7 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
         );
         if (!conf) return;
 
-        apiService.removeChosenProject(deletedProject);
+        api.removeChosenProject(deletedProject);
 
         final updatedProjectFilter = {...projectsFilter}..removeWhere((p) => p.name == deletedProject);
         filterByProjects(updatedProjectFilter);

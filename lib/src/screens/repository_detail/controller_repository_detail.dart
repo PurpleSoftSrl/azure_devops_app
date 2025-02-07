@@ -1,11 +1,10 @@
 part of repository_detail;
 
 class _RepositoryDetailController {
-  _RepositoryDetailController._(this.apiService, this.args);
+  _RepositoryDetailController._(this.api, this.args);
 
   final RepoDetailArgs args;
-
-  final AzureApiService apiService;
+  final AzureApiService api;
 
   final repoItems = ValueNotifier<ApiResponse<List<RepoItem>?>?>(null);
 
@@ -14,7 +13,7 @@ class _RepositoryDetailController {
   Branch? currentBranch;
 
   Future<void> init() async {
-    final branchesRes = await apiService.getRepositoryBranches(
+    final branchesRes = await api.getRepositoryBranches(
       projectName: args.projectName,
       repoName: args.repositoryName,
     );
@@ -32,7 +31,7 @@ class _RepositoryDetailController {
   }
 
   Future<void> _getRepoItems() async {
-    final itemsRes = await apiService.getRepositoryItems(
+    final itemsRes = await api.getRepositoryItems(
       projectName: args.projectName,
       repoName: args.repositoryName,
       path: args.filePath ?? '/',

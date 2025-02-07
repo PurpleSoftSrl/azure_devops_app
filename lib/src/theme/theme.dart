@@ -48,13 +48,13 @@ class AppTheme {
 
   static bool isTablet = _platformMediaQuery.size.width >= tabletBreakpoint;
 
-  static StorageService get storageService => StorageServiceCore();
+  static StorageService get storage => StorageServiceCore();
 
-  static bool get isLightTheme => storageService.getThemeMode() == 'light';
+  static bool get isLightTheme => storage.getThemeMode() == 'light';
 
-  static bool get isDarkTheme => storageService.getThemeMode() == 'dark';
+  static bool get isDarkTheme => storage.getThemeMode() == 'dark';
 
-  static bool get isSystemTheme => storageService.getThemeMode().isEmpty || storageService.getThemeMode() == 'system';
+  static bool get isSystemTheme => storage.getThemeMode().isEmpty || storage.getThemeMode() == 'system';
 
   static String get themeMode {
     if (isSystemTheme) return 'System';

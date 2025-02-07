@@ -1,10 +1,10 @@
 part of home;
 
 class _HomeController with AppLogger {
-  _HomeController._(this.apiService, this.storageService, this.purchase);
+  _HomeController._(this.api, this.storage, this.purchase);
 
-  final AzureApiService apiService;
-  final StorageService storageService;
+  final AzureApiService api;
+  final StorageService storage;
   final PurchaseService purchase;
 
   final projects = ValueNotifier<ApiResponse<List<Project>>?>(null);
@@ -16,8 +16,8 @@ class _HomeController with AppLogger {
   bool get hasManyProjects => _projectsCount > 10;
 
   late final filtersService = FiltersService(
-    storageService: storageService,
-    organization: apiService.organization,
+    storage: storage,
+    organization: api.organization,
   );
 
   List<SavedShortcut> shortcuts = [];
@@ -25,12 +25,12 @@ class _HomeController with AppLogger {
   final visibilityKey = GlobalKey();
 
   Future<void> init() async {
-    final allProjectsRes = await apiService.getProjects();
+    final allProjectsRes = await api.getProjects();
     allProjects = allProjectsRes.data ?? [];
 
     await purchase.init(
-      userId: apiService.user?.emailAddress,
-      userName: apiService.user?.displayName,
+      userId: api.user?.emailAddress,
+      userName: api.user?.displayName,
     );
 
     // avoid resetting projects if response is error (and thus contains zero projects)
@@ -39,7 +39,7 @@ class _HomeController with AppLogger {
       return;
     }
 
-    final alreadyChosenProjects = storageService.getChosenProjects();
+    final alreadyChosenProjects = storage.getChosenProjects();
 
     final existentProjects = alreadyChosenProjects.where((p) => allProjects.map((e) => e.id!).contains(p.id));
     final sortedProjects = existentProjects.toList()..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!));
@@ -52,7 +52,7 @@ class _HomeController with AppLogger {
 
     projects.value = ApiResponse.ok(sortedProjects);
 
-    storageService.setChosenProjects(existentProjects);
+    storage.setChosenProjects(existentProjects);
 
     _configureSentryAndFirebase();
 
@@ -105,9 +105,9 @@ class _HomeController with AppLogger {
   }
 
   void _configureSentryAndFirebase() {
-    final userId = apiService.user?.id ?? 'uknown-id';
-    final email = apiService.user?.emailAddress ?? 'unknown-user';
-    final org = apiService.organization;
+    final userId = api.user?.id ?? 'uknown-id';
+    final email = api.user?.emailAddress ?? 'unknown-user';
+    final org = api.organization;
 
     Sentry.configureScope((sc) async {
       await sc.setUser(SentryUser(id: userId, email: email));
@@ -123,7 +123,7 @@ class _HomeController with AppLogger {
 
   /// Shows review dialog only the 5th time the app is opened.
   Future<void> _maybeRequestReview() async {
-    final sessionCount = storageService.numberOfSessions;
+    final sessionCount = storage.numberOfSessions;
     if (sessionCount == 5) {
       final inAppReview = InAppReview.instance;
 
@@ -133,12 +133,12 @@ class _HomeController with AppLogger {
       }
     }
 
-    storageService.increaseNumberOfSessions();
+    storage.increaseNumberOfSessions();
   }
 
   void _logSession() {
     Timer(Duration(seconds: 5), () {
-      if (apiService.user != null) logInfo('5 seconds session');
+      if (api.user != null) logInfo('5 seconds session');
     });
   }
 
@@ -244,7 +244,7 @@ class _HomeController with AppLogger {
   }
 
   void _maybeShowSubscriptionBottomsheet() {
-    if (storageService.hasSeenSubscriptionAddedBottomsheet) return;
+    if (storage.hasSeenSubscriptionAddedBottomsheet) return;
 
     // ignore: unawaited_futures
     OverlayService.bottomsheet(
@@ -261,7 +261,7 @@ class _HomeController with AppLogger {
       ),
     );
 
-    storageService.setHasSeenSubscriptionAddedBottomsheet();
+    storage.setHasSeenSubscriptionAddedBottomsheet();
   }
 
   void _goToChooseSubscription() {

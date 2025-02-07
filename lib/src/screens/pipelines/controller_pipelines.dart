@@ -1,13 +1,13 @@
 part of pipelines;
 
 class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
-  _PipelinesController._(this.apiService, this.storageService, this.args, this.adsService) {
+  _PipelinesController._(this.api, this.storage, this.args, this.ads) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
 
-  final AzureApiService apiService;
-  final StorageService storageService;
-  final AdsService adsService;
+  final AzureApiService api;
+  final StorageService storage;
+  final AdsService ads;
   final PipelinesArgs? args;
 
   final pipelines = ValueNotifier<ApiResponse<List<Pipeline>?>?>(null);
@@ -26,8 +26,8 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
   var _hasStoppedTimer = false;
 
   late final filtersService = FiltersService(
-    storageService: storageService,
-    organization: apiService.organization,
+    storage: storage,
+    organization: api.organization,
   );
 
   bool get isDefaultPipelineNamesFilter => pipelineNamesFilter.isEmpty;
@@ -74,7 +74,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
   }
 
   Future<void> _getDataAndAds() async {
-    await getNewNativeAds(adsService);
+    await getNewNativeAds(ads);
     await _getData();
   }
 
@@ -90,7 +90,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
 
   void _fillFilters(PipelinesFilters savedFilters) {
     if (savedFilters.projects.isNotEmpty) {
-      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+      projectsFilter = getProjects(storage).where((p) => savedFilters.projects.contains(p.name)).toSet();
     }
 
     if (savedFilters.pipelines.isNotEmpty) {
@@ -98,7 +98,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
     }
 
     if (savedFilters.triggeredBy.isNotEmpty) {
-      usersFilter = getSortedUsers(apiService).where((p) => savedFilters.triggeredBy.contains(p.mailAddress)).toSet();
+      usersFilter = getSortedUsers(api).where((p) => savedFilters.triggeredBy.contains(p.mailAddress)).toSet();
     }
 
     if (savedFilters.result.isNotEmpty) {
@@ -111,7 +111,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
   Future<void> _getData() async {
     final now = DateTime.now();
 
-    final res = await apiService.getRecentPipelines(
+    final res = await api.getRecentPipelines(
       projects: isDefaultProjectsFilter ? null : projectsFilter,
       definition: args?.definition,
       result: resultFilter,
@@ -281,7 +281,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
         );
         if (!conf) return;
 
-        apiService.removeChosenProject(deletedProject);
+        api.removeChosenProject(deletedProject);
 
         final updatedProjectFilter = {...projectsFilter}..removeWhere((p) => p.name == deletedProject);
         filterByProjects(updatedProjectFilter);

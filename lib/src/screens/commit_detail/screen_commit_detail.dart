@@ -43,13 +43,13 @@ class _CommitDetailScreen extends StatelessWidget {
                             author.name!,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          if (ctrl.apiService.organization.isNotEmpty && author.imageUrl != null) ...[
+                          if (ctrl.api.organization.isNotEmpty && author.imageUrl != null) ...[
                             const SizedBox(
                               width: 20,
                             ),
                             MemberAvatar(
                               // shows placeholder image for committers not inside the organization
-                              imageUrl: author.imageUrl!.startsWith(ctrl.apiService.basePath) ? null : author.imageUrl,
+                              imageUrl: author.imageUrl!.startsWith(ctrl.api.basePath) ? null : author.imageUrl,
                               userDescriptor: author.imageUrl!.split('/').last,
                               radius: 30,
                             ),

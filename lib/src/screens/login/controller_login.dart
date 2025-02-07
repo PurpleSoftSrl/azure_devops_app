@@ -1,9 +1,9 @@
 part of login;
 
 class _LoginController with AppLogger {
-  _LoginController._(this.apiService);
+  _LoginController._(this.api);
 
-  final AzureApiService apiService;
+  final AzureApiService api;
 
   final formFieldKey = GlobalKey<FormFieldState<dynamic>>();
 
@@ -29,7 +29,7 @@ class _LoginController with AppLogger {
   }
 
   Future<void> _loginAndNavigate(String token, {required bool isPat}) async {
-    final isLogged = await apiService.login(token);
+    final isLogged = await api.login(token);
 
     final isFailed = [LoginStatus.failed, LoginStatus.unauthorized].contains(isLogged);
 
@@ -44,7 +44,7 @@ class _LoginController with AppLogger {
       final hasSetOrg = await _setOrgManually();
       if (!hasSetOrg) return;
 
-      final isLoggedManually = await apiService.login(pat);
+      final isLoggedManually = await api.login(pat);
       if (isLoggedManually == LoginStatus.failed) {
         _showLoginErrorAlert();
         return;
@@ -109,7 +109,7 @@ class _LoginController with AppLogger {
     if (!hasSetOrg) return false;
     if (manualOrg == null || manualOrg!.isEmpty) return false;
 
-    await apiService.setOrganization(manualOrg!);
+    await api.setOrganization(manualOrg!);
 
     return true;
   }

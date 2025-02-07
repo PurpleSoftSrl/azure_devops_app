@@ -1,12 +1,12 @@
 part of settings;
 
 class _SettingsController with ShareMixin, AppLogger {
-  _SettingsController._(this.apiService, this.storageService);
+  _SettingsController._(this.api, this.storage);
 
-  final AzureApiService apiService;
-  final StorageService storageService;
+  final AzureApiService api;
+  final StorageService storage;
 
-  late String gitUsername = apiService.user!.emailAddress!;
+  late String gitUsername = api.user!.emailAddress!;
 
   String appVersion = '';
 
@@ -18,7 +18,7 @@ class _SettingsController with ShareMixin, AppLogger {
     final info = await PackageInfo.fromPlatform();
     appVersion = info.version;
 
-    final orgs = await apiService.getOrganizations();
+    final orgs = await api.getOrganizations();
     // copyWith is needed to make page visible even if getOrganizations returns 401
     organizations.value = orgs.copyWith(isError: false, data: []);
   }
@@ -38,7 +38,7 @@ class _SettingsController with ShareMixin, AppLogger {
     );
     if (!confirm) return;
 
-    await apiService.logout();
+    await api.logout();
     await MsalService().logout();
 
     // Rebuild app to reset dependencies. This is needed to fix user null error after logout and login
@@ -57,11 +57,11 @@ class _SettingsController with ShareMixin, AppLogger {
 
   void changeThemeMode(String mode) {
     PurpleTheme.of(AppRouter.rootNavigator!.context).changeTheme(mode);
-    storageService.setThemeMode(mode);
+    storage.setThemeMode(mode);
   }
 
   void clearLocalStorage() {
-    storageService.clearNoToken();
+    storage.clearNoToken();
 
     OverlayService.snackbar('Cache cleared!');
 
@@ -82,12 +82,12 @@ class _SettingsController with ShareMixin, AppLogger {
     final selectedOrg = await _selectOrganization(organizations.value!.data!);
     if (selectedOrg == null) return;
 
-    apiService.switchOrganization(selectedOrg.accountName!);
+    api.switchOrganization(selectedOrg.accountName!);
     unawaited(AppRouter.goToSplash());
   }
 
   Future<Organization?> _selectOrganization(List<Organization> organizations) async {
-    final currentOrg = storageService.getOrganization();
+    final currentOrg = storage.getOrganization();
 
     Organization? selectedOrg;
 

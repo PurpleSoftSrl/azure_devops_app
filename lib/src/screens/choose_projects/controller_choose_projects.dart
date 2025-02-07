@@ -1,11 +1,11 @@
 part of choose_projects;
 
 class _ChooseProjectsController {
-  _ChooseProjectsController._(this.apiService, this.removeRoutes, this.storageService);
+  _ChooseProjectsController._(this.api, this.removeRoutes, this.storage);
 
-  final AzureApiService apiService;
+  final AzureApiService api;
   final bool removeRoutes;
-  final StorageService storageService;
+  final StorageService storage;
 
   final chosenProjects = ValueNotifier<ApiResponse<List<Project>?>?>(null);
   final visibleProjects = ValueNotifier<List<Project>>([]);
@@ -19,18 +19,17 @@ class _ChooseProjectsController {
   Iterable<Project> alreadyChosenProjects = [];
 
   Future<void> init() async {
-    final org = storageService.getOrganization();
+    final org = storage.getOrganization();
     if (org.isEmpty) {
       await _chooseOrg();
     }
 
     allProjects = [];
 
-    final projectsRes = await apiService.getProjects();
+    final projectsRes = await api.getProjects();
     final projects = projectsRes.data ?? <Project>[];
 
-    alreadyChosenProjects =
-        storageService.getChosenProjects().where((p) => projects.map((p1) => p1.id!).contains(p.id));
+    alreadyChosenProjects = storage.getChosenProjects().where((p) => projects.map((p1) => p1.id!).contains(p.id));
 
     // sort projects by last change date, already chosen projects go first.
     if (alreadyChosenProjects.isNotEmpty) {
@@ -81,7 +80,7 @@ class _ChooseProjectsController {
       );
     }
 
-    apiService.setChosenProjects(
+    api.setChosenProjects(
       chosenProjects.value!.data!..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)),
     );
 
@@ -91,7 +90,7 @@ class _ChooseProjectsController {
       final hasChangedProjects = _initiallyChosenProjects != chosenProjects.value!.data!;
       if (hasChangedProjects) {
         // get new work item types to avoid errors in work items creation
-        unawaited(apiService.getWorkItemTypes(force: true));
+        unawaited(api.getWorkItemTypes(force: true));
       }
 
       AppRouter.popRoute();
@@ -99,7 +98,7 @@ class _ChooseProjectsController {
   }
 
   Future<void> _chooseOrg() async {
-    final orgsRes = await apiService.getOrganizations();
+    final orgsRes = await api.getOrganizations();
     if (orgsRes.isError) {
       return OverlayService.error(
         'Error trying to get your organizations',
@@ -117,7 +116,7 @@ class _ChooseProjectsController {
     }
 
     if (orgs.length < 2) {
-      await apiService.setOrganization(orgs.first.accountName!);
+      await api.setOrganization(orgs.first.accountName!);
       return;
     }
 
@@ -125,7 +124,7 @@ class _ChooseProjectsController {
 
     if (selectedOrg == null) return;
 
-    await apiService.setOrganization(selectedOrg.accountName!);
+    await api.setOrganization(selectedOrg.accountName!);
   }
 
   Future<Organization?> _selectOrganization(List<Organization> orgs) async {

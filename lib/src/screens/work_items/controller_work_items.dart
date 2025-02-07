@@ -1,13 +1,13 @@
 part of work_items;
 
 class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
-  _WorkItemsController._(this.apiService, this.storageService, this.args, this.adsService) {
+  _WorkItemsController._(this.api, this.storage, this.args, this.ads) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
 
-  final AzureApiService apiService;
-  final StorageService storageService;
-  final AdsService adsService;
+  final AzureApiService api;
+  final StorageService storage;
+  final AdsService ads;
   final WorkItemsArgs? args;
 
   final workItems = ValueNotifier<ApiResponse<List<WorkItem>?>?>(null);
@@ -32,8 +32,8 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
   bool get isDefaultStateCategoryFilter => stateCategoriesFilter.isEmpty;
 
   late final filtersService = FiltersService(
-    storageService: storageService,
-    organization: apiService.organization,
+    storage: storage,
+    organization: api.organization,
   );
 
   /// Read/write filters from local storage only if user is not coming from project page or from shortcut
@@ -56,7 +56,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
     allWorkItemTypes = [];
     allWorkItemStates = statesFilter.toList();
 
-    final types = await apiService.getWorkItemTypes();
+    final types = await api.getWorkItemTypes();
     if (!types.isError) {
       _fillTypesAndStates(types.data!.values);
 
@@ -75,14 +75,14 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     if (shouldPersistFilters) {
       if (savedFilters?.area.isNotEmpty ?? false) {
-        areaFilter = apiService.workItemAreas.values
+        areaFilter = api.workItemAreas.values
             .expand((a) => a)
             .expand((a) => [a, if (a.children != null) ...a.children!])
             .firstWhereOrNull((a) => a.path == savedFilters!.area.first);
       }
 
       if (savedFilters?.iteration.isNotEmpty ?? false) {
-        apiService.workItemIterations.values
+        api.workItemIterations.values
             .expand((a) => a)
             .expand((a) => [a, if (a.children != null) ...a.children!])
             .firstWhereOrNull((a) => a.path == savedFilters!.iteration.first);
@@ -91,7 +91,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
   }
 
   Future<void> _getDataAndAds() async {
-    await getNewNativeAds(adsService);
+    await getNewNativeAds(ads);
     await _getData();
   }
 
@@ -110,7 +110,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
   WorkItemsFilters _fillFilters(WorkItemsFilters savedFilters) {
     if (savedFilters.projects.isNotEmpty) {
-      projectsFilter = getProjects(storageService).where((p) => savedFilters.projects.contains(p.name)).toSet();
+      projectsFilter = getProjects(storage).where((p) => savedFilters.projects.contains(p.name)).toSet();
     }
 
     if (savedFilters.assignees.isNotEmpty) {
@@ -154,7 +154,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     final allStatesToAdd = <WorkItemState>{};
 
-    for (final entry in apiService.workItemStates.values) {
+    for (final entry in api.workItemStates.values) {
       final states = entry.values.expand((v) => v);
       allStatesToAdd.addAll(states);
     }
@@ -176,12 +176,12 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
     projectsFilter = projects;
 
     for (final project in projectsFilter) {
-      final projectAreas = apiService.workItemAreas[project.name!];
+      final projectAreas = api.workItemAreas[project.name!];
       if (projectAreas != null && projectAreas.isNotEmpty) {
         _resetAreaFilterIfNecessary(projectAreas);
       }
 
-      final projectIterations = apiService.workItemIterations[project.name!];
+      final projectIterations = api.workItemIterations[project.name!];
       if (projectIterations != null && projectIterations.isNotEmpty) {
         _resetIterationFilterIfNecessary(projectIterations);
       }
@@ -308,14 +308,14 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
     }
 
     if (hasSavedQuery) {
-      final savedQueryRes = await apiService.getProjectSavedQuery(
+      final savedQueryRes = await api.getProjectSavedQuery(
         projectName: args!.savedQuery!.projectId,
         queryId: args!.savedQuery!.id,
       );
       savedQuery.value = savedQueryRes.data;
     }
 
-    final res = await apiService.getWorkItems(
+    final res = await api.getWorkItems(
       projects: isDefaultProjectsFilter ? null : projectsFilter,
       types: typesFilter.isEmpty ? null : typesFilter,
       states: states,
@@ -370,7 +370,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
   }
 
   List<GraphUser> getAssignees() {
-    final users = getSortedUsers(apiService, withUserAll: false);
+    final users = getSortedUsers(api, withUserAll: false);
     final unassigned = GraphUser(displayName: 'Unassigned', mailAddress: 'unassigned');
     return users..insert(0, unassigned);
   }
@@ -383,7 +383,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
     bool hasRealChildren(List<AreaOrIteration>? as) =>
         as != null && (as.length > 1 || (as.first.children?.isNotEmpty ?? false));
 
-    final areas = apiService.workItemAreas;
+    final areas = api.workItemAreas;
 
     if (areas.isEmpty) return [];
 
@@ -398,7 +398,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
   // otherwise if user has selected a project show only iterations of the selected project,
   // otherwise show all iterations.
   Iterable<AreaOrIteration> getIterationsToShow() {
-    final iterations = apiService.workItemIterations;
+    final iterations = api.workItemIterations;
     if (iterations.isEmpty) return [];
 
     final hasProjectFilter = projectsFilter.isNotEmpty;
@@ -479,7 +479,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
         );
         if (!conf) return;
 
-        apiService.removeChosenProject(deletedProject);
+        api.removeChosenProject(deletedProject);
 
         final updatedProjectFilter = {...projectsFilter}..removeWhere((p) => p.name == deletedProject);
         filterByProjects(updatedProjectFilter);
@@ -498,7 +498,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
         );
         if (!conf) return;
 
-        await apiService.getWorkItemTypes(force: true);
+        await api.getWorkItemTypes(force: true);
         filterByIteration(null);
       }
 
@@ -515,7 +515,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
         );
         if (!conf) return;
 
-        await apiService.getWorkItemTypes(force: true);
+        await api.getWorkItemTypes(force: true);
         filterByArea(null);
       }
 

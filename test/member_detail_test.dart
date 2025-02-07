@@ -10,8 +10,8 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Page building test', (t) async {
-    final memberPage = AzureApiServiceInherited(
-      apiService: AzureApiServiceMock(),
+    final memberPage = AzureApiServiceWidget(
+      api: AzureApiServiceMock(),
       child: MaterialApp(
         theme: mockTheme,
         onGenerateRoute: (_) => MaterialPageRoute(

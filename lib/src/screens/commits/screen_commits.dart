@@ -25,26 +25,24 @@ class _CommitsScreen extends StatelessWidget {
               filters: [
                 FilterMenu<Project>.multiple(
                   title: 'Projects',
-                  values: ctrl.getProjects(ctrl.storageService, withProjectAll: false),
+                  values: ctrl.getProjects(ctrl.storage, withProjectAll: false),
                   currentFilters: ctrl.projectsFilter,
                   onSelectedMultiple: ctrl.filterByProjects,
                   formatLabel: (p) => p.name!,
                   isDefaultFilter: ctrl.isDefaultProjectsFilter,
                   widgetBuilder: (p) => ProjectFilterWidget(project: p),
-                  onSearchChanged: ctrl.hasManyProjects(ctrl.storageService)
-                      ? (s) => ctrl.searchProject(s, ctrl.storageService)
-                      : null,
+                  onSearchChanged:
+                      ctrl.hasManyProjects(ctrl.storage) ? (s) => ctrl.searchProject(s, ctrl.storage) : null,
                 ),
                 FilterMenu<GraphUser>.multiple(
                   title: 'Authors',
-                  values: ctrl.getSortedUsers(ctrl.apiService, withUserAll: false),
+                  values: ctrl.getSortedUsers(ctrl.api, withUserAll: false),
                   currentFilters: ctrl.usersFilter,
                   onSelectedMultiple: ctrl.filterByUsers,
-                  formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.apiService),
+                  formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.api),
                   isDefaultFilter: ctrl.isDefaultUsersFilter,
                   widgetBuilder: (u) => UserFilterWidget(user: u),
-                  onSearchChanged:
-                      ctrl.hasManyUsers(ctrl.apiService) ? (s) => ctrl.searchUser(s, ctrl.apiService) : null,
+                  onSearchChanged: ctrl.hasManyUsers(ctrl.api) ? (s) => ctrl.searchUser(s, ctrl.api) : null,
                 ),
               ],
             ),
