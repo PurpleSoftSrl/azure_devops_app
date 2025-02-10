@@ -7,7 +7,7 @@ class BacklogsResponse {
 
   factory BacklogsResponse.fromJson(Map<String, dynamic> json) => BacklogsResponse(
         boards: List<Backlog>.from(
-          (json['value'] as List<dynamic>).map((x) => Backlog.fromJson(x as Map<String, dynamic>)),
+          (json['value'] as List<dynamic>? ?? []).map((x) => Backlog.fromJson(x as Map<String, dynamic>)),
         ),
       );
 

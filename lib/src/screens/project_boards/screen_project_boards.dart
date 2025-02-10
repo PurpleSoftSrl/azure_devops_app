@@ -14,7 +14,8 @@ class _ProjectBoardsScreen extends StatelessWidget {
       notifier: ctrl.projectBoards,
       builder: (boards) {
         final teamBoards = {
-          for (final teamBoard in boards!.entries) teamBoard.key: teamBoard.value.boards,
+          for (final teamBoard in boards!.entries.where((t) => t.value.boards.isNotEmpty))
+            teamBoard.key: teamBoard.value.boards,
         };
 
         final teamSprints = {
@@ -24,46 +25,48 @@ class _ProjectBoardsScreen extends StatelessWidget {
 
         return Column(
           children: [
-            SectionHeader.withIcon(
-              text: 'Boards',
-              icon: DevOpsIcons.board,
-              mainAxisAlignment: MainAxisAlignment.center,
-              marginTop: 0,
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            ...teamBoards.entries.map(
-              (tb) => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    tb.key.name,
-                    style: context.textTheme.bodyMedium,
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  ...tb.value.map(
-                    (board) => NavigationButton(
-                      onTap: () => ctrl.goToBoardDetail(tb.key, board),
-                      margin: board == tb.value.first ? EdgeInsets.zero : const EdgeInsets.only(top: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(child: Text(board.name)),
-                          Icon(Icons.arrow_forward_ios),
-                        ],
+            if (teamBoards.isNotEmpty) ...[
+              SectionHeader.withIcon(
+                text: 'Boards',
+                icon: DevOpsIcons.board,
+                mainAxisAlignment: MainAxisAlignment.center,
+                marginTop: 0,
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              ...teamBoards.entries.map(
+                (tb) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      tb.key.name,
+                      style: context.textTheme.bodyMedium,
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    ...tb.value.map(
+                      (board) => NavigationButton(
+                        onTap: () => ctrl.goToBoardDetail(tb.key, board),
+                        margin: board == tb.value.first ? EdgeInsets.zero : const EdgeInsets.only(top: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(child: Text(board.name)),
+                            Icon(Icons.arrow_forward_ios),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                ],
+                    const SizedBox(
+                      height: 16,
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
             if (teamSprints.isNotEmpty) ...[
               SectionHeader.withIcon(
                 text: 'Sprints',

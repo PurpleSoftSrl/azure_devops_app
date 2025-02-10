@@ -1622,10 +1622,14 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final visibleBoards = <String, List<({String backlogId, String backlogname})>>{};
 
     for (final team in teams) {
-      final backlogsRes = await _get('$_basePath/$projectName/${team.id}/_apis/work/backlogs?$_apiVersion');
+      final backlogsRes = await _get('$_basePath/$projectName/${team.id}/_apis/work/backlogs2?$_apiVersion');
+      if (backlogsRes.isError) continue;
+
       final backlogs = BacklogsResponse.fromResponse(backlogsRes);
 
       final teamSettingsRes = await _get('$_basePath/$projectName/${team.id}/_apis/work/teamsettings?$_apiVersion');
+      if (teamSettingsRes.isError) continue;
+
       final teamSettings = TeamSettingsResponse.fromResponse(teamSettingsRes);
 
       final visibleBacklogs = backlogs.where((b) => teamSettings.backlogVisibilities[b.id] ?? false).toList();
