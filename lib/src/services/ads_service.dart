@@ -181,6 +181,10 @@ class AdsServiceImpl with AppLogger implements AdsService {
       return;
     }
 
+    if (_isJavascriptEngineNotFound(errorMessage)) {
+      _stopRequestingAds();
+    }
+
     if (_isTooManyFailedRequests(errorMessage)) {
       _pauseRequestingAds();
     }
@@ -193,6 +197,8 @@ class AdsServiceImpl with AppLogger implements AdsService {
 
   bool _isTooManyFailedRequests(String errorMessage) => errorMessage.contains('Too many recently failed requests');
 
+  bool _isJavascriptEngineNotFound(String errorMessage) => errorMessage.contains('Unable to obtain a JavascriptEngine');
+
   /// Stops requesting ads for 30 seconds.
   void _pauseRequestingAds() {
     logDebug('Pausing requesting ads');
@@ -202,6 +208,11 @@ class AdsServiceImpl with AppLogger implements AdsService {
       _showAds = true;
       logDebug('Ads can be requested again');
     });
+  }
+
+  void _stopRequestingAds() {
+    logDebug('Stopping requesting ads');
+    _showAds = false;
   }
 }
 
