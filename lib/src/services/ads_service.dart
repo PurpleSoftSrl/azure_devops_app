@@ -62,7 +62,7 @@ class AdsServiceImpl with AppLogger implements AdsService {
           logDebug('Loaded interstitial ad');
         },
         onAdFailedToLoad: (error) {
-          logError('InterstitialAd failed to load: $error', error);
+          _handleAdFailedToLoad(error, 'interstitial');
         },
       ),
     );
@@ -142,13 +142,14 @@ class AdsServiceImpl with AppLogger implements AdsService {
             }
           },
           onAdFailedToLoad: (ad, error) {
-            logError('NativeAd failed to load: $error', error);
             newNativeAds.add((ad as NativeAd).copyWith(adUnitId: ''));
             ad.dispose();
 
             if (newNativeAds.length >= adsCount) {
               compl.complete(newNativeAds.where((ad) => ad.adUnitId.isNotEmpty).toList());
             }
+
+            _debounce(() => _handleAdFailedToLoad(error, 'native'), const Duration(seconds: 2));
           },
           onAdImpression: (ad) => logDebug('NativeAd onAdImpression.'),
         ),
@@ -166,6 +167,41 @@ class AdsServiceImpl with AppLogger implements AdsService {
     }
 
     return compl.future;
+  }
+
+  void _handleAdFailedToLoad(LoadAdError error, String adType) {
+    final errorCode = error.code;
+    final errorMessage = error.message;
+    final adNetwork = error.responseInfo?.adapterResponses?.firstOrNull?.adSourceInstanceName ?? 'unknown ad source';
+
+    final errorLog = '$adType ad failed to load: Code: $errorCode - Message: $errorMessage - Source: $adNetwork';
+
+    if (_isNetworkError(errorMessage)) {
+      logDebug(errorLog);
+      return;
+    }
+
+    if (_isTooManyFailedRequests(errorMessage)) {
+      _pauseRequestingAds();
+    }
+
+    logError(errorLog, error);
+  }
+
+  bool _isNetworkError(String errorMessage) =>
+      ['Network error', 'Error while connecting to ad server'].any(errorMessage.contains);
+
+  bool _isTooManyFailedRequests(String errorMessage) => errorMessage.contains('Too many recently failed requests');
+
+  /// Stops requesting ads for 30 seconds.
+  void _pauseRequestingAds() {
+    logDebug('Pausing requesting ads');
+    _showAds = false;
+
+    Timer(Duration(seconds: 30), () {
+      _showAds = true;
+      logDebug('Ads can be requested again');
+    });
   }
 }
 
@@ -198,4 +234,10 @@ class AdsServiceWidget extends InheritedWidget {
   bool updateShouldNotify(covariant InheritedWidget oldWidget) {
     return false;
   }
+}
+
+Timer? _debounceTimer;
+void _debounce(dynamic Function() action, Duration duration) {
+  _debounceTimer?.cancel();
+  _debounceTimer = Timer(duration, action);
 }
