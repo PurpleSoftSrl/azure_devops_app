@@ -1,6 +1,6 @@
 part of sprint_detail;
 
-class _SprintDetailController {
+class _SprintDetailController with FilterMixin {
   _SprintDetailController._(this.api, this.args);
 
   final AzureApiService api;
@@ -9,23 +9,53 @@ class _SprintDetailController {
   final sprintWithItems = ValueNotifier<ApiResponse<SprintDetailWithItems>?>(null);
   final columnItems = <BoardColumn, List<WorkItem>>{};
 
+  Set<WorkItemType> typesFilter = {};
+  List<WorkItemType> allWorkItemTypes = [];
+
+  Set<String> get _allowedTypes => _data?.sprint.types?.toSet() ?? {};
+
+  SprintDetailWithItems? _data;
+
   Future<void> init() async {
     final res = await api.getProjectSprint(projectName: args.project, teamId: args.teamId, sprintId: args.sprintId);
+
+    _data = res.data;
+
+    allWorkItemTypes = [];
+
+    _fillColumns();
+    await _fillTypesFilter();
+
     sprintWithItems.value = res;
+  }
 
-    final data = sprintWithItems.value?.data;
-    if (data == null) return;
+  void _fillColumns() {
+    if (_data == null) return;
 
-    for (final column in data.sprint.columns ?? <BoardColumn>[]) {
+    for (final column in _data!.sprint.columns ?? <BoardColumn>[]) {
       columnItems[column] = [];
 
       final columnName = column.name;
-      final itemsToAdd = data.items
+      final itemsToAdd = _data!.items
           .where((item) => item.fields.systemState == columnName)
           .sortedBy((item) => item.fields.systemChangedDate)
           .reversed;
 
-      columnItems[column]!.addAll(itemsToAdd);
+      final filteredByTypes = typesFilter.isEmpty
+          ? itemsToAdd
+          : itemsToAdd.where((i) => typesFilter.map((t) => t.name).contains(i.fields.systemWorkItemType)).toList();
+
+      final filteredByUsers = usersFilter.isEmpty
+          ? filteredByTypes
+          : filteredByTypes
+              .where(
+                (i) => usersFilter
+                    .map((u) => u.displayName == 'Unassigned' ? '' : u.mailAddress)
+                    .contains(i.fields.systemAssignedTo?.uniqueName ?? ''),
+              )
+              .toList();
+
+      columnItems[column]!.addAll(filteredByUsers);
     }
   }
 
@@ -54,5 +84,61 @@ class _SprintDetailController {
 
     await AppRouter.goToCreateOrEditWorkItem(args: addItemArgs);
     await init();
+  }
+
+  Future<void> _fillTypesFilter() async {
+    final types = await api.getWorkItemTypes();
+    if (types.isError) return;
+
+    final typeList = types.data!.values.expand((ts) => ts).where((t) => _allowedTypes.contains(t.name)).toSet();
+
+    final distinctTypeIds = <String>{};
+
+    // get distinct types by name
+    for (final type in typeList) {
+      if (distinctTypeIds.add(type.name)) {
+        allWorkItemTypes.add(type);
+      }
+    }
+  }
+
+  List<GraphUser> getAssignees() {
+    final users = getSortedUsers(api, withUserAll: false);
+    final unassigned = GraphUser(displayName: 'Unassigned', mailAddress: 'unassigned');
+    return users..insert(0, unassigned);
+  }
+
+  void filterByTypes(Set<WorkItemType> types) {
+    typesFilter = types;
+
+    _fillColumns();
+    _refreshUI();
+  }
+
+  void filterByUsers(Set<GraphUser> users) {
+    usersFilter = users;
+
+    _fillColumns();
+    _refreshUI();
+  }
+
+  List<GraphUser> searchAssignee(String query) {
+    final loweredQuery = query.toLowerCase().trim();
+    final users = getAssignees();
+    return users.where((u) => u.displayName != null && u.displayName!.toLowerCase().contains(loweredQuery)).toList();
+  }
+
+  void _refreshUI() {
+    sprintWithItems.value = sprintWithItems.value!.copyWith();
+  }
+
+  void resetFilters() {
+    sprintWithItems.value = null;
+    columnItems.clear();
+
+    typesFilter.clear();
+    usersFilter.clear();
+
+    init();
   }
 }

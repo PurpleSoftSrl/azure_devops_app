@@ -1,6 +1,6 @@
 part of board_detail;
 
-class _BoardDetailController with ApiErrorHelper, AdsMixin {
+class _BoardDetailController with ApiErrorHelper, AdsMixin, FilterMixin {
   _BoardDetailController._(this.api, this.args, this.ads);
 
   final AzureApiService api;
@@ -10,26 +10,52 @@ class _BoardDetailController with ApiErrorHelper, AdsMixin {
   final boardWithItems = ValueNotifier<ApiResponse<BoardDetailWithItems>?>(null);
   final columnItems = <BoardColumn, List<WorkItem>>{};
 
-  Set<String> get _allowedTypes =>
-      boardWithItems.value?.data?.board.columns.firstOrNull?.stateMappings.keys.toSet() ?? {};
+  Set<WorkItemType> typesFilter = {};
+  List<WorkItemType> allWorkItemTypes = [];
+
+  BoardDetailWithItems? _data;
+
+  Set<String> get _allowedTypes => _data?.board.columns.firstOrNull?.stateMappings.keys.toSet() ?? {};
 
   Future<void> init() async {
     final res = await api.getProjectBoard(projectName: args.project, teamId: args.teamId, backlogId: args.backlogId);
+    _data = res.data;
+
+    allWorkItemTypes = [];
+
+    _fillColumns();
+    await _fillTypesFilter();
+
     boardWithItems.value = res;
+  }
 
-    final data = boardWithItems.value?.data;
-    if (data == null) return;
+  void _fillColumns() {
+    if (_data == null) return;
 
-    for (final column in data.board.columns) {
+    for (final column in _data!.board.columns) {
       columnItems[column] = [];
 
       final columnName = column.name;
-      final itemsToAdd = data.items
-          .where((item) => item.fields.boardColumn == columnName)
+      final itemsToAdd = _data!.items
+          .where((i) => i.fields.boardColumn == columnName)
           .sortedBy((item) => item.fields.systemChangedDate)
           .reversed;
 
-      columnItems[column]!.addAll(itemsToAdd);
+      final filteredByTypes = typesFilter.isEmpty
+          ? itemsToAdd
+          : itemsToAdd.where((i) => typesFilter.map((t) => t.name).contains(i.fields.systemWorkItemType)).toList();
+
+      final filteredByUsers = usersFilter.isEmpty
+          ? filteredByTypes
+          : filteredByTypes
+              .where(
+                (i) => usersFilter
+                    .map((u) => u.displayName == 'Unassigned' ? '' : u.mailAddress)
+                    .contains(i.fields.systemAssignedTo?.uniqueName ?? ''),
+              )
+              .toList();
+
+      columnItems[column]!.addAll(filteredByUsers);
     }
   }
 
@@ -108,5 +134,61 @@ class _BoardDetailController with ApiErrorHelper, AdsMixin {
     );
 
     await init();
+  }
+
+  Future<void> _fillTypesFilter() async {
+    final types = await api.getWorkItemTypes();
+    if (types.isError) return;
+
+    final typeList = types.data!.values.expand((ts) => ts).where((t) => _allowedTypes.contains(t.name)).toSet();
+
+    final distinctTypeIds = <String>{};
+
+    // get distinct types by name
+    for (final type in typeList) {
+      if (distinctTypeIds.add(type.name)) {
+        allWorkItemTypes.add(type);
+      }
+    }
+  }
+
+  List<GraphUser> getAssignees() {
+    final users = getSortedUsers(api, withUserAll: false);
+    final unassigned = GraphUser(displayName: 'Unassigned', mailAddress: 'unassigned');
+    return users..insert(0, unassigned);
+  }
+
+  void filterByTypes(Set<WorkItemType> types) {
+    typesFilter = types;
+
+    _fillColumns();
+    _refreshUI();
+  }
+
+  void filterByUsers(Set<GraphUser> users) {
+    usersFilter = users;
+
+    _fillColumns();
+    _refreshUI();
+  }
+
+  List<GraphUser> searchAssignee(String query) {
+    final loweredQuery = query.toLowerCase().trim();
+    final users = getAssignees();
+    return users.where((u) => u.displayName != null && u.displayName!.toLowerCase().contains(loweredQuery)).toList();
+  }
+
+  void _refreshUI() {
+    boardWithItems.value = boardWithItems.value!.copyWith();
+  }
+
+  void resetFilters() {
+    boardWithItems.value = null;
+    columnItems.clear();
+
+    typesFilter.clear();
+    usersFilter.clear();
+
+    init();
   }
 }

@@ -1740,11 +1740,13 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final sprint = Sprint.fromResponse(sprintRes);
 
-    final states = SprintStatesResponse.fromResponse(columnsRes);
+    final sprintDetail = SprintDetailResponse.fromResponse(columnsRes);
+
     final teamDefaultArea = teamAreasRes.isError ? null : TeamAreasResponse.fromResponse(teamAreasRes).defaultValue;
 
     sprint
-      ..columns = states.map((s) => BoardColumn.fromState(state: s))
+      ..columns = sprintDetail.states.map((s) => BoardColumn.fromState(state: s)).toList()
+      ..types = sprintDetail.types
       ..teamDefaultArea = teamDefaultArea;
 
     final itemIds = SprintItemsResponse.fromResponse(itemsRes).map((i) => i.target.id);

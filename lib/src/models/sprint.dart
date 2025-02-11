@@ -43,8 +43,9 @@ class Sprint {
   final String path;
   final SprintAttributes attributes;
 
-  Iterable<BoardColumn>? columns;
+  List<BoardColumn>? columns;
   String? teamDefaultArea;
+  List<String>? types;
 }
 
 class SprintAttributes {
@@ -108,21 +109,20 @@ class _Target {
   final int id;
 }
 
-class SprintStatesResponse {
-  SprintStatesResponse({required this.fps});
+class SprintDetailResponse {
+  SprintDetailResponse({required this.fps});
 
-  factory SprintStatesResponse.fromJson(Map<String, dynamic> json) => SprintStatesResponse(
+  factory SprintDetailResponse.fromJson(Map<String, dynamic> json) => SprintDetailResponse(
         fps: _Fps.fromJson(json['fps'] as Map<String, dynamic>? ?? {}),
       );
 
-  static List<String> fromResponse(Response res) =>
-      SprintStatesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>)
+  static _TaskboardModel fromResponse(Response res) =>
+      SprintDetailResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>)
           .fps
           .dataProviders
           .data
           .taskboardData
-          .taskboardModel
-          .states;
+          .taskboardModel;
 
   final _Fps fps;
 }
@@ -173,11 +173,13 @@ class _MsVssWorkWebNewSprintsHubTaskboardDataProvider {
 }
 
 class _TaskboardModel {
-  _TaskboardModel({required this.states});
+  _TaskboardModel({required this.states, required this.types});
 
   factory _TaskboardModel.fromJson(Map<String, dynamic> json) => _TaskboardModel(
         states: List<String>.from(json['states'] as List<dynamic>? ?? []),
+        types: List<String>.from((json['transitions'] as Map<String, dynamic>? ?? {}).keys.toList()),
       );
 
   final List<String> states;
+  final List<String> types;
 }

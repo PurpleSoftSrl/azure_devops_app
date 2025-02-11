@@ -17,12 +17,12 @@ class FiltersRow extends StatelessWidget {
   const FiltersRow({
     required this.filters,
     required this.resetFilters,
-    required this.saveFilters,
+    this.saveFilters,
   });
 
   final List<FilterMenu<Object?>> filters;
   final VoidCallback resetFilters;
-  final VoidCallback saveFilters;
+  final VoidCallback? saveFilters;
 
   @override
   Widget build(BuildContext context) {
@@ -373,12 +373,12 @@ class _FilterBottomsheet<T> extends StatelessWidget {
 class _FiltersActionsMenu extends StatelessWidget {
   const _FiltersActionsMenu({
     required this.resetFilters,
-    required this.saveFilters,
+    this.saveFilters,
     required this.selectedFiltersCount,
   });
 
   final VoidCallback resetFilters;
-  final VoidCallback saveFilters;
+  final VoidCallback? saveFilters;
   final int selectedFiltersCount;
 
   @override
@@ -392,11 +392,12 @@ class _FiltersActionsMenu extends StatelessWidget {
           text: 'Reset filters',
           icon: DevOpsIcons.failed,
         ),
-        PopupItem(
-          onTap: saveFilters,
-          text: 'Save filters',
-          icon: Icons.save_outlined,
-        ),
+        if (saveFilters != null)
+          PopupItem(
+            onTap: saveFilters!,
+            text: 'Save filters',
+            icon: Icons.save_outlined,
+          ),
       ],
       child: Chip(
         visualDensity: VisualDensity.compact,
