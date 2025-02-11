@@ -597,7 +597,8 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
             fieldData.controller.text = text.formatted;
 
             if (fieldData.editorController != null) {
-              _trySetText(fieldData, text);
+              // wait a bit because the editor might not be initialized yet
+              Timer(Duration(milliseconds: 500), () => _trySetText(fieldData, text));
             }
           }
         }
@@ -621,7 +622,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
   void _trySetText(DynamicFieldData fieldData, String text) {
     try {
       fieldData.editorController!.setText(text);
-    } catch (e) {
+    } catch (_) {
       // ignore
     }
   }
