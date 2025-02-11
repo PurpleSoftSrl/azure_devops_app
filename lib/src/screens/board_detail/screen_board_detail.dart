@@ -15,10 +15,7 @@ class _BoardDetailScreen extends StatelessWidget {
         notifier: ctrl.boardWithItems,
         padding: EdgeInsets.zero,
         actions: [
-          IconButton(
-            icon: const Icon(DevOpsIcons.plus),
-            onPressed: ctrl.addNewItem,
-          ),
+          _Actions(ctrl: ctrl),
         ],
         header: () => FiltersRow(
           resetFilters: ctrl.resetFilters,

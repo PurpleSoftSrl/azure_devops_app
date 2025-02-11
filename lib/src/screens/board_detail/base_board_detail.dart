@@ -19,6 +19,7 @@ import 'package:azure_devops/src/widgets/board_widget.dart';
 import 'package:azure_devops/src/widgets/filter_menu.dart';
 import 'package:azure_devops/src/widgets/navigation_button.dart';
 import 'package:azure_devops/src/widgets/popup_menu.dart';
+import 'package:azure_devops/src/widgets/search_field.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 

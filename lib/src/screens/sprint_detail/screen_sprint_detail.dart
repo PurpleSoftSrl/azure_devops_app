@@ -15,10 +15,7 @@ class _SprintDetailScreen extends StatelessWidget {
         notifier: ctrl.sprintWithItems,
         padding: EdgeInsets.zero,
         actions: [
-          IconButton(
-            icon: const Icon(DevOpsIcons.plus),
-            onPressed: ctrl.addNewItem,
-          ),
+          _Actions(ctrl: ctrl),
         ],
         header: () => FiltersRow(
           resetFilters: ctrl.resetFilters,

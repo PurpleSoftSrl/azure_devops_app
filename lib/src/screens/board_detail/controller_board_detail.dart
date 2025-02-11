@@ -17,6 +17,9 @@ class _BoardDetailController with ApiErrorHelper, AdsMixin, FilterMixin {
 
   Set<String> get _allowedTypes => _data?.board.columns.firstOrNull?.stateMappings.keys.toSet() ?? {};
 
+  final isSearching = ValueNotifier<bool>(false);
+  String? _currentSearchQuery;
+
   Future<void> init() async {
     final res = await api.getProjectBoard(projectName: args.project, teamId: args.teamId, backlogId: args.backlogId);
     _data = res.data;
@@ -55,7 +58,17 @@ class _BoardDetailController with ApiErrorHelper, AdsMixin, FilterMixin {
               )
               .toList();
 
-      columnItems[column]!.addAll(filteredByUsers);
+      final matchedItems = (_currentSearchQuery ?? '').isEmpty
+          ? filteredByUsers
+          : filteredByUsers
+              .where(
+                (i) =>
+                    i.id.toString().contains(_currentSearchQuery!) ||
+                    i.fields.systemTitle.toLowerCase().contains(_currentSearchQuery!),
+              )
+              .toList();
+
+      columnItems[column]!.addAll(matchedItems);
     }
   }
 
@@ -189,6 +202,26 @@ class _BoardDetailController with ApiErrorHelper, AdsMixin, FilterMixin {
     typesFilter.clear();
     usersFilter.clear();
 
+    _currentSearchQuery = null;
+    _hideSearchField();
+
     init();
+  }
+
+  /// Search currently filtered work items by id or title.
+  void _searchWorkItem(String query) {
+    _currentSearchQuery = query.trim().toLowerCase();
+
+    _fillColumns();
+    _refreshUI();
+  }
+
+  void resetSearch() {
+    _searchWorkItem('');
+    _hideSearchField();
+  }
+
+  void _hideSearchField() {
+    isSearching.value = false;
   }
 }
