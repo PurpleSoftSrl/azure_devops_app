@@ -1,4 +1,5 @@
 ## 3.2.1 - 2025-02-11
+- fix backlogs api call
 - ads: avoid making requests if 'Unable to obtain a JavascriptEngine' error occurs
 - ads: improve error handling and logs
 - project_boards: fix deserialization error
