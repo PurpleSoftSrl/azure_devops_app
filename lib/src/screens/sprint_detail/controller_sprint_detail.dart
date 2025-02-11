@@ -12,7 +12,7 @@ class _SprintDetailController with FilterMixin {
   Set<WorkItemType> typesFilter = {};
   List<WorkItemType> allWorkItemTypes = [];
 
-  Set<String> get _allowedTypes => _data?.sprint.types?.toSet() ?? {};
+  Set<String> get _allowedTypes => _data?.sprint.types?.toSet() ?? {'Task', 'Bug', 'User Story'};
 
   SprintDetailWithItems? _data;
 
@@ -59,13 +59,8 @@ class _SprintDetailController with FilterMixin {
     }
   }
 
-  Future<void> goToDetail(WorkItem item) async {
-    await AppRouter.goToWorkItemDetail(project: args.project, id: item.id);
-    await init();
-  }
-
   Future<void> addNewItem() async {
-    final sprint = sprintWithItems.value?.data?.sprint;
+    final sprint = _data?.sprint;
 
     final areaPath = sprint?.teamDefaultArea;
     if (areaPath == null) return;
@@ -79,10 +74,37 @@ class _SprintDetailController with FilterMixin {
       project: args.project,
       isAreaVisible: false,
       isIterationVisible: false,
-      allowedTypes: {'Task', 'Bug', 'User Story'},
+      allowedTypes: _allowedTypes,
     );
 
     await AppRouter.goToCreateOrEditWorkItem(args: addItemArgs);
+    await init();
+  }
+
+  Future<void> goToDetail(WorkItem item) async {
+    await AppRouter.goToWorkItemDetail(project: args.project, id: item.id);
+    await init();
+  }
+
+  Future<void> editItem(WorkItem item) async {
+    final sprint = _data?.sprint;
+
+    final areaPath = sprint?.teamDefaultArea;
+    if (areaPath == null) return;
+
+    final iterationPath = sprint?.path;
+    if (iterationPath == null) return;
+
+    final editItemArgs = CreateOrEditWorkItemArgs(
+      project: args.project,
+      area: areaPath,
+      iteration: iterationPath,
+      id: item.id,
+      isAreaVisible: false,
+      isIterationVisible: false,
+      allowedTypes: _allowedTypes,
+    );
+    await AppRouter.goToCreateOrEditWorkItem(args: editItemArgs);
     await init();
   }
 

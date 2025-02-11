@@ -53,6 +53,9 @@ class _SprintDetailScreen extends StatelessWidget {
               tabController: DefaultTabController.of(ctx),
               columnItems: ctrl.columnItems,
               onTapItem: ctrl.goToDetail,
+              actions: (item) => [
+                PopupItem(text: 'Edit', onTap: () => ctrl.editItem(item)),
+              ],
             ),
           ),
         ),
