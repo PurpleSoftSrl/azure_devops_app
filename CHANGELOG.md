@@ -1,3 +1,8 @@
+## 3.2.1 - 2025-02-11
+- ads: avoid making requests if 'Unable to obtain a JavascriptEngine' error occurs
+- ads: improve error handling and logs
+- project_boards: fix deserialization error
+
 ## 3.2.0 - 2025-02-07
 - refactoring: make WorkItemListTile private
 - refactoring: renamings
