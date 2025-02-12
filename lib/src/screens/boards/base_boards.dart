@@ -4,6 +4,7 @@ import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
+import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/project_card.dart';
@@ -24,7 +25,7 @@ class BoardsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBasePage(
-      initState: () => _BoardsController._(context.api),
+      initState: () => _BoardsController._(context.storage),
       smartphone: (ctrl) => _BoardsScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _BoardsScreen(ctrl, _tabletParameters),
     );

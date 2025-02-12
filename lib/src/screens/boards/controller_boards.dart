@@ -1,15 +1,15 @@
 part of boards;
 
 class _BoardsController {
-  _BoardsController._(this.api);
+  _BoardsController._(this.storage);
 
-  final AzureApiService api;
+  final StorageService storage;
 
   final allProjects = ValueNotifier<ApiResponse<List<Project>?>?>(null);
 
   Future<void> init() async {
-    final allProjectsRes = await api.getProjects();
-    allProjects.value = allProjectsRes;
+    final allProjectsRes = storage.getChosenProjects().toList();
+    allProjects.value = ApiResponse.ok(allProjectsRes);
   }
 
   void goToProjectBoards(Project project) {
