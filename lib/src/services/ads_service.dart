@@ -193,18 +193,20 @@ class AdsServiceImpl with AppLogger implements AdsService {
   }
 
   bool _isNetworkError(String errorMessage) =>
-      ['Network error', 'Error while connecting to ad server'].any(errorMessage.contains);
+      ['network error', 'error while connecting to ad server'].any(errorMessage.toLowerCase().contains);
 
-  bool _isTooManyFailedRequests(String errorMessage) => errorMessage.contains('Too many recently failed requests');
+  bool _isTooManyFailedRequests(String errorMessage) =>
+      errorMessage.toLowerCase().contains('too many recently failed requests');
 
-  bool _isJavascriptEngineNotFound(String errorMessage) => errorMessage.contains('Unable to obtain a JavascriptEngine');
+  bool _isJavascriptEngineNotFound(String errorMessage) =>
+      errorMessage.toLowerCase().contains('unable to obtain a javascriptengine');
 
   /// Stops requesting ads for 30 seconds.
   void _pauseRequestingAds() {
     logDebug('Pausing requesting ads');
     _showAds = false;
 
-    Timer(Duration(seconds: 30), () {
+    Timer(const Duration(seconds: 30), () {
       _showAds = true;
       logDebug('Ads can be requested again');
     });
