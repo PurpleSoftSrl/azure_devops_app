@@ -40,8 +40,8 @@ class MsalService with AppLogger {
       if (_pca == null) await init();
 
       await _pca!.signOut();
-    } on MsalException catch (e) {
-      logDebug('Logout exception: ${e.message}');
+    } on MsalException catch (e, s) {
+      logError(e, s);
     }
   }
 
@@ -52,8 +52,8 @@ class MsalService with AppLogger {
       final token = await _pca!.acquireToken(scopes: _scopes, prompt: Prompt.selectAccount);
       _isLoggedIn = true;
       return token.accessToken;
-    } on MsalException catch (e) {
-      logDebug('Login exception: ${e.message}');
+    } on MsalException catch (e, s) {
+      logError(e, s);
       return null;
     }
   }
@@ -65,8 +65,8 @@ class MsalService with AppLogger {
       final token = await _pca!.acquireTokenSilent(scopes: _scopes);
       _isLoggedIn = true;
       return token.accessToken;
-    } on MsalException catch (e) {
-      logDebug('LoginSilently exception: ${e.message}');
+    } on MsalException catch (e, s) {
+      logError(e, s);
       return null;
     }
   }
