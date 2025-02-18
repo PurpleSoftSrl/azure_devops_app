@@ -1,3 +1,13 @@
+## 3.3.0 - 2025-02-18
+- ads: fix onDismiss not called when ads are disabled
+- ads: improve error handling and logs (2)
+- boards: show only selected projects
+- msal: improve error logs
+- avoid html editor not initialized exception
+- boards/sprints: add search items field
+- sprint: add edit item action
+- boards/sprints: add type and assignee filters
+
 ## 3.2.1 - 2025-02-11
 - fix backlogs api call
 - ads: avoid making requests if 'Unable to obtain a JavascriptEngine' error occurs
