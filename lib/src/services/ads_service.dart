@@ -72,6 +72,7 @@ class AdsServiceImpl with AppLogger implements AdsService {
   Future<void> showInterstitialAd({VoidCallback? onDismiss}) async {
     if (!_showAds) {
       logDebug('Ads are disabled');
+      onDismiss?.call();
       return;
     }
 
