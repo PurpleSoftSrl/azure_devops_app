@@ -193,8 +193,14 @@ class AdsServiceImpl with AppLogger implements AdsService {
     logError(errorLog, error);
   }
 
-  bool _isNetworkError(String errorMessage) =>
-      ['network error', 'error while connecting to ad server'].any(errorMessage.toLowerCase().contains);
+  bool _isNetworkError(String errorMessage) => [
+        'network error',
+        'error while connecting to ad server',
+        'the request timed out',
+        'timeout occurred',
+        'internet connection appears to be offline',
+        'network connection was lost',
+      ].any(errorMessage.toLowerCase().contains);
 
   bool _isTooManyFailedRequests(String errorMessage) =>
       errorMessage.toLowerCase().contains('too many recently failed requests');
