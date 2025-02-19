@@ -569,8 +569,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       _isLoggingError = true;
       Timer(Duration(seconds: 2), () => _isLoggingError = false);
 
-      String title;
-      SentryLevel level;
+      var title = '${res.statusCode} ${res.reasonPhrase} $method $url';
+      var level = SentryLevel.warning;
 
       if (res.statusCode == 400 && res.body.isNotEmpty) {
         // bad request special handling
@@ -579,14 +579,10 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
         try {
           decodedRes = jsonDecode(res.body);
+          title = decodedRes['message'] as String? ?? '';
         } catch (e, s) {
           logError(e, s);
         }
-
-        title = decodedRes['message'] as String? ?? '';
-      } else {
-        title = '${res.statusCode} ${res.reasonPhrase} $method $url';
-        level = SentryLevel.warning;
       }
 
       Sentry.captureEvent(
