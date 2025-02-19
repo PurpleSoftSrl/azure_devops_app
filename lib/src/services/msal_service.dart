@@ -40,6 +40,8 @@ class MsalService with AppLogger {
       if (_pca == null) await init();
 
       await _pca!.signOut();
+    } on MsalUserCancelException catch (_) {
+      // ignore
     } on MsalException catch (e, s) {
       logError(e, s);
     }
@@ -52,6 +54,8 @@ class MsalService with AppLogger {
       final token = await _pca!.acquireToken(scopes: _scopes, prompt: Prompt.selectAccount);
       _isLoggedIn = true;
       return token.accessToken;
+    } on MsalUserCancelException catch (_) {
+      return null;
     } on MsalException catch (e, s) {
       logError(e, s);
       return null;
