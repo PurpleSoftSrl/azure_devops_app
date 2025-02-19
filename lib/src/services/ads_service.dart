@@ -80,7 +80,7 @@ class AdsServiceImpl with AppLogger implements AdsService {
 
     _interstitialAd?.fullScreenContentCallback = FullScreenContentCallback(
       onAdFailedToShowFullScreenContent: (ad, error) {
-        logError('Interstitial onAdFailedToShowFullScreenContent: $error', error);
+        logErrorMessage('Interstitial onAdFailedToShowFullScreenContent: $error');
         ad.dispose();
         _loadInterstitialAd();
         onDismiss?.call();
@@ -190,7 +190,7 @@ class AdsServiceImpl with AppLogger implements AdsService {
       _pauseRequestingAds();
     }
 
-    logError(errorLog, error);
+    logErrorMessage(errorLog);
   }
 
   bool _isNetworkError(String errorMessage) => [

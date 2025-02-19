@@ -25,20 +25,26 @@ mixin AppLogger {
     Sentry.captureMessage(msg);
   }
 
-  /// Logs on Sentry with level error only if ![kDebugMode]
+  /// Logs exception on Sentry with level error only if ![kDebugMode]
   void logError(Object? exception, Object stacktrace) {
     if (kDebugMode) {
       logDebug('Error: $exception');
       return;
     }
 
-    if (exception is Exception) {
-      Sentry.captureException(exception, stackTrace: stacktrace);
-    } else {
-      final tagStr = (_tag ?? '').isNotEmpty ? '[$_tag] ' : '';
-      final errorMessage = '${tagStr}Error: $exception';
-      Sentry.captureMessage(errorMessage, level: SentryLevel.error);
+    Sentry.captureException(exception, stackTrace: stacktrace);
+  }
+
+  /// Logs message on Sentry with level error only if ![kDebugMode]
+  void logErrorMessage(String message) {
+    if (kDebugMode) {
+      logDebug('Error: $message');
+      return;
     }
+
+    final tagStr = (_tag ?? '').isNotEmpty ? '[$_tag] ' : '';
+    final errorMessage = '${tagStr}Error: $message';
+    Sentry.captureMessage(errorMessage, level: SentryLevel.error);
   }
 
   /// Logs on Firebase Analytics only if [useFirebase] is true
