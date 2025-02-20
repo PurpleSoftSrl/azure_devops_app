@@ -124,7 +124,7 @@ class AdsServiceImpl with AppLogger implements AdsService {
     final newNativeAds = <AdWithView>[];
     final compl = Completer<List<AdWithView>>();
 
-    const adsCount = 3;
+    const adsCount = 1;
 
     for (var i = 0; i < adsCount; i++) {
       final nativeAd = NativeAd(
@@ -173,9 +173,8 @@ class AdsServiceImpl with AppLogger implements AdsService {
   void _handleAdFailedToLoad(LoadAdError error, String adType) {
     final errorCode = error.code;
     final errorMessage = error.message;
-    final adNetwork = error.responseInfo?.adapterResponses?.firstOrNull?.adSourceInstanceName ?? 'unknown ad source';
 
-    final errorLog = '$adType ad failed to load: Code: $errorCode - Message: $errorMessage - Source: $adNetwork';
+    final errorLog = '$adType ad failed to load: Code: $errorCode - Message: $errorMessage';
 
     if (_isNetworkError(errorMessage)) {
       logDebug(errorLog);
