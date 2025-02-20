@@ -134,7 +134,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
   }
 
   Future<void> _openFile(String filePath) async {
-    final open = await OpenFilex.open(filePath);
+    final open = await OpenFile.open(filePath);
     switch (open.type) {
       case ResultType.done:
         break;
