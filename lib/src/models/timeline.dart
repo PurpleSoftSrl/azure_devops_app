@@ -52,7 +52,7 @@ class Record {
     required this.changeId,
     required this.lastModified,
     this.workerName,
-    this.order,
+    required this.order,
     this.details,
     required this.errorCount,
     required this.warningCount,
@@ -81,7 +81,7 @@ class Record {
         changeId: json['changeId'] as int,
         lastModified: DateTime.parse(json['lastModified'] as String),
         workerName: json['workerName'] as String?,
-        order: json['order'] as int?,
+        order: json['order'] as int? ?? 0,
         details: json['details'],
         errorCount: json['errorCount'] as int,
         warningCount: json['warningCount'] as int,
@@ -113,7 +113,7 @@ class Record {
   final int changeId;
   final DateTime lastModified;
   final String? workerName;
-  final int? order;
+  final int order;
   final dynamic details;
   final int errorCount;
   final int warningCount;

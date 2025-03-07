@@ -51,12 +51,12 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
 
     if (buildDetail.value?.isError ?? true) return;
 
-    final realLogs = res.data!.timeline.where((r) => r.order != null && r.order! < 1000);
+    final realLogs = res.data!.timeline.where((r) => r.order < 1000);
 
-    final stages = realLogs.where((r) => r.type == 'Stage').sorted((a, b) => a.order!.compareTo(b.order!));
-    final phases = realLogs.where((r) => r.type == 'Phase').sorted((a, b) => a.order!.compareTo(b.order!));
-    final jobs = realLogs.where((r) => r.type == 'Job').sorted((a, b) => a.order!.compareTo(b.order!));
-    final tasks = realLogs.where((r) => r.type == 'Task').sorted((a, b) => a.order!.compareTo(b.order!));
+    final stages = realLogs.where((r) => r.type == 'Stage').sorted((a, b) => a.order.compareTo(b.order));
+    final phases = realLogs.where((r) => r.type == 'Phase').sorted((a, b) => a.order.compareTo(b.order));
+    final jobs = realLogs.where((r) => r.type == 'Job').sorted((a, b) => a.order.compareTo(b.order));
+    final tasks = realLogs.where((r) => r.type == 'Task').sorted((a, b) => a.order.compareTo(b.order));
 
     final timeline = <_Stage>[];
 
