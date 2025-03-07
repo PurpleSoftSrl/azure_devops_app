@@ -57,7 +57,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
   }
 
   void goToProject() {
-    AppRouter.goToProjectDetail(args.project);
+    AppRouter.goToProjectDetail(itemDetail.value!.data!.item.fields.systemTeamProject);
   }
 
   Future<void> editWorkItem() async {
