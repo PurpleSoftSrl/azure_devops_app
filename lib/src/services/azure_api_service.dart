@@ -1680,10 +1680,17 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final itemIds = BoardItemsResponse.fromResponse(itemsRes).data.content.boardModel.itemSource.payload.rows;
     if (itemIds.isEmpty) return ApiResponse.ok(BoardDetailWithItems(board: board, items: []));
 
-    final items = await _getWorkItemsBatch(itemIds);
-    if (items.isError) return ApiResponse.error(items.errorResponse);
+    final allItems = <WorkItem>[];
 
-    return ApiResponse.ok(BoardDetailWithItems(board: board, items: items.data!));
+    // split into batches of 200 to avoid WorkItemPageSizeExceededException
+    for (final ids in itemIds.slices(200)) {
+      final items = await _getWorkItemsBatch(ids);
+      if (items.isError) return ApiResponse.error(items.errorResponse);
+
+      allItems.addAll(items.data!);
+    }
+
+    return ApiResponse.ok(BoardDetailWithItems(board: board, items: allItems));
   }
 
   @override
@@ -1748,10 +1755,17 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final itemIds = SprintItemsResponse.fromResponse(itemsRes).map((i) => i.target.id);
     if (itemIds.isEmpty) return ApiResponse.ok(SprintDetailWithItems(sprint: sprint, items: []));
 
-    final items = await _getWorkItemsBatch(itemIds);
-    if (items.isError) return ApiResponse.error(items.errorResponse);
+    final allItems = <WorkItem>[];
 
-    return ApiResponse.ok(SprintDetailWithItems(sprint: sprint, items: items.data!));
+    // split into batches of 200 to avoid WorkItemPageSizeExceededException
+    for (final ids in itemIds.slices(200)) {
+      final items = await _getWorkItemsBatch(ids);
+      if (items.isError) return ApiResponse.error(items.errorResponse);
+
+      allItems.addAll(items.data!);
+    }
+
+    return ApiResponse.ok(SprintDetailWithItems(sprint: sprint, items: allItems));
   }
 
   @override
