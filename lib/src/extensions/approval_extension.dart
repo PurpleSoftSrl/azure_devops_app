@@ -7,8 +7,13 @@ import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:flutter/material.dart';
 
 extension ApprovalExt on Approval {
-  String get executionOrderDescription =>
-      'All approvers must approve${executionOrder == 'inSequence' ? ' in sequence' : ''}';
+  String get executionOrderDescription {
+    if (minRequiredApprovers < steps.length) {
+      return 'At least $minRequiredApprovers approvers must approve';
+    }
+
+    return 'All approvers must approve${executionOrder == 'inSequence' ? ' in sequence' : ''}';
+  }
 
   int getLastStepTimestamp() => steps.fold(
         DateTime(1900).millisecondsSinceEpoch,
