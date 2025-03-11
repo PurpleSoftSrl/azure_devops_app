@@ -145,6 +145,21 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
       pipes = pipes.where((p) => pipelineNamesFilter.contains(p.definition?.name)).toList();
     }
 
+    final runningPipelines = pipes.where((p) => p.status == PipelineStatus.inProgress);
+
+    if (runningPipelines.isNotEmpty) {
+      final approvalsRes = await api.getPendingApprovalPipelines(pipelines: runningPipelines.toList());
+
+      final approvalsByPipeline = groupBy(approvalsRes.data ?? <Approval>[], (a) => a.pipeline.owner.id);
+
+      for (final approval in approvalsByPipeline.entries) {
+        final pipeline = runningPipelines.firstWhereOrNull((p) => p.id == approval.key);
+        if (pipeline != null) {
+          pipeline.approvals = approval.value.where((a) => a.status == 'pending').toList();
+        }
+      }
+    }
+
     pipelines.value = res.copyWith(data: pipes);
   }
 

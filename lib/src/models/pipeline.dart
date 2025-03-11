@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:azure_devops/src/models/pipeline_approvals.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/timeline.dart';
 import 'package:flutter/foundation.dart';
@@ -94,6 +95,8 @@ class Pipeline {
   final LastChangedBy? requestedFor;
   final LastChangedBy? requestedBy;
   final PipelineRepository? repository;
+
+  List<Approval> approvals = [];
 
   @visibleForTesting
   static Pipeline empty() {

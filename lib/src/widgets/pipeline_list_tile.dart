@@ -32,12 +32,18 @@ class PipelineListTile extends StatelessWidget {
           Row(
             children: [
               if (pipe.status == PipelineStatus.inProgress)
-                InProgressPipelineIcon(
-                  child: Icon(
-                    DevOpsIcons.running,
-                    color: Colors.blue,
-                  ),
-                )
+                if (pipe.approvals.isNotEmpty)
+                  Icon(
+                    Icons.warning,
+                    color: Colors.yellow,
+                  )
+                else
+                  InProgressPipelineIcon(
+                    child: Icon(
+                      DevOpsIcons.running,
+                      color: Colors.blue,
+                    ),
+                  )
               else
                 pipe.status == PipelineStatus.completed ? pipe.result.icon : pipe.status.icon,
               const SizedBox(

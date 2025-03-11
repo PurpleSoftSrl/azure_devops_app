@@ -19,6 +19,7 @@ import 'package:azure_devops/src/models/file_diff.dart';
 import 'package:azure_devops/src/models/identity_response.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
+import 'package:azure_devops/src/models/pipeline_approvals.dart';
 import 'package:azure_devops/src/models/processes.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
@@ -255,6 +256,9 @@ abstract class AzureApiService {
     PipelineStatus status,
     Set<String>? triggeredBy,
   });
+
+  Future<ApiResponse<List<Approval>>> getPendingApprovalPipelines({required List<Pipeline> pipelines});
+
 
   Future<ApiResponse<PipelineWithTimeline>> getPipeline({required String projectName, required int id});
 
@@ -2234,7 +2238,18 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final res =
         allProjectPipelines.where((r) => !r.isError).map(GetPipelineResponse.fromResponse).expand((b) => b).toList();
+    return ApiResponse.ok(res);
+  }
 
+  @override
+  Future<ApiResponse<List<Approval>>> getPendingApprovalPipelines({required List<Pipeline> pipelines}) async {
+    final approvalsRes = await Future.wait([
+      for (final pipeline in pipelines)
+        _get('$_basePath/${pipeline.project!.name}/_apis/pipelines/approvals?\$expand=steps&$_apiVersion'),
+    ]);
+
+    final res =
+        approvalsRes.where((r) => !r.isError).map(GetPipelineApprovalsResponse.fromResponse).expand((a) => a).toList();
     return ApiResponse.ok(res);
   }
 
