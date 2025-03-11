@@ -1,6 +1,6 @@
 part of pipeline_detail;
 
-class _PipelineDetailController with ShareMixin, AdsMixin {
+class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
   _PipelineDetailController._(this.args, this.api, this.ads) : visibilityKey = GlobalKey();
 
   final ({String project, int id}) args;
@@ -275,7 +275,8 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
     final res = await api.approvePipelineApproval(approval: approval, projectId: pipeline.project!.id!);
 
     if (!(res.data ?? false)) {
-      return OverlayService.error('Error', description: 'Approval not approved');
+      final errorMessage = getErrorMessage(res.errorResponse!);
+      return OverlayService.error('Error', description: 'Approval not approved.\n\n$errorMessage');
     }
 
     AppRouter.popRoute();
@@ -293,7 +294,8 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
     final res = await api.rejectPipelineApproval(approval: approval, projectId: pipeline.project!.id!);
 
     if (!(res.data ?? false)) {
-      return OverlayService.error('Error', description: 'Approval not rejected');
+      final errorMessage = getErrorMessage(res.errorResponse!);
+      return OverlayService.error('Error', description: 'Approval not rejected.\n\n$errorMessage');
     }
 
     AppRouter.popRoute();

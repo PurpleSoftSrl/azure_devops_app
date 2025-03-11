@@ -10,6 +10,7 @@ import 'package:azure_devops/src/extensions/pipeline_extension.dart';
 import 'package:azure_devops/src/extensions/pipeline_result_extension.dart';
 import 'package:azure_devops/src/extensions/string_extension.dart';
 import 'package:azure_devops/src/mixins/ads_mixin.dart';
+import 'package:azure_devops/src/mixins/api_error_mixin.dart';
 import 'package:azure_devops/src/mixins/share_mixin.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/pipeline_approvals.dart';
