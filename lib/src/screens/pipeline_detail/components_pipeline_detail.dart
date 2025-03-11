@@ -136,16 +136,7 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sortedApprovals = approvals.sorted(
-      (a, b) => max(
-        a.steps.fold(
-          DateTime(1900).millisecondsSinceEpoch,
-          (prev, step) => max(prev, (step.lastModifiedOn ?? DateTime.now()).millisecondsSinceEpoch),
-        ),
-        b.steps.fold(
-          DateTime(1900).millisecondsSinceEpoch,
-          (prev, step) => max(prev, (step.lastModifiedOn ?? DateTime.now()).millisecondsSinceEpoch),
-        ),
-      ),
+      (a, b) => max(a.getLastStepTimestamp(), b.getLastStepTimestamp()),
     );
 
     return ListView(
@@ -156,7 +147,10 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
             children: [
               Text('Requirement'),
               const SizedBox(height: 5),
-              Text(approval.executionOrderDescription, style: context.textTheme.bodySmall),
+              Text(
+                approval.executionOrderDescription,
+                style: context.textTheme.bodySmall,
+              ),
               const SizedBox(height: 10),
               ...approval.steps.sortedBy((s) => s.lastModifiedOn ?? DateTime.now()).map(
                     (step) => Padding(
@@ -173,8 +167,10 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(step.assignedApprover.displayName),
-                              if (['approved', 'rejected'].contains(step.status))
+                              Text(
+                                step.assignedApprover.displayName,
+                              ),
+                              if (step.isCompleted)
                                 Text(
                                   '${step.status.titleCase} ${step.lastModifiedOn?.minutesAgo} ${step.lastModifiedOn?.minutesAgo == 'now' ? '' : 'ago'}',
                                   style: context.textTheme.bodySmall,
@@ -182,21 +178,7 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
                             ],
                           ),
                           const Spacer(),
-                          if (step.status == 'approved')
-                            Icon(
-                              DevOpsIcons.success,
-                              color: Colors.green,
-                            )
-                          else if (step.status == 'rejected')
-                            Icon(
-                              DevOpsIcons.failed,
-                              color: context.colorScheme.error,
-                            )
-                          else if (step.status == 'pending')
-                            Icon(
-                              DevOpsIcons.queued,
-                              color: Colors.blue,
-                            ),
+                          step.statusIcon,
                         ],
                       ),
                     ),
@@ -205,7 +187,10 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
               if (approval.instructions.isNotEmpty) ...[
                 Text('Instructions'),
                 const SizedBox(height: 5),
-                Text(approval.instructions, style: context.textTheme.bodySmall),
+                Text(
+                  approval.instructions,
+                  style: context.textTheme.bodySmall,
+                ),
               ],
               if (canApprove(approval)) ...[
                 const SizedBox(height: 40),
@@ -240,9 +225,4 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
       ],
     );
   }
-}
-
-extension on Approval {
-  String get executionOrderDescription =>
-      'All approvers must approve${executionOrder == 'inSequence' ? ' in sequence' : ''}';
 }

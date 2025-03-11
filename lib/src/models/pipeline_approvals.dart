@@ -35,8 +35,8 @@ class Approval {
         executionOrder: json['executionOrder'] as String? ?? '',
         minRequiredApprovers: json['minRequiredApprovers'] as int? ?? 0,
         pipeline: ApprovalPipeline.fromJson(json['pipeline'] as Map<String, dynamic>? ?? {}),
-        steps: List<Step>.from(
-          (json['steps'] as List<dynamic>? ?? []).map((x) => Step.fromJson(x as Map<String, dynamic>)),
+        steps: List<ApprovalStep>.from(
+          (json['steps'] as List<dynamic>? ?? []).map((x) => ApprovalStep.fromJson(x as Map<String, dynamic>)),
         ),
       );
 
@@ -46,7 +46,7 @@ class Approval {
   final String executionOrder;
   final int minRequiredApprovers;
   final ApprovalPipeline pipeline;
-  final List<Step> steps;
+  final List<ApprovalStep> steps;
 }
 
 class ApprovalPipeline {
@@ -82,8 +82,8 @@ class Owner {
   final String name;
 }
 
-class Step {
-  Step({
+class ApprovalStep {
+  ApprovalStep({
     required this.assignedApprover,
     this.actualApprover,
     required this.status,
@@ -93,7 +93,7 @@ class Step {
     this.initiatedOn,
   });
 
-  factory Step.fromJson(Map<String, dynamic> json) => Step(
+  factory ApprovalStep.fromJson(Map<String, dynamic> json) => ApprovalStep(
         assignedApprover: AssignedApprover.fromJson(json['assignedApprover'] as Map<String, dynamic>? ?? {}),
         actualApprover: json['actualApprover'] == null
             ? null

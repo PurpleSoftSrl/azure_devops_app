@@ -82,19 +82,11 @@ class _PipelineDetailScreen extends StatelessWidget {
                     const SizedBox(
                       width: 10,
                     ),
-                    if (pipeline.status == PipelineStatus.inProgress)
-                      if (pipeline.approvals.isNotEmpty)
-                        Icon(
-                          Icons.warning,
-                          color: Colors.yellow,
-                        )
-                      else
-                        InProgressPipelineIcon(
-                          child: Icon(
-                            DevOpsIcons.running,
-                            color: Colors.blue,
-                          ),
-                        )
+                    if (pipeline.status == PipelineStatus.inProgress && pipeline.approvals.isNotEmpty)
+                      Icon(
+                        Icons.warning,
+                        color: Colors.yellow,
+                      )
                     else
                       pipeline.status == PipelineStatus.completed ? pipeline.result.icon : pipeline.status.icon,
                   ],
