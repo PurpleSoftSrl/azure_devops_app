@@ -135,9 +135,22 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sortedApprovals = approvals.sorted(
+      (a, b) => max(
+        a.steps.fold(
+          DateTime(1900).millisecondsSinceEpoch,
+          (prev, step) => max(prev, (step.lastModifiedOn ?? DateTime.now()).millisecondsSinceEpoch),
+        ),
+        b.steps.fold(
+          DateTime(1900).millisecondsSinceEpoch,
+          (prev, step) => max(prev, (step.lastModifiedOn ?? DateTime.now()).millisecondsSinceEpoch),
+        ),
+      ),
+    );
+
     return ListView(
       children: [
-        ...approvals.map(
+        ...sortedApprovals.map(
           (approval) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -145,57 +158,57 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
               const SizedBox(height: 5),
               Text(approval.executionOrderDescription, style: context.textTheme.bodySmall),
               const SizedBox(height: 10),
-              ...approval.steps.map(
-                (step) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Row(
-                    children: [
-                      MemberAvatar(
-                        userDescriptor: step.assignedApprover.descriptor,
-                        radius: 20,
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+              ...approval.steps.sortedBy((s) => s.lastModifiedOn ?? DateTime.now()).map(
+                    (step) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Row(
                         children: [
-                          Text(step.assignedApprover.displayName),
-                          if (['approved', 'rejected'].contains(step.status))
-                            Text(
-                              '${step.status.titleCase} ${step.lastModifiedOn?.minutesAgo} ${step.lastModifiedOn?.minutesAgo == 'now' ? '' : 'ago'}',
-                              style: context.textTheme.bodySmall,
+                          MemberAvatar(
+                            userDescriptor: step.assignedApprover.descriptor,
+                            radius: 20,
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(step.assignedApprover.displayName),
+                              if (['approved', 'rejected'].contains(step.status))
+                                Text(
+                                  '${step.status.titleCase} ${step.lastModifiedOn?.minutesAgo} ${step.lastModifiedOn?.minutesAgo == 'now' ? '' : 'ago'}',
+                                  style: context.textTheme.bodySmall,
+                                ),
+                            ],
+                          ),
+                          const Spacer(),
+                          if (step.status == 'approved')
+                            Icon(
+                              DevOpsIcons.success,
+                              color: Colors.green,
+                            )
+                          else if (step.status == 'rejected')
+                            Icon(
+                              DevOpsIcons.failed,
+                              color: context.colorScheme.error,
+                            )
+                          else if (step.status == 'pending')
+                            Icon(
+                              DevOpsIcons.queued,
+                              color: Colors.blue,
                             ),
                         ],
                       ),
-                      const Spacer(),
-                      if (step.status == 'approved')
-                        Icon(
-                          DevOpsIcons.success,
-                          color: Colors.green,
-                        )
-                      else if (step.status == 'rejected')
-                        Icon(
-                          DevOpsIcons.failed,
-                          color: context.colorScheme.error,
-                        )
-                      else if (step.status == 'pending')
-                        Icon(
-                          DevOpsIcons.queued,
-                          color: Colors.blue,
-                        ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
               const SizedBox(height: 20),
               if (approval.instructions.isNotEmpty) ...[
                 Text('Instructions'),
                 const SizedBox(height: 5),
                 Text(approval.instructions, style: context.textTheme.bodySmall),
-                const SizedBox(height: 40),
               ],
-              if (canApprove(approval))
+              if (canApprove(approval)) ...[
+                const SizedBox(height: 40),
                 Row(
                   children: [
                     Expanded(
@@ -215,7 +228,12 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
                     ),
                   ],
                 ),
-              const SizedBox(height: 60),
+                const SizedBox(height: 20),
+              ],
+              if (approval != sortedApprovals.last)
+                const Divider(
+                  height: 60,
+                ),
             ],
           ),
         ),
