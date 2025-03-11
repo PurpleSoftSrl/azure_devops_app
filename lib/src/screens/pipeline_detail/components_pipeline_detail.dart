@@ -124,12 +124,14 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
   const _PendingApprovalsBottomSheet({
     required this.approvals,
     required this.canApprove,
+    required this.isBlockedApprover,
     required this.onApprove,
     required this.onReject,
   });
 
   final List<Approval> approvals;
   final bool Function(Approval) canApprove;
+  final bool Function(Approval) isBlockedApprover;
   final void Function(Approval) onApprove;
   final void Function(Approval) onReject;
 
@@ -214,6 +216,32 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 20),
+              ] else if (isBlockedApprover(approval)) ...[
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(AppTheme.radius),
+                    border: Border.all(color: Colors.yellow, width: .5),
+                  ),
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.warning,
+                        color: Colors.yellow,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Configurations on this approval prevent you from approving your own run.',
+                          style: context.textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
               if (approval != sortedApprovals.last)
                 const Divider(

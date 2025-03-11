@@ -26,6 +26,7 @@ class Approval {
     required this.minRequiredApprovers,
     required this.pipeline,
     required this.steps,
+    required this.blockedApprovers,
   });
 
   factory Approval.fromJson(Map<String, dynamic> json) => Approval(
@@ -38,6 +39,9 @@ class Approval {
         steps: List<ApprovalStep>.from(
           (json['steps'] as List<dynamic>? ?? []).map((x) => ApprovalStep.fromJson(x as Map<String, dynamic>)),
         ),
+        blockedApprovers: (json['blockedApprovers'] as List<dynamic>? ?? [])
+            .map((x) => AssignedApprover.fromJson(x as Map<String, dynamic>))
+            .toList(),
       );
 
   final String id;
@@ -47,6 +51,7 @@ class Approval {
   final int minRequiredApprovers;
   final ApprovalPipeline pipeline;
   final List<ApprovalStep> steps;
+  final List<AssignedApprover> blockedApprovers;
 }
 
 class ApprovalPipeline {

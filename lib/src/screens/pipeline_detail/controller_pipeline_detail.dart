@@ -245,6 +245,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
       builder: (_) => _PendingApprovalsBottomSheet(
         approvals: pipeline.approvals,
         canApprove: (_) => false,
+        isBlockedApprover: (_) => false,
         onApprove: (_) {},
         onReject: (_) {},
       ),
@@ -258,6 +259,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
       builder: (_) => _PendingApprovalsBottomSheet(
         approvals: pendingApprovals,
         canApprove: _canApprove,
+        isBlockedApprover: _isBlockedApprover,
         onApprove: _approveApproval,
         onReject: _rejectApproval,
       ),
@@ -268,7 +270,18 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
     final pendingStep = approval.steps.firstWhereOrNull((s) => s.status == 'pending');
     if (pendingStep == null) return false;
 
-    return pendingStep.assignedApprover.uniqueName == api.user!.emailAddress;
+    final userEmail = api.user!.emailAddress;
+
+    return !_isBlockedApprover(approval) && (pendingStep.assignedApprover.uniqueName == userEmail);
+  }
+
+  bool _isBlockedApprover(Approval approval) {
+    final pendingStep = approval.steps.firstWhereOrNull((s) => s.status == 'pending');
+    if (pendingStep == null) return false;
+
+    final userEmail = api.user!.emailAddress;
+
+    return approval.blockedApprovers.map((a) => a.uniqueName).contains(userEmail);
   }
 
   Future<void> _approveApproval(Approval approval) async {
