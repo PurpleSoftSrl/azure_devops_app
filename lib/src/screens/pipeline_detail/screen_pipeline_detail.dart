@@ -218,17 +218,9 @@ class _PipelineDetailScreen extends StatelessWidget {
                                       if (stage.stage.name != '__default') _StageRow(stage: stage.stage),
                                       if (stage.phases.isNotEmpty && stage.phases.expand((phase) => phase.jobs).isEmpty)
                                         ...stage.phases.where((p) => p.phase.result == TaskResult.failed).map(
-                                              (phase) => Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(left: 10, top: 5),
-                                                    child: _PhaseRow(phase: phase.phase),
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                ],
+                                              (phase) => Padding(
+                                                padding: const EdgeInsets.only(left: 10, top: 5),
+                                                child: _PhaseRow(phase: phase.phase),
                                               ),
                                             )
                                       else
