@@ -257,7 +257,9 @@ abstract class AzureApiService {
     Set<String>? triggeredBy,
   });
 
-  Future<ApiResponse<List<Approval>>> getPendingApprovalPipelines({required List<Pipeline> pipelines});
+  Future<ApiResponse<List<Approval>>> getPendingApprovals({required List<Pipeline> pipelines});
+
+  Future<ApiResponse<List<Approval>>> getPipelineApprovals({required Pipeline pipeline});
 
   Future<ApiResponse<bool>> approvePipelineApproval({required Approval approval, required String projectId});
 
@@ -2245,15 +2247,30 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<Approval>>> getPendingApprovalPipelines({required List<Pipeline> pipelines}) async {
+  Future<ApiResponse<List<Approval>>> getPendingApprovals({required List<Pipeline> pipelines}) async {
     final approvalsRes = await Future.wait([
       for (final pipeline in pipelines)
-        _get('$_basePath/${pipeline.project!.name}/_apis/pipelines/approvals?\$expand=steps&$_apiVersion'),
+        _get(
+          '$_basePath/${pipeline.project!.name}/_apis/pipelines/approvals?\$expand=steps&state=pending&$_apiVersion',
+        ),
     ]);
 
     final res =
         approvalsRes.where((r) => !r.isError).map(GetPipelineApprovalsResponse.fromResponse).expand((a) => a).toList();
     return ApiResponse.ok(res);
+  }
+
+  @override
+  Future<ApiResponse<List<Approval>>> getPipelineApprovals({required Pipeline pipeline}) async {
+    final approvalsRes =
+        await _get('$_basePath/${pipeline.project!.name}/_apis/pipelines/approvals?\$expand=steps&$_apiVersion');
+    if (approvalsRes.isError) return ApiResponse.error(approvalsRes);
+
+    final approvals = GetPipelineApprovalsResponse.fromResponse(approvalsRes)
+        .where((a) => a.pipeline.owner.id == pipeline.id)
+        .toList();
+
+    return ApiResponse.ok(approvals);
   }
 
   @override

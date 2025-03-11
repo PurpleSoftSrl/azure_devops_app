@@ -154,8 +154,13 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<List<Approval>>> getPendingApprovalPipelines({required List<Pipeline> pipelines}) async {
+  Future<ApiResponse<List<Approval>>> getPendingApprovals({required List<Pipeline> pipelines}) async {
     return ApiResponse.ok([]);
+  }
+
+  @override
+  Future<ApiResponse<List<Approval>>> getPipelineApprovals({required Pipeline pipeline}) async {
+    return ApiResponse.ok(<Approval>[]);
   }
 
   @override

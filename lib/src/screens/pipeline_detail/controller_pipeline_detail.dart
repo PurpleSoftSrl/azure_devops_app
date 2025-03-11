@@ -55,10 +55,8 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
       return;
     }
 
-    if (res.data!.pipeline.status == PipelineStatus.inProgress) {
-      final approvals = await api.getPendingApprovalPipelines(pipelines: [res.data!.pipeline]);
-      res.data!.pipeline.approvals = approvals.data ?? [];
-    }
+    final approvals = await api.getPipelineApprovals(pipeline: res.data!.pipeline);
+    res.data!.pipeline.approvals = approvals.data ?? [];
 
     buildDetail.value = res;
 

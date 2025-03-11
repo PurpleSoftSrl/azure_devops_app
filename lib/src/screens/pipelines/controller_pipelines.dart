@@ -148,7 +148,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
     final runningPipelines = pipes.where((p) => p.status == PipelineStatus.inProgress);
 
     if (runningPipelines.isNotEmpty) {
-      final approvalsRes = await api.getPendingApprovalPipelines(pipelines: runningPipelines.toList());
+      final approvalsRes = await api.getPendingApprovals(pipelines: runningPipelines.toList());
 
       final approvalsByPipeline = groupBy(approvalsRes.data ?? <Approval>[], (a) => a.pipeline.owner.id);
 
