@@ -142,6 +142,8 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Requirement'),
+              const SizedBox(height: 5),
+              Text(approval.executionOrderDescription, style: context.textTheme.bodySmall),
               const SizedBox(height: 10),
               ...approval.steps.map(
                 (step) => Padding(
@@ -189,7 +191,7 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
               const SizedBox(height: 20),
               if (approval.instructions.isNotEmpty) ...[
                 Text('Instructions'),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 Text(approval.instructions, style: context.textTheme.bodySmall),
                 const SizedBox(height: 40),
               ],
@@ -220,4 +222,9 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
       ],
     );
   }
+}
+
+extension on Approval {
+  String get executionOrderDescription =>
+      'All approvers must approve${executionOrder == 'inSequence' ? ' in sequence' : ''}';
 }

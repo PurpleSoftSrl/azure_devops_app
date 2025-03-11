@@ -234,7 +234,8 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
   }
 
   String getPendingApprovalText() {
-    return '${pendingApprovals.length} approval${pendingApprovals.length > 1 ? 's' : ''} need${pendingApprovals.length > 1 ? '' : 's'} review before this run can continue';
+    final length = pendingApprovals.length;
+    return '$length approval${length > 1 ? 's' : ''} need${length > 1 ? '' : 's'} review before this run can continue';
   }
 
   void viewPendingApprovals() {
