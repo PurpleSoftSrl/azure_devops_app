@@ -88,9 +88,9 @@ class Step {
     this.actualApprover,
     required this.status,
     this.deferredTo,
-    required this.lastModifiedOn,
+    this.lastModifiedOn,
     required this.order,
-    required this.initiatedOn,
+    this.initiatedOn,
   });
 
   factory Step.fromJson(Map<String, dynamic> json) => Step(
@@ -100,18 +100,18 @@ class Step {
             : AssignedApprover.fromJson(json['actualApprover'] as Map<String, dynamic>? ?? {}),
         status: json['status'] as String? ?? '',
         deferredTo: json['deferredTo'] == null ? null : DateTime.parse(json['deferredTo'] as String).toLocal(),
-        lastModifiedOn: DateTime.parse(json['lastModifiedOn'] as String? ?? '').toLocal(),
+        lastModifiedOn: DateTime.tryParse(json['lastModifiedOn'] as String? ?? '')?.toLocal(),
         order: json['order'] as int? ?? 0,
-        initiatedOn: DateTime.parse(json['initiatedOn'] as String? ?? '').toLocal(),
+        initiatedOn: DateTime.tryParse(json['initiatedOn'] as String? ?? '')?.toLocal(),
       );
 
   final AssignedApprover assignedApprover;
   final AssignedApprover? actualApprover;
   final String status;
   final DateTime? deferredTo;
-  final DateTime lastModifiedOn;
+  final DateTime? lastModifiedOn;
   final int order;
-  final DateTime initiatedOn;
+  final DateTime? initiatedOn;
 }
 
 class AssignedApprover {

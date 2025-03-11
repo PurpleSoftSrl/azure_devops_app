@@ -8,12 +8,14 @@ class LoadingButton extends StatefulWidget {
     required this.text,
     this.backgroundColor,
     this.textColor,
+    this.margin,
   });
 
   final dynamic Function() onPressed;
   final String text;
   final Color? backgroundColor;
   final Color? textColor;
+  final EdgeInsets? margin;
 
   @override
   State<LoadingButton> createState() => _LoadingButtonState();
@@ -25,7 +27,7 @@ class _LoadingButtonState extends State<LoadingButton> with AppLogger {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 50),
+      padding: widget.margin ?? const EdgeInsets.symmetric(horizontal: 50),
       child: MaterialButton(
         color: widget.backgroundColor ?? context.colorScheme.primary,
         minWidth: double.maxFinite,

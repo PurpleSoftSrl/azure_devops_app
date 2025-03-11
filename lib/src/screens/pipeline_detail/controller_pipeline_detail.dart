@@ -15,6 +15,9 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
 
   Pipeline get pipeline => buildDetail.value!.data!.pipeline;
 
+  List<Approval> get pendingApprovals => pipeline.approvals.where((a) => a.status == 'pending').toList();
+  bool get hasPendingApprovals => pendingApprovals.isNotEmpty;
+
   GlobalKey visibilityKey;
   var _hasStoppedTimer = false;
 
@@ -47,9 +50,17 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
 
   Future<void> _init() async {
     final res = await api.getPipeline(projectName: args.project, id: args.id);
-    buildDetail.value = res;
+    if (res.isError) {
+      buildDetail.value = res;
+      return;
+    }
 
-    if (buildDetail.value?.isError ?? true) return;
+    if (res.data!.pipeline.status == PipelineStatus.inProgress) {
+      final approvals = await api.getPendingApprovalPipelines(pipelines: [res.data!.pipeline]);
+      res.data!.pipeline.approvals = approvals.data ?? [];
+    }
+
+    buildDetail.value = res;
 
     final realLogs = res.data!.timeline.where((r) => r.order < 1000);
 
@@ -220,6 +231,59 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
 
   void goToPreviousRuns() {
     AppRouter.goToPipelines(args: (definition: pipeline.definition!.id!, project: pipeline.project!, shortcut: null));
+  }
+
+  String getPendingApprovalText() {
+    return '${pendingApprovals.length} approval${pendingApprovals.length > 1 ? 's' : ''} need${pendingApprovals.length > 1 ? '' : 's'} review before this run can continue';
+  }
+
+  void viewPendingApprovals() {
+    OverlayService.bottomsheet(
+      title: 'Pending approvals',
+      isScrollControlled: true,
+      builder: (context) => _PendingApprovalsBottomSheet(
+        approvals: pendingApprovals,
+        canApprove: _canApprove,
+        onApprove: _approveApproval,
+        onReject: _rejectApproval,
+      ),
+    );
+  }
+
+  bool _canApprove(Approval approval) {
+    final pendingStep = approval.steps.firstWhereOrNull((s) => s.status == 'pending');
+    if (pendingStep == null) return false;
+
+    return pendingStep.assignedApprover.id == api.user!.id;
+  }
+
+  Future<void> _approveApproval(Approval approval) async {
+    final res = await api.approvePipelineApproval(approval: approval, projectId: pipeline.project!.id!);
+
+    if (!(res.data ?? false)) {
+      return OverlayService.error('Error', description: 'Approval not approved');
+    }
+
+    AppRouter.popRoute();
+    OverlayService.snackbar('Approval approved successfully');
+  }
+
+  Future<void> _rejectApproval(Approval approval) async {
+    final conf = await OverlayService.confirm(
+      'Reject approval',
+      description: 'Do you really want to reject this approval?',
+    );
+
+    if (!conf) return;
+
+    final res = await api.rejectPipelineApproval(approval: approval, projectId: pipeline.project!.id!);
+
+    if (!(res.data ?? false)) {
+      return OverlayService.error('Error', description: 'Approval not rejected');
+    }
+
+    AppRouter.popRoute();
+    OverlayService.snackbar('Approval rejected successfully');
   }
 }
 

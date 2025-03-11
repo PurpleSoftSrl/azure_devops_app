@@ -91,3 +91,105 @@ class _TaskRow extends StatelessWidget {
     );
   }
 }
+
+class _PendingApprovalsBottomSheet extends StatelessWidget {
+  const _PendingApprovalsBottomSheet({
+    required this.approvals,
+    required this.canApprove,
+    required this.onApprove,
+    required this.onReject,
+  });
+
+  final List<Approval> approvals;
+  final bool Function(Approval) canApprove;
+  final void Function(Approval) onApprove;
+  final void Function(Approval) onReject;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: [
+        ...approvals.map(
+          (approval) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Requirement'),
+              const SizedBox(height: 10),
+              ...approval.steps.map(
+                (step) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Row(
+                    children: [
+                      MemberAvatar(
+                        userDescriptor: step.assignedApprover.descriptor,
+                        radius: 20,
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(step.assignedApprover.displayName),
+                          if (['approved', 'rejected'].contains(step.status))
+                            Text(
+                              '${step.status.titleCase} ${step.lastModifiedOn?.minutesAgo} ${step.lastModifiedOn?.minutesAgo == 'now' ? '' : 'ago'}',
+                              style: context.textTheme.bodySmall,
+                            ),
+                        ],
+                      ),
+                      const Spacer(),
+                      if (step.status == 'approved')
+                        Icon(
+                          DevOpsIcons.success,
+                          color: Colors.green,
+                        )
+                      else if (step.status == 'rejected')
+                        Icon(
+                          DevOpsIcons.failed,
+                          color: context.colorScheme.error,
+                        )
+                      else if (step.status == 'pending')
+                        Icon(
+                          DevOpsIcons.queued,
+                          color: Colors.blue,
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              if (approval.instructions.isNotEmpty) ...[
+                Text('Instructions'),
+                const SizedBox(height: 10),
+                Text(approval.instructions, style: context.textTheme.bodySmall),
+                const SizedBox(height: 40),
+              ],
+              if (canApprove(approval))
+                Row(
+                  children: [
+                    Expanded(
+                      child: LoadingButton(
+                        onPressed: () => onApprove(approval),
+                        text: 'Approve',
+                        margin: const EdgeInsets.only(right: 10),
+                      ),
+                    ),
+                    Expanded(
+                      child: LoadingButton(
+                        onPressed: () => onReject(approval),
+                        text: 'Reject',
+                        margin: const EdgeInsets.only(left: 10),
+                        backgroundColor: context.colorScheme.error,
+                      ),
+                    ),
+                  ],
+                ),
+              const SizedBox(height: 60),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}

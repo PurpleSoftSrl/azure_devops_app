@@ -259,6 +259,9 @@ abstract class AzureApiService {
 
   Future<ApiResponse<List<Approval>>> getPendingApprovalPipelines({required List<Pipeline> pipelines});
 
+  Future<ApiResponse<bool>> approvePipelineApproval({required Approval approval, required String projectId});
+
+  Future<ApiResponse<bool>> rejectPipelineApproval({required Approval approval, required String projectId});
 
   Future<ApiResponse<PipelineWithTimeline>> getPipeline({required String projectName, required int id});
 
@@ -2251,6 +2254,40 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final res =
         approvalsRes.where((r) => !r.isError).map(GetPipelineApprovalsResponse.fromResponse).expand((a) => a).toList();
     return ApiResponse.ok(res);
+  }
+
+  @override
+  Future<ApiResponse<bool>> approvePipelineApproval({required Approval approval, required String projectId}) async {
+    final body = [
+      {
+        'approvalId': approval.id,
+        'status': 4,
+        'comment': 'Approved by ${user!.displayName} via AzDevops app',
+      }
+    ];
+
+    final approvalsRes = await _patchList('$_basePath/$projectId/_apis/pipelines/approvals?$_apiVersion', body: body);
+
+    if (approvalsRes.isError) return ApiResponse.error(approvalsRes);
+
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> rejectPipelineApproval({required Approval approval, required String projectId}) async {
+    final body = [
+      {
+        'approvalId': approval.id,
+        'status': 8,
+        'comment': 'Rejected by ${user!.displayName} via AzDevops app',
+      }
+    ];
+
+    final approvalsRes = await _patchList('$_basePath/$projectId/_apis/pipelines/approvals?$_apiVersion', body: body);
+
+    if (approvalsRes.isError) return ApiResponse.error(approvalsRes);
+
+    return ApiResponse.ok(true);
   }
 
   @override

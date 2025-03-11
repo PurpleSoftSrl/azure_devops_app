@@ -77,6 +77,12 @@ class _PipelineDetailScreen extends StatelessWidget {
                       width: 10,
                     ),
                     if (pipeline.status == PipelineStatus.inProgress)
+                      if (pipeline.approvals.isNotEmpty)
+                        Icon(
+                          Icons.warning,
+                          color: Colors.yellow,
+                        )
+                      else
                       InProgressPipelineIcon(
                         child: Icon(
                           DevOpsIcons.running,
@@ -86,6 +92,24 @@ class _PipelineDetailScreen extends StatelessWidget {
                     else
                       pipeline.status == PipelineStatus.completed ? pipeline.result.icon : pipeline.status.icon,
                   ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                if (ctrl.hasPendingApprovals)
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(AppTheme.radius),
+                      border: Border.all(color: Colors.yellow),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.symmetric(vertical: 12),
+                    child: Row(
+                      children: [
+                        Expanded(child: Text(ctrl.getPendingApprovalText())),
+                        NavigationButton(onTap: ctrl.viewPendingApprovals, child: Text('View')),
+                      ],
+                    ),
                 ),
                 const SizedBox(
                   height: 10,
