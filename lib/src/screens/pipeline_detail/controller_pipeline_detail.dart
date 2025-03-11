@@ -18,6 +18,8 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
   List<Approval> get pendingApprovals => pipeline.approvals.where((a) => a.status == 'pending').toList();
   bool get hasPendingApprovals => pendingApprovals.isNotEmpty;
 
+  bool get hasApprovals => pipeline.approvals.isNotEmpty;
+
   GlobalKey visibilityKey;
   var _hasStoppedTimer = false;
 
@@ -236,11 +238,24 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
     return '$length approval${length > 1 ? 's' : ''} need${length > 1 ? '' : 's'} review before this run can continue';
   }
 
+  void viewAllApprovals() {
+    OverlayService.bottomsheet(
+      title: 'Approvals',
+      isScrollControlled: true,
+      builder: (_) => _PendingApprovalsBottomSheet(
+        approvals: pipeline.approvals,
+        canApprove: (_) => false,
+        onApprove: (_) {},
+        onReject: (_) {},
+      ),
+    );
+  }
+
   void viewPendingApprovals() {
     OverlayService.bottomsheet(
       title: 'Pending approvals',
       isScrollControlled: true,
-      builder: (context) => _PendingApprovalsBottomSheet(
+      builder: (_) => _PendingApprovalsBottomSheet(
         approvals: pendingApprovals,
         canApprove: _canApprove,
         onApprove: _approveApproval,

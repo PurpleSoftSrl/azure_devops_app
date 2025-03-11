@@ -35,6 +35,11 @@ class _PipelineDetailScreen extends StatelessWidget {
                         icon: ctrl.getActionIconFromStatus(),
                       ),
                       PopupItem(
+                        onTap: ctrl.viewAllApprovals,
+                        text: 'View approvals',
+                        icon: DevOpsIcons.task,
+                      ),
+                      PopupItem(
                         onTap: ctrl.shareBuild,
                         text: 'Share',
                         icon: DevOpsIcons.share,
