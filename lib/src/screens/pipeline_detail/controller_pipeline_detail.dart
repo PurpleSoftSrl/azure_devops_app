@@ -254,7 +254,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
     final pendingStep = approval.steps.firstWhereOrNull((s) => s.status == 'pending');
     if (pendingStep == null) return false;
 
-    return pendingStep.assignedApprover.id == api.user!.id;
+    return pendingStep.assignedApprover.uniqueName == api.user!.emailAddress;
   }
 
   Future<void> _approveApproval(Approval approval) async {
