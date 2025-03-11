@@ -76,7 +76,7 @@ class Record {
         currentOperation: json['currentOperation'],
         percentComplete: json['percentComplete'] as int?,
         state: TaskStatus.fromString(json['state'] as String),
-        result: json['result'] == null ? null : _TaskResult.fromString(json['result'] as String),
+        result: json['result'] == null ? null : TaskResult.fromString(json['result'] as String),
         resultCode: json['resultCode'],
         changeId: json['changeId'] as int,
         lastModified: DateTime.parse(json['lastModified'] as String),
@@ -108,7 +108,7 @@ class Record {
   final dynamic currentOperation;
   final int? percentComplete;
   final TaskStatus state;
-  final _TaskResult? result;
+  final TaskResult? result;
   final dynamic resultCode;
   final int changeId;
   final DateTime lastModified;
@@ -238,7 +238,7 @@ enum TaskStatus {
 }
 
 /// The result of a task/job/stage.
-enum _TaskResult {
+enum TaskResult {
   abandoned('abandoned'),
   canceled('canceled'),
   failed('failed'),
@@ -246,28 +246,28 @@ enum _TaskResult {
   succeeded('succeeded'),
   succeededWithIssues('succeededWithIssues');
 
-  const _TaskResult(this.stringValue);
+  const TaskResult(this.stringValue);
 
   final String stringValue;
 
-  static _TaskResult fromString(String str) {
+  static TaskResult fromString(String str) {
     return values.firstWhere((v) => v.stringValue == str);
   }
 
   @override
   String toString() {
     switch (this) {
-      case _TaskResult.abandoned:
+      case TaskResult.abandoned:
         return 'Abandoned';
-      case _TaskResult.canceled:
+      case TaskResult.canceled:
         return 'Canceled';
-      case _TaskResult.failed:
+      case TaskResult.failed:
         return 'Failed';
-      case _TaskResult.skipped:
+      case TaskResult.skipped:
         return 'Skipped';
-      case _TaskResult.succeeded:
+      case TaskResult.succeeded:
         return 'Succeeded';
-      case _TaskResult.succeededWithIssues:
+      case TaskResult.succeededWithIssues:
         return 'Succeeded with issues';
     }
   }
@@ -276,27 +276,27 @@ enum _TaskResult {
     const size = 15.0;
 
     switch (this) {
-      case _TaskResult.abandoned:
-      case _TaskResult.canceled:
+      case TaskResult.abandoned:
+      case TaskResult.canceled:
         return Icon(
           DevOpsIcons.cancelled,
           color: AppRouter.rootNavigator!.context.themeExtension.onBackground,
           size: size,
         );
-      case _TaskResult.failed:
+      case TaskResult.failed:
         return Icon(
           DevOpsIcons.failed,
           color: Colors.red,
           size: size,
         );
-      case _TaskResult.skipped:
+      case TaskResult.skipped:
         return Icon(
           DevOpsIcons.skipped,
           color: AppRouter.rootNavigator!.context.themeExtension.onBackground,
           size: size,
         );
-      case _TaskResult.succeeded:
-      case _TaskResult.succeededWithIssues:
+      case TaskResult.succeeded:
+      case TaskResult.succeededWithIssues:
         return Icon(
           DevOpsIcons.success,
           color: Colors.green,

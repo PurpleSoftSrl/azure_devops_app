@@ -83,12 +83,12 @@ class _PipelineDetailScreen extends StatelessWidget {
                           color: Colors.yellow,
                         )
                       else
-                      InProgressPipelineIcon(
-                        child: Icon(
-                          DevOpsIcons.running,
-                          color: Colors.blue,
-                        ),
-                      )
+                        InProgressPipelineIcon(
+                          child: Icon(
+                            DevOpsIcons.running,
+                            color: Colors.blue,
+                          ),
+                        )
                     else
                       pipeline.status == PipelineStatus.completed ? pipeline.result.icon : pipeline.status.icon,
                   ],
@@ -110,7 +110,7 @@ class _PipelineDetailScreen extends StatelessWidget {
                         NavigationButton(onTap: ctrl.viewPendingApprovals, child: Text('View')),
                       ],
                     ),
-                ),
+                  ),
                 const SizedBox(
                   height: 10,
                 ),
@@ -216,29 +216,45 @@ class _PipelineDetailScreen extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       if (stage.stage.name != '__default') _StageRow(stage: stage.stage),
-                                      ...stage.phases.expand((phase) => phase.jobs).map(
-                                            (job) => Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.only(left: 10, top: 5),
-                                                  child: _JobRow(job: job.job),
-                                                ),
-                                                const SizedBox(
-                                                  height: 5,
-                                                ),
-                                                ...job.tasks.map(
-                                                  (task) => InkWell(
-                                                    onTap: () => ctrl.seeLogs(task),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.only(bottom: 5, left: 20),
-                                                      child: _TaskRow(task: task),
+                                      if (stage.phases.isNotEmpty && stage.phases.expand((phase) => phase.jobs).isEmpty)
+                                        ...stage.phases.where((p) => p.phase.result == TaskResult.failed).map(
+                                              (phase) => Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 10, top: 5),
+                                                    child: _PhaseRow(phase: phase.phase),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                      else
+                                        ...stage.phases.expand((phase) => phase.jobs).map(
+                                              (job) => Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 10, top: 5),
+                                                    child: _JobRow(job: job.job),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  ...job.tasks.map(
+                                                    (task) => InkWell(
+                                                      onTap: () => ctrl.seeLogs(task),
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(bottom: 5, left: 20),
+                                                        child: _TaskRow(task: task),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
-                                          ),
                                       const SizedBox(
                                         height: 20,
                                       ),

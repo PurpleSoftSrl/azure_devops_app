@@ -28,6 +28,34 @@ class _StageRow extends StatelessWidget {
   }
 }
 
+class _PhaseRow extends StatelessWidget {
+  const _PhaseRow({required this.phase});
+
+  final Record phase;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        if (phase.state == TaskStatus.inProgress)
+          InProgressPipelineIcon(
+            child: phase.state.icon,
+          )
+        else
+          phase.state == TaskStatus.completed && phase.result != null ? phase.result!.icon : phase.state.icon,
+        const SizedBox(
+          width: 10,
+        ),
+        Expanded(child: Text('${phase.name} (Job)')),
+        const SizedBox(
+          width: 8,
+        ),
+        Text(phase.getRunTime()),
+      ],
+    );
+  }
+}
+
 class _JobRow extends StatelessWidget {
   const _JobRow({required this.job});
 
