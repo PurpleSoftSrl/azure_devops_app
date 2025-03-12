@@ -302,7 +302,8 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
     }
 
     AppRouter.popRoute();
-    OverlayService.snackbar('Approval approved successfully');
+
+    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Approval approved successfully'));
   }
 
   Future<void> _deferApproval(Approval approval) async {
@@ -325,7 +326,8 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
     }
 
     AppRouter.popRoute();
-    OverlayService.snackbar('Approval deferred successfully');
+
+    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Approval deferred successfully'));
   }
 
   Future<void> _rejectApproval(Approval approval) async {
@@ -344,7 +346,8 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
     }
 
     AppRouter.popRoute();
-    OverlayService.snackbar('Approval rejected successfully');
+
+    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Approval rejected successfully'));
   }
 }
 
