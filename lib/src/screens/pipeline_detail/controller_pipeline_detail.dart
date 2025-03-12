@@ -287,6 +287,13 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
   }
 
   Future<void> _approveApproval(Approval approval) async {
+    final conf = await OverlayService.confirm(
+      'Attention',
+      description: 'Do you really want to approve this approval?',
+    );
+
+    if (!conf) return;
+
     final res = await api.approvePipelineApproval(approval: approval, projectId: pipeline.project!.id!);
 
     if (!(res.data ?? false)) {
@@ -323,7 +330,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
 
   Future<void> _rejectApproval(Approval approval) async {
     final conf = await OverlayService.confirm(
-      'Reject approval',
+      'Attention',
       description: 'Do you really want to reject this approval?',
     );
 
