@@ -19,6 +19,7 @@ import 'package:azure_devops/src/models/file_diff.dart';
 import 'package:azure_devops/src/models/identity_response.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
+import 'package:azure_devops/src/models/pipeline_approvals.dart';
 import 'package:azure_devops/src/models/processes.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
@@ -255,6 +256,18 @@ abstract class AzureApiService {
     PipelineStatus status,
     Set<String>? triggeredBy,
   });
+
+  Future<ApiResponse<List<Approval>>> getPendingApprovals({required List<Pipeline> pipelines});
+
+  Future<ApiResponse<List<Approval>>> getPipelineApprovals({required Pipeline pipeline});
+
+  Future<ApiResponse<bool>> approvePipelineApproval({
+    required Approval approval,
+    required String projectId,
+    DateTime? deferredTo,
+  });
+
+  Future<ApiResponse<bool>> rejectPipelineApproval({required Approval approval, required String projectId});
 
   Future<ApiResponse<PipelineWithTimeline>> getPipeline({required String projectName, required int id});
 
@@ -2234,8 +2247,75 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final res =
         allProjectPipelines.where((r) => !r.isError).map(GetPipelineResponse.fromResponse).expand((b) => b).toList();
-
     return ApiResponse.ok(res);
+  }
+
+  @override
+  Future<ApiResponse<List<Approval>>> getPendingApprovals({required List<Pipeline> pipelines}) async {
+    final approvalsRes = await Future.wait([
+      for (final pipeline in pipelines)
+        _get(
+          '$_basePath/${pipeline.project!.name}/_apis/pipelines/approvals?\$expand=steps&state=pending&$_apiVersion',
+        ),
+    ]);
+
+    final res =
+        approvalsRes.where((r) => !r.isError).map(GetPipelineApprovalsResponse.fromResponse).expand((a) => a).toList();
+    return ApiResponse.ok(res);
+  }
+
+  @override
+  Future<ApiResponse<List<Approval>>> getPipelineApprovals({required Pipeline pipeline}) async {
+    final approvalsRes =
+        await _get('$_basePath/${pipeline.project!.name}/_apis/pipelines/approvals?\$expand=steps&$_apiVersion');
+    if (approvalsRes.isError) return ApiResponse.error(approvalsRes);
+
+    final approvals = GetPipelineApprovalsResponse.fromResponse(approvalsRes)
+        .where((a) => a.pipeline.owner.id == pipeline.id)
+        .toList();
+
+    return ApiResponse.ok(approvals);
+  }
+
+  @override
+  Future<ApiResponse<bool>> approvePipelineApproval({
+    required Approval approval,
+    required String projectId,
+    DateTime? deferredTo,
+  }) async {
+    final isDeferred = deferredTo != null;
+
+    final body = [
+      {
+        'approvalId': approval.id,
+        'status': isDeferred ? 128 : 4,
+        'comment': '${isDeferred ? 'Deferred' : 'Approved'} by ${user!.displayName} via AzDevops app',
+        'deferredTo': deferredTo?.toUtc().toIso8601String(),
+      }
+    ];
+
+    final approvalsRes = await _patchList('$_basePath/$projectId/_apis/pipelines/approvals?$_apiVersion', body: body);
+
+    if (approvalsRes.isError) return ApiResponse.error(approvalsRes);
+
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> rejectPipelineApproval({required Approval approval, required String projectId}) async {
+    final body = [
+      {
+        'approvalId': approval.id,
+        'status': 8,
+        'comment': 'Rejected by ${user!.displayName} via AzDevops app',
+      }
+    ];
+
+    final approvalsRes = await _patchList('$_basePath/$projectId/_apis/pipelines/approvals?$_apiVersion', body: body);
+
+    if (approvalsRes.isError) return ApiResponse.error(approvalsRes);
+
+    return ApiResponse.ok(true);
   }
 
   @override

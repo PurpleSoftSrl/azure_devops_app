@@ -34,6 +34,12 @@ class _PipelineDetailScreen extends StatelessWidget {
                         text: ctrl.getActionTextFromStatus(),
                         icon: ctrl.getActionIconFromStatus(),
                       ),
+                      if (ctrl.hasApprovals)
+                        PopupItem(
+                          onTap: ctrl.viewAllApprovals,
+                          text: 'View approvals',
+                          icon: DevOpsIcons.task,
+                        ),
                       PopupItem(
                         onTap: ctrl.shareBuild,
                         text: 'Share',
@@ -76,17 +82,33 @@ class _PipelineDetailScreen extends StatelessWidget {
                     const SizedBox(
                       width: 10,
                     ),
-                    if (pipeline.status == PipelineStatus.inProgress)
-                      InProgressPipelineIcon(
-                        child: Icon(
-                          DevOpsIcons.running,
-                          color: Colors.blue,
-                        ),
+                    if (pipeline.status == PipelineStatus.inProgress && ctrl.pendingApprovals.isNotEmpty)
+                      Icon(
+                        Icons.warning,
+                        color: Colors.orange,
                       )
                     else
                       pipeline.status == PipelineStatus.completed ? pipeline.result.icon : pipeline.status.icon,
                   ],
                 ),
+                const SizedBox(
+                  height: 10,
+                ),
+                if (ctrl.hasPendingApprovals)
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(AppTheme.radius),
+                      border: Border.all(color: Colors.orange),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.symmetric(vertical: 12),
+                    child: Row(
+                      children: [
+                        Expanded(child: Text(ctrl.getPendingApprovalText())),
+                        NavigationButton(onTap: ctrl.viewPendingApprovals, child: Text('View')),
+                      ],
+                    ),
+                  ),
                 const SizedBox(
                   height: 10,
                 ),
@@ -192,29 +214,37 @@ class _PipelineDetailScreen extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       if (stage.stage.name != '__default') _StageRow(stage: stage.stage),
-                                      ...stage.phases.expand((phase) => phase.jobs).map(
-                                            (job) => Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.only(left: 10, top: 5),
-                                                  child: _JobRow(job: job.job),
-                                                ),
-                                                const SizedBox(
-                                                  height: 5,
-                                                ),
-                                                ...job.tasks.map(
-                                                  (task) => InkWell(
-                                                    onTap: () => ctrl.seeLogs(task),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.only(bottom: 5, left: 20),
-                                                      child: _TaskRow(task: task),
+                                      if (stage.phases.isNotEmpty && stage.phases.expand((phase) => phase.jobs).isEmpty)
+                                        ...stage.phases.where((p) => p.phase.result == TaskResult.failed).map(
+                                              (phase) => Padding(
+                                                padding: const EdgeInsets.only(left: 10, top: 5),
+                                                child: _PhaseRow(phase: phase.phase),
+                                              ),
+                                            )
+                                      else
+                                        ...stage.phases.expand((phase) => phase.jobs).map(
+                                              (job) => Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 10, top: 5),
+                                                    child: _JobRow(job: job.job),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  ...job.tasks.map(
+                                                    (task) => InkWell(
+                                                      onTap: () => ctrl.seeLogs(task),
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(bottom: 5, left: 20),
+                                                        child: _TaskRow(task: task),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
-                                          ),
                                       const SizedBox(
                                         height: 20,
                                       ),

@@ -11,6 +11,7 @@ import 'package:azure_devops/src/models/file_diff.dart';
 import 'package:azure_devops/src/models/identity_response.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
+import 'package:azure_devops/src/models/pipeline_approvals.dart';
 import 'package:azure_devops/src/models/processes.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
@@ -150,6 +151,30 @@ class AzureApiServiceMock implements AzureApiService {
     final secondPipe = emptyPipe.copyWithStatus(PipelineStatus.inProgress).copyWithRequestedFor('Test User 2');
     final thirdPipe = emptyPipe.copyWithStatus(PipelineStatus.notStarted).copyWithRequestedFor('Test User 3');
     return ApiResponse.ok([firstPipe, secondPipe, thirdPipe]);
+  }
+
+  @override
+  Future<ApiResponse<List<Approval>>> getPendingApprovals({required List<Pipeline> pipelines}) async {
+    return ApiResponse.ok([]);
+  }
+
+  @override
+  Future<ApiResponse<List<Approval>>> getPipelineApprovals({required Pipeline pipeline}) async {
+    return ApiResponse.ok(<Approval>[]);
+  }
+
+  @override
+  Future<ApiResponse<bool>> approvePipelineApproval({
+    required Approval approval,
+    required String projectId,
+    DateTime? deferredTo,
+  }) async {
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<bool>> rejectPipelineApproval({required Approval approval, required String projectId}) async {
+    return ApiResponse.ok(true);
   }
 
   @override

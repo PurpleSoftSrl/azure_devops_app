@@ -2,12 +2,14 @@ library pipelines;
 
 import 'dart:async';
 
+import 'package:azure_devops/src/extensions/approval_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/pipeline_result_extension.dart';
 import 'package:azure_devops/src/mixins/ads_mixin.dart';
 import 'package:azure_devops/src/mixins/api_error_mixin.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
+import 'package:azure_devops/src/models/pipeline_approvals.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/router/router.dart';

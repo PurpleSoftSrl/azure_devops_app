@@ -5,6 +5,22 @@ import 'package:http/http.dart';
 mixin ApiErrorHelper {
   final projectNotFoundException = 'ProjectDoesNotExistWithNameException';
 
+  String getErrorMessage(Response res) {
+    var errorMsg = '';
+
+    try {
+      final responseBody = res.body;
+      final apiErrorMessage = jsonDecode(responseBody) as Map<String, dynamic>;
+      final msg = apiErrorMessage['message'] as String? ?? '';
+
+      errorMsg += msg.replaceAll(RegExp("['«»:]"), '').trim();
+    } catch (_) {
+      // ignore
+    }
+
+    return errorMsg;
+  }
+
   ({String msg, String type}) getErrorMessageAndType(Response res) {
     var errorMsg = '';
     var type = '';

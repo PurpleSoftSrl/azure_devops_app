@@ -252,8 +252,8 @@ class AppRouter {
     _currentNavigator!.pop(result);
   }
 
-  static void popRoute() {
-    rootNavigator!.pop();
+  static void popRoute({Object? result}) {
+    rootNavigator!.pop(result);
   }
 
   static Future<void> askBeforeClosingApp({required bool didPop}) async {

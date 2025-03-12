@@ -1,6 +1,6 @@
 part of pipeline_detail;
 
-class _PipelineDetailController with ShareMixin, AdsMixin {
+class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
   _PipelineDetailController._(this.args, this.api, this.ads) : visibilityKey = GlobalKey();
 
   final ({String project, int id}) args;
@@ -14,6 +14,11 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
   Timer? _timer;
 
   Pipeline get pipeline => buildDetail.value!.data!.pipeline;
+
+  List<Approval> get pendingApprovals => pipeline.approvals.where((a) => a.isPending).toList();
+  bool get hasPendingApprovals => pendingApprovals.isNotEmpty;
+
+  bool get hasApprovals => pipeline.approvals.isNotEmpty;
 
   GlobalKey visibilityKey;
   var _hasStoppedTimer = false;
@@ -47,9 +52,15 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
 
   Future<void> _init() async {
     final res = await api.getPipeline(projectName: args.project, id: args.id);
-    buildDetail.value = res;
+    if (res.isError) {
+      buildDetail.value = res;
+      return;
+    }
 
-    if (buildDetail.value?.isError ?? true) return;
+    final approvals = await api.getPipelineApprovals(pipeline: res.data!.pipeline);
+    res.data!.pipeline.approvals = approvals.data ?? [];
+
+    buildDetail.value = res;
 
     final realLogs = res.data!.timeline.where((r) => r.order < 1000);
 
@@ -220,6 +231,123 @@ class _PipelineDetailController with ShareMixin, AdsMixin {
 
   void goToPreviousRuns() {
     AppRouter.goToPipelines(args: (definition: pipeline.definition!.id!, project: pipeline.project!, shortcut: null));
+  }
+
+  String getPendingApprovalText() {
+    final length = pendingApprovals.length;
+    return '$length approval${length > 1 ? 's' : ''} need${length > 1 ? '' : 's'} review before this run can continue';
+  }
+
+  void viewAllApprovals() {
+    OverlayService.bottomsheet(
+      title: 'Approvals',
+      isScrollControlled: true,
+      builder: (_) => _PendingApprovalsBottomSheet(
+        approvals: pipeline.approvals,
+        canApprove: (_) => false,
+        isBlockedApprover: (_) => false,
+        onApprove: (_) {},
+        onDefer: (_) {},
+        onReject: (_) {},
+      ),
+    );
+  }
+
+  void viewPendingApprovals() {
+    OverlayService.bottomsheet(
+      title: 'Pending approvals',
+      isScrollControlled: true,
+      builder: (_) => _PendingApprovalsBottomSheet(
+        approvals: pendingApprovals,
+        canApprove: _canApprove,
+        isBlockedApprover: _isBlockedApprover,
+        onApprove: _approveApproval,
+        onDefer: _deferApproval,
+        onReject: _rejectApproval,
+      ),
+    );
+  }
+
+  bool _canApprove(Approval approval) {
+    final pendingStep = approval.steps.firstWhereOrNull((s) => s.isPending);
+    if (pendingStep == null) return false;
+
+    final userEmail = api.user!.emailAddress;
+
+    return !_isBlockedApprover(approval) && (pendingStep.assignedApprover.uniqueName == userEmail);
+  }
+
+  bool _isBlockedApprover(Approval approval) {
+    final pendingStep = approval.steps.firstWhereOrNull((s) => s.isPending);
+    if (pendingStep == null) return false;
+
+    final userEmail = api.user!.emailAddress;
+
+    return approval.blockedApprovers.map((a) => a.uniqueName).contains(userEmail);
+  }
+
+  Future<void> _approveApproval(Approval approval) async {
+    final conf = await OverlayService.confirm(
+      'Attention',
+      description: 'Do you really want to approve this approval?',
+    );
+
+    if (!conf) return;
+
+    final res = await api.approvePipelineApproval(approval: approval, projectId: pipeline.project!.id!);
+
+    if (!(res.data ?? false)) {
+      final errorMessage = getErrorMessage(res.errorResponse!);
+      return OverlayService.error('Error', description: 'Approval not approved.\n\n$errorMessage');
+    }
+
+    AppRouter.popRoute();
+
+    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Approval approved successfully'));
+  }
+
+  Future<void> _deferApproval(Approval approval) async {
+    final deferredDateTime = await OverlayService.bottomsheet<DateTime>(
+      title: 'Defer approval',
+      isScrollControlled: true,
+      builder: (_) => _DeferApprovalBottomSheet(),
+    );
+    if (deferredDateTime == null) return;
+
+    final res = await api.approvePipelineApproval(
+      approval: approval,
+      projectId: pipeline.project!.id!,
+      deferredTo: deferredDateTime,
+    );
+
+    if (!(res.data ?? false)) {
+      final errorMessage = getErrorMessage(res.errorResponse!);
+      return OverlayService.error('Error', description: 'Approval not deferred.\n\n$errorMessage');
+    }
+
+    AppRouter.popRoute();
+
+    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Approval deferred successfully'));
+  }
+
+  Future<void> _rejectApproval(Approval approval) async {
+    final conf = await OverlayService.confirm(
+      'Attention',
+      description: 'Do you really want to reject this approval?',
+    );
+
+    if (!conf) return;
+
+    final res = await api.rejectPipelineApproval(approval: approval, projectId: pipeline.project!.id!);
+
+    if (!(res.data ?? false)) {
+      final errorMessage = getErrorMessage(res.errorResponse!);
+      return OverlayService.error('Error', description: 'Approval not rejected.\n\n$errorMessage');
+    }
+
+    AppRouter.popRoute();
+
+    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Approval rejected successfully'));
   }
 }
 

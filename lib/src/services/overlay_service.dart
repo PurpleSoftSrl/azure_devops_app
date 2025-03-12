@@ -135,7 +135,7 @@ class OverlayService {
   }
 
   // ignore: long-parameter-list, long-method
-  static Future<void> bottomsheet({
+  static Future<T?> bottomsheet<T>({
     required WidgetBuilder builder,
     bool isDismissible = true,
     bool isScrollControlled = false,
@@ -146,7 +146,7 @@ class OverlayService {
     Widget? topRight,
     String? name,
   }) async {
-    await showModalBottomSheet(
+    return showModalBottomSheet<T>(
       context: context,
       backgroundColor: context.themeExtension.background,
       useRootNavigator: true,
