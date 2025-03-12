@@ -155,7 +155,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
       for (final approval in approvalsByPipeline.entries) {
         final pipeline = runningPipelines.firstWhereOrNull((p) => p.id == approval.key);
         if (pipeline != null) {
-          pipeline.approvals = approval.value.where((a) => a.status == 'pending').toList();
+          pipeline.approvals = approval.value.where((a) => a.isPending).toList();
         }
       }
     }

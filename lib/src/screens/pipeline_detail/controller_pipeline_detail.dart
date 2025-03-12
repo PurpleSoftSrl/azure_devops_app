@@ -15,7 +15,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
 
   Pipeline get pipeline => buildDetail.value!.data!.pipeline;
 
-  List<Approval> get pendingApprovals => pipeline.approvals.where((a) => a.status == 'pending').toList();
+  List<Approval> get pendingApprovals => pipeline.approvals.where((a) => a.isPending).toList();
   bool get hasPendingApprovals => pendingApprovals.isNotEmpty;
 
   bool get hasApprovals => pipeline.approvals.isNotEmpty;
@@ -269,7 +269,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
   }
 
   bool _canApprove(Approval approval) {
-    final pendingStep = approval.steps.firstWhereOrNull((s) => s.status == 'pending');
+    final pendingStep = approval.steps.firstWhereOrNull((s) => s.isPending);
     if (pendingStep == null) return false;
 
     final userEmail = api.user!.emailAddress;
@@ -278,7 +278,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
   }
 
   bool _isBlockedApprover(Approval approval) {
-    final pendingStep = approval.steps.firstWhereOrNull((s) => s.status == 'pending');
+    final pendingStep = approval.steps.firstWhereOrNull((s) => s.isPending);
     if (pendingStep == null) return false;
 
     final userEmail = api.user!.emailAddress;

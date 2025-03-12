@@ -21,6 +21,8 @@ extension ApprovalExt on Approval {
         DateTime(1900).millisecondsSinceEpoch,
         (prev, step) => max(prev, (step.lastModifiedOn ?? DateTime.now()).millisecondsSinceEpoch),
       );
+
+  bool get isPending => status == 'pending';
 }
 
 extension StepExt on ApprovalStep {
@@ -69,4 +71,6 @@ extension StepExt on ApprovalStep {
 
     return '${status.titleCase}${isDeferred ? ' to ${deferredTo?.toSimpleDate()}' : ''} $timeAgo${isNow ? '' : ' ago'}';
   }
+
+  bool get isPending => status == 'pending';
 }
