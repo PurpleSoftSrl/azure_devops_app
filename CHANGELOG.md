@@ -1,3 +1,15 @@
+## 3.4.0 - 2025-03-12
+- Handle pipeline approvals (#57)
+- pipelines: fix deployment jobs not showing in timeline
+- boards/sprints: handle boards with more than 200 items
+- project_detail: fix project id in title sometimes
+- ads: show less native ads
+- upgrade Flutter to 3.29.0
+- msal: don't log MsalUserCancelException
+- improve error logs
+- ads: improve error handling and logs (3)
+- fix log api error
+
 ## 3.3.0 - 2025-02-18
 - ads: fix onDismiss not called when ads are disabled
 - ads: improve error handling and logs (2)
