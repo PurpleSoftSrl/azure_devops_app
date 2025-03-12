@@ -225,7 +225,7 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(AppTheme.radius),
-                    border: Border.all(color: Colors.yellow, width: .5),
+                    border: Border.all(color: Colors.orange, width: .5),
                   ),
                   padding: const EdgeInsets.all(12),
                   margin: const EdgeInsets.symmetric(vertical: 12),
@@ -233,7 +233,7 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.warning,
-                        color: Colors.yellow,
+                        color: Colors.orange,
                       ),
                       const SizedBox(
                         width: 10,

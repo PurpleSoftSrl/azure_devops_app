@@ -32,7 +32,7 @@ class PipelineListTile extends StatelessWidget {
               if (pipe.status == PipelineStatus.inProgress && pipe.approvals.isNotEmpty)
                 Icon(
                   Icons.warning,
-                  color: Colors.yellow,
+                  color: Colors.orange,
                 )
               else
                 pipe.status == PipelineStatus.completed ? pipe.result.icon : pipe.status.icon,

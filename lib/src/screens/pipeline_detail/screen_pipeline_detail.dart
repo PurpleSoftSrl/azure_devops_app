@@ -85,7 +85,7 @@ class _PipelineDetailScreen extends StatelessWidget {
                     if (pipeline.status == PipelineStatus.inProgress && ctrl.pendingApprovals.isNotEmpty)
                       Icon(
                         Icons.warning,
-                        color: Colors.yellow,
+                        color: Colors.orange,
                       )
                     else
                       pipeline.status == PipelineStatus.completed ? pipeline.result.icon : pipeline.status.icon,
@@ -98,7 +98,7 @@ class _PipelineDetailScreen extends StatelessWidget {
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(AppTheme.radius),
-                      border: Border.all(color: Colors.yellow),
+                      border: Border.all(color: Colors.orange),
                     ),
                     padding: const EdgeInsets.all(12),
                     margin: const EdgeInsets.symmetric(vertical: 12),
