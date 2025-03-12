@@ -164,7 +164,11 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<bool>> approvePipelineApproval({required Approval approval, required String projectId}) async {
+  Future<ApiResponse<bool>> approvePipelineApproval({
+    required Approval approval,
+    required String projectId,
+    DateTime? deferredTo,
+  }) async {
     return ApiResponse.ok(true);
   }
 

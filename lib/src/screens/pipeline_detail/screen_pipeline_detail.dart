@@ -82,7 +82,7 @@ class _PipelineDetailScreen extends StatelessWidget {
                     const SizedBox(
                       width: 10,
                     ),
-                    if (pipeline.status == PipelineStatus.inProgress && pipeline.approvals.isNotEmpty)
+                    if (pipeline.status == PipelineStatus.inProgress && ctrl.pendingApprovals.isNotEmpty)
                       Icon(
                         Icons.warning,
                         color: Colors.yellow,

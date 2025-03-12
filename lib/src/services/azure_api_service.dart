@@ -261,7 +261,11 @@ abstract class AzureApiService {
 
   Future<ApiResponse<List<Approval>>> getPipelineApprovals({required Pipeline pipeline});
 
-  Future<ApiResponse<bool>> approvePipelineApproval({required Approval approval, required String projectId});
+  Future<ApiResponse<bool>> approvePipelineApproval({
+    required Approval approval,
+    required String projectId,
+    DateTime? deferredTo,
+  });
 
   Future<ApiResponse<bool>> rejectPipelineApproval({required Approval approval, required String projectId});
 
@@ -2274,12 +2278,19 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<bool>> approvePipelineApproval({required Approval approval, required String projectId}) async {
+  Future<ApiResponse<bool>> approvePipelineApproval({
+    required Approval approval,
+    required String projectId,
+    DateTime? deferredTo,
+  }) async {
+    final isDeferred = deferredTo != null;
+
     final body = [
       {
         'approvalId': approval.id,
-        'status': 4,
-        'comment': 'Approved by ${user!.displayName} via AzDevops app',
+        'status': isDeferred ? 128 : 4,
+        'comment': '${isDeferred ? 'Deferred' : 'Approved'} by ${user!.displayName} via AzDevops app',
+        'deferredTo': deferredTo?.toUtc().toIso8601String(),
       }
     ];
 

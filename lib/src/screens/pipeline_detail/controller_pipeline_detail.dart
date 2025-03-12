@@ -247,6 +247,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
         canApprove: (_) => false,
         isBlockedApprover: (_) => false,
         onApprove: (_) {},
+        onDefer: (_) {},
         onReject: (_) {},
       ),
     );
@@ -261,6 +262,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
         canApprove: _canApprove,
         isBlockedApprover: _isBlockedApprover,
         onApprove: _approveApproval,
+        onDefer: _deferApproval,
         onReject: _rejectApproval,
       ),
     );
@@ -294,6 +296,29 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
 
     AppRouter.popRoute();
     OverlayService.snackbar('Approval approved successfully');
+  }
+
+  Future<void> _deferApproval(Approval approval) async {
+    final deferredDateTime = await OverlayService.bottomsheet<DateTime>(
+      title: 'Defer approval',
+      isScrollControlled: true,
+      builder: (_) => _DeferApprovalBottomSheet(),
+    );
+    if (deferredDateTime == null) return;
+
+    final res = await api.approvePipelineApproval(
+      approval: approval,
+      projectId: pipeline.project!.id!,
+      deferredTo: deferredDateTime,
+    );
+
+    if (!(res.data ?? false)) {
+      final errorMessage = getErrorMessage(res.errorResponse!);
+      return OverlayService.error('Error', description: 'Approval not deferred.\n\n$errorMessage');
+    }
+
+    AppRouter.popRoute();
+    OverlayService.snackbar('Approval deferred successfully');
   }
 
   Future<void> _rejectApproval(Approval approval) async {

@@ -126,6 +126,7 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
     required this.canApprove,
     required this.isBlockedApprover,
     required this.onApprove,
+    required this.onDefer,
     required this.onReject,
   });
 
@@ -133,6 +134,7 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
   final bool Function(Approval) canApprove;
   final bool Function(Approval) isBlockedApprover;
   final void Function(Approval) onApprove;
+  final void Function(Approval) onDefer;
   final void Function(Approval) onReject;
 
   @override
@@ -172,14 +174,39 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
                               Text(
                                 step.assignedApprover.displayName,
                               ),
-                              if (step.isCompleted)
-                                Text(
-                                  '${step.status.titleCase} ${step.lastModifiedOn?.minutesAgo} ${step.lastModifiedOn?.minutesAgo == 'now' ? '' : 'ago'}',
-                                  style: context.textTheme.bodySmall,
-                                ),
+                              Text(
+                                step.statusDescription,
+                                style: context.textTheme.bodySmall,
+                              ),
                             ],
                           ),
                           const Spacer(),
+                          if (canApprove(approval))
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: DevOpsPopupMenu(
+                                tooltip: '$approval actions',
+                                offset: const Offset(0, 20),
+                                constraints: BoxConstraints(minWidth: 150),
+                                items: () => [
+                                  PopupItem(
+                                    onTap: () => onApprove(approval),
+                                    text: 'Approve',
+                                    icon: DevOpsIcons.success,
+                                  ),
+                                  PopupItem(
+                                    onTap: () => onDefer(approval),
+                                    text: 'Defer',
+                                    icon: DevOpsIcons.queued,
+                                  ),
+                                  PopupItem(
+                                    onTap: () => onReject(approval),
+                                    text: 'Reject',
+                                    icon: DevOpsIcons.failed,
+                                  ),
+                                ],
+                              ),
+                            ),
                           step.statusIcon,
                         ],
                       ),
@@ -194,29 +221,7 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
                   style: context.textTheme.bodySmall,
                 ),
               ],
-              if (canApprove(approval)) ...[
-                const SizedBox(height: 40),
-                Row(
-                  children: [
-                    Expanded(
-                      child: LoadingButton(
-                        onPressed: () => onApprove(approval),
-                        text: 'Approve',
-                        margin: const EdgeInsets.only(right: 10),
-                      ),
-                    ),
-                    Expanded(
-                      child: LoadingButton(
-                        onPressed: () => onReject(approval),
-                        text: 'Reject',
-                        margin: const EdgeInsets.only(left: 10),
-                        backgroundColor: context.colorScheme.error,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-              ] else if (isBlockedApprover(approval)) ...[
+              if (isBlockedApprover(approval)) ...[
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(AppTheme.radius),
@@ -251,6 +256,104 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _DeferApprovalBottomSheet extends StatefulWidget {
+  const _DeferApprovalBottomSheet();
+
+  @override
+  State<_DeferApprovalBottomSheet> createState() => _DeferApprovalBottomSheetState();
+}
+
+class _DeferApprovalBottomSheetState extends State<_DeferApprovalBottomSheet> {
+  final _dateController = TextEditingController();
+  final _timeController = TextEditingController();
+
+  var _date = DateTime.now();
+  var _time = TimeOfDay.now();
+
+  final _formKey = GlobalKey<FormState>();
+
+  Future<void> _showDatePicker() async {
+    final date = await showDatePicker(
+      context: AppRouter.rootNavigator!.context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(Duration(days: 30)),
+    );
+
+    if (date == null) return;
+
+    _date = date;
+    _dateController.text = date.toDate();
+  }
+
+  Future<void> _showTimePicker() async {
+    final time = await showTimePicker(
+      context: AppRouter.rootNavigator!.context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (time == null) return;
+
+    if (!mounted) return;
+
+    _time = time;
+    _timeController.text = time.format(context);
+  }
+
+  final _timeZone = DateTime.now().timeZoneName;
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          DevOpsFormField(
+            label: 'Date',
+            controller: _dateController,
+            onChanged: (_) {},
+            readOnly: true,
+            onTap: _showDatePicker,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          DevOpsFormField(
+            label: 'Time',
+            controller: _timeController,
+            onChanged: (_) {},
+            readOnly: true,
+            onTap: _showTimePicker,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            'Time is in your local time zone: $_timeZone',
+            style: context.textTheme.bodySmall,
+            textAlign: TextAlign.center,
+          ),
+          const Spacer(),
+          LoadingButton(
+            onPressed: () {
+              final isValid = _formKey.currentState!.validate();
+              if (!isValid) return;
+
+              final dateTime = DateTime(_date.year, _date.month, _date.day, _time.hour, _time.minute);
+
+              AppRouter.popRoute(result: dateTime);
+            },
+            text: 'Defer',
+          ),
+          const SizedBox(
+            height: 40,
+          ),
+        ],
+      ),
     );
   }
 }

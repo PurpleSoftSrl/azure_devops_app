@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
+import 'package:azure_devops/src/extensions/datetime_extension.dart';
+import 'package:azure_devops/src/extensions/string_extension.dart';
 import 'package:azure_devops/src/models/pipeline_approvals.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
@@ -41,6 +43,11 @@ extension StepExt on ApprovalStep {
           DevOpsIcons.queued,
           color: Colors.blue,
         );
+      case 'deferred':
+        return Icon(
+          DevOpsIcons.queued,
+          color: Colors.blue,
+        );
       case 'timedOut':
         return Icon(
           DevOpsIcons.skipped,
@@ -53,5 +60,13 @@ extension StepExt on ApprovalStep {
           color: Colors.transparent,
         );
     }
+  }
+
+  String get statusDescription {
+    final timeAgo = lastModifiedOn?.minutesAgo;
+    final isNow = timeAgo == 'now';
+    final isDeferred = status.toLowerCase() == 'deferred';
+
+    return '${status.titleCase}${isDeferred ? ' to ${deferredTo?.toSimpleDate()}' : ''} $timeAgo${isNow ? '' : ' ago'}';
   }
 }
