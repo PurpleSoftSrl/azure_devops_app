@@ -305,6 +305,15 @@ class _DeferApprovalBottomSheetState extends State<_DeferApprovalBottomSheet> {
   }
 
   final _timeZone = DateTime.now().timeZoneName;
+  String get _timeZoneOffset {
+    final now = DateTime.now();
+
+    final hours = now.timeZoneOffset.inHours;
+    final minutes = now.timeZoneOffset.inMinutes.remainder(60);
+    final sign = hours.isNegative ? '-' : '+';
+
+    return '$sign${hours.abs()}:${minutes.toString().padLeft(2, '0')}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -333,7 +342,7 @@ class _DeferApprovalBottomSheetState extends State<_DeferApprovalBottomSheet> {
             height: 20,
           ),
           Text(
-            'Time is in your local time zone: $_timeZone',
+            'Time zone: (UTC$_timeZoneOffset) $_timeZone',
             style: context.textTheme.bodySmall,
             textAlign: TextAlign.center,
           ),
