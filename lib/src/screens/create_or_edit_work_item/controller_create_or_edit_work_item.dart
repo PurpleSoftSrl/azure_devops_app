@@ -808,6 +808,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
   Future<void> _getProjectTags() {
     return api.getProjectTags(projectName: newWorkItemProject.name!).then((res) {
       if (res.isError) {
+        _projectTags.value = {};
         return OverlayService.snackbar('Could not get tags for project ${newWorkItemProject.name}', isError: true);
       }
 
