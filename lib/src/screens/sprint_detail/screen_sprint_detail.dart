@@ -17,31 +17,7 @@ class _SprintDetailScreen extends StatelessWidget {
         actions: [
           _Actions(ctrl: ctrl),
         ],
-        header: () => FiltersRow(
-          resetFilters: ctrl.resetFilters,
-          filters: [
-            WorkItemTypeFilterMenu.multiple(
-              title: 'Types',
-              values: ctrl.allWorkItemTypes,
-              formatLabel: (t) =>
-                  [null, 'system'].contains(t.customization) ? t.name : '${t.name} (${t.customization})',
-              currentFilters: ctrl.typesFilter,
-              onSelectedMultiple: ctrl.filterByTypes,
-              isDefaultFilter: ctrl.typesFilter.isEmpty,
-              widgetBuilder: (t) => WorkItemTypeFilter(type: t),
-            ),
-            FilterMenu<GraphUser>.multiple(
-              title: 'Assigned to',
-              values: ctrl.getAssignees(),
-              onSelectedMultiple: ctrl.filterByUsers,
-              formatLabel: (u) => ctrl.getFormattedUser(u, ctrl.api),
-              isDefaultFilter: ctrl.isDefaultUsersFilter,
-              currentFilters: ctrl.usersFilter,
-              widgetBuilder: (u) => UserFilterWidget(user: u),
-              onSearchChanged: ctrl.hasManyUsers(ctrl.api) ? ctrl.searchAssignee : null,
-            ),
-          ],
-        ),
+        header: () => _Filters(ctrl: ctrl),
         builder: (_) => DefaultTabController(
           length: ctrl.columnItems.length,
           child: Builder(
