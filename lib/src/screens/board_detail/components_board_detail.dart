@@ -14,18 +14,23 @@ class _Actions extends StatelessWidget {
         onResetSearch: ctrl.resetSearch,
         hint: 'Search by id or title',
         margin: const EdgeInsets.only(left: 56, right: 16),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SearchButton(
-              isSearching: ctrl.isSearching,
-            ),
-            IconButton(
-              icon: const Icon(DevOpsIcons.plus),
-              onPressed: ctrl.addNewItem,
-              iconSize: 24,
-            ),
-          ],
+        child: ValueListenableBuilder(
+          valueListenable: ctrl.boardWithItems,
+          builder: (_, board, __) => Row(
+            mainAxisSize: MainAxisSize.min,
+            children: board == null
+                ? const []
+                : [
+                    SearchButton(
+                      isSearching: ctrl.isSearching,
+                    ),
+                    IconButton(
+                      icon: const Icon(DevOpsIcons.plus),
+                      onPressed: ctrl.addNewItem,
+                      iconSize: 24,
+                    ),
+                  ],
+          ),
         ),
       ),
     );
