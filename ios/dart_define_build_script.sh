@@ -14,10 +14,12 @@ for index in "${!define_items[@]}"
 do
     decodedEntry=$(entry_decode "${define_items[$index]}");
 
-    if [[ $decodedEntry != *"flutter"* ]];
+    if [[ $decodedEntry != *"FLUTTER_"* ]];
       then define_items["$index"]=$decodedEntry;
+    else
+      define_items["$index"]="";
     fi
-    
+      
 done
 
 printf "%s\n" "${define_items[@]}" > "${SRCROOT}/Flutter/Environment${CONFIGURATION}.xcconfig"
