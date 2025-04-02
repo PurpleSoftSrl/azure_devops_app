@@ -43,6 +43,9 @@ dependencies:
   firebase_analytics: ^11.3.6
   file_picker: ^8.0.5
   msal_auth:
+   git:
+    url: https://github.com/PurpleSoftSrl/msal_auth
+    ref: main  
   xml: ^6.3.0
   purple_theme:
    git:
