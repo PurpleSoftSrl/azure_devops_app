@@ -1,3 +1,10 @@
+## 3.4.1 - 2025-04-02
+- update msal plugin
+- ios: fix dart define build script
+- boards/sprints: show actions when data is loaded
+- boards/sprints: show filters when data is loaded
+- work_items: handle get tags error when adding tags
+
 ## 3.4.0 - 2025-03-12
 - Handle pipeline approvals (#57)
 - pipelines: fix deployment jobs not showing in timeline
