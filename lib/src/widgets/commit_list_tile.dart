@@ -69,9 +69,13 @@ class CommitListTile extends StatelessWidget {
                       width: 8,
                     ),
                     if (commit.tags?.isNotEmpty ?? false)
-                      for (final tag in commit.tags!)
+                      if (commit.tags!.length > 1)
+                        TagChipMultiple(
+                          tags: commit.tags!,
+                        )
+                      else
                         TagChip(
-                          tag: tag,
+                          tag: commit.tags!.first,
                         ),
                     const SizedBox(
                       width: 8,
@@ -101,41 +105,86 @@ class TagChip extends StatelessWidget {
 
   final Tag tag;
 
+  String get _getTagDescription {
+    var description = tag.comment ?? '';
+    if (tag.tagger != null) {
+      description += '\n${tag.tagger!.name ?? ''}';
+      description += '\n${tag.tagger?.date?.toDate() ?? ''}';
+    }
+    return description;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final subtitleStyle = context.textTheme.labelSmall!.copyWith(height: 1);
     return DevOpsPopupMenu(
       tooltip: tag.name,
       items: () => [
-        PopupItem(
-          text: '${tag.comment ?? ''}\n${tag.tagger?.name}\n${tag.tagger?.date?.toDate()}',
-          onTap: () {},
-        ),
+        if (_getTagDescription.isNotEmpty)
+          PopupItem(
+            text: _getTagDescription,
+            onTap: () {},
+          ),
       ],
-      offset: Offset(0, 20),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-        decoration: BoxDecoration(
-          color: context.colorScheme.secondaryContainer,
-          borderRadius: BorderRadius.circular(100),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.sell_outlined,
-              size: 10,
-              color: context.themeExtension.onBackground,
-            ),
-            const SizedBox(
-              width: 4,
-            ),
-            Text(
-              tag.name,
+      offset: const Offset(0, 20),
+      child: _TagChip(label: tag.name),
+    );
+  }
+}
+
+class TagChipMultiple extends StatelessWidget {
+  const TagChipMultiple({required this.tags});
+
+  final List<Tag> tags;
+
+  @override
+  Widget build(BuildContext context) {
+    return DevOpsPopupMenu(
+      tooltip: tags.map((tag) => tag.name).join(', '),
+      items: () => [
+        for (final tag in tags)
+          PopupItem(
+            text: tag.name,
+            onTap: () {},
+          ),
+      ],
+      offset: const Offset(0, 20),
+      child: _TagChip(label: '${tags.length} tags'),
+    );
+  }
+}
+
+class _TagChip extends StatelessWidget {
+  const _TagChip({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final subtitleStyle = context.textTheme.labelSmall!.copyWith(height: 1);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      decoration: BoxDecoration(
+        color: context.colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(100),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.sell_outlined,
+            size: 10,
+            color: context.themeExtension.onBackground,
+          ),
+          const SizedBox(
+            width: 4,
+          ),
+          Flexible(
+            child: Text(
+              label,
               style: subtitleStyle,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
