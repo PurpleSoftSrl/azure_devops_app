@@ -68,6 +68,8 @@ class _HomeController with AppLogger {
     if (Platform.isAndroid) {
       await ShareIntentService().maybeHandleSharedUrl();
     }
+
+    await NotificationsService(userId: api.user!.id!, organization: api.organization).init();
   }
 
   Future<void> goToCommits() async {
