@@ -898,6 +898,9 @@ class AzureApiServiceMock implements AzureApiService {
   Future<ApiResponse<List<UserTenant>>> getDirectories() async {
     return ApiResponse.ok([]);
   }
+
+  @override
+  String get pushNotificationsUrl => '';
 }
 
 class StorageServiceMock implements StorageService {
