@@ -1,19 +1,19 @@
 part of notifications_settings;
 
-class _NotificationsSettingsController {
+class _NotificationsSettingsController with ApiErrorHelper {
   _NotificationsSettingsController._(this.api, this.storage);
 
   final AzureApiService api;
   final StorageService storage;
 
-  final data = ValueNotifier<ApiResponse<List<HookSubscription>>?>(null);
+  final subscriptions = ValueNotifier<ApiResponse<List<HookSubscription>>?>(null);
   List<Project> projects = <Project>[];
 
   Future<void> init() async {
     projects = storage.getChosenProjects().toList();
 
     final res = await api.getSubscriptions();
-    data.value = res;
+    subscriptions.value = res;
   }
 
   bool hasHookSubscription(String projectId, EventType type) {
@@ -30,15 +30,18 @@ class _NotificationsSettingsController {
       case EventType.buildCompleted:
         publisherInputs = PublisherInputs(
           projectId: projectId,
-          definitionName: '', // TODO select definition
+          // definitionName: '', // TODO select definition
         );
-      case EventType.pullRequestUpdated:
       case EventType.pullRequestMerged:
         publisherInputs = PublisherInputs(
           projectId: projectId,
-          repository: '', // TODO select repository
-          branch: '',
+          // repository: '', // TODO select repository
+          // branch: '',
           mergeResult: 'Succeeded',
+        );
+      case EventType.pullRequestUpdated:
+        publisherInputs = PublisherInputs(
+          projectId: projectId,
         );
       case EventType.workItemUpdated:
         publisherInputs = PublisherInputs(
@@ -48,7 +51,7 @@ class _NotificationsSettingsController {
       case EventType.approvalCompleted:
         publisherInputs = PublisherInputs(
           projectId: projectId,
-          pipelineId: '', // TODO select pipeline
+          // pipelineId: '', // TODO select pipeline
         );
       case EventType.unknown:
     }
@@ -65,7 +68,8 @@ class _NotificationsSettingsController {
     );
 
     if (res.isError) {
-      return OverlayService.error('Error', description: res.errorResponse?.body ?? 'Subscription not created');
+      final error = getErrorMessage(res.errorResponse!);
+      return OverlayService.error('Error', description: error);
     }
 
     await init();
@@ -94,8 +98,8 @@ class _NotificationsSettingsController {
   }
 
   HookSubscription? _getSubscriptionByType(String projectId, EventType type) {
-    final subscription =
-        data.value?.data?.firstWhereOrNull((s) => s.publisherInputs.projectId == projectId && s.eventType == type);
+    final subscription = subscriptions.value?.data
+        ?.firstWhereOrNull((s) => s.publisherInputs.projectId == projectId && s.eventType == type);
     return subscription;
   }
 }
