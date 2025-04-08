@@ -11,7 +11,7 @@ class _NotificationsSettingsScreen extends StatelessWidget {
     return AppPage(
       init: ctrl.init,
       title: 'Notifications',
-      notifier: ctrl.data,
+      notifier: ctrl.subscriptions,
       builder: (subscriptions) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

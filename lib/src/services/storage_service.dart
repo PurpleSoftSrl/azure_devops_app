@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:azure_devops/src/models/hook_subscriptions.dart';
 import 'package:azure_devops/src/models/project.dart';
-import 'package:azure_devops/src/models/subscription_hooks.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -135,21 +135,21 @@ class PublisherInputs {
   final String? pipelineId;
 
   Map<String, dynamic> toJson() => {
-        'buildStatus': buildStatus,
-        'definitionName': definitionName,
+        if (buildStatus != null) 'buildStatus': buildStatus,
+        if (definitionName != null) 'definitionName': definitionName,
         'projectId': projectId,
-        'branch': branch,
-        'mergeResult': mergeResult,
-        'pullrequestCreatedBy': pullrequestCreatedBy,
-        'repository': repository,
-        'pipelineId': pipelineId,
+        if (branch != null) 'branch': branch,
+        if (mergeResult != null) 'mergeResult': mergeResult,
+        if (pullrequestCreatedBy != null) 'pullrequestCreatedBy': pullrequestCreatedBy,
+        if (repository != null) 'repository': repository,
+        if (pipelineId != null) 'pipelineId': pipelineId,
       };
 }
 
 enum EventType {
   buildCompleted('build.complete'),
-  pullRequestUpdated('git.pullrequest.merged'),
-  pullRequestMerged('git.pullrequest.updated'),
+  pullRequestUpdated('git.pullrequest.updated'),
+  pullRequestMerged('git.pullrequest.merged'),
   workItemUpdated('workitem.updated'),
   approvalPending('ms.vss-pipelinechecks-events.approval-pending'),
   approvalCompleted('ms.vss-pipelinechecks-events.approval-completed'),

@@ -1,8 +1,9 @@
 library notifications_settings;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
+import 'package:azure_devops/src/mixins/api_error_mixin.dart';
+import 'package:azure_devops/src/models/hook_subscriptions.dart';
 import 'package:azure_devops/src/models/project.dart';
-import 'package:azure_devops/src/models/subscription_hooks.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/notifications_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
