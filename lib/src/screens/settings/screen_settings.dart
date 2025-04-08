@@ -106,6 +106,26 @@ class _SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(
+            height: 20,
+          ),
+          NavigationButton(
+            onTap: ctrl.goToNotificationsSettings,
+            child: Row(
+              children: [
+                Icon(DevOpsIcons.send),
+                const SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  'Notifications',
+                  style: context.textTheme.bodyLarge,
+                ),
+                const Spacer(),
+                Icon(Icons.arrow_forward_ios),
+              ],
+            ),
+          ),
           if (directories.length > 1) ...[
             const SizedBox(
               height: 20,

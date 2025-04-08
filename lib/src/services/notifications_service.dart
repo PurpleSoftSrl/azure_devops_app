@@ -16,14 +16,11 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 class NotificationsService with AppLogger {
-  factory NotificationsService({required String userId, required String organization}) {
-    return _instance ??= NotificationsService._(userId, organization);
+  factory NotificationsService() {
+    return _instance ??= NotificationsService._();
   }
 
-  NotificationsService._(this.userId, this.organization);
-
-  final String userId;
-  final String organization;
+  NotificationsService._();
 
   static NotificationsService? _instance;
 
@@ -33,7 +30,7 @@ class NotificationsService with AppLogger {
     _instance = null;
   }
 
-  Future<void> init() async {
+  Future<void> init({required String userId, required String organization}) async {
     if (_initialized) return;
 
     final perm = await FirebaseMessaging.instance.requestPermission();
@@ -70,5 +67,13 @@ class NotificationsService with AppLogger {
     switch (type) {
       default:
     }
+  }
+
+  Future<void> subscribeToTopic(String topic) async {
+    await FirebaseMessaging.instance.subscribeToTopic(topic);
+  }
+
+  Future<void> unsubscribeFromTopic(String topic) async {
+    await FirebaseMessaging.instance.unsubscribeFromTopic(topic);
   }
 }

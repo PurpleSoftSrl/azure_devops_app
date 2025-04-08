@@ -32,6 +32,7 @@ import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/saved_query.dart';
 import 'package:azure_devops/src/models/sprint.dart';
+import 'package:azure_devops/src/models/subscription_hooks.dart';
 import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_areas.dart';
 import 'package:azure_devops/src/models/team_member.dart' show GetTeamMembersResponse;
@@ -394,6 +395,15 @@ abstract class AzureApiService {
   });
 
   Future<ApiResponse<List<UserTenant>>> getDirectories();
+
+  Future<ApiResponse<List<HookSubscription>>> getSubscriptions();
+
+  Future<ApiResponse<bool>> createHookSubscription({
+    required String projectId,
+    required String publisherId,
+    required EventType eventType,
+    required PublisherInputs publisherInputs,
+  });
 }
 
 class AzureApiServiceImpl with AppLogger implements AzureApiService {
@@ -482,6 +492,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   ];
 
   List<LinkType> _linkTypes = [];
+
+  static const _workerUrl = 'https://push.azdevops.app/api/webhook';
 
   void dispose() {
     instance = null;
@@ -2579,6 +2591,38 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     if (identity.isError) return ApiResponse.error(null);
 
     return ApiResponse.ok(UserIdentity.fromResponse(identity).id);
+  }
+
+  @override
+  Future<ApiResponse<List<HookSubscription>>> getSubscriptions() async {
+    final res = await _get('$_basePath/_apis/hooks/subscriptions?$_apiVersion');
+    if (res.isError) return ApiResponse.error(null);
+
+    return ApiResponse.ok(GetHookSubscriptionsResponse.fromResponse(res));
+  }
+
+  @override
+  Future<ApiResponse<bool>> createHookSubscription({
+    required String projectId,
+    required String publisherId,
+    required EventType eventType,
+    required PublisherInputs publisherInputs,
+  }) async {
+    final subRes = await _post(
+      '$_basePath/_apis/hooks/subscriptions?$_apiVersion',
+      body: {
+        'publisherId': publisherId,
+        'eventType': eventType.value,
+        'consumerId': 'webHooks',
+        'consumerActionId': 'httpRequest',
+        'publisherInputs': publisherInputs.toJson(),
+        'consumerInputs': {'url': _workerUrl},
+      },
+    );
+
+    if (subRes.isError) return ApiResponse.error(subRes);
+
+    return ApiResponse.ok(true);
   }
 
   Future<ApiResponse<List<GraphUser>>> _getUsers() async {

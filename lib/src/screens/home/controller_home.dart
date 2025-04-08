@@ -69,7 +69,9 @@ class _HomeController with AppLogger {
       await ShareIntentService().maybeHandleSharedUrl();
     }
 
-    await NotificationsService(userId: api.user!.id!, organization: api.organization).init();
+    if (useFirebase) {
+      await NotificationsService().init(userId: api.user!.id!, organization: api.organization);
+    }
   }
 
   Future<void> goToCommits() async {

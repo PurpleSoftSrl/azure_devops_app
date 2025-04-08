@@ -49,6 +49,10 @@ class _SettingsController with ShareMixin, AppLogger {
     AppRouter.goToChooseSubscription();
   }
 
+  void goToNotificationsSettings() {
+    AppRouter.goToNotificationsSettings();
+  }
+
   void seeChosenProjects() {
     AppRouter.goToChooseProjects(removeRoutes: false);
   }

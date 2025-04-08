@@ -16,6 +16,7 @@ import 'package:azure_devops/src/screens/file_diff/base_file_diff.dart';
 import 'package:azure_devops/src/screens/home/base_home.dart';
 import 'package:azure_devops/src/screens/login/base_login.dart';
 import 'package:azure_devops/src/screens/member_detail/base_member_detail.dart';
+import 'package:azure_devops/src/screens/notifications_settings/base_notifications_settings.dart';
 import 'package:azure_devops/src/screens/pipeline_detail/base_pipeline_detail.dart';
 import 'package:azure_devops/src/screens/pipeline_logs/base_pipeline_logs.dart';
 import 'package:azure_devops/src/screens/pipelines/base_pipelines.dart';
@@ -83,6 +84,7 @@ class AppRouter {
   static const _projectBoards = '/project-boards';
   static const _boardDetail = '/board-detail';
   static const _sprintDetail = '/sprint-detail';
+  static const _notificationsSettings = '/notifications-settings';
   static const _error = '/error';
 
   static int index = 0;
@@ -130,6 +132,7 @@ class AppRouter {
     _savedQueries: (_) => SavedQueriesPage(),
     _boardDetail: (_) => BoardDetailPage(),
     _sprintDetail: (_) => SprintDetailPage(),
+    _notificationsSettings: (_) => NotificationsSettingsPage(),
     _projectBoards: (_) => ProjectBoardsPage(),
     _error: (_) => ErrorPage(description: 'Something went wrong', onRetry: goToSplash),
   };
@@ -242,6 +245,8 @@ class AppRouter {
       _goTo<SprintDetailArgs>(_sprintDetail, args: args);
 
   static SprintDetailArgs getSprintDetailArgs(BuildContext context) => _getArgs(context);
+
+  static Future<void> goToNotificationsSettings() => _goTo(_notificationsSettings);
 
   static Future<void> goToPullRequests({PullRequestArgs? args}) => _goTo(_pullRequests, args: args);
 

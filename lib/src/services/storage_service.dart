@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:azure_devops/src/models/project.dart';
+import 'package:azure_devops/src/models/subscription_hooks.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -55,6 +56,9 @@ abstract class StorageService {
 
   String getTenantId();
   void setTenantId(String id);
+
+  void setSubscriptionStatus(HookSubscription sub, {required bool isSubscribed});
+  bool isSubscribedTo(HookSubscription sub);
 }
 
 class StorageServiceCore implements StorageService {
@@ -284,6 +288,19 @@ class StorageServiceCore implements StorageService {
   void setHasSeenSubscriptionAddedBottomsheet() {
     _helper.setBool(_Keys.hasSeenSubscriptionAddedBottomsheet, value: true);
   }
+
+  @override
+  void setSubscriptionStatus(HookSubscription sub, {required bool isSubscribed}) {
+    final map = jsonDecode(_helper.getString(_Keys.pushNotificationSubscriptions) ?? '{}') as Map<String, dynamic>;
+    map[sub.id] = isSubscribed;
+    _helper.setString(_Keys.pushNotificationSubscriptions, jsonEncode(map));
+  }
+
+  @override
+  bool isSubscribedTo(HookSubscription sub) {
+    final map = jsonDecode(_helper.getString(_Keys.pushNotificationSubscriptions) ?? '{}') as Map<String, dynamic>;
+    return map[sub.id] == true;
+  }
 }
 
 class _StorageServiceHelper {
@@ -367,6 +384,8 @@ class _StorageServiceHelper {
 }
 
 class _Keys {
+  _Keys._();
+
   static const token = 'token';
   static const chosenProjects = 'chosenProjects';
   static const theme = 'theme';
@@ -376,6 +395,7 @@ class _Keys {
   static const filters = 'filters';
   static const shortcuts = 'shortcuts';
   static const hasSeenSubscriptionAddedBottomsheet = 'hasSeenSubscriptionAddedBottomsheet';
+  static const pushNotificationSubscriptions = 'pushNotificationSubscriptions';
 }
 
 class StorageServiceWidget extends InheritedWidget {
