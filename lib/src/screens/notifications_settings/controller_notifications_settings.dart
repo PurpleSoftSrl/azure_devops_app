@@ -17,8 +17,7 @@ class _NotificationsSettingsController {
   }
 
   bool hasHookSubscription(String projectId, EventType type) {
-    final subscription =
-        data.value?.data?.firstWhereOrNull((s) => s.publisherInputs.projectId == projectId && s.eventType == type);
+    final subscription = _getSubscriptionByType(projectId, type);
     return subscription != null;
   }
 
@@ -72,11 +71,11 @@ class _NotificationsSettingsController {
     await init();
   }
 
-  void togglePushNotificationSubscription(String projectId, EventType type, {required bool value}) {
+  void togglePushNotifications(String projectId, EventType type, {required bool value}) {
     if (!hasHookSubscription(projectId, type)) return;
 
-    final subscription =
-        data.value!.data!.firstWhere((s) => s.publisherInputs.projectId == projectId && s.eventType == type);
+    final subscription = _getSubscriptionByType(projectId, type);
+    if (subscription == null) return;
 
     final topic = 'topic_${subscription.id}';
 
@@ -89,9 +88,14 @@ class _NotificationsSettingsController {
     storage.setSubscriptionStatus(subscription, isSubscribed: value);
   }
 
-  bool isSubscribedTo(String projectId, EventType type) {
-    final sub =
-        data.value?.data?.firstWhereOrNull((s) => s.publisherInputs.projectId == projectId && s.eventType == type);
+  bool isPushNotificationsEnabled(String projectId, EventType type) {
+    final sub = _getSubscriptionByType(projectId, type);
     return sub != null && storage.isSubscribedTo(sub);
+  }
+
+  HookSubscription? _getSubscriptionByType(String projectId, EventType type) {
+    final subscription =
+        data.value?.data?.firstWhereOrNull((s) => s.publisherInputs.projectId == projectId && s.eventType == type);
+    return subscription;
   }
 }

@@ -28,8 +28,8 @@ class _NotificationsSettingsScreen extends StatelessWidget {
                           ? SwitchListTile(
                               title: Text(type.description, style: context.textTheme.labelLarge),
                               subtitle: Text('Enable push notifications', style: context.textTheme.labelSmall),
-                              value: ctrl.isSubscribedTo(p.id!, type),
-                              onChanged: (value) => ctrl.togglePushNotificationSubscription(p.id!, type, value: value),
+                              value: ctrl.isPushNotificationsEnabled(p.id!, type),
+                              onChanged: (value) => ctrl.togglePushNotifications(p.id!, type, value: value),
                               contentPadding: EdgeInsets.zero,
                             )
                           : ListTile(
