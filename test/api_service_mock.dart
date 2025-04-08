@@ -22,6 +22,7 @@ import 'package:azure_devops/src/models/repository_branches.dart';
 import 'package:azure_devops/src/models/repository_items.dart';
 import 'package:azure_devops/src/models/saved_query.dart';
 import 'package:azure_devops/src/models/sprint.dart';
+import 'package:azure_devops/src/models/subscription_hooks.dart';
 import 'package:azure_devops/src/models/team.dart';
 import 'package:azure_devops/src/models/team_member.dart' as t;
 import 'package:azure_devops/src/models/user.dart';
@@ -874,6 +875,21 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
+  Future<ApiResponse<bool>> createHookSubscription({
+    required String projectId,
+    required String publisherId,
+    required EventType eventType,
+    required PublisherInputs publisherInputs,
+  }) async {
+    return ApiResponse.ok(true);
+  }
+
+  @override
+  Future<ApiResponse<List<HookSubscription>>> getSubscriptions() async {
+    return ApiResponse.ok([]);
+  }
+
+  @override
   List<GitRepository> get allRepositories => [];
 }
 
@@ -966,6 +982,14 @@ class StorageServiceMock implements StorageService {
 
   @override
   void setHasSeenSubscriptionAddedBottomsheet() {}
+
+  @override
+  bool isSubscribedTo(HookSubscription sub) {
+    return true;
+  }
+
+  @override
+  void setSubscriptionStatus(HookSubscription sub, {required bool isSubscribed}) {}
 }
 
 class AdsServiceMock implements AdsService {
