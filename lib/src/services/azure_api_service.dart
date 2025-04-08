@@ -87,6 +87,8 @@ abstract class AzureApiService {
   /// Work item iteration paths for each project
   Map<String, List<AreaOrIteration>> get workItemIterations;
 
+  String get pushNotificationsUrl;
+
   bool get isImageUnauthorized;
 
   List<GitRepository> get allRepositories;
@@ -477,6 +479,9 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   Map<String, List<AreaOrIteration>> get workItemIterations => _workItemIterations;
   final Map<String, List<AreaOrIteration>> _workItemIterations = {};
 
+  @override
+  String get pushNotificationsUrl => 'https://push.azdevops.app/api/webhook';
+
   static const _fieldNamesToSkip = [
     'System.Id',
     'System.Title',
@@ -489,8 +494,6 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   ];
 
   List<LinkType> _linkTypes = [];
-
-  static const _workerUrl = 'https://push.azdevops.app/api/webhook';
 
   void dispose() {
     instance = null;
@@ -2591,7 +2594,10 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final res = await _get('$_basePath/_apis/hooks/subscriptions?$_apiVersion');
     if (res.isError) return ApiResponse.error(null);
 
-    return ApiResponse.ok(GetHookSubscriptionsResponse.fromResponse(res));
+    final allSubscriptions = GetHookSubscriptionsResponse.fromResponse(res);
+    final filteredSubscriptions = allSubscriptions.where((s) => s.consumerInputs.url == pushNotificationsUrl).toList();
+
+    return ApiResponse.ok(filteredSubscriptions);
   }
 
   @override
@@ -2609,7 +2615,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
         'consumerId': 'webHooks',
         'consumerActionId': 'httpRequest',
         'publisherInputs': publisherInputs.toJson(),
-        'consumerInputs': {'url': _workerUrl},
+        'consumerInputs': {'url': pushNotificationsUrl},
       },
     );
 

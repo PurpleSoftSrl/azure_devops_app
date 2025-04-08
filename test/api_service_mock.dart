@@ -891,6 +891,9 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   List<GitRepository> get allRepositories => [];
+
+  @override
+  String get pushNotificationsUrl => '';
 }
 
 class StorageServiceMock implements StorageService {
