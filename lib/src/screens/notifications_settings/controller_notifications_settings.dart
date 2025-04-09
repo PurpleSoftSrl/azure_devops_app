@@ -119,10 +119,12 @@ class _NotificationsSettingsController with ApiErrorHelper {
       EventType.buildCompleted ||
       EventType.pullRequestMerged ||
       EventType.pullRequestUpdated ||
-      EventType.workItemUpdated ||
       EventType.approvalPending ||
       EventType.approvalCompleted =>
         'topic_${subscription.id}_${cleanChild}_$_userId',
+      // We use email address for work item updates because the user ID is not available in the devops webhook
+      EventType.workItemUpdated =>
+        'topic_${subscription.id}_${cleanChild}_${api.user!.emailAddress!.replaceAll('@', '.')}',
       EventType.unknown => '',
     };
 
