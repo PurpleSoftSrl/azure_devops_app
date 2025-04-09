@@ -901,6 +901,16 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   String get pushNotificationsUrl => '';
+
+  @override
+  Future<ApiResponse<List<String>>> getPipelineDefinitions({required String projectId}) async {
+    return ApiResponse.ok([]);
+  }
+
+  @override
+  Future<ApiResponse<List<AreaOrIteration>>> getWorkItemAreas({required String projectId}) async {
+    return ApiResponse.ok([]);
+  }
 }
 
 class StorageServiceMock implements StorageService {
@@ -1002,12 +1012,12 @@ class StorageServiceMock implements StorageService {
   void setTenantId(String id) {}
 
   @override
-  bool isSubscribedTo(HookSubscription sub) {
+  bool isSubscribedTo(HookSubscription sub, String child) {
     return true;
   }
 
   @override
-  void setSubscriptionStatus(HookSubscription sub, {required bool isSubscribed}) {}
+  void setSubscriptionStatus(HookSubscription sub, String child, {required bool isSubscribed}) {}
 }
 
 class AdsServiceMock implements AdsService {

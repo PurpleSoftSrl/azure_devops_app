@@ -22,6 +22,7 @@ import 'package:azure_devops/src/models/identity_response.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/pipeline_approvals.dart';
+import 'package:azure_devops/src/models/pipeline_definitions.dart';
 import 'package:azure_devops/src/models/processes.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/project_languages.dart';
@@ -134,6 +135,8 @@ abstract class AzureApiService {
   });
 
   Future<ApiResponse<List<LinkType>>> getWorkItemLinkTypes();
+
+  Future<ApiResponse<List<AreaOrIteration>>> getWorkItemAreas({required String projectId});
 
   Future<ApiResponse<WorkItemWithUpdates>> getWorkItemDetail({
     required String projectName,
@@ -263,6 +266,8 @@ abstract class AzureApiService {
     PipelineStatus status,
     Set<String>? triggeredBy,
   });
+
+  Future<ApiResponse<List<String>>> getPipelineDefinitions({required String projectId});
 
   Future<ApiResponse<List<Approval>>> getPendingApprovals({required List<Pipeline> pipelines});
 
@@ -1184,6 +1189,17 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     _linkTypes = linkTypesToShow;
 
     return ApiResponse.ok(linkTypesToShow);
+  }
+
+  @override
+  Future<ApiResponse<List<AreaOrIteration>>> getWorkItemAreas({required String projectId}) async {
+    final areaRes = await _get('$_basePath/$projectId/_apis/wit/classificationnodes?\$depth=14&$_apiVersion');
+    if (areaRes.isError) return ApiResponse.error(areaRes);
+
+    final areasAndIterations = AreasAndIterationsResponse.fromResponse(areaRes);
+    return ApiResponse.ok(
+      areasAndIterations.areasAndIterations.where((i) => i.structureType == 'area').toList(),
+    );
   }
 
   @override
@@ -2277,6 +2293,14 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final res =
         allProjectPipelines.where((r) => !r.isError).map(GetPipelineResponse.fromResponse).expand((b) => b).toList();
     return ApiResponse.ok(res);
+  }
+
+  @override
+  Future<ApiResponse<List<String>>> getPipelineDefinitions({required String projectId}) async {
+    final res = await _get('$_basePath/$projectId/_apis/build/definitions?$_apiVersion');
+    if (res.isError) return ApiResponse.error(res);
+
+    return ApiResponse.ok(PipelineDefinitionsResponse.fromResponse(res).map((d) => d.name ?? '').toList());
   }
 
   @override

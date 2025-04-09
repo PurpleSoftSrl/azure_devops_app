@@ -57,8 +57,8 @@ abstract class StorageService {
   String getTenantId();
   void setTenantId(String id);
 
-  void setSubscriptionStatus(HookSubscription sub, {required bool isSubscribed});
-  bool isSubscribedTo(HookSubscription sub);
+  void setSubscriptionStatus(HookSubscription sub, String child, {required bool isSubscribed});
+  bool isSubscribedTo(HookSubscription sub, String child);
 }
 
 class StorageServiceCore implements StorageService {
@@ -290,16 +290,16 @@ class StorageServiceCore implements StorageService {
   }
 
   @override
-  void setSubscriptionStatus(HookSubscription sub, {required bool isSubscribed}) {
+  void setSubscriptionStatus(HookSubscription sub, String child, {required bool isSubscribed}) {
     final map = jsonDecode(_helper.getString(_Keys.pushNotificationSubscriptions) ?? '{}') as Map<String, dynamic>;
-    map[sub.id] = isSubscribed;
+    map['${sub.id}_$child'] = isSubscribed;
     _helper.setString(_Keys.pushNotificationSubscriptions, jsonEncode(map));
   }
 
   @override
-  bool isSubscribedTo(HookSubscription sub) {
+  bool isSubscribedTo(HookSubscription sub, String child) {
     final map = jsonDecode(_helper.getString(_Keys.pushNotificationSubscriptions) ?? '{}') as Map<String, dynamic>;
-    return map[sub.id] == true;
+    return map['${sub.id}_$child'] == true;
   }
 }
 

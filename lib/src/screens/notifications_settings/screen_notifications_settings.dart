@@ -25,12 +25,26 @@ class _NotificationsSettingsScreen extends StatelessWidget {
                 ),
                 ...EventType.values.where((t) => t != EventType.unknown).map(
                       (type) => ctrl.hasHookSubscription(p.id!, type)
-                          ? SwitchListTile(
-                              title: Text(type.description, style: context.textTheme.labelLarge),
-                              subtitle: Text('Enable push notifications', style: context.textTheme.labelSmall),
-                              value: ctrl.isPushNotificationsEnabled(p.id!, type),
-                              onChanged: (value) => ctrl.togglePushNotifications(p.id!, type, value: value),
-                              contentPadding: EdgeInsets.zero,
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 16),
+                                Text(type.description, style: context.textTheme.bodyMedium),
+                                ...(ctrl._subscriptionChildren['${p.id}_${type.value}'] ?? <String>[]).map(
+                                  (child) => SwitchListTile(
+                                    title: Text(
+                                      child,
+                                      style: context.textTheme.labelLarge!
+                                          .copyWith(color: context.colorScheme.onSecondary),
+                                    ),
+                                    value: ctrl.isPushNotificationsEnabled(p.id!, type, child),
+                                    onChanged: (value) =>
+                                        ctrl.togglePushNotifications(p.id!, type, child, value: value),
+                                    dense: true,
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
+                                ),
+                              ],
                             )
                           : ListTile(
                               title: Text(type.description, style: context.textTheme.labelLarge),

@@ -1,5 +1,6 @@
 library notifications_settings;
 
+import 'package:azure_devops/src/extensions/area_or_iteration_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/api_error_mixin.dart';
 import 'package:azure_devops/src/models/hook_subscriptions.dart';
