@@ -81,7 +81,6 @@ class NotificationsService with AppLogger {
         _handlePullRequestNotification(data);
       case EventType.workItemCreated:
       case EventType.workItemUpdated:
-      case EventType.workItemCommented:
         _handleWorkItemNotification(data);
       case EventType.unknown:
     }

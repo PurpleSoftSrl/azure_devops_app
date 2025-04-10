@@ -58,7 +58,6 @@ class _NotificationsSettingsController with ApiErrorHelper {
         case EventType.pullRequestCommented:
         case EventType.workItemCreated:
         case EventType.workItemUpdated:
-        case EventType.workItemCommented:
           break;
         case EventType.unknown:
           return OverlayService.error('Error', description: 'Event type $type is not supported');
