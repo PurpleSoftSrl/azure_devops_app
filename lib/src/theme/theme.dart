@@ -113,6 +113,7 @@ class AppTheme {
       dialogTheme: _getDialogTheme(colorScheme),
       bottomSheetTheme: _getBottomSheetTheme(colorScheme),
       checkboxTheme: _getCheckboxTheme(colorScheme, themeExtension),
+      switchTheme: _getSwitchTheme(colorScheme, themeExtension),
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       hoverColor: Colors.transparent,
@@ -187,6 +188,25 @@ class AppTheme {
         width: .5,
         color: ext.onBackground,
       ),
+    );
+  }
+
+  static SwitchThemeData _getSwitchTheme(ColorScheme colorScheme, AppColorsExtension ext) {
+    final disabledColor = ext.onBackground.withValues(alpha: .3);
+    return SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) return disabledColor;
+        return states.contains(WidgetState.selected) ? colorScheme.primary : colorScheme.onSecondary;
+      }),
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        return states.contains(WidgetState.selected) ? ext.background : ext.background;
+      }),
+      trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) return disabledColor;
+        return states.contains(WidgetState.selected) ? colorScheme.primary : colorScheme.onSecondary;
+      }),
+      trackOutlineWidth: WidgetStatePropertyAll(1),
+      thumbIcon: WidgetStatePropertyAll(Icon(Icons.circle, color: Colors.transparent)),
     );
   }
 
