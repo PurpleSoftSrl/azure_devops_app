@@ -23,44 +23,61 @@ class _NotificationsSettingsScreen extends StatelessWidget {
                   p.name!,
                   style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                 ),
-                ...EventType.values.where((t) => t != EventType.unknown).map(
-                      (type) => ctrl.hasHookSubscription(p.id!, type)
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 16),
-                                Text(type.description, style: context.textTheme.bodyMedium),
-                                ...(ctrl._subscriptionChildren['${p.id}_${type.value}'] ?? <String>[]).map(
-                                  (child) => SwitchListTile(
-                                    title: Text(
-                                      child,
-                                      style: context.textTheme.labelLarge!
-                                          .copyWith(color: context.colorScheme.onSecondary),
-                                    ),
-                                    value: ctrl.isPushNotificationsEnabled(p.id!, type, child),
-                                    onChanged: (value) =>
-                                        ctrl.togglePushNotifications(p.id!, type, child, value: value),
-                                    dense: true,
-                                    contentPadding: EdgeInsets.zero,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : ListTile(
-                              title: Text(type.description, style: context.textTheme.labelLarge),
-                              subtitle: Text('Create a subscription', style: context.textTheme.labelSmall),
-                              trailing: SizedBox(
-                                width: 80,
-                                height: 40,
-                                child: LoadingButton(
-                                  onPressed: () => ctrl.createHookSubscription(p.id!, type),
-                                  margin: EdgeInsets.zero,
-                                  text: 'Create',
-                                ),
+                ...ctrl.eventCategories.entries.map(
+                  (entry) {
+                    if (ctrl.hasHookSubscription(p.id!, entry.key)) {
+                      final subscriptionChildren = ctrl.getCachedSubscriptionChildren(p.id!, entry);
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 16),
+                          Text(
+                            entry.key.description,
+                            style: context.textTheme.bodyMedium,
+                          ),
+                          if (subscriptionChildren.isEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                'No subscriptions available',
+                                style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
                               ),
-                              contentPadding: EdgeInsets.zero,
+                            )
+                          else
+                            ...subscriptionChildren.map(
+                              (child) => SwitchListTile(
+                                title: Text(
+                                  child,
+                                  style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
+                                ),
+                                value: ctrl.isPushNotificationsEnabled(p.id!, entry.key, child),
+                                onChanged: (value) =>
+                                    ctrl.togglePushNotifications(p.id!, entry.key, child, value: value),
+                                dense: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
                             ),
-                    ),
+                        ],
+                      );
+                    }
+
+                    return ListTile(
+                      title: Text(entry.key.description, style: context.textTheme.labelLarge),
+                      subtitle: Text('Create a subscription', style: context.textTheme.labelSmall),
+                      trailing: SizedBox(
+                        width: 80,
+                        height: 40,
+                        child: LoadingButton(
+                          onPressed: () => ctrl.createHookSubscription(p.id!, entry.key),
+                          margin: EdgeInsets.zero,
+                          text: 'Create',
+                        ),
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    );
+                  },
+                ),
                 if (p != ctrl.projects.last) const Divider(height: 48),
               ],
             ),
