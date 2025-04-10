@@ -102,8 +102,8 @@ class _NotificationsSettingsController with ApiErrorHelper {
     }
   }
 
-  List<String> getCachedSubscriptionChildren(String projectId, MapEntry<EventCategory, List<EventType>> entry) =>
-      _subscriptionChildren['${projectId}_${entry.key.name}'] ?? <String>[];
+  List<String> getCachedSubscriptionChildren(String projectId, EventCategory category) =>
+      _subscriptionChildren['${projectId}_${category.name}'] ?? <String>[];
 
   void togglePushNotifications(String projectId, EventCategory category, String child, {required bool value}) {
     if (!hasHookSubscription(projectId, category)) return;
@@ -189,6 +189,44 @@ class _NotificationsSettingsController with ApiErrorHelper {
     OverlayService.snackbar(
       'Error retrieving user ID, subscription to push notifications will not work',
       isError: true,
+    );
+  }
+
+  void showInfo() {
+    OverlayService.bottomsheet(
+      title: 'Info',
+      spaceUnderTitle: false,
+      builder: (context) => ListView(
+        children: [
+          const SizedBox(height: 16),
+          Text("1. Tap on 'Create' button", style: context.textTheme.bodyMedium),
+          Text(
+            'This will create a few Azure DevOps service hooks for each category you select.\nIt has to be done only once for each project in the organization.',
+            style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
+          ),
+          const SizedBox(height: 12),
+          Text('2. Switch on the toggle for the items you are interested in', style: context.textTheme.bodyMedium),
+          Text(
+            'This will subscribe you to push notifications for the selected repository/pipeline/area.\nIt has to be done on each device you want to receive notifications on.',
+            style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
+          ),
+          const SizedBox(height: 12),
+          Text('3. Trigger one of these events to receive a push notification', style: context.textTheme.bodyMedium),
+          ...eventCategories.entries.map(
+            (entry) => ListTile(
+              title: Text(
+                '- ${entry.key.description}',
+                style: context.textTheme.labelLarge,
+              ),
+              subtitle: Text(
+                entry.value.map((e) => e.description).join(', '),
+                style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
+              ),
+              contentPadding: EdgeInsets.zero,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
