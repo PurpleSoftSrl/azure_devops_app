@@ -71,14 +71,17 @@ class NotificationsService with AppLogger {
     log('Received notification type $type with data: $data');
 
     switch (type) {
-      case EventType.buildCompleted:
       case EventType.approvalPending:
       case EventType.approvalCompleted:
+      case EventType.buildCompleted:
         _handlePipelineNotification(data);
+      case EventType.pullRequestCreated:
       case EventType.pullRequestUpdated:
-      case EventType.pullRequestMerged:
+      case EventType.pullRequestCommented:
         _handlePullRequestNotification(data);
+      case EventType.workItemCreated:
       case EventType.workItemUpdated:
+      case EventType.workItemCommented:
         _handleWorkItemNotification(data);
       case EventType.unknown:
     }

@@ -148,9 +148,12 @@ class PublisherInputs {
 
 enum EventType {
   buildCompleted('build.complete', EventCategory.pipelines),
+  pullRequestCreated('git.pullrequest.created', EventCategory.pullRequests),
   pullRequestUpdated('git.pullrequest.updated', EventCategory.pullRequests),
-  pullRequestMerged('git.pullrequest.merged', EventCategory.pullRequests),
+  pullRequestCommented('ms.vss-code.git-pullrequest-comment-event', EventCategory.pullRequests),
+  workItemCreated('workitem.created', EventCategory.workItems),
   workItemUpdated('workitem.updated', EventCategory.workItems),
+  workItemCommented('workitem.commented', EventCategory.workItems),
   approvalPending('ms.vss-pipelinechecks-events.approval-pending', EventCategory.pipelines),
   approvalCompleted('ms.vss-pipelinechecks-events.approval-completed', EventCategory.pipelines),
   unknown('', EventCategory.unknown);
@@ -163,9 +166,12 @@ enum EventType {
   static EventType fromString(String value) {
     return switch (value) {
       'build.complete' => EventType.buildCompleted,
-      'git.pullrequest.merged' => EventType.pullRequestMerged,
+      'git.pullrequest.created' => EventType.pullRequestCreated,
       'git.pullrequest.updated' => EventType.pullRequestUpdated,
+      'ms.vss-code.git-pullrequest-comment-event' => EventType.pullRequestCommented,
+      'workitem.created' => EventType.workItemCreated,
       'workitem.updated' => EventType.workItemUpdated,
+      'workitem.commented' => EventType.workItemCommented,
       'ms.vss-pipelinechecks-events.approval-pending' => EventType.approvalPending,
       'ms.vss-pipelinechecks-events.approval-completed' => EventType.approvalCompleted,
       _ => EventType.unknown,
@@ -175,9 +181,12 @@ enum EventType {
   String get description {
     return switch (this) {
       EventType.buildCompleted => 'Build completed',
+      EventType.pullRequestCreated => 'Pull request created',
       EventType.pullRequestUpdated => 'Pull request updated',
-      EventType.pullRequestMerged => 'Pull request merged',
+      EventType.pullRequestCommented => 'Pull request commented',
+      EventType.workItemCreated => 'Work item created',
       EventType.workItemUpdated => 'Work item updated',
+      EventType.workItemCommented => 'Work item commented',
       EventType.approvalPending => 'Approval pending',
       EventType.approvalCompleted => 'Approval completed',
       _ => '',
@@ -188,7 +197,10 @@ enum EventType {
     return switch (this) {
       EventType.buildCompleted ||
       EventType.pullRequestUpdated ||
-      EventType.pullRequestMerged ||
+      EventType.pullRequestCreated ||
+      EventType.pullRequestCommented ||
+      EventType.workItemCreated ||
+      EventType.workItemCommented ||
       EventType.workItemUpdated =>
         'tfs',
       EventType.approvalPending || EventType.approvalCompleted => 'pipelines',
@@ -206,14 +218,19 @@ enum EventCategory {
   List<EventType> get eventTypes {
     return switch (this) {
       EventCategory.pipelines => [
-          EventType.buildCompleted,
           EventType.approvalPending,
           EventType.approvalCompleted,
+          EventType.buildCompleted,
         ],
-      EventCategory.workItems => [EventType.workItemUpdated],
+      EventCategory.workItems => [
+          EventType.workItemCreated,
+          EventType.workItemUpdated,
+          EventType.workItemCommented,
+        ],
       EventCategory.pullRequests => [
+          EventType.pullRequestCreated,
           EventType.pullRequestUpdated,
-          EventType.pullRequestMerged,
+          EventType.pullRequestCommented,
         ],
       _ => [],
     };
