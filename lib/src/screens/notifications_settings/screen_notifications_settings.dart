@@ -81,19 +81,31 @@ class _NotificationsSettingsScreen extends StatelessWidget {
                       );
                     }
 
-                    return ListTile(
-                      title: Text(entry.key.description, style: context.textTheme.labelLarge),
-                      subtitle: Text('Create a subscription', style: context.textTheme.labelSmall),
-                      trailing: SizedBox(
-                        width: 80,
-                        height: 40,
-                        child: LoadingButton(
-                          onPressed: () => ctrl.createHookSubscription(p.id!, entry.key),
-                          margin: EdgeInsets.zero,
-                          text: 'Create',
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 16),
+                        Text(
+                          entry.key.description,
+                          style: context.textTheme.bodyMedium,
                         ),
-                      ),
-                      contentPadding: EdgeInsets.zero,
+                        ListTile(
+                          title: Text(
+                            'Create a subscription',
+                            style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
+                          ),
+                          trailing: SizedBox(
+                            width: 80,
+                            height: 48,
+                            child: LoadingButton(
+                              onPressed: () => ctrl.createHookSubscription(p.id!, entry.key),
+                              margin: EdgeInsets.zero,
+                              text: 'Create',
+                            ),
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ],
                     );
                   },
                 ),
