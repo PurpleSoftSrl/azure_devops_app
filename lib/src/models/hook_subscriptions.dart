@@ -153,7 +153,6 @@ enum EventType {
   pullRequestCommented('ms.vss-code.git-pullrequest-comment-event', EventCategory.pullRequests),
   workItemCreated('workitem.created', EventCategory.workItems),
   workItemUpdated('workitem.updated', EventCategory.workItems),
-  workItemCommented('workitem.commented', EventCategory.workItems),
   approvalPending('ms.vss-pipelinechecks-events.approval-pending', EventCategory.pipelines),
   approvalCompleted('ms.vss-pipelinechecks-events.approval-completed', EventCategory.pipelines),
   unknown('', EventCategory.unknown);
@@ -171,7 +170,6 @@ enum EventType {
       'ms.vss-code.git-pullrequest-comment-event' => EventType.pullRequestCommented,
       'workitem.created' => EventType.workItemCreated,
       'workitem.updated' => EventType.workItemUpdated,
-      'workitem.commented' => EventType.workItemCommented,
       'ms.vss-pipelinechecks-events.approval-pending' => EventType.approvalPending,
       'ms.vss-pipelinechecks-events.approval-completed' => EventType.approvalCompleted,
       _ => EventType.unknown,
@@ -186,7 +184,6 @@ enum EventType {
       EventType.pullRequestCommented => 'Pull request commented',
       EventType.workItemCreated => 'Work item created',
       EventType.workItemUpdated => 'Work item updated',
-      EventType.workItemCommented => 'Work item commented',
       EventType.approvalPending => 'Approval pending',
       EventType.approvalCompleted => 'Approval completed',
       _ => '',
@@ -200,7 +197,6 @@ enum EventType {
       EventType.pullRequestCreated ||
       EventType.pullRequestCommented ||
       EventType.workItemCreated ||
-      EventType.workItemCommented ||
       EventType.workItemUpdated =>
         'tfs',
       EventType.approvalPending || EventType.approvalCompleted => 'pipelines',
@@ -225,7 +221,6 @@ enum EventCategory {
       EventCategory.workItems => [
           EventType.workItemCreated,
           EventType.workItemUpdated,
-          EventType.workItemCommented,
         ],
       EventCategory.pullRequests => [
           EventType.pullRequestCreated,
