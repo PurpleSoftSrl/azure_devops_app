@@ -47,25 +47,21 @@ class _NotificationsSettingsController with ApiErrorHelper {
     if (hasHookSubscription(projectId, category)) return;
 
     for (final type in category.eventTypes) {
-      PublisherInputs? publisherInputs;
+      final publisherInputs = PublisherInputs(projectId: projectId);
 
       switch (type) {
-        case EventType.buildCompleted:
-          publisherInputs = PublisherInputs(projectId: projectId);
-        case EventType.pullRequestMerged:
-          publisherInputs = PublisherInputs(projectId: projectId, mergeResult: 'Succeeded');
-        case EventType.pullRequestUpdated:
-          publisherInputs = PublisherInputs(projectId: projectId);
-        case EventType.workItemUpdated:
-          publisherInputs = PublisherInputs(projectId: projectId);
         case EventType.approvalPending:
         case EventType.approvalCompleted:
-          publisherInputs = PublisherInputs(projectId: projectId);
+        case EventType.buildCompleted:
+        case EventType.pullRequestCreated:
+        case EventType.pullRequestUpdated:
+        case EventType.pullRequestCommented:
+        case EventType.workItemCreated:
+        case EventType.workItemUpdated:
+        case EventType.workItemCommented:
+          break;
         case EventType.unknown:
-      }
-
-      if (publisherInputs == null) {
-        return OverlayService.error('Error', description: 'Event type $type is not supported');
+          return OverlayService.error('Error', description: 'Event type $type is not supported');
       }
 
       final res = await api.createHookSubscription(
