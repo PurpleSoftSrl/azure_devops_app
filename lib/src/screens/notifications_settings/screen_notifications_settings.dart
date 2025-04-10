@@ -19,9 +19,19 @@ class _NotificationsSettingsScreen extends StatelessWidget {
             (p) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  p.name!,
-                  style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      p.name!,
+                      style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    if (ctrl.hasAllHookSubscriptions(p.id!))
+                      Switch(
+                        value: ctrl.isAllPushNotificationsEnabled(p.id!),
+                        onChanged: (value) => ctrl.toggleAllPushNotifications(p.id!, value: value),
+                      ),
+                  ],
                 ),
                 ...ctrl.eventCategories.entries.map(
                   (entry) {
