@@ -22,15 +22,20 @@ class _NotificationsSettingsScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      p.name!,
-                      style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                    Flexible(
+                      child: Text(
+                        p.name!,
+                        style: context.textTheme.titleLarge,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     if (ctrl.hasAllHookSubscriptions(p.id!))
                       Switch(
                         value: ctrl.isAllPushNotificationsEnabled(p.id!),
                         onChanged: (value) => ctrl.toggleAllPushNotifications(p.id!, value: value),
-                      ),
+                      )
+                    else
+                      const SizedBox(height: 48),
                   ],
                 ),
                 ...ctrl.eventCategories.entries.map(
@@ -47,12 +52,15 @@ class _NotificationsSettingsScreen extends StatelessWidget {
                             style: context.textTheme.bodyMedium,
                           ),
                           if (subscriptionChildren.isEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Text(
+                            SwitchListTile(
+                              title: Text(
                                 'No subscriptions available',
                                 style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
                               ),
+                              value: false,
+                              onChanged: null,
+                              dense: true,
+                              contentPadding: EdgeInsets.zero,
                             )
                           else
                             ...subscriptionChildren.map(
@@ -60,6 +68,7 @@ class _NotificationsSettingsScreen extends StatelessWidget {
                                 title: Text(
                                   child,
                                   style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 value: ctrl.isPushNotificationsEnabled(p.id!, entry.key, child),
                                 onChanged: (value) =>
