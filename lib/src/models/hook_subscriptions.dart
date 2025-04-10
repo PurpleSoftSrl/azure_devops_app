@@ -147,17 +147,18 @@ class PublisherInputs {
 }
 
 enum EventType {
-  buildCompleted('build.complete'),
-  pullRequestUpdated('git.pullrequest.updated'),
-  pullRequestMerged('git.pullrequest.merged'),
-  workItemUpdated('workitem.updated'),
-  approvalPending('ms.vss-pipelinechecks-events.approval-pending'),
-  approvalCompleted('ms.vss-pipelinechecks-events.approval-completed'),
-  unknown('');
+  buildCompleted('build.complete', EventCategory.pipelines),
+  pullRequestUpdated('git.pullrequest.updated', EventCategory.pullRequests),
+  pullRequestMerged('git.pullrequest.merged', EventCategory.pullRequests),
+  workItemUpdated('workitem.updated', EventCategory.workItems),
+  approvalPending('ms.vss-pipelinechecks-events.approval-pending', EventCategory.pipelines),
+  approvalCompleted('ms.vss-pipelinechecks-events.approval-completed', EventCategory.pipelines),
+  unknown('', EventCategory.unknown);
 
-  const EventType(this.value);
+  const EventType(this.value, this.category);
 
   final String value;
+  final EventCategory category;
 
   static EventType fromString(String value) {
     return switch (value) {
@@ -191,6 +192,38 @@ enum EventType {
       EventType.workItemUpdated =>
         'tfs',
       EventType.approvalPending || EventType.approvalCompleted => 'pipelines',
+      _ => '',
+    };
+  }
+}
+
+enum EventCategory {
+  pipelines,
+  workItems,
+  pullRequests,
+  unknown;
+
+  List<EventType> get eventTypes {
+    return switch (this) {
+      EventCategory.pipelines => [
+          EventType.buildCompleted,
+          EventType.approvalPending,
+          EventType.approvalCompleted,
+        ],
+      EventCategory.workItems => [EventType.workItemUpdated],
+      EventCategory.pullRequests => [
+          EventType.pullRequestUpdated,
+          EventType.pullRequestMerged,
+        ],
+      _ => [],
+    };
+  }
+
+  String get description {
+    return switch (this) {
+      EventCategory.pipelines => 'Pipelines',
+      EventCategory.workItems => 'Work items',
+      EventCategory.pullRequests => 'Pull requests',
       _ => '',
     };
   }

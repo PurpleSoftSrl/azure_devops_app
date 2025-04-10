@@ -15,6 +15,8 @@ class _NotificationsSettingsController with ApiErrorHelper {
 
   String _userId = '';
 
+  final eventCategories = groupBy(EventType.values.where((t) => t != EventType.unknown), (e) => e.category);
+
   Future<void> init() async {
     projects = storage.getChosenProjects().toList();
 
@@ -24,7 +26,7 @@ class _NotificationsSettingsController with ApiErrorHelper {
     for (final project in projects) {
       final projectSubscriptions = res.data?.where((s) => s.publisherInputs.projectId == project.id).toList() ?? [];
       for (final subscription in projectSubscriptions) {
-        await _getSubscriptionChildren(project.id!, subscription.eventType);
+        await _getSubscriptionChildren(project.id!, subscription.eventType.category);
       }
     }
 
@@ -36,125 +38,125 @@ class _NotificationsSettingsController with ApiErrorHelper {
     if (_userId.isEmpty) _userIdError();
   }
 
-  bool hasHookSubscription(String projectId, EventType type) {
-    final subscription = _getSubscriptionByType(projectId, type);
-    return subscription != null;
+  bool hasHookSubscription(String projectId, EventCategory category) {
+    final subscription = _getSubscriptionsByCategory(projectId, category);
+    return subscription.isNotEmpty;
   }
 
-  Future<void> createHookSubscription(String projectId, EventType type) async {
-    if (hasHookSubscription(projectId, type)) return;
+  Future<void> createHookSubscription(String projectId, EventCategory category) async {
+    if (hasHookSubscription(projectId, category)) return;
 
-    PublisherInputs? publisherInputs;
+    for (final type in category.eventTypes) {
+      PublisherInputs? publisherInputs;
 
-    switch (type) {
-      case EventType.buildCompleted:
-        publisherInputs = PublisherInputs(projectId: projectId);
-      case EventType.pullRequestMerged:
-        publisherInputs = PublisherInputs(projectId: projectId, mergeResult: 'Succeeded');
-      case EventType.pullRequestUpdated:
-        publisherInputs = PublisherInputs(projectId: projectId);
-      case EventType.workItemUpdated:
-        publisherInputs = PublisherInputs(projectId: projectId);
-      case EventType.approvalPending:
-      case EventType.approvalCompleted:
-        publisherInputs = PublisherInputs(projectId: projectId);
-      case EventType.unknown:
+      switch (type) {
+        case EventType.buildCompleted:
+          publisherInputs = PublisherInputs(projectId: projectId);
+        case EventType.pullRequestMerged:
+          publisherInputs = PublisherInputs(projectId: projectId, mergeResult: 'Succeeded');
+        case EventType.pullRequestUpdated:
+          publisherInputs = PublisherInputs(projectId: projectId);
+        case EventType.workItemUpdated:
+          publisherInputs = PublisherInputs(projectId: projectId);
+        case EventType.approvalPending:
+        case EventType.approvalCompleted:
+          publisherInputs = PublisherInputs(projectId: projectId);
+        case EventType.unknown:
+      }
+
+      if (publisherInputs == null) {
+        return OverlayService.error('Error', description: 'Event type $type is not supported');
+      }
+
+      final res = await api.createHookSubscription(
+        projectId: projectId,
+        publisherId: type.publisherId,
+        eventType: type,
+        publisherInputs: publisherInputs,
+      );
+
+      if (res.isError) {
+        final error = getErrorMessage(res.errorResponse!);
+        return OverlayService.error('Error', description: error);
+      }
     }
 
-    if (publisherInputs == null) {
-      return OverlayService.error('Error', description: 'Event type $type is not supported');
-    }
-
-    final res = await api.createHookSubscription(
-      projectId: projectId,
-      publisherId: type.publisherId,
-      eventType: type,
-      publisherInputs: publisherInputs,
-    );
-
-    if (res.isError) {
-      final error = getErrorMessage(res.errorResponse!);
-      return OverlayService.error('Error', description: error);
-    }
-
-    await _getSubscriptionChildren(projectId, type);
+    await _getSubscriptionChildren(projectId, category);
 
     await init();
   }
 
-  Future<void> _getSubscriptionChildren(String projectId, EventType type) async {
-    final key = '${projectId}_${type.value}';
+  Future<void> _getSubscriptionChildren(String projectId, EventCategory category) async {
+    final key = '${projectId}_${category.name}';
 
     if (_subscriptionChildren.containsKey(key)) return;
 
-    switch (type) {
-      case EventType.buildCompleted:
-      case EventType.approvalPending:
-      case EventType.approvalCompleted:
+    switch (category) {
+      case EventCategory.pipelines:
         final res = await api.getPipelineDefinitions(projectId: projectId);
         _subscriptionChildren[key] = res.data ?? [];
-      case EventType.pullRequestUpdated:
-      case EventType.pullRequestMerged:
+      case EventCategory.pullRequests:
         final res = await api.getProjectRepositories(projectName: projectId);
         _subscriptionChildren[key] = res.data?.map((repo) => repo.name ?? '').toList() ?? [];
-      case EventType.workItemUpdated:
+      case EventCategory.workItems:
         final res = await api.getWorkItemAreas(projectId: projectId);
         _subscriptionChildren[key] = res.data?.map((area) => area.escapedAreaPath).toList() ?? [];
-      case EventType.unknown:
+      case EventCategory.unknown:
         _subscriptionChildren[key] = [];
     }
   }
 
-  void togglePushNotifications(String projectId, EventType type, String child, {required bool value}) {
-    if (!hasHookSubscription(projectId, type)) return;
+  List<String> getCachedSubscriptionChildren(String projectId, MapEntry<EventCategory, List<EventType>> entry) =>
+      _subscriptionChildren['${projectId}_${entry.key.name}'] ?? <String>[];
 
-    final subscription = _getSubscriptionByType(projectId, type);
-    if (subscription == null) return;
+  void togglePushNotifications(String projectId, EventCategory category, String child, {required bool value}) {
+    if (!hasHookSubscription(projectId, category)) return;
+
+    final subscriptions = _getSubscriptionsByCategory(projectId, category);
+    if (subscriptions.isEmpty) return;
 
     if (_userId.isEmpty) return _userIdError();
 
     final cleanChild = child.replaceAll(' ', '');
 
-    final topic = switch (type) {
-      EventType.buildCompleted ||
-      EventType.pullRequestMerged ||
-      EventType.pullRequestUpdated ||
-      EventType.approvalPending ||
-      EventType.approvalCompleted =>
-        'topic_${subscription.id}_${cleanChild}_$_userId',
-      // We use email address for work item updates because the user ID is not available in the devops webhook
-      EventType.workItemUpdated =>
-        'topic_${subscription.id}_${cleanChild}_${api.user!.emailAddress!.replaceAll('@', '.')}',
-      EventType.unknown => '',
-    };
+    for (final subscription in subscriptions) {
+      final topic = switch (category) {
+        EventCategory.pipelines || EventCategory.pullRequests => 'topic_${subscription.id}_${cleanChild}_$_userId',
+        // We use email address for work item updates because the user ID is not available in the devops webhook
+        EventCategory.workItems =>
+          'topic_${subscription.id}_${cleanChild}_${api.user!.emailAddress!.replaceAll('@', '.')}',
+        EventCategory.unknown => '',
+      };
 
-    if (topic.isEmpty) {
-      OverlayService.error('Error', description: 'Event type $type is not supported');
-      return;
+      if (topic.isEmpty) {
+        OverlayService.error('Error', description: 'Event category $category is not supported');
+        return;
+      }
+
+      if (value) {
+        NotificationsService().subscribeToTopic(topic);
+      } else {
+        NotificationsService().unsubscribeFromTopic(topic);
+      }
+
+      storage.setSubscriptionStatus(subscription, cleanChild, isSubscribed: value);
     }
-
-    if (value) {
-      NotificationsService().subscribeToTopic(topic);
-    } else {
-      NotificationsService().unsubscribeFromTopic(topic);
-    }
-
-    storage.setSubscriptionStatus(subscription, cleanChild, isSubscribed: value);
 
     _refreshUI();
   }
 
-  bool isPushNotificationsEnabled(String projectId, EventType type, String child) {
+  bool isPushNotificationsEnabled(String projectId, EventCategory type, String child) {
     final cleanChild = child.replaceAll(' ', '');
 
-    final sub = _getSubscriptionByType(projectId, type);
-    return sub != null && storage.isSubscribedTo(sub, cleanChild);
+    final subs = _getSubscriptionsByCategory(projectId, type);
+    return subs.isNotEmpty && (subs.every((sub) => storage.isSubscribedTo(sub, cleanChild)));
   }
 
-  HookSubscription? _getSubscriptionByType(String projectId, EventType type) {
-    final subscription = subscriptions.value?.data
-        ?.firstWhereOrNull((s) => s.publisherInputs.projectId == projectId && s.eventType == type);
-    return subscription;
+  List<HookSubscription> _getSubscriptionsByCategory(String projectId, EventCategory category) {
+    final subs = subscriptions.value?.data
+        ?.where((s) => s.publisherInputs.projectId == projectId && s.eventType.category == category)
+        .toList();
+    return subs ?? [];
   }
 
   void _refreshUI() {
