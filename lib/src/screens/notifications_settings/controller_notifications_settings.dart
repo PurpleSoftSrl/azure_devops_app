@@ -159,6 +159,32 @@ class _NotificationsSettingsController with ApiErrorHelper {
     return subs ?? [];
   }
 
+  bool hasAllHookSubscriptions(String projectId) {
+    return EventCategory.values
+        .where((c) => c != EventCategory.unknown)
+        .every((c) => hasHookSubscription(projectId, c));
+  }
+
+  bool isAllPushNotificationsEnabled(String projectId) {
+    return EventCategory.values.where((c) => c != EventCategory.unknown).every((category) {
+      if (!hasHookSubscription(projectId, category)) return false;
+
+      final children = _subscriptionChildren['${projectId}_${category.name}'] ??= [];
+      return children.every((child) => isPushNotificationsEnabled(projectId, category, child));
+    });
+  }
+
+  void toggleAllPushNotifications(String projectId, {required bool value}) {
+    for (final category in EventCategory.values.where((c) => c != EventCategory.unknown)) {
+      if (!hasHookSubscription(projectId, category)) continue;
+
+      final children = _subscriptionChildren['${projectId}_${category.name}'] ??= [];
+      for (final child in children) {
+        togglePushNotifications(projectId, category, child, value: value);
+      }
+    }
+  }
+
   void _refreshUI() {
     subscriptions.value = ApiResponse.ok([...subscriptions.value?.data ?? []]);
   }
