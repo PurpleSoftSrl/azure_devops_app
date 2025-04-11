@@ -72,7 +72,6 @@ class NotificationsService with AppLogger {
 
     switch (type) {
       case EventType.approvalPending:
-      case EventType.approvalCompleted:
       case EventType.buildCompleted:
         _handlePipelineNotification(data);
       case EventType.pullRequestCreated:
