@@ -30,21 +30,24 @@ class _LoadingButtonState extends State<LoadingButton> with AppLogger {
       padding: widget.margin ?? const EdgeInsets.symmetric(horizontal: 50),
       child: MaterialButton(
         color: widget.backgroundColor ?? context.colorScheme.primary,
+        disabledColor: widget.backgroundColor ?? context.colorScheme.primary,
         minWidth: double.maxFinite,
         shape: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
         elevation: 0,
-        onPressed: () async {
-          setState(() => _isLoading = true);
+        onPressed: _isLoading
+            ? null
+            : () async {
+                setState(() => _isLoading = true);
 
-          // catch exceptions to avoid infinite loading
-          try {
-            await widget.onPressed();
-          } catch (e) {
-            logDebug(e.toString());
-          }
+                // catch exceptions to avoid infinite loading
+                try {
+                  await widget.onPressed();
+                } catch (e) {
+                  logDebug(e.toString());
+                }
 
-          if (mounted) setState(() => _isLoading = false);
-        },
+                if (mounted) setState(() => _isLoading = false);
+              },
         child: _isLoading
             ? CircularProgressIndicator(
                 backgroundColor: context.themeExtension.background,
