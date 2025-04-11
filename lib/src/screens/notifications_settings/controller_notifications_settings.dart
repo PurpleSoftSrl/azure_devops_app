@@ -51,7 +51,6 @@ class _NotificationsSettingsController with ApiErrorHelper {
 
       switch (type) {
         case EventType.approvalPending:
-        case EventType.approvalCompleted:
         case EventType.buildCompleted:
         case EventType.pullRequestCreated:
         case EventType.pullRequestUpdated:

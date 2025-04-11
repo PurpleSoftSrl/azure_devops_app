@@ -154,7 +154,6 @@ enum EventType {
   workItemCreated('workitem.created', EventCategory.workItems),
   workItemUpdated('workitem.updated', EventCategory.workItems),
   approvalPending('ms.vss-pipelinechecks-events.approval-pending', EventCategory.pipelines),
-  approvalCompleted('ms.vss-pipelinechecks-events.approval-completed', EventCategory.pipelines),
   unknown('', EventCategory.unknown);
 
   const EventType(this.value, this.category);
@@ -171,7 +170,6 @@ enum EventType {
       'workitem.created' => EventType.workItemCreated,
       'workitem.updated' => EventType.workItemUpdated,
       'ms.vss-pipelinechecks-events.approval-pending' => EventType.approvalPending,
-      'ms.vss-pipelinechecks-events.approval-completed' => EventType.approvalCompleted,
       _ => EventType.unknown,
     };
   }
@@ -185,7 +183,6 @@ enum EventType {
       EventType.workItemCreated => 'Work item created',
       EventType.workItemUpdated => 'Work item updated',
       EventType.approvalPending => 'Approval pending',
-      EventType.approvalCompleted => 'Approval completed',
       _ => '',
     };
   }
@@ -199,7 +196,7 @@ enum EventType {
       EventType.workItemCreated ||
       EventType.workItemUpdated =>
         'tfs',
-      EventType.approvalPending || EventType.approvalCompleted => 'pipelines',
+      EventType.approvalPending => 'pipelines',
       _ => '',
     };
   }
@@ -215,7 +212,6 @@ enum EventCategory {
     return switch (this) {
       EventCategory.pipelines => [
           EventType.approvalPending,
-          EventType.approvalCompleted,
           EventType.buildCompleted,
         ],
       EventCategory.workItems => [
