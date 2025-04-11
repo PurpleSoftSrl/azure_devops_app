@@ -107,7 +107,7 @@ class _NotificationsSettingsController with ApiErrorHelper {
 
     if (_userId.isEmpty) return _userIdError();
 
-    final cleanChild = child.replaceAll(' ', '');
+    final cleanChild = child.replaceAll(RegExp('[^a-zA-Z0-9._-]'), '');
 
     for (final subscription in subscriptions) {
       final topic = switch (category) {
