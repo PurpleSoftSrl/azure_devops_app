@@ -110,23 +110,29 @@ class _NotificationsSettingsController with ApiErrorHelper {
     final cleanChild = child.replaceAll(RegExp('[^a-zA-Z0-9._-]'), '');
 
     for (final subscription in subscriptions) {
-      final topic = switch (category) {
-        EventCategory.pipelines || EventCategory.pullRequests => 'topic_${subscription.id}_${cleanChild}_$_userId',
-        // We use email address for work item updates because the user ID is not available in the devops webhook
-        EventCategory.workItems =>
-          'topic_${subscription.id}_${cleanChild}_${api.user!.emailAddress!.replaceAll('@', '.')}',
-        EventCategory.unknown => '',
+      final topics = switch (category) {
+        EventCategory.pipelines || EventCategory.pullRequests => ['topic_${subscription.id}_${cleanChild}_$_userId'],
+        // We use both email and userId for work items because the userId is not always available in the devops webhooks
+        EventCategory.workItems => [
+            'topic_${subscription.id}_${cleanChild}_${api.user!.emailAddress!.replaceAll('@', '.')}',
+            'topic_${subscription.id}_${cleanChild}_$_userId',
+          ],
+        EventCategory.unknown => <String>[],
       };
 
-      if (topic.isEmpty) {
+      if (topics.isEmpty) {
         OverlayService.error('Error', description: 'Event category $category is not supported');
         return;
       }
 
       if (value) {
-        NotificationsService().subscribeToTopic(topic);
+        for (final topic in topics) {
+          NotificationsService().subscribeToTopic(topic);
+        }
       } else {
-        NotificationsService().unsubscribeFromTopic(topic);
+        for (final topic in topics) {
+          NotificationsService().unsubscribeFromTopic(topic);
+        }
       }
 
       storage.setSubscriptionStatus(subscription, cleanChild, isSubscribed: value);
