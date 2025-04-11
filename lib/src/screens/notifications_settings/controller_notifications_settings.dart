@@ -38,6 +38,15 @@ class _NotificationsSettingsController with ApiErrorHelper {
     if (_userId.isEmpty) _userIdError();
   }
 
+  void showInfo() {
+    OverlayService.bottomsheet(
+      title: 'How to enable notifications',
+      spaceUnderTitle: false,
+      isScrollControlled: true,
+      builder: (_) => _InfoBottomsheet(eventCategories: eventCategories),
+    );
+  }
+
   bool hasHookSubscription(String projectId, EventCategory category) {
     final subscription = _getSubscriptionsByCategory(projectId, category);
     return subscription.isNotEmpty;
@@ -48,19 +57,6 @@ class _NotificationsSettingsController with ApiErrorHelper {
 
     for (final type in category.eventTypes) {
       final publisherInputs = PublisherInputs(projectId: projectId);
-
-      switch (type) {
-        case EventType.approvalPending:
-        case EventType.buildCompleted:
-        case EventType.pullRequestCreated:
-        case EventType.pullRequestUpdated:
-        case EventType.pullRequestCommented:
-        case EventType.workItemCreated:
-        case EventType.workItemUpdated:
-          break;
-        case EventType.unknown:
-          return OverlayService.error('Error', description: 'Event type $type is not supported');
-      }
 
       final res = await api.createHookSubscription(
         projectId: projectId,
@@ -187,46 +183,6 @@ class _NotificationsSettingsController with ApiErrorHelper {
     OverlayService.snackbar(
       'Error retrieving user ID, subscription to push notifications will not work',
       isError: true,
-    );
-  }
-
-  void showInfo() {
-    OverlayService.bottomsheet(
-      title: 'How to enable notifications',
-      spaceUnderTitle: false,
-      isScrollControlled: true,
-      builder: (context) => ListView(
-        children: [
-          const SizedBox(height: 16),
-          Text("1. Tap on 'Create' button", style: context.textTheme.bodyMedium),
-          Text(
-            'This will create a few Azure DevOps service hooks for each category you select.\nIt has to be done only once for each project in the organization.',
-            style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
-          ),
-          const SizedBox(height: 12),
-          Text('2. Switch on the toggle for the items you are interested in', style: context.textTheme.bodyMedium),
-          Text(
-            'This will subscribe you to push notifications for the selected repository/pipeline/area.\nIt has to be done on each device you want to receive notifications on.',
-            style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
-          ),
-          const SizedBox(height: 12),
-          Text('3. Trigger one of these events to receive a push notification', style: context.textTheme.bodyMedium),
-          ...eventCategories.entries.map(
-            (entry) => ListTile(
-              title: Text(
-                '- ${entry.key.description}',
-                style: context.textTheme.labelLarge,
-              ),
-              subtitle: Text(
-                entry.value.map((e) => e.description).join(', '),
-                style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
-              ),
-              contentPadding: EdgeInsets.zero,
-              minTileHeight: 20,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
