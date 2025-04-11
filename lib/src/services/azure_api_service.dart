@@ -2638,6 +2638,16 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     required EventType eventType,
     required PublisherInputs publisherInputs,
   }) async {
+    final subscriptionsRes = await getSubscriptions();
+    if (subscriptionsRes.isError) return ApiResponse.error(subscriptionsRes.errorResponse);
+
+    final existingSubscription = (subscriptionsRes.data ?? []).firstWhereOrNull(
+      (s) => s.eventType == eventType && s.publisherInputs.projectId == projectId,
+    );
+    if (existingSubscription != null) {
+      return ApiResponse.error(Response('{"message": "Subscription already exists, try to refresh the page."}', 409));
+    }
+
     final subRes = await _post(
       '$_basePath/_apis/hooks/subscriptions?$_apiVersion',
       body: {
