@@ -174,11 +174,11 @@ class OverlayService {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const SizedBox(
-                          width: 80,
+                          width: 40,
                         ),
                         Flexible(child: Text(title)),
                         SizedBox(
-                          width: 80,
+                          width: 40,
                           child: topRight ??
                               (isDismissible
                                   ? Align(

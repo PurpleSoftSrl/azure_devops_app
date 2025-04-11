@@ -192,8 +192,9 @@ class _NotificationsSettingsController with ApiErrorHelper {
 
   void showInfo() {
     OverlayService.bottomsheet(
-      title: 'Info',
+      title: 'How to enable notifications',
       spaceUnderTitle: false,
+      isScrollControlled: true,
       builder: (context) => ListView(
         children: [
           const SizedBox(height: 16),
@@ -221,6 +222,7 @@ class _NotificationsSettingsController with ApiErrorHelper {
                 style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
               ),
               contentPadding: EdgeInsets.zero,
+              minTileHeight: 20,
             ),
           ),
         ],
