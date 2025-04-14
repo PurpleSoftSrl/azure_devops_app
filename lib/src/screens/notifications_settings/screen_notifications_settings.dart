@@ -33,22 +33,28 @@ class _NotificationsSettingsScreen extends StatelessWidget {
             (p) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _ProjectTitleRow(
-                  ctrl: ctrl,
-                  project: p,
-                ),
-                ...ctrl.eventCategories.entries.map(
-                  (entry) => ctrl.hasHookSubscription(p.id!, entry.key)
-                      ? _ActiveSubscription(
-                          ctrl: ctrl,
-                          project: p,
-                          category: entry.key,
-                        )
-                      : _InactiveSubscription(
-                          ctrl: ctrl,
-                          project: p,
-                          category: entry.key,
-                        ),
+                ExpansionTile(
+                  title: _ProjectTitleRow(
+                    ctrl: ctrl,
+                    project: p,
+                  ),
+                  tilePadding: EdgeInsets.zero,
+                  shape: const Border(),
+                  children: ctrl.eventCategories.entries
+                      .map(
+                        (entry) => ctrl.hasHookSubscription(p.id!, entry.key)
+                            ? _ActiveSubscription(
+                                ctrl: ctrl,
+                                project: p,
+                                category: entry.key,
+                              )
+                            : _InactiveSubscription(
+                                ctrl: ctrl,
+                                project: p,
+                                category: entry.key,
+                              ),
+                      )
+                      .toList(),
                 ),
                 if (p != ctrl.projects.last) const Divider(height: 48),
               ],
