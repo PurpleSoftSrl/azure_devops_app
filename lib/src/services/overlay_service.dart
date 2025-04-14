@@ -144,6 +144,7 @@ class OverlayService {
     EdgeInsets padding = const EdgeInsets.all(15),
     bool spaceUnderTitle = true,
     Widget? topRight,
+    double topRightWidth = 40,
     String? name,
   }) async {
     return showModalBottomSheet<T>(
@@ -173,12 +174,12 @@ class OverlayService {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const SizedBox(
-                          width: 40,
+                        SizedBox(
+                          width: topRightWidth,
                         ),
                         Flexible(child: Text(title)),
                         SizedBox(
-                          width: 40,
+                          width: topRightWidth,
                           child: topRight ??
                               (isDismissible
                                   ? Align(
