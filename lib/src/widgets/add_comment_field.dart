@@ -114,6 +114,7 @@ Future<bool> showEditor(
     heightPercentage: .9,
     isScrollControlled: true,
     title: title,
+    topRightWidth: 80,
     topRight: ValueListenableBuilder<bool>(
       valueListenable: hasChanged,
       builder: (context, changed, __) => SizedBox(

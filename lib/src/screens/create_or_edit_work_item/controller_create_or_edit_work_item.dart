@@ -746,6 +746,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
       title: 'Add link',
       heightPercentage: .9,
       isScrollControlled: true,
+      topRightWidth: 80,
       topRight: ValueListenableBuilder<bool>(
         valueListenable: hasChanged,
         builder: (context, changed, __) => SizedBox(
