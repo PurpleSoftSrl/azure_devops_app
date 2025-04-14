@@ -90,10 +90,25 @@ class _NotificationsSettingsController with ApiErrorHelper {
         _subscriptionChildren[key] = res.data?.map((repo) => repo.name ?? '').toList() ?? [];
       case EventCategory.workItems:
         final res = await api.getWorkItemAreas(projectId: projectId);
-        _subscriptionChildren[key] = res.data?.map((area) => area.escapedAreaPath).toList() ?? [];
+        final allAreas = _getAllAreas(res.data ?? []);
+        _subscriptionChildren[key] = allAreas;
       case EventCategory.unknown:
         _subscriptionChildren[key] = [];
     }
+  }
+
+  List<String> _getAllAreas(List<AreaOrIteration> areas) {
+    final allAreas = <String>[];
+
+    for (final area in areas) {
+      allAreas.add(area.escapedAreaPath);
+
+      if (area.children != null && area.children!.isNotEmpty) {
+        allAreas.addAll(_getAllAreas(area.children!));
+      }
+    }
+
+    return allAreas;
   }
 
   List<String> getCachedSubscriptionChildren(String projectId, EventCategory category) =>
