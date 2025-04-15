@@ -126,7 +126,9 @@ class _NotificationsSettingsController with ApiErrorHelper {
 
     for (final subscription in subscriptions) {
       final topics = switch (category) {
-        EventCategory.pipelines || EventCategory.pullRequests => ['topic_${subscription.id}_${cleanChild}_$_userId'],
+        // Pipelines notifications are sent to all subscribed users, not only the one who triggered the event
+        EventCategory.pipelines => ['topic_${subscription.id}_$cleanChild'],
+        EventCategory.pullRequests => ['topic_${subscription.id}_${cleanChild}_$_userId'],
         // We use both email and userId for work items because the userId is not always available in the devops webhooks
         EventCategory.workItems => [
             'topic_${subscription.id}_${cleanChild}_${api.user!.emailAddress!.replaceAll('@', '.')}',
