@@ -40,23 +40,23 @@ class _NotificationsSettingsScreen extends StatelessWidget {
                   ),
                   tilePadding: EdgeInsets.zero,
                   shape: const Border(),
-                  children: ctrl.eventCategories.entries
-                      .map(
-                        (entry) => ctrl.hasHookSubscription(p.id!, entry.key)
-                            ? _ActiveSubscription(
-                                ctrl: ctrl,
-                                project: p,
-                                category: entry.key,
-                              )
-                            : _InactiveSubscription(
-                                ctrl: ctrl,
-                                project: p,
-                                category: entry.key,
-                              ),
-                      )
-                      .toList(),
+                  children: [
+                    ...ctrl.eventCategories.entries.map(
+                      (entry) => ctrl.hasHookSubscription(p.id!, entry.key)
+                          ? _ActiveSubscription(
+                              ctrl: ctrl,
+                              project: p,
+                              category: entry.key,
+                            )
+                          : _InactiveSubscription(
+                              ctrl: ctrl,
+                              project: p,
+                              category: entry.key,
+                            ),
+                    ),
+                    if (p != ctrl.projects.last) const Divider(height: 48),
+                  ],
                 ),
-                if (p != ctrl.projects.last) const Divider(height: 48),
               ],
             ),
           ),
