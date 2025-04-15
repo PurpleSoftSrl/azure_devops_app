@@ -122,7 +122,7 @@ class _NotificationsSettingsController with ApiErrorHelper {
 
     if (_userId.isEmpty) return _userIdError();
 
-    final cleanChild = child.replaceAll(RegExp('[^a-zA-Z0-9._-]'), '');
+    final cleanChild = child.cleaned;
 
     for (final subscription in subscriptions) {
       final topics = switch (category) {
@@ -159,7 +159,7 @@ class _NotificationsSettingsController with ApiErrorHelper {
   }
 
   bool isPushNotificationsEnabled(String projectId, EventCategory type, String child) {
-    final cleanChild = child.replaceAll(' ', '');
+    final cleanChild = child.cleaned;
 
     final subs = _getSubscriptionsByCategory(projectId, type);
     return subs.isNotEmpty && (subs.every((sub) => storage.isSubscribedTo(sub, cleanChild)));
@@ -207,5 +207,11 @@ class _NotificationsSettingsController with ApiErrorHelper {
       'Error retrieving user ID, subscription to push notifications will not work',
       isError: true,
     );
+  }
+}
+
+extension on String {
+  String get cleaned {
+    return replaceAll(RegExp('[^a-zA-Z0-9._-]'), '');
   }
 }
