@@ -17,18 +17,18 @@ class _NotificationsSettingsController with ApiErrorHelper {
 
   final eventCategories = groupBy(EventType.values.where((t) => t != EventType.unknown), (e) => e.category);
 
+  final pageMode = ValueNotifier<PageMode>(PageMode.user);
+
   Future<void> init() async {
     projects = storage.getChosenProjects().toList();
 
     final res = await api.getSubscriptions();
     if (res.isError) return;
 
-    for (final project in projects) {
-      final projectSubscriptions = res.data?.where((s) => s.publisherInputs.projectId == project.id).toList() ?? [];
-      for (final subscription in projectSubscriptions) {
-        await _getSubscriptionChildren(project.id!, subscription.eventType.category);
-      }
-    }
+    await Future.wait([
+      for (final project in projects)
+        for (final category in EventCategory.values) _getSubscriptionChildren(project.id!, category),
+    ]);
 
     subscriptions.value = res;
 
@@ -45,6 +45,10 @@ class _NotificationsSettingsController with ApiErrorHelper {
       isScrollControlled: true,
       builder: (_) => _InfoBottomsheet(eventCategories: eventCategories),
     );
+  }
+
+  void setPageMode(Set<String> value) {
+    pageMode.value = PageMode.values.firstWhere((e) => e.name == value.first);
   }
 
   bool hasHookSubscription(String projectId, EventCategory category) {
@@ -214,4 +218,9 @@ extension on String {
   String get cleaned {
     return replaceAll(RegExp('[^a-zA-Z0-9._-]'), '');
   }
+}
+
+enum PageMode {
+  user,
+  admin,
 }
