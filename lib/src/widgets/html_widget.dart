@@ -149,7 +149,7 @@ class HtmlWidget extends StatelessWidget {
               if (innerHtml.startsWith('#')) {
                 return GestureDetector(
                   onTap: () {
-                    final url = href;
+                    final url = (href?.endsWith('/') ?? false) ? href?.substring(0, href.length - 1) : href;
                     if (url == null) return;
 
                     final project = url.substring(0, url.indexOf('/_workitems')).split('/').lastOrNull;
@@ -171,7 +171,7 @@ class HtmlWidget extends StatelessWidget {
               if (href != null && href.contains('/pullrequest/')) {
                 return GestureDetector(
                   onTap: () {
-                    final url = href;
+                    final url = href.endsWith('/') ? href.substring(0, href.length - 1) : href;
 
                     final project = url.substring(0, url.indexOf('/_git')).split('/').lastOrNull;
                     if (project == null) return;
