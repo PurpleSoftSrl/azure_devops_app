@@ -11,9 +11,27 @@ class _InfoBottomsheet extends StatelessWidget {
       children: [
         const SizedBox(height: 16),
         Text("1. Tap on 'Create' button", style: context.textTheme.bodyMedium),
-        Text(
-          'This will create a few Azure DevOps service hooks for each category you select.\nIt has to be done only once for each project in the organization.',
+        Text.rich(
           style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
+          TextSpan(
+            children: [
+              TextSpan(
+                text: '''
+This will create a few Azure DevOps service hook subscriptions for each category you select.
+It has to be done only once for each project in the organization.
+
+You must be part of the Project Administrators group to perform this action, or you can ask an administrator to give you the necessary permissions as documented ''',
+              ),
+              TextSpan(
+                text: 'here.',
+                style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.primary),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () => launchUrlString(
+                        'https://learn.microsoft.com/en-us/azure/devops/service-hooks/view-permission?view=azure-devops',
+                      ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 12),
         Text('2. Switch on the toggle for the items you are interested in', style: context.textTheme.bodyMedium),
@@ -38,6 +56,51 @@ class _InfoBottomsheet extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _PageModeSwitch extends StatelessWidget {
+  const _PageModeSwitch({
+    required this.pageMode,
+    required this.ctrl,
+  });
+
+  final _NotificationsSettingsController ctrl;
+  final PageMode pageMode;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SegmentedButton<String>(
+        segments: PageMode.values
+            .map(
+              (mode) => ButtonSegment(
+                value: mode.name,
+                label: Text(mode.name.titleCase),
+              ),
+            )
+            .toList(),
+        selected: {pageMode.name},
+        onSelectionChanged: ctrl.setPageMode,
+        showSelectedIcon: false,
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.resolveWith(
+            (states) =>
+                states.contains(WidgetState.selected) ? context.colorScheme.primary : context.themeExtension.background,
+          ),
+          foregroundColor: WidgetStateProperty.resolveWith(
+            (states) =>
+                states.contains(WidgetState.selected) ? context.colorScheme.onPrimary : context.colorScheme.primary,
+          ),
+          shape: WidgetStatePropertyAll(
+            const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(18))),
+          ),
+          side: WidgetStatePropertyAll(BorderSide(color: context.colorScheme.primary)),
+          animationDuration: Duration.zero,
+          splashFactory: NoSplash.splashFactory,
+        ),
+      ),
     );
   }
 }
