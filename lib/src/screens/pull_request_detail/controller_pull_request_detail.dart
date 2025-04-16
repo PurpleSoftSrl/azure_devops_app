@@ -66,6 +66,8 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
   Timer? _timer;
 
+  late var _repositoryId = args.repository;
+
   void dispose() {
     _isDisposed = true;
     _stopTimer();
@@ -95,9 +97,21 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   }
 
   Future<void> _init() async {
+    // handle navigation from work item's PR link
+    if (_repositoryId.isEmpty) {
+      final pullRequest = await _getPullRequestById();
+      if (pullRequest == null) {
+        final errorMessage = 'Pull request not found in project ${args.project}';
+        prDetail.value = ApiResponse.error(Response('', 404, reasonPhrase: errorMessage));
+        return;
+      }
+
+      _repositoryId = pullRequest.repository.id;
+    }
+
     final res = await api.getPullRequest(
       projectName: args.project,
-      repositoryId: args.repository,
+      repositoryId: _repositoryId,
       id: args.id,
     );
 
@@ -130,6 +144,15 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     );
 
     prDetail.value = res.copyWith(data: res.data?.copyWith(pr: prAndThreads.pr, updates: prAndThreads.updates));
+  }
+
+  /// Search all PRs in project args.project and find the one with id = args.id
+  Future<PullRequest?> _getPullRequestById() async {
+    final pullrequestsRes = await api.getPullRequests(
+      status: PullRequestStatus.all,
+      projects: {Project(name: args.project)},
+    );
+    return pullrequestsRes.data?.firstWhereOrNull((pr) => pr.pullRequestId == args.id);
   }
 
   void _getChangedFiles(List<CommitWithChangeEntry> changes) {

@@ -290,4 +290,31 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
 
     AppRouter.goToWorkItemDetail(project: projectId, id: id);
   }
+
+  String getReplacedText(String text) {
+    return text.splitMapJoin(
+      RegExp('![0-9]+'),
+      onMatch: (p0) {
+        final item = p0.group(0);
+        if (item == null) return p0.input;
+
+        final prId = item.substring(1);
+        return '[!$prId](${api.basePath}/${args.project}/_apis/git/pullrequests/$prId)';
+      },
+    );
+  }
+
+  Future<void> onTapMarkdownLink(String text, String? href, String? _) async {
+    final isPrLink = text.startsWith(RegExp('![0-9]+'));
+    if (isPrLink) {
+      final id = href!.split('/').last;
+      final parsedId = int.tryParse(id);
+      if (parsedId == null) return;
+
+      unawaited(AppRouter.goToPullRequestDetail(project: args.project, id: parsedId, repository: ''));
+      return;
+    }
+
+    if (await canLaunchUrlString(href!)) await launchUrlString(href);
+  }
 }

@@ -176,7 +176,7 @@ class _CommentWidget extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 8, bottom: 8, right: 8),
                 child: AppMarkdownWidget(
-                  data: update.text,
+                  data: ctrl.getReplacedText(update.text),
                   styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
                     p: context.textTheme.labelMedium,
                     a: context.textTheme.labelMedium!.copyWith(
@@ -185,9 +185,7 @@ class _CommentWidget extends StatelessWidget {
                       decorationColor: Colors.blue,
                     ),
                   ),
-                  onTapLink: (_, url, ___) async {
-                    if (await canLaunchUrlString(url!)) await launchUrlString(url);
-                  },
+                  onTapLink: ctrl.onTapMarkdownLink,
                 ),
               )
             else if (update.format == 'html')
