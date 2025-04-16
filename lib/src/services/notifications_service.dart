@@ -53,8 +53,9 @@ class NotificationsService with AppLogger {
       );
     });
 
-    await FirebaseMessaging.instance.subscribeToTopic(userId);
-    await FirebaseMessaging.instance.subscribeToTopic(organization);
+    await subscribeToTopic(userId);
+    await subscribeToTopic(organization);
+    await subscribeToTopic('azdevops_global');
 
     final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
