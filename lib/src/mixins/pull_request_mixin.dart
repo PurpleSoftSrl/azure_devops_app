@@ -29,7 +29,7 @@ mixin PullRequestHelper {
     PullRequest? pr;
 
     if (description.isNotEmpty) {
-      final replacedDescription = _replaceWorkItemLinks(description);
+      final replacedDescription = _replaceWorkItemLinks(description, isMarkdown: true);
       pr = data!.pr.copyWith(description: replacedDescription);
     }
 
@@ -128,9 +128,11 @@ mixin PullRequestHelper {
   }
 
   String _getWorkItemLinkHtml(String itemId) =>
-      '<div> <a href="$_basePath/$_projectId/_workitems/edit/$itemId" data-vss-mention="version:1.0">#$itemId</a>&nbsp;<br></div>';
+      '<a href="$_basePath/$_projectId/_workitems/edit/$itemId" data-vss-mention="version:1.0">#$itemId</a>';
 
-  String _replaceWorkItemLinks(String text) {
+  String _getWorkItemLinkMarkdown(String itemId) => '[#$itemId]($_basePath/$_projectId/_workitems/edit/$itemId)';
+
+  String _replaceWorkItemLinks(String text, {bool isMarkdown = false}) {
     return text.splitMapJoin(
       RegExp('#[0-9]+'),
       onMatch: (p0) {
@@ -138,7 +140,7 @@ mixin PullRequestHelper {
         if (item == null) return p0.input;
 
         final itemId = item.substring(1);
-        return _getWorkItemLinkHtml(itemId);
+        return isMarkdown ? _getWorkItemLinkMarkdown(itemId) : _getWorkItemLinkHtml(itemId);
       },
     );
   }
