@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
+import 'package:azure_devops/src/services/share_intent_service.dart';
 import 'package:flutter/material.dart';
 
 class LifecycleListener extends StatefulWidget {
@@ -55,6 +57,10 @@ class _LifecycleListenerState extends State<LifecycleListener> with WidgetsBindi
         logDebug('Session resumed');
         _checkSubscription();
         _lastSubscriptionCheck = now;
+      }
+
+      if (Platform.isAndroid) {
+        ShareIntentService().maybeHandleSharedUrl();
       }
     }
 

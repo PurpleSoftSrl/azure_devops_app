@@ -2,6 +2,7 @@ import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/saved_query.dart';
 import 'package:azure_devops/src/models/user.dart';
+import 'package:azure_devops/src/router/share_extension_router.dart';
 import 'package:azure_devops/src/screens/board_detail/base_board_detail.dart';
 import 'package:azure_devops/src/screens/boards/base_boards.dart';
 import 'package:azure_devops/src/screens/choose_projects/base_choose_projects.dart';
@@ -131,6 +132,23 @@ class AppRouter {
     _projectBoards: (_) => ProjectBoardsPage(),
     _error: (_) => ErrorPage(description: 'Something went wrong', onRetry: goToSplash),
   };
+
+  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    final url = Uri.tryParse(settings.name ?? '');
+    if (url == null) return null;
+
+    final path = url.path;
+    final query = url.queryParameters;
+
+    if (path.toLowerCase() == 'sharedurl') {
+      final url = query['url'] ?? '';
+      if (url.isEmpty) return null;
+
+      ShareExtensionRouter.handleRoute(Uri.parse(url));
+    }
+
+    return null;
+  }
 
   static Future<void> goToSplash() async {
     await rootNavigator!.pushNamedAndRemoveUntil(_splash, (_) => false);
