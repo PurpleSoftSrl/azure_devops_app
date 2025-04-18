@@ -39,6 +39,20 @@ class ShareExtensionRouter {
       return AppRouter.goToWorkItemDetail(project: project, id: workItemId);
     }
 
+    if (_isCommitsListUrl(pathSegments)) {
+      final projectId = pathSegments[1];
+      final project = Project(id: projectId, name: projectId);
+      return AppRouter.goToCommits(project: project);
+    }
+
+    if (_isPipelinesListUrl(pathSegments)) {
+      final projectId = pathSegments[1];
+      final project = Project(id: projectId, name: projectId);
+      final definition = int.tryParse(url.queryParameters['definitionId'] ?? '');
+
+      return AppRouter.goToPipelines(args: (project: project, shortcut: null, definition: definition));
+    }
+
     if (_isPullRequestsListUrl(pathSegments)) {
       final projectId = pathSegments[1];
       final project = Project(id: projectId, name: projectId);
@@ -67,12 +81,14 @@ class ShareExtensionRouter {
 
       return AppRouter.goToRepositoryDetail(repoDetailArgs);
     }
+
+    if (_isProjectUrl(pathSegments)) {
+      final project = pathSegments[1];
+      return AppRouter.goToProjectDetail(project);
+    }
   }
 
   static bool _isRepositoryUrl(List<String> pathSegments) => pathSegments.length > 3 && pathSegments[2] == '_git';
-
-  static bool _isWorkItemsListUrl(List<String> pathSegments) => // TODO handle not only recentlyupdated
-      pathSegments.length > 3 && pathSegments[2] == '_workitems' && pathSegments[3] == 'recentlyupdated';
 
   static bool _isWorkItemDetailUrl(List<String> pathSegments) =>
       pathSegments.length > 4 && pathSegments[2] == '_workitems' && pathSegments[3] == 'edit';
@@ -86,6 +102,26 @@ class ShareExtensionRouter {
   static bool _isCommitDetailUrl(List<String> pathSegments) =>
       pathSegments.length > 4 && pathSegments[2] == '_git' && pathSegments[4] == 'commit';
 
+  static bool _isCommitsListUrl(List<String> pathSegments) =>
+      pathSegments.length > 4 && pathSegments[2] == '_git' && pathSegments[4] == 'commits';
+
+  static bool _isPipelinesListUrl(List<String> pathSegments) => pathSegments.length > 2 && pathSegments[2] == '_build';
+
+  static bool _isWorkItemsListUrl(List<String> pathSegments) =>
+      pathSegments.length > 3 && pathSegments[2] == '_workitems' && _workItemsTabs.contains(pathSegments[3]);
+
   static bool _isPullRequestsListUrl(List<String> pathSegments) =>
       pathSegments.length > 4 && pathSegments[2] == '_git' && pathSegments[4] == 'pullrequests';
+
+  static bool _isProjectUrl(List<String> pathSegments) => pathSegments.length > 1;
+
+  static const _workItemsTabs = [
+    'assignedtome',
+    'following',
+    'mentioned',
+    'myactivity',
+    'recentlyupdated',
+    'recentlycompleted',
+    'recentlycreated',
+  ];
 }
