@@ -119,54 +119,45 @@ class _NotificationsSettingsController with ApiErrorHelper {
       _subscriptionChildren['${projectId}_${category.name}'] ?? <String>[];
 
   void togglePushNotifications(String projectId, EventCategory category, String child, {required bool value}) {
-    if (!hasHookSubscription(projectId, category)) return;
-
-    final subscriptions = _getSubscriptionsByCategory(projectId, category);
-    if (subscriptions.isEmpty) return;
-
     if (_userId.isEmpty) return _userIdError();
 
     final cleanChild = child.cleaned;
 
-    for (final subscription in subscriptions) {
-      final topics = switch (category) {
-        // Pipelines notifications are sent to all subscribed users, not only the one who triggered the event
-        EventCategory.pipelines => ['topic_${subscription.id}_$cleanChild'],
-        EventCategory.pullRequests => ['topic_${subscription.id}_${cleanChild}_$_userId'],
-        // We use both email and userId for work items because the userId is not always available in the devops webhooks
-        EventCategory.workItems => [
-            'topic_${subscription.id}_${cleanChild}_${api.user!.emailAddress!.replaceAll('@', '.')}',
-            'topic_${subscription.id}_${cleanChild}_$_userId',
-          ],
-        EventCategory.unknown => <String>[],
-      };
+    final topics = switch (category) {
+      // Pipelines notifications are sent to all subscribed users, not only the one who triggered the event
+      EventCategory.pipelines => ['topic_${projectId}_$cleanChild'],
+      EventCategory.pullRequests => ['topic_${projectId}_${cleanChild}_$_userId'],
+      // We use both email and userId for work items because the userId is not always available in the devops webhooks
+      EventCategory.workItems => [
+          'topic_${projectId}_${cleanChild}_${api.user!.emailAddress!.replaceAll('@', '.')}',
+          'topic_${projectId}_${cleanChild}_$_userId',
+        ],
+      EventCategory.unknown => <String>[],
+    };
 
-      if (topics.isEmpty) {
-        OverlayService.error('Error', description: 'Event category $category is not supported');
-        return;
-      }
-
-      if (value) {
-        for (final topic in topics) {
-          NotificationsService().subscribeToTopic(topic);
-        }
-      } else {
-        for (final topic in topics) {
-          NotificationsService().unsubscribeFromTopic(topic);
-        }
-      }
-
-      storage.setSubscriptionStatus(subscription, cleanChild, isSubscribed: value);
+    if (topics.isEmpty) {
+      OverlayService.error('Error', description: 'Event category $category is not supported');
+      return;
     }
+
+    if (value) {
+      for (final topic in topics) {
+        NotificationsService().subscribeToTopic(topic);
+      }
+    } else {
+      for (final topic in topics) {
+        NotificationsService().unsubscribeFromTopic(topic);
+      }
+    }
+
+    storage.setSubscriptionStatus(projectId, category, cleanChild, isSubscribed: value);
 
     _refreshUI();
   }
 
-  bool isPushNotificationsEnabled(String projectId, EventCategory type, String child) {
+  bool isPushNotificationsEnabled(String projectId, EventCategory category, String child) {
     final cleanChild = child.cleaned;
-
-    final subs = _getSubscriptionsByCategory(projectId, type);
-    return subs.isNotEmpty && (subs.every((sub) => storage.isSubscribedTo(sub, cleanChild)));
+    return storage.isSubscribedTo(projectId, category, cleanChild);
   }
 
   List<HookSubscription> _getSubscriptionsByCategory(String projectId, EventCategory category) {
@@ -177,6 +168,8 @@ class _NotificationsSettingsController with ApiErrorHelper {
   }
 
   bool hasAllHookSubscriptions(String projectId) {
+    if (pageMode.value == PageMode.user) return true;
+
     return EventCategory.values
         .where((c) => c != EventCategory.unknown)
         .every((c) => hasHookSubscription(projectId, c));
@@ -184,7 +177,7 @@ class _NotificationsSettingsController with ApiErrorHelper {
 
   bool isAllPushNotificationsEnabled(String projectId) {
     return EventCategory.values.where((c) => c != EventCategory.unknown).every((category) {
-      if (!hasHookSubscription(projectId, category)) return false;
+      if (pageMode.value == PageMode.admin && !hasHookSubscription(projectId, category)) return false;
 
       final children = _subscriptionChildren['${projectId}_${category.name}'] ??= [];
       return children.every((child) => isPushNotificationsEnabled(projectId, category, child));
@@ -193,7 +186,7 @@ class _NotificationsSettingsController with ApiErrorHelper {
 
   void toggleAllPushNotifications(String projectId, {required bool value}) {
     for (final category in EventCategory.values.where((c) => c != EventCategory.unknown)) {
-      if (!hasHookSubscription(projectId, category)) continue;
+      if (pageMode.value == PageMode.admin && !hasHookSubscription(projectId, category)) continue;
 
       final children = _subscriptionChildren['${projectId}_${category.name}'] ??= [];
       for (final child in children) {

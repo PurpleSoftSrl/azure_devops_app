@@ -57,8 +57,8 @@ abstract class StorageService {
   String getTenantId();
   void setTenantId(String id);
 
-  void setSubscriptionStatus(HookSubscription sub, String child, {required bool isSubscribed});
-  bool isSubscribedTo(HookSubscription sub, String child);
+  void setSubscriptionStatus(String projectId, EventCategory category, String child, {required bool isSubscribed});
+  bool isSubscribedTo(String projectId, EventCategory category, String child);
 }
 
 class StorageServiceCore implements StorageService {
@@ -290,16 +290,16 @@ class StorageServiceCore implements StorageService {
   }
 
   @override
-  void setSubscriptionStatus(HookSubscription sub, String child, {required bool isSubscribed}) {
+  void setSubscriptionStatus(String projectId, EventCategory category, String child, {required bool isSubscribed}) {
     final map = jsonDecode(_helper.getString(_Keys.pushNotificationSubscriptions) ?? '{}') as Map<String, dynamic>;
-    map['${sub.id}_$child'] = isSubscribed;
+    map['${projectId}_${category.name}_$child'] = isSubscribed;
     _helper.setString(_Keys.pushNotificationSubscriptions, jsonEncode(map));
   }
 
   @override
-  bool isSubscribedTo(HookSubscription sub, String child) {
+  bool isSubscribedTo(String projectId, EventCategory category, String child) {
     final map = jsonDecode(_helper.getString(_Keys.pushNotificationSubscriptions) ?? '{}') as Map<String, dynamic>;
-    return map['${sub.id}_$child'] == true;
+    return map['${projectId}_${category.name}_$child'] == true;
   }
 }
 

@@ -1012,12 +1012,12 @@ class StorageServiceMock implements StorageService {
   void setTenantId(String id) {}
 
   @override
-  bool isSubscribedTo(HookSubscription sub, String child) {
+  bool isSubscribedTo(String projectId, EventCategory category, String child) {
     return true;
   }
 
   @override
-  void setSubscriptionStatus(HookSubscription sub, String child, {required bool isSubscribed}) {}
+  void setSubscriptionStatus(String projectId, EventCategory category, String child, {required bool isSubscribed}) {}
 }
 
 class AdsServiceMock implements AdsService {
