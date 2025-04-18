@@ -118,7 +118,7 @@ class _NotificationsSettingsController with ApiErrorHelper {
   List<String> getCachedSubscriptionChildren(String projectId, EventCategory category) =>
       _subscriptionChildren['${projectId}_${category.name}'] ?? <String>[];
 
-  void togglePushNotifications(String projectId, EventCategory category, String child, {required bool value}) {
+  void togglePushNotifications(String projectId, EventCategory category, String child, {required bool isEnabled}) {
     if (_userId.isEmpty) return _userIdError();
 
     final cleanChild = child.cleaned;
@@ -140,7 +140,7 @@ class _NotificationsSettingsController with ApiErrorHelper {
       return;
     }
 
-    if (value) {
+    if (isEnabled) {
       for (final topic in topics) {
         NotificationsService().subscribeToTopic(topic);
       }
@@ -150,7 +150,7 @@ class _NotificationsSettingsController with ApiErrorHelper {
       }
     }
 
-    storage.setSubscriptionStatus(projectId, category, cleanChild, isSubscribed: value);
+    storage.setSubscriptionStatus(projectId, category, cleanChild, isSubscribed: isEnabled);
 
     _refreshUI();
   }
@@ -184,13 +184,13 @@ class _NotificationsSettingsController with ApiErrorHelper {
     });
   }
 
-  void toggleAllPushNotifications(String projectId, {required bool value}) {
+  void toggleAllPushNotifications(String projectId, {required bool isEnabled}) {
     for (final category in EventCategory.values.where((c) => c != EventCategory.unknown)) {
       if (pageMode.value == PageMode.admin && !hasHookSubscription(projectId, category)) continue;
 
       final children = _subscriptionChildren['${projectId}_${category.name}'] ??= [];
       for (final child in children) {
-        togglePushNotifications(projectId, category, child, value: value);
+        togglePushNotifications(projectId, category, child, isEnabled: isEnabled);
       }
     }
   }
