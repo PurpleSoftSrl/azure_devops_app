@@ -61,6 +61,7 @@
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>msauth.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+					<string>azdevopsshareext.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 				</array>
 			</dict>
 		</array>
