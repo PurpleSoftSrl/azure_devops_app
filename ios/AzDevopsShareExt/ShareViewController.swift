@@ -12,9 +12,8 @@ class ShareViewController: UIViewController {
     private var appURLString =
         "azdevopsshareext.io.purplesoft.azuredevops://share?url="
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        print("viewDidLoad")
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
         guard
             let extensionItem = extensionContext?.inputItems.first
@@ -26,44 +25,34 @@ class ShareViewController: UIViewController {
             return
         }
 
-        let textDataType = UTType.url.identifier
-        if itemProvider.hasItemConformingToTypeIdentifier(textDataType) {
-            // Load the item from itemProvider
-            itemProvider.loadItem(forTypeIdentifier: textDataType, options: nil)
-            { (providedText, error) in
-                if error != nil {
-                    return
-                }
-                if let text = providedText as? NSURL {
-                    // this is where we load our view
-                    print("url: \(text)")
-                    self.appURLString += (text.absoluteString ?? "")
-                    self.openMainApp()
-                } else {
-                    return
-                }
-            }
+        let textDataType: String = UTType.url.identifier
 
+        if itemProvider.hasItemConformingToTypeIdentifier(textDataType) {
+            itemProvider.loadItem(forTypeIdentifier: textDataType as String, options: [:])
+            { providedText, error in
+                guard error == nil, let text = providedText as? NSURL else {
+                    return
+                }
+
+                print("url: \(text)")
+                self.appURLString += (text.absoluteString ?? "")
+                self.openMainApp()
+            }
         }
     }
 
     private func openMainApp() {
-        self.extensionContext?.completeRequest(
-            returningItems: nil,
-            completionHandler: { _ in
-                guard let url = URL(string: self.appURLString) else { return }
-                self.openURL(url)
-            })
-    }
+        guard let url = URL(string: self.appURLString) else { return }
 
-    @objc func openURL(_ url: URL) {
         var responder: UIResponder? = self
         while responder != nil {
             if let application = responder as? UIApplication {
-                return application.open(url)
+                application.open(url)
             }
             responder = responder?.next
         }
-    }
 
+        self.extensionContext!.completeRequest(
+            returningItems: [], completionHandler: nil)
+    }
 }
