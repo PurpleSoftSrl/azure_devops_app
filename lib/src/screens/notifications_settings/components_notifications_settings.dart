@@ -129,7 +129,7 @@ class _ProjectTitleRow extends StatelessWidget {
         if (ctrl.hasAllHookSubscriptions(project.id!))
           Switch(
             value: ctrl.isAllPushNotificationsEnabled(project.id!),
-            onChanged: (value) => ctrl.toggleAllPushNotifications(project.id!, value: value),
+            onChanged: (value) => ctrl.toggleAllPushNotifications(project.id!, isEnabled: value),
           )
         else
           const SizedBox(height: 48),
@@ -180,7 +180,7 @@ class _ActiveSubscription extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               value: ctrl.isPushNotificationsEnabled(project.id!, category, child),
-              onChanged: (value) => ctrl.togglePushNotifications(project.id!, category, child, value: value),
+              onChanged: (value) => ctrl.togglePushNotifications(project.id!, category, child, isEnabled: value),
               dense: true,
               contentPadding: EdgeInsets.zero,
             ),
