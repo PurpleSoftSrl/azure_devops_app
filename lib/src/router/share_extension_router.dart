@@ -7,7 +7,7 @@ class ShareExtensionRouter {
   ShareExtensionRouter._();
 
   static Future<void> handleRoute(Uri url) async {
-    final pathSegments = url.pathSegments;
+    final pathSegments = url.pathSegments.where((s) => s.trim().isNotEmpty).toList();
     if (pathSegments.isEmpty) return;
     if (AzureApiServiceImpl().user == null) return;
     if (pathSegments.first != AzureApiServiceImpl().organization) return;
