@@ -45,6 +45,7 @@ class AzureDevOps extends StatelessWidget {
                       child: MaterialApp(
                         navigatorKey: AppRouter.navigatorKey,
                         routes: AppRouter.routes,
+                        onGenerateRoute: AppRouter.onGenerateRoute,
                         theme: AppTheme.lightTheme,
                         darkTheme: AppTheme.darkTheme,
                         debugShowCheckedModeBanner: false,

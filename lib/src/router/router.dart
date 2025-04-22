@@ -2,6 +2,7 @@ import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/saved_query.dart';
 import 'package:azure_devops/src/models/user.dart';
+import 'package:azure_devops/src/router/share_extension_router.dart';
 import 'package:azure_devops/src/screens/board_detail/base_board_detail.dart';
 import 'package:azure_devops/src/screens/boards/base_boards.dart';
 import 'package:azure_devops/src/screens/choose_projects/base_choose_projects.dart';
@@ -38,8 +39,8 @@ import 'package:flutter/services.dart';
 typedef WorkItemsArgs = ({Project? project, SavedShortcut? shortcut, ChildQuery? savedQuery});
 typedef WorkItemDetailArgs = ({String project, int id});
 typedef SavedQueriesArgs = ({String project, String path, String queryId});
-typedef BoardDetailArgs = ({String project, String teamId, String boardId, String backlogId});
-typedef SprintDetailArgs = ({String project, String teamId, String teamName, String sprintId, String sprintName});
+typedef BoardDetailArgs = ({String project, String teamId, String boardName, String backlogId});
+typedef SprintDetailArgs = ({String project, String teamId, String sprintId, String sprintName});
 typedef PullRequestArgs = ({Project? project, SavedShortcut? shortcut});
 typedef PullRequestDetailArgs = ({String project, String repository, int id});
 typedef CommitsArgs = ({Project? project, GraphUser? author, SavedShortcut? shortcut});
@@ -131,6 +132,23 @@ class AppRouter {
     _projectBoards: (_) => ProjectBoardsPage(),
     _error: (_) => ErrorPage(description: 'Something went wrong', onRetry: goToSplash),
   };
+
+  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    final url = Uri.tryParse(settings.name ?? '');
+    if (url == null) return null;
+
+    final path = url.path;
+    final query = url.queryParameters;
+
+    if (path.toLowerCase() == 'sharedurl') {
+      final url = query['url'] ?? '';
+      if (url.isEmpty) return null;
+
+      ShareExtensionRouter.handleRoute(Uri.parse(url));
+    }
+
+    return null;
+  }
 
   static Future<void> goToSplash() async {
     await rootNavigator!.pushNamedAndRemoveUntil(_splash, (_) => false);

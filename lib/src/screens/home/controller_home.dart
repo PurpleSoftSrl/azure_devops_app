@@ -64,6 +64,10 @@ class _HomeController with AppLogger {
     if (!hasSubscription) {
       _maybeShowSubscriptionBottomsheet();
     }
+
+    if (Platform.isAndroid) {
+      await ShareIntentService().maybeHandleSharedUrl();
+    }
   }
 
   Future<void> goToCommits() async {
