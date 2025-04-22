@@ -59,7 +59,7 @@ class _LifecycleListenerState extends State<LifecycleListener> with WidgetsBindi
         _lastSubscriptionCheck = now;
       }
 
-      if (Platform.isAndroid) {
+      if (Platform.isAndroid && user != null) {
         ShareIntentService().maybeHandleSharedUrl();
       }
     }
