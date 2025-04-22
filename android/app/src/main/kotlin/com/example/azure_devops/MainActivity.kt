@@ -9,9 +9,11 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import java.net.URL
 
 class MainActivity : FlutterActivity(), MethodCallHandler {
     private var sharedUrl = ""
+    private val allowedDomains = listOf("dev.azure.com", "visualstudio.com")
     private val CHANNEL = "io.purplesoft.azuredevops.shareextension"
     private val tag = "AzDevopsMainActivity"
 
@@ -47,11 +49,23 @@ class MainActivity : FlutterActivity(), MethodCallHandler {
         val action = intent.getAction()
         val type = intent.getType()
 
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if ("text/plain".equals(type)) {
-                updateSharedUrl(intent);
-            }
+        if (!Intent.ACTION_SEND.equals(action) || type == null || !"text/plain".equals(type)) {
+            Log.d(tag, "Received intent with wrong action or type, not handling it")
+            return
         }
+
+        val text = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+        Log.d(tag, "Received shared text: ${text}")
+
+        val url = URL(text)
+        val host = url.host.lowercase()
+
+        if (!allowedDomains.any( { host.contains(it.lowercase()) } )) {
+            Log.d(tag, "Received shared URL with wrong domain (${host}), not handling it")
+            return
+        }
+
+        updateSharedUrl(intent);
     }
 
     private fun updateSharedUrl(intent: Intent) {
