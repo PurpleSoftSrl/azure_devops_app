@@ -1,3 +1,10 @@
+## 3.5.0 - 2025-04-22
+- msal: fix signout when token expired
+- work_items: handle PR links in comment
+- html_widget: handle tap on links with trailing slash
+- pull_requests: fix work item links in description
+- commits: improve tags UI
+
 ## 3.4.1 - 2025-04-02
 - update msal plugin
 - ios: fix dart define build script
