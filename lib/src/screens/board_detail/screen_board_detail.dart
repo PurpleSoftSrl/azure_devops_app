@@ -11,7 +11,7 @@ class _BoardDetailScreen extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) => AppPage(
         init: ctrl.init,
-        title: ctrl.args.boardId,
+        title: ctrl.args.boardName,
         notifier: ctrl.boardWithItems,
         padding: EdgeInsets.zero,
         actions: [

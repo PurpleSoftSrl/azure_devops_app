@@ -1,6 +1,7 @@
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
+import 'package:collection/collection.dart';
 import 'package:highlighting/languages/all.dart';
 
 class ShareExtensionRouter {
@@ -83,6 +84,34 @@ class ShareExtensionRouter {
       return AppRouter.goToRepositoryDetail(repoDetailArgs);
     }
 
+    if (_isBoardUrl(pathSegments)) {
+      final project = pathSegments[1];
+
+      final boardsRes = await AzureApiServiceImpl().getProjectBoards(projectName: project);
+      if (boardsRes.isError) return;
+
+      final board = boardsRes.data!.values.expand((bs) => bs).firstWhereOrNull((b) => b.name == pathSegments[6]);
+      if (board == null) return;
+
+      return AppRouter.goToBoardDetail(
+        args: (project: project, teamId: pathSegments[5], boardName: board.name, backlogId: board.backlogId!),
+      );
+    }
+
+    if (_isSprintUrl(pathSegments)) {
+      final project = pathSegments[1];
+
+      final sprintsRes = await AzureApiServiceImpl().getProjectSprints(projectName: project);
+      if (sprintsRes.isError) return;
+
+      final sprint = sprintsRes.data!.values.expand((s) => s).firstWhereOrNull((s) => s.name == pathSegments[6]);
+      if (sprint == null) return;
+
+      return AppRouter.goToSprintDetail(
+        args: (project: project, teamId: pathSegments[4], sprintId: sprint.id, sprintName: sprint.name),
+      );
+    }
+
     if (_isProjectUrl(pathSegments)) {
       final project = pathSegments[1];
       return AppRouter.goToProjectDetail(project);
@@ -113,6 +142,12 @@ class ShareExtensionRouter {
 
   static bool _isPullRequestsListUrl(List<String> pathSegments) =>
       pathSegments.length > 4 && pathSegments[2] == '_git' && pathSegments[4] == 'pullrequests';
+
+  static bool _isBoardUrl(List<String> pathSegments) =>
+      pathSegments.length > 6 && pathSegments[2] == '_boards' && pathSegments[3] == 'board';
+
+  static bool _isSprintUrl(List<String> pathSegments) =>
+      pathSegments.length > 6 && pathSegments[2] == '_sprints' && pathSegments[3] == 'taskboard';
 
   static bool _isProjectUrl(List<String> pathSegments) => pathSegments.length > 1;
 

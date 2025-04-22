@@ -53,13 +53,13 @@ class _ProjectBoardsController {
 
   void goToBoardDetail(Team team, Board board) {
     AppRouter.goToBoardDetail(
-      args: (project: projectName, teamId: team.id, boardId: board.name, backlogId: board.backlogId!),
+      args: (project: projectName, teamId: team.id, boardName: board.name, backlogId: board.backlogId!),
     );
   }
 
   void goToSprintDetail(Team team, Sprint sprint) {
     AppRouter.goToSprintDetail(
-      args: (project: projectName, teamId: team.id, teamName: team.name, sprintId: sprint.id, sprintName: sprint.name),
+      args: (project: projectName, teamId: team.id, sprintId: sprint.id, sprintName: sprint.name),
     );
   }
 }
