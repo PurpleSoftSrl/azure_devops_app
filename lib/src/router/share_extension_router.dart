@@ -1,4 +1,5 @@
 import 'package:azure_devops/src/models/project.dart';
+import 'package:azure_devops/src/models/saved_query.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:collection/collection.dart';
@@ -112,6 +113,28 @@ class ShareExtensionRouter {
       );
     }
 
+    if (_isSavedQueryUrl(pathSegments)) {
+      final project = pathSegments[1];
+      final queryId = pathSegments[4];
+
+      final query = await AzureApiServiceImpl().getProjectSavedQuery(projectName: project, queryId: queryId);
+      if (query.isError) return;
+
+      final queryData = query.data!;
+
+      final childQuery = ChildQuery(
+        id: queryId,
+        name: queryData.name,
+        path: queryData.path,
+        queryType: 'flat',
+        isPublic: false,
+        isFolder: false,
+        hasChildren: false,
+        url: '${AzureApiServiceImpl().basePath}/$project/_apis/',
+      );
+      return AppRouter.goToWorkItems(args: (project: null, shortcut: null, savedQuery: childQuery));
+    }
+
     if (_isProjectUrl(pathSegments)) {
       final project = pathSegments[1];
       return AppRouter.goToProjectDetail(project);
@@ -148,6 +171,9 @@ class ShareExtensionRouter {
 
   static bool _isSprintUrl(List<String> pathSegments) =>
       pathSegments.length > 6 && pathSegments[2] == '_sprints' && pathSegments[3] == 'taskboard';
+
+  static bool _isSavedQueryUrl(List<String> pathSegments) =>
+      pathSegments.length > 4 && pathSegments[2] == '_queries' && pathSegments[3] == 'query';
 
   static bool _isProjectUrl(List<String> pathSegments) => pathSegments.length > 1;
 
