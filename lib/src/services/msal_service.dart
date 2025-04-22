@@ -14,8 +14,6 @@ class MsalService with AppLogger {
 
   SingleAccountPca? _pca;
 
-  var _isLoggedIn = false;
-
   void dispose() {
     instance = null;
   }
@@ -34,8 +32,6 @@ class MsalService with AppLogger {
   }
 
   Future<void> logout() async {
-    if (!_isLoggedIn) return;
-
     try {
       if (_pca == null) await init();
 
@@ -52,7 +48,6 @@ class MsalService with AppLogger {
       if (_pca == null) await init();
 
       final token = await _pca!.acquireToken(scopes: _scopes, prompt: Prompt.selectAccount);
-      _isLoggedIn = true;
       return token.accessToken;
     } on MsalUserCancelException catch (_) {
       return null;
@@ -67,7 +62,6 @@ class MsalService with AppLogger {
       if (_pca == null) await init();
 
       final token = await _pca!.acquireTokenSilent(scopes: _scopes);
-      _isLoggedIn = true;
       return token.accessToken;
     } on MsalException catch (e, s) {
       logError(e, s);

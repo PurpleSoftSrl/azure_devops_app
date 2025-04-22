@@ -623,7 +623,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: b6f05e11775c2848e3434137cce821bbd1b810f9
+      resolved-ref: a08167b26d6041a941266a8e2ba6e322b815ffbe
       url: "https://github.com/PurpleSoftSrl/msal_auth"
     source: git
     version: "3.1.4"
