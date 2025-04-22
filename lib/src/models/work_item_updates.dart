@@ -362,7 +362,7 @@ class CommentItemUpdate extends ItemUpdate {
 
   final int workItemId;
   final int id;
-  final String text;
+  String text;
   final bool isEdited;
   final String format;
 }

@@ -1,5 +1,7 @@
 part of work_item_detail;
 
+typedef _MentionGuidWithName = ({String guid, String name});
+
 class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixin {
   _WorkItemDetailController._(this.args, this.api, this.storage, this.ads);
 
@@ -26,6 +28,8 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
 
   Map<String, Set<WorkItemField>> fieldsToShow = {};
 
+  final _mentionRegExp = RegExp('@<[a-zA-Z0-9-]+>');
+
   var _isDisposed = false;
 
   Future<void> init() async {
@@ -40,12 +44,56 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
       fieldsToShow = fieldsRes.data?.fields ?? <String, Set<WorkItemField>>{};
     }
 
+    updates = res.data?.updates ?? [];
+
+    for (final update in updates.whereType<CommentItemUpdate>()) {
+      update.text = await _getReplacedComment(update.text);
+    }
+
     itemDetail.value = res;
-    updates = itemDetail.value?.data?.updates ?? [];
   }
 
   void dispose() {
     _isDisposed = true;
+  }
+
+  Future<String> _getReplacedComment(String text) async {
+    final mentionGuids = _getMentionGuids(text);
+
+    final mentionsWithNames = await _getIdentitiesFromGuids(mentionGuids.toSet());
+
+    var replacedText = text;
+
+    for (final mention in mentionsWithNames) {
+      replacedText = replacedText.replaceAll(
+        RegExp('@<${mention.guid}>', caseSensitive: false),
+        '[${mention.name}](@${mention.guid})',
+      );
+    }
+
+    return replacedText;
+  }
+
+  List<String> _getMentionGuids(String text) {
+    final allMatches = _mentionRegExp.allMatches(text);
+    if (allMatches.isEmpty) return [];
+
+    final res = <String>[];
+
+    for (final match in allMatches) {
+      res.add(text.substring(match.start + 2, match.end - 1).trim());
+    }
+
+    return res;
+  }
+
+  Future<List<_MentionGuidWithName>> _getIdentitiesFromGuids(Set<String> mentionsToReplace) async {
+    final res = await Future.wait([
+      for (final mention in mentionsToReplace) api.getIdentityFromGuid(guid: mention),
+    ]);
+
+    final identitites = res.where((r) => !r.isError && r.data != null).map((r) => r.data!);
+    return identitites.map((i) => (guid: i.guid ?? '', name: i.displayName)).toList();
   }
 
   void toggleShowUpdatesReversed() {
@@ -305,9 +353,11 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
   }
 
   Future<void> onTapMarkdownLink(String text, String? href, String? _) async {
+    if (href == null) return;
+
     final isPrLink = text.startsWith(RegExp('![0-9]+'));
     if (isPrLink) {
-      final id = href!.split('/').last;
+      final id = href.split('/').last;
       final parsedId = int.tryParse(id);
       if (parsedId == null) return;
 
@@ -315,6 +365,15 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
       return;
     }
 
-    if (await canLaunchUrlString(href!)) await launchUrlString(href);
+    if (href.startsWith('@')) {
+      final name = text;
+      final user = await api.getUserFromDisplayName(name: name);
+      if (user.isError) return;
+
+      unawaited(AppRouter.goToMemberDetail(user.data!.descriptor!));
+      return;
+    }
+
+    if (await canLaunchUrlString(href)) await launchUrlString(href);
   }
 }
