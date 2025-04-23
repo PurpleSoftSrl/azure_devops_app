@@ -36,7 +36,7 @@ class _LoginScreen extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: ctrl.showInfo,
-                  icon: Icon(Icons.info_outline),
+                  icon: Icon(DevOpsIcons.info),
                 ),
               ],
             ),

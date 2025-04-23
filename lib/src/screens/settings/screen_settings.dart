@@ -113,7 +113,7 @@ class _SettingsScreen extends StatelessWidget {
             onTap: ctrl.goToNotificationsSettings,
             child: Row(
               children: [
-                Icon(DevOpsIcons.send),
+                Icon(DevOpsIcons.notification),
                 const SizedBox(
                   width: 20,
                 ),
