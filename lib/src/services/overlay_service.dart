@@ -260,6 +260,7 @@ class OverlayService {
         label: label,
         initialValue: initialValue,
       ),
+      topRightWidth: 80,
       topRight: Builder(
         builder: (context) => TextButton(
           onPressed: () {
