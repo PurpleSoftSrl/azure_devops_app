@@ -49,8 +49,15 @@ class _LoadingButtonState extends State<LoadingButton> with AppLogger {
                 if (mounted) setState(() => _isLoading = false);
               },
         child: _isLoading
-            ? CircularProgressIndicator(
-                backgroundColor: context.themeExtension.background,
+            ? LayoutBuilder(
+                builder: (context, constraints) => SizedBox(
+                  height: constraints.maxHeight * .8,
+                  width: constraints.maxHeight * .8,
+                  child: CircularProgressIndicator(
+                    backgroundColor: context.themeExtension.background,
+                    strokeWidth: 3,
+                  ),
+                ),
               )
             : Text(
                 widget.text,
