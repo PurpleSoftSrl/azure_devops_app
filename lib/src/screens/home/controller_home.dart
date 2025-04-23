@@ -252,27 +252,27 @@ class _HomeController with AppLogger {
   }
 
   void _maybeShowSubscriptionBottomsheet() {
-    if (storage.hasSeenSubscriptionAddedBottomsheet) return;
+    if (storage.hasSeenNotificationsAddedBottomsheet) return;
 
     // ignore: unawaited_futures
     OverlayService.bottomsheet(
-      title: 'Hi there!',
+      title: 'Push notifications',
       isDismissible: false,
       isScrollControlled: true,
       heightPercentage: .9,
-      builder: (_) => _SubscriptionAddedBottomsheet(
-        onRemoveAds: () {
+      builder: (_) => _FeatureAddedBottomsheet(
+        onConfirm: () {
           AppRouter.popRoute();
-          _goToChooseSubscription();
+          _goToNotifications();
         },
         onSkip: AppRouter.popRoute,
       ),
     );
 
-    storage.setHasSeenSubscriptionAddedBottomsheet();
+    storage.setHasSeenNotificationsAddedBottomsheet();
   }
 
-  void _goToChooseSubscription() {
-    AppRouter.goToChooseSubscription();
+  void _goToNotifications() {
+    AppRouter.goToNotificationsSettings();
   }
 }

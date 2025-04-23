@@ -51,8 +51,8 @@ abstract class StorageService {
 
   void deleteShortcut(SavedShortcut shortcut);
 
-  bool get hasSeenSubscriptionAddedBottomsheet;
-  void setHasSeenSubscriptionAddedBottomsheet();
+  bool get hasSeenNotificationsAddedBottomsheet;
+  void setHasSeenNotificationsAddedBottomsheet();
 
   void setSubscriptionStatus(String projectId, EventCategory category, String child, {required bool isSubscribed});
   bool isSubscribedTo(String projectId, EventCategory category, String child);
@@ -269,11 +269,11 @@ class StorageServiceCore implements StorageService {
   }
 
   @override
-  bool get hasSeenSubscriptionAddedBottomsheet => _helper.getBool(_Keys.hasSeenSubscriptionAddedBottomsheet) ?? false;
+  bool get hasSeenNotificationsAddedBottomsheet => _helper.getBool(_Keys.hasSeenNotificationsAddedBottomsheet) ?? false;
 
   @override
-  void setHasSeenSubscriptionAddedBottomsheet() {
-    _helper.setBool(_Keys.hasSeenSubscriptionAddedBottomsheet, value: true);
+  void setHasSeenNotificationsAddedBottomsheet() {
+    _helper.setBool(_Keys.hasSeenNotificationsAddedBottomsheet, value: true);
   }
 
   @override
@@ -380,7 +380,7 @@ class _Keys {
   static const numberOfSessions = 'numberOfSessions';
   static const filters = 'filters';
   static const shortcuts = 'shortcuts';
-  static const hasSeenSubscriptionAddedBottomsheet = 'hasSeenSubscriptionAddedBottomsheet';
+  static const hasSeenNotificationsAddedBottomsheet = 'hasSeenNotificationsAddedBottomsheet';
   static const pushNotificationSubscriptions = 'pushNotificationSubscriptions';
 }
 
