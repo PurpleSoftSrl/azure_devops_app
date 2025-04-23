@@ -15,7 +15,7 @@ class _NotificationsSettingsScreen extends StatelessWidget {
       actions: [
         IconButton(
           onPressed: ctrl.showInfo,
-          icon: Icon(Icons.info_outline),
+          icon: Icon(DevOpsIcons.info),
         ),
       ],
       builder: (subscriptions) => ValueListenableBuilder(
