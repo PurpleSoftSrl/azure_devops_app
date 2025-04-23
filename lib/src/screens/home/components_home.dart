@@ -122,10 +122,10 @@ class _ProjectsHeaderWithSearchField extends StatelessWidget {
   }
 }
 
-class _SubscriptionAddedBottomsheet extends StatelessWidget {
-  const _SubscriptionAddedBottomsheet({required this.onRemoveAds, required this.onSkip});
+class _FeatureAddedBottomsheet extends StatelessWidget {
+  const _FeatureAddedBottomsheet({required this.onConfirm, required this.onSkip});
 
-  final VoidCallback onRemoveAds;
+  final VoidCallback onConfirm;
   final VoidCallback onSkip;
 
   @override
@@ -133,28 +133,35 @@ class _SubscriptionAddedBottomsheet extends StatelessWidget {
     return ListView(
       children: [
         Image.asset(
-          'assets/illustrations/crying_smiling_guy.png',
+          'assets/illustrations/notifications.png',
           height: 200,
         ),
         const SizedBox(
           height: 40,
         ),
         Text(
+          "Don't miss a thing!",
+          style: context.textTheme.titleMedium,
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Text(
           '''
-In this release, we've introduced ads to help support the app's ongoing development and keep things running smoothly.
+Want to stay in the loop? 
+Turn on push notifications to catch all the important updates on your projects right when they happen.
 
-We understand that ads can be disruptive, so we've also added an option for you to remove them with a paid subscription.
-
-Would you like to remove them?
+You can switch them on or off anytime in Settings > Notifications.
 ''',
-          style: context.textTheme.bodyLarge,
+          style:
+              context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.normal, fontFamily: AppTheme.defaultFont),
         ),
         const SizedBox(
           height: 52,
         ),
         LoadingButton(
-          onPressed: onRemoveAds,
-          text: 'Remove ads',
+          onPressed: onConfirm,
+          text: 'Configure',
         ),
         const SizedBox(
           height: 16,

@@ -998,10 +998,10 @@ class StorageServiceMock implements StorageService {
   void deleteShortcut(SavedShortcut shortcut) {}
 
   @override
-  bool get hasSeenSubscriptionAddedBottomsheet => true;
+  bool get hasSeenNotificationsAddedBottomsheet => true;
 
   @override
-  void setHasSeenSubscriptionAddedBottomsheet() {}
+  void setHasSeenNotificationsAddedBottomsheet() {}
 
   @override
   String getTenantId() {
