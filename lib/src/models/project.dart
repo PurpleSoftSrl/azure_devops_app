@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:azure_devops/src/models/repository.dart';
 import 'package:http/http.dart';
 
 class GetProjectsResponse {
@@ -71,6 +72,17 @@ class Project {
   final String? defaultTeamImageUrl;
 
   static Project fromResponse(Response res) => Project.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+
+  static Project fromRepository(TeamProjectReference project) {
+    return Project(
+      id: project.id,
+      name: project.name,
+      url: project.url,
+      revision: project.revision,
+      lastUpdateTime: project.lastUpdateTime,
+      defaultTeamImageUrl: project.defaultTeamImageUrl,
+    );
+  }
 
   static List<Project>? listFromJson(
     dynamic json, {

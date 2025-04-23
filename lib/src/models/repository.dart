@@ -37,7 +37,7 @@ class GitRepository {
   bool? isFork;
   String? name;
   _GitRepositoryRef? parentRepository;
-  _TeamProjectReference? project;
+  TeamProjectReference? project;
   String? remoteUrl;
   int? size;
   String? url;
@@ -84,7 +84,7 @@ class GitRepository {
         isFork: json['isFork'] as bool?,
         name: json['name'] as String?,
         parentRepository: _GitRepositoryRef.fromJson(json['parentRepository']),
-        project: _TeamProjectReference.fromJson(json['project']),
+        project: TeamProjectReference.fromJson(json['project']),
         remoteUrl: json['remoteUrl'] as String?,
         size: json['size'] as int?,
         url: json['url'] as String?,
@@ -123,7 +123,7 @@ class _GitRepositoryRef {
   String? id;
   bool? isFork;
   String? name;
-  _TeamProjectReference? project;
+  TeamProjectReference? project;
   String? remoteUrl;
   String? url;
 
@@ -159,7 +159,7 @@ class _GitRepositoryRef {
         id: json['id'] as String?,
         isFork: json['isFork'] as bool?,
         name: json['name'] as String?,
-        project: _TeamProjectReference.fromJson(json['project']),
+        project: TeamProjectReference.fromJson(json['project']),
         remoteUrl: json['remoteUrl'] as String?,
         url: json['url'] as String?,
       );
@@ -168,8 +168,8 @@ class _GitRepositoryRef {
   }
 }
 
-class _TeamProjectReference {
-  _TeamProjectReference({
+class TeamProjectReference {
+  TeamProjectReference({
     this.abbreviation,
     this.defaultTeamImageUrl,
     this.description,
@@ -194,7 +194,7 @@ class _TeamProjectReference {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is _TeamProjectReference &&
+      other is TeamProjectReference &&
           other.abbreviation == abbreviation &&
           other.defaultTeamImageUrl == defaultTeamImageUrl &&
           other.description == description &&
@@ -221,11 +221,11 @@ class _TeamProjectReference {
   String toString() =>
       'TeamProjectReference[abbreviation=$abbreviation, defaultTeamImageUrl=$defaultTeamImageUrl, description=$description, id=$id, lastUpdateTime=$lastUpdateTime, name=$name, revision=$revision, url=$url, visibility=$visibility]';
 
-  static _TeamProjectReference? fromJson(dynamic value) {
+  static TeamProjectReference? fromJson(dynamic value) {
     if (value is Map) {
       final json = value.cast<String, dynamic>();
 
-      return _TeamProjectReference(
+      return TeamProjectReference(
         abbreviation: json['abbreviation'] as String?,
         defaultTeamImageUrl: json['defaultTeamImageUrl'] as String?,
         description: json['description'] as String?,

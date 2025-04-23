@@ -23,6 +23,11 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
   bool get hasShortcut => args?.shortcut != null;
 
+  GitRepository? repositoryFilter;
+  bool get isDefaultRepositoryFilter => repositoryFilter == null;
+
+  String get _repositoryFilterKey => '${repositoryFilter!.project!.name}/${repositoryFilter!.name}';
+
   Future<void> init() async {
     if (shouldPersistFilters) {
       _fillSavedFilters();
@@ -56,12 +61,18 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
     if (savedFilters.authors.isNotEmpty) {
       usersFilter = getSortedUsers(api).where((p) => savedFilters.authors.contains(p.mailAddress)).toSet();
     }
+
+    if (savedFilters.repository.isNotEmpty) {
+      final repositoryName = savedFilters.repository.first.split('/').last;
+      repositoryFilter = api.allRepositories.firstWhereOrNull((r) => r.name == repositoryName);
+    }
   }
 
   Future<void> _getData() async {
     final res = await api.getRecentCommits(
       projects: isDefaultProjectsFilter ? null : projectsFilter,
       authors: isDefaultUsersFilter ? null : usersFilter.map((u) => u.mailAddress ?? '').toSet(),
+      repository: isDefaultRepositoryFilter ? null : repositoryFilter,
     );
 
     if (res.isError) {
@@ -127,10 +138,23 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
     }
   }
 
+  void filterByRepository(GitRepository? repository) {
+    if (repository == repositoryFilter) return;
+
+    recentCommits.value = null;
+    repositoryFilter = repository;
+    _getDataAndAds();
+
+    if (shouldPersistFilters) {
+      filtersService.saveCommitsRepositoryFilter({if (repositoryFilter != null) _repositoryFilterKey});
+    }
+  }
+
   void resetFilters() {
     recentCommits.value = null;
     projectsFilter.clear();
     usersFilter.clear();
+    repositoryFilter = null;
 
     if (shouldPersistFilters) {
       filtersService.resetCommitsFilters();
@@ -148,10 +172,19 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
       filters: CommitsFilters(
         projects: projectsFilter.map((p) => p.name!).toSet(),
         authors: usersFilter.map((u) => u.mailAddress!).toSet(),
+        repository: repositoryFilter == null ? {} : {_repositoryFilterKey},
       ),
     );
 
     OverlayService.snackbar(res.message, isError: !res.result);
+  }
+
+  List<GitRepository> getRepositoriesToShow() {
+    return api.allRepositories
+        .where(
+          (r) => isDefaultProjectsFilter || (projectsFilter.map((p) => p.id).contains(r.project!.id)),
+        )
+        .toList();
   }
 
   Future<void> _handleBadRequest(Response response) async {

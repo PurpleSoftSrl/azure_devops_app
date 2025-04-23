@@ -23,17 +23,30 @@ class _CommitsScreen extends StatelessWidget {
               resetFilters: ctrl.resetFilters,
               saveFilters: ctrl.saveFilters,
               filters: [
-                FilterMenu<Project>.multiple(
-                  title: 'Projects',
-                  values: ctrl.getProjects(ctrl.storage, withProjectAll: false),
-                  currentFilters: ctrl.projectsFilter,
-                  onSelectedMultiple: ctrl.filterByProjects,
-                  formatLabel: (p) => p.name!,
-                  isDefaultFilter: ctrl.isDefaultProjectsFilter,
-                  widgetBuilder: (p) => ProjectFilterWidget(project: p),
-                  onSearchChanged:
-                      ctrl.hasManyProjects(ctrl.storage) ? (s) => ctrl.searchProject(s, ctrl.storage) : null,
-                ),
+                if (ctrl.repositoryFilter == null)
+                  FilterMenu<Project>.multiple(
+                    title: 'Projects',
+                    values: ctrl.getProjects(ctrl.storage, withProjectAll: false),
+                    currentFilters: ctrl.projectsFilter,
+                    onSelectedMultiple: ctrl.filterByProjects,
+                    formatLabel: (p) => p.name!,
+                    isDefaultFilter: ctrl.isDefaultProjectsFilter,
+                    widgetBuilder: (p) => ProjectFilterWidget(project: p),
+                    onSearchChanged:
+                        ctrl.hasManyProjects(ctrl.storage) ? (s) => ctrl.searchProject(s, ctrl.storage) : null,
+                  ),
+                if (ctrl.api.allRepositories.isNotEmpty)
+                  FilterMenu<GitRepository>.custom(
+                    title: 'Repository',
+                    currentFilter: ctrl.repositoryFilter,
+                    formatLabel: (r) => r.name!,
+                    isDefaultFilter: ctrl.isDefaultRepositoryFilter,
+                    body: _RepositoryFilterBody(
+                      repositories: ctrl.getRepositoriesToShow(),
+                      onTap: ctrl.filterByRepository,
+                      selectedRepository: ctrl.repositoryFilter,
+                    ),
+                  ),
                 FilterMenu<GraphUser>.multiple(
                   title: 'Authors',
                   values: ctrl.getSortedUsers(ctrl.api, withUserAll: false),

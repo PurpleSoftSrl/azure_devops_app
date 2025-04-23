@@ -75,6 +75,7 @@ class FiltersService {
     return CommitsFilters(
       projects: _getFilters(commitsFilters, attribute: CommitsFilters.projectsKey),
       authors: _getFilters(commitsFilters, attribute: CommitsFilters.authorsKey),
+      repository: _getFilters(commitsFilters, attribute: CommitsFilters.repositoryKey),
     );
   }
 
@@ -84,6 +85,15 @@ class FiltersService {
 
   void saveCommitsAuthorsFilter(Set<String> userEmails) {
     storage.saveFilter(organization, FilterAreas.commits, CommitsFilters.authorsKey, userEmails);
+  }
+
+  void saveCommitsRepositoryFilter(Set<String> repository) {
+    storage.saveFilter(
+      organization,
+      FilterAreas.commits,
+      CommitsFilters.repositoryKey,
+      repository.isEmpty ? {} : repository,
+    );
   }
 
   void resetCommitsFilters() {
@@ -177,6 +187,7 @@ class FiltersService {
     return CommitsFilters(
       projects: _getShortcutFilters(shortcut, attribute: CommitsFilters.projectsKey),
       authors: _getShortcutFilters(shortcut, attribute: CommitsFilters.authorsKey),
+      repository: _getShortcutFilters(shortcut, attribute: CommitsFilters.repositoryKey),
     );
   }
 
@@ -309,18 +320,22 @@ class CommitsFilters {
   CommitsFilters({
     required this.projects,
     required this.authors,
+    required this.repository,
   });
 
   static const projectsKey = 'projects';
   static const authorsKey = 'authors';
+  static const repositoryKey = 'repository';
 
   final Set<String> projects;
   final Set<String> authors;
+  final Set<String> repository;
 
   Map<String, Set<String>> toMap() {
     return {
       if (authors.isNotEmpty) authorsKey: authors,
       if (projects.isNotEmpty) projectsKey: projects,
+      if (repository.isNotEmpty) repositoryKey: repository,
     };
   }
 }

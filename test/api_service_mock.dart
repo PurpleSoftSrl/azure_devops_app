@@ -181,6 +181,7 @@ class AzureApiServiceMock implements AzureApiService {
   Future<ApiResponse<List<Commit>>> getRecentCommits({
     Set<Project>? projects,
     Set<String>? authors,
+    GitRepository? repository,
     int? maxCount,
   }) async {
     final emptyCommit = Commit.empty();
@@ -871,6 +872,9 @@ class AzureApiServiceMock implements AzureApiService {
       ),
     );
   }
+
+  @override
+  List<GitRepository> get allRepositories => [];
 }
 
 class StorageServiceMock implements StorageService {

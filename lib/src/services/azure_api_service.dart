@@ -88,6 +88,8 @@ abstract class AzureApiService {
 
   bool get isImageUnauthorized;
 
+  List<GitRepository> get allRepositories;
+
   String getUserAvatarUrl(String userDescriptor);
 
   Future<LoginStatus> login(String accessToken);
@@ -231,6 +233,7 @@ abstract class AzureApiService {
   Future<ApiResponse<List<Commit>>> getRecentCommits({
     Set<Project>? projects,
     Set<String>? authors,
+    GitRepository? repository,
     int? maxCount,
   });
 
@@ -439,6 +442,10 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   List<Project> _projects = [];
   Iterable<Project>? _chosenProjects;
+
+  @override
+  List<GitRepository> get allRepositories => _allRepos ?? [];
+  List<GitRepository>? _allRepos;
 
   StorageService get storage => StorageServiceCore.instance!;
 
@@ -2348,9 +2355,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   Future<ApiResponse<List<Commit>>> getRecentCommits({
     Set<Project>? projects,
     Set<String>? authors,
+    GitRepository? repository,
     int? maxCount,
   }) async {
-    final projectsToSearch = projects ?? (_chosenProjects ?? _projects);
+    final projectsToSearch = repository != null
+        ? [Project.fromRepository(repository.project!)]
+        : (projects ?? (_chosenProjects ?? _projects));
 
     final allProjectRepos = await Future.wait([
       for (final project in projectsToSearch) _get('$_basePath/${project.name}/_apis/git/repositories?$_apiVersion'),
@@ -2367,6 +2377,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final repos =
         allProjectRepos.where((r) => !r.isError).map(GetRepositoriesResponse.fromResponse).expand((r) => r).toList();
 
+    _allRepos ??= repos;
+
     final topSearch = maxCount != null ? '&searchCriteria.\$top=$maxCount' : '';
 
     final allProjectCommits = <Response>[];
@@ -2375,7 +2387,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       final authorSearch = author.isNotEmpty ? '&searchCriteria.author=$author' : '';
 
       // get commits in slices to avoid 'too many open files' error happening on iOS
-      final slices = repos.slices(50);
+      final slices = repos.where((r) => repository == null || r.id == repository.id).slices(50);
       for (final slice in slices) {
         allProjectCommits.addAll(
           await Future.wait([
