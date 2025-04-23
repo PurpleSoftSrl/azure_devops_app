@@ -70,7 +70,8 @@ class _NotificationsSettingsController with ApiErrorHelper {
       );
 
       if (res.isError) {
-        final error = getErrorMessage(res.errorResponse!);
+        final error =
+            res.errorResponse?.statusCode == 403 ? _getForbiddenErrorMessage() : getErrorMessage(res.errorResponse!);
         return OverlayService.error('Error', description: error);
       }
     }
@@ -78,6 +79,14 @@ class _NotificationsSettingsController with ApiErrorHelper {
     await _getSubscriptionChildren(projectId, category);
 
     await init();
+  }
+
+  String _getForbiddenErrorMessage() {
+    return '''
+You don't have permissions to create a subscription for this project.
+Please check your permissions or ask a project administrator to create this subscription.
+
+Tap on the info icon to learn more about how to enable notifications.''';
   }
 
   Future<void> _getSubscriptionChildren(String projectId, EventCategory category) async {
