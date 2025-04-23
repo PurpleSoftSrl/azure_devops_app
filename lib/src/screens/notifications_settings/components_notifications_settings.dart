@@ -77,7 +77,10 @@ class _PageModeSwitch extends StatelessWidget {
             .map(
               (mode) => ButtonSegment(
                 value: mode.name,
-                label: Text(mode.name.titleCase),
+                label: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: Text(mode.name.titleCase),
+                ),
               ),
             )
             .toList(),
@@ -85,18 +88,17 @@ class _PageModeSwitch extends StatelessWidget {
         onSelectionChanged: ctrl.setPageMode,
         showSelectedIcon: false,
         style: ButtonStyle(
+          textStyle: WidgetStatePropertyAll(context.textTheme.bodyMedium),
           backgroundColor: WidgetStateProperty.resolveWith(
-            (states) =>
-                states.contains(WidgetState.selected) ? context.colorScheme.primary : context.themeExtension.background,
+            (states) => states.contains(WidgetState.selected)
+                ? context.colorScheme.primary
+                : Colors.white.withValues(alpha: .18),
           ),
-          foregroundColor: WidgetStateProperty.resolveWith(
-            (states) =>
-                states.contains(WidgetState.selected) ? context.colorScheme.onPrimary : context.colorScheme.primary,
-          ),
+          foregroundColor: WidgetStatePropertyAll(context.colorScheme.onPrimary),
           shape: WidgetStatePropertyAll(
-            const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(18))),
+            const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
           ),
-          side: WidgetStatePropertyAll(BorderSide(color: context.colorScheme.primary)),
+          side: WidgetStatePropertyAll(BorderSide(color: Colors.white.withValues(alpha: .24))),
           animationDuration: Duration.zero,
           splashFactory: NoSplash.splashFactory,
         ),
@@ -158,13 +160,13 @@ class _ActiveSubscription extends StatelessWidget {
         const SizedBox(height: 16),
         Text(
           category.description,
-          style: context.textTheme.bodyMedium,
+          style: context.textTheme.titleSmall,
         ),
         if (subscriptionChildren.isEmpty)
           SwitchListTile(
             title: Text(
               'No subscriptions available',
-              style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
+              style: context.textTheme.bodySmall!.copyWith(color: context.colorScheme.onSecondary),
             ),
             value: false,
             onChanged: null,
@@ -176,7 +178,7 @@ class _ActiveSubscription extends StatelessWidget {
             (child) => SwitchListTile(
               title: Text(
                 child,
-                style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
+                style: context.textTheme.bodySmall!.copyWith(color: context.colorScheme.onSecondary),
                 overflow: TextOverflow.ellipsis,
               ),
               value: ctrl.isPushNotificationsEnabled(project.id!, category, child),
@@ -209,16 +211,16 @@ class _InactiveSubscription extends StatelessWidget {
         const SizedBox(height: 16),
         Text(
           category.description,
-          style: context.textTheme.bodyMedium,
+          style: context.textTheme.titleSmall,
         ),
         ListTile(
           title: Text(
             'Create a subscription',
-            style: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSecondary),
+            style: context.textTheme.bodySmall!.copyWith(color: context.colorScheme.onSecondary),
           ),
           trailing: SizedBox(
             width: 80,
-            height: 48,
+            height: 32,
             child: LoadingButton(
               onPressed: () => ctrl.createHookSubscription(project.id!, category),
               margin: EdgeInsets.zero,
