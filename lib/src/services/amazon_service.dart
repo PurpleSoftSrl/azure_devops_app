@@ -26,12 +26,14 @@ class AmazonService with AppLogger {
 
   static const _basePath = 'https://products.azdevops.app';
 
+  var _lastFetchTime = DateTime.now();
+
   void dispose() {
     instance = null;
   }
 
   Future<List<AmazonItem>> getItems() async {
-    if (_items != null) return _items!;
+    if (_items != null && _lastFetchTime.isAfter(DateTime.now().subtract(Duration(hours: 1)))) return _items!;
 
     final allItems = <AmazonItem>[];
 
@@ -48,6 +50,7 @@ class AmazonService with AppLogger {
       allItems.addAll(items);
 
       logDebug('Fetched ${items.length} items for category: $category.');
+      _lastFetchTime = DateTime.now();
     }
 
     logDebug('Total items fetched: ${allItems.length}');
