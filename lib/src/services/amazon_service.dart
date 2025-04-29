@@ -2,6 +2,7 @@ import 'package:azure_devops/src/extensions/reponse_extension.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/models/amazon/amazon_item.dart';
 import 'package:collection/collection.dart';
+import 'package:http/http.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class AmazonService with AppLogger {
@@ -39,7 +40,14 @@ class AmazonService with AppLogger {
 
     for (final category in _categories) {
       final url = '$_basePath/api/products?category=$category';
-      final jsonsRes = await _client.get(Uri.parse(url));
+      final Response jsonsRes;
+
+      try {
+        jsonsRes = await _client.get(Uri.parse(url));
+      } catch (e, s) {
+        logError(e, s);
+        continue;
+      }
 
       if (jsonsRes.isError) {
         logErrorMessage('Error fetching items for category: $category');

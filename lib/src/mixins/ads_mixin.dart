@@ -11,8 +11,12 @@ mixin AdsMixin {
   Future<void> getNewNativeAds(AdsService ads) async {
     _hasAmazonAds = ads.hasAmazonAds;
 
-    if (ads.hasAmazonAds) {
-      await _getNewAmazonAds(ads);
+    if (_hasAmazonAds) {
+      final items = await _getNewAmazonAds(ads);
+      if (items.isEmpty) {
+        _hasAmazonAds = false;
+        await _getNewAdmobAds(ads);
+      }
     } else {
       await _getNewAdmobAds(ads);
     }
@@ -24,9 +28,9 @@ mixin AdsMixin {
     nativeAds = newAds.map((ad) => (ad: ad, key: GlobalKey())).toList();
   }
 
-  Future<void> _getNewAmazonAds(AdsService ads) async {
+  Future<List<AmazonItem>> _getNewAmazonAds(AdsService ads) async {
     final newAmazonAds = await ads.getNewAmazonAds();
-    amazonAds = newAmazonAds.toList();
+    return amazonAds = newAmazonAds.toList();
   }
 
   /// Whether to show a native ad at the given [index] inside [items] list.
