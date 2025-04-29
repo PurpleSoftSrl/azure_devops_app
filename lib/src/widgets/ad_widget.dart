@@ -53,58 +53,61 @@ class AmazonAdWidget extends StatelessWidget {
     final hasDiscount = item.discount != null && item.discount!.amount > 0;
     return SizedBox(
       height: 160,
-      child: Center(
-        child: GestureDetector(
-          onTap: () => launchUrlString(item.itemUrl, mode: LaunchMode.externalApplication),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: Image.network(
-                  item.imageUrl,
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Center(
+          child: GestureDetector(
+            onTap: () => launchUrlString(item.itemUrl, mode: LaunchMode.externalApplication),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: Image.network(
+                    item.imageUrl,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      item.title,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textTheme.titleSmall,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        if (hasDiscount)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: Text(item.discountedPrice.amount.toCurrency(item.currency)),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        item.title,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.titleSmall,
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          if (hasDiscount)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Text(item.discountedPrice.amount.toCurrency(item.currency)),
+                            ),
+                          Text(
+                            item.originalPrice.amount.toCurrency(item.currency),
+                            style: context.textTheme.bodySmall?.copyWith(
+                              decoration: hasDiscount ? TextDecoration.lineThrough : null,
+                            ),
                           ),
-                        Text(
-                          item.originalPrice.amount.toCurrency(item.currency),
-                          style: context.textTheme.bodySmall?.copyWith(
-                            decoration: hasDiscount ? TextDecoration.lineThrough : null,
-                          ),
-                        ),
-                        if (item.isPrime) ...[
-                          const Spacer(),
-                          SvgPicture.network(
-                            'https://m.media-amazon.com/images/G/29/perc/prime-logo.png',
-                            width: 50,
-                          ),
+                          if (item.isPrime) ...[
+                            const Spacer(),
+                            SvgPicture.network(
+                              'https://m.media-amazon.com/images/G/29/perc/prime-logo.png',
+                              width: 50,
+                            ),
+                          ],
                         ],
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
