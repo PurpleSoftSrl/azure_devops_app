@@ -93,8 +93,8 @@ class _PullRequestsScreen extends StatelessWidget {
               );
 
               if (ctrl.shouldShowNativeAd(prs, pr, adsIndex)) {
-                yield NativeAdWidget(
-                  ad: ctrl.nativeAds[adsIndex++],
+                yield CustomAdWidget(
+                  item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++],
                 );
               }
             },
