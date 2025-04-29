@@ -1,6 +1,7 @@
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/num_extension.dart';
 import 'package:azure_devops/src/models/amazon/amazon_item.dart';
+import 'package:azure_devops/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -64,12 +65,12 @@ class AmazonAdWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                   child: Image.network(
                     item.imageUrl,
-                    width: 100,
-                    height: 100,
+                    width: 80,
+                    height: 80,
                     fit: BoxFit.cover,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -83,11 +84,22 @@ class AmazonAdWidget extends StatelessWidget {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          if (hasDiscount)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: Text(item.discountedPrice.amount.toCurrency(item.currency)),
+                          if (hasDiscount) ...[
+                            Text(
+                              '-${item.discount!.percentage.toPercentage()}',
+                              style: context.textTheme.bodyMedium!.copyWith(
+                                color: context.colorScheme.error,
+                                fontWeight: FontWeight.normal,
+                                fontFamily: AppTheme.defaultFont,
+                              ),
                             ),
+                            const SizedBox(width: 4),
+                            Text(
+                              item.discountedPrice.amount.toCurrency(item.currency),
+                              style: context.textTheme.bodyMedium,
+                            ),
+                            const SizedBox(width: 8),
+                          ],
                           Text(
                             item.originalPrice.amount.toCurrency(item.currency),
                             style: context.textTheme.bodySmall?.copyWith(
@@ -98,7 +110,7 @@ class AmazonAdWidget extends StatelessWidget {
                             const Spacer(),
                             SvgPicture.network(
                               'https://m.media-amazon.com/images/G/29/perc/prime-logo.png',
-                              width: 50,
+                              width: 45,
                             ),
                           ],
                         ],
