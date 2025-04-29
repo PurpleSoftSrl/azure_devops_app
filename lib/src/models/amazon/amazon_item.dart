@@ -2,6 +2,7 @@ import 'dart:convert';
 
 class AmazonItem {
   AmazonItem({
+    required this.id,
     required this.itemUrl,
     required this.title,
     required this.imageUrl,
@@ -13,6 +14,7 @@ class AmazonItem {
   });
 
   factory AmazonItem.fromJson(Map<String, dynamic> json) => AmazonItem(
+        id: json['id'] as String? ?? '',
         itemUrl: json['itemUrl'] as String? ?? '',
         title: json['title'] as String? ?? '',
         imageUrl: json['imageUrl'] as String? ?? '',
@@ -27,6 +29,7 @@ class AmazonItem {
         (json.decode(str) as List<dynamic>? ?? []).map((x) => AmazonItem.fromJson(x as Map<String, dynamic>? ?? {})),
       );
 
+  final String id;
   final String itemUrl;
   final String title;
   final String imageUrl;
@@ -35,6 +38,18 @@ class AmazonItem {
   final Discount? discount;
   final Price discountedPrice;
   final String currency;
+
+  @override
+  bool operator ==(covariant AmazonItem other) {
+    if (identical(this, other)) return true;
+
+    return other.id == id;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode;
+  }
 }
 
 class Discount {

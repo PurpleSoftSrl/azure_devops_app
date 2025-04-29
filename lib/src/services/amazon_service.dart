@@ -52,6 +52,13 @@ class AmazonService with AppLogger {
 
     logDebug('Total items fetched: ${allItems.length}');
 
-    return _items = allItems.sorted((a, b) => (b.discount?.percentage ?? 0).compareTo(a.discount?.percentage ?? 0));
+    final distinctItems = allItems
+        .sorted((a, b) => (b.discount?.percentage ?? 0).compareTo(a.discount?.percentage ?? 0))
+        .toSet()
+        .toList();
+
+    logDebug('Distinct items: ${distinctItems.length}');
+
+    return _items = distinctItems;
   }
 }
