@@ -1,6 +1,7 @@
 import 'package:azure_devops/src/extensions/reponse_extension.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/models/amazon/amazon_item.dart';
+import 'package:collection/collection.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class AmazonService with AppLogger {
@@ -18,6 +19,13 @@ class AmazonService with AppLogger {
 
   List<AmazonItem>? _items;
 
+  static const _categories = [
+    'computers',
+    'electronics',
+  ];
+
+  static const _basePath = 'https://products.azdevops.app';
+
   void dispose() {
     instance = null;
   }
@@ -25,14 +33,25 @@ class AmazonService with AppLogger {
   Future<List<AmazonItem>> getItems() async {
     if (_items != null) return _items!;
 
-    // TODO handle multiple categories
-    final url = 'https://products.azdevops.app/api/products?category=computers';
-    final jsonsRes = await _client.get(Uri.parse(url));
-    if (jsonsRes.isError) return [];
+    final allItems = <AmazonItem>[];
 
-    final items = AmazonItem.listFromJson(jsonsRes.body);
-    logDebug('Fetched ${items.length} items.');
+    for (final category in _categories) {
+      final url = '$_basePath/api/products?category=$category';
+      final jsonsRes = await _client.get(Uri.parse(url));
 
-    return _items = items;
+      if (jsonsRes.isError) {
+        logErrorMessage('Error fetching items for category: $category');
+        continue;
+      }
+
+      final items = AmazonItem.listFromJson(jsonsRes.body);
+      allItems.addAll(items);
+
+      logDebug('Fetched ${items.length} items for category: $category.');
+    }
+
+    logDebug('Total items fetched: ${allItems.length}');
+
+    return _items = allItems.sorted((a, b) => (b.discount?.percentage ?? 0).compareTo(a.discount?.percentage ?? 0));
   }
 }
