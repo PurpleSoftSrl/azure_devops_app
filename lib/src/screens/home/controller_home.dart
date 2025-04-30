@@ -98,7 +98,7 @@ class _HomeController with AppLogger {
   void goToListPage(SavedShortcut shortcut) {
     switch (shortcut.area) {
       case FilterAreas.commits:
-        AppRouter.goToCommits(shortcut: shortcut);
+        AppRouter.goToCommits(args: (shortcut: shortcut, project: null, author: null, repository: null));
       case FilterAreas.pipelines:
         AppRouter.goToPipelines(args: (definition: null, project: null, shortcut: shortcut));
       case FilterAreas.workItems:

@@ -4,6 +4,7 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
   _CommitsController._(this.api, this.storage, this.args, this.ads) {
     if (args?.project != null) projectsFilter = {args!.project!};
     if (args?.author != null) usersFilter = {args!.author!};
+    if (args?.repository != null) repositoryFilter = args!.repository;
   }
 
   final AzureApiService api;

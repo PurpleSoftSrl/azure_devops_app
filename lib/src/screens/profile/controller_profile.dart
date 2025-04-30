@@ -81,8 +81,9 @@ class _ProfileController with FilterMixin, AdsMixin {
 
   void goToCommits(Commit commit) {
     final project = getProjects(storage).firstWhereOrNull((p) => p.id == commit.projectId);
-
     final me = api.allUsers.firstWhereOrNull((u) => u.mailAddress == api.user?.emailAddress);
-    AppRouter.goToCommits(project: project, author: me);
+    final repository = api.allRepositories.firstWhereOrNull((r) => r.id == commit.repositoryId);
+
+    AppRouter.goToCommits(args: (project: project, author: me, repository: repository, shortcut: null));
   }
 }

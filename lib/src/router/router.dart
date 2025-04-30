@@ -1,5 +1,6 @@
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/project.dart';
+import 'package:azure_devops/src/models/repository.dart';
 import 'package:azure_devops/src/models/saved_query.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/router/share_extension_router.dart';
@@ -43,7 +44,7 @@ typedef BoardDetailArgs = ({String project, String teamId, String boardName, Str
 typedef SprintDetailArgs = ({String project, String teamId, String sprintId, String sprintName});
 typedef PullRequestArgs = ({Project? project, SavedShortcut? shortcut});
 typedef PullRequestDetailArgs = ({String project, String repository, int id});
-typedef CommitsArgs = ({Project? project, GraphUser? author, SavedShortcut? shortcut});
+typedef CommitsArgs = ({Project? project, GraphUser? author, SavedShortcut? shortcut, GitRepository? repository});
 typedef CommitDetailArgs = ({String project, String repository, String commitId});
 typedef FileDiffArgs = ({Commit commit, String filePath, bool isAdded, bool isDeleted, int? pullRequestId});
 typedef PipelineLogsArgs = ({String project, int pipelineId, String taskId, String parentTaskId, int logId});
@@ -186,8 +187,7 @@ class AppRouter {
 
   static PipelineLogsArgs getPipelineLogsArgs(BuildContext context) => _getArgs(context);
 
-  static Future<void> goToCommits({Project? project, GraphUser? author, SavedShortcut? shortcut}) =>
-      _goTo(_commits, args: (project: project, author: author, shortcut: shortcut));
+  static Future<void> goToCommits({CommitsArgs? args}) => _goTo<CommitsArgs>(_commits, args: args);
 
   static CommitsArgs? getCommitsArgs(BuildContext context) => _getArgs(context);
 

@@ -90,7 +90,9 @@ class _ProjectDetailController with ApiErrorHelper {
   }
 
   void goToCommits() {
-    AppRouter.goToCommits(project: project.value?.data?.project);
+    AppRouter.goToCommits(
+      args: (project: project.value?.data?.project, author: null, repository: null, shortcut: null),
+    );
   }
 
   void goToPipelines() {

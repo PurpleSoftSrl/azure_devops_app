@@ -45,7 +45,7 @@ class ShareExtensionRouter {
     if (_isCommitsListUrl(pathSegments)) {
       final projectId = pathSegments[1];
       final project = Project(id: projectId, name: projectId);
-      return AppRouter.goToCommits(project: project);
+      return AppRouter.goToCommits(args: (project: project, author: null, repository: null, shortcut: null));
     }
 
     if (_isPipelinesListUrl(pathSegments)) {
