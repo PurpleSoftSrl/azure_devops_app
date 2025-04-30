@@ -1,7 +1,6 @@
 import 'package:azure_devops/src/extensions/reponse_extension.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/models/amazon/amazon_item.dart';
-import 'package:collection/collection.dart';
 import 'package:http/http.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -20,12 +19,7 @@ class AmazonService with AppLogger {
 
   List<AmazonItem>? _items;
 
-  static const _categories = [
-    'computers',
-    'electronics',
-  ];
-
-  static const _basePath = 'https://products.azdevops.app';
+  static const _url = 'https://products.azdevops.app/api/products?category=all';
 
   var _lastFetchTime = DateTime.now();
 
@@ -34,42 +28,29 @@ class AmazonService with AppLogger {
   }
 
   Future<List<AmazonItem>> getItems() async {
-    if (_items != null && _lastFetchTime.isAfter(DateTime.now().subtract(Duration(hours: 1)))) return _items!;
+    if (_items != null && _hasFetchedRecently()) return _items!;
 
-    final allItems = <AmazonItem>[];
+    final Response jsonsRes;
 
-    for (final category in _categories) {
-      final url = '$_basePath/api/products?category=$category';
-      final Response jsonsRes;
-
-      try {
-        jsonsRes = await _client.get(Uri.parse(url));
-      } catch (e, s) {
-        logError(e, s);
-        continue;
-      }
-
-      if (jsonsRes.isError) {
-        logErrorMessage('Error fetching items for category: $category');
-        continue;
-      }
-
-      final items = AmazonItem.listFromJson(jsonsRes.body);
-      allItems.addAll(items);
-
-      logDebug('Fetched ${items.length} items for category: $category.');
-      _lastFetchTime = DateTime.now();
+    try {
+      jsonsRes = await _client.get(Uri.parse(_url));
+    } catch (e, s) {
+      logError(e, s);
+      return [];
     }
 
-    logDebug('Total items fetched: ${allItems.length}');
+    if (jsonsRes.isError) {
+      logErrorMessage('Error fetching items');
+      return [];
+    }
 
-    final distinctItems = allItems
-        .sorted((a, b) => (b.discount?.percentage ?? 0).compareTo(a.discount?.percentage ?? 0))
-        .toSet()
-        .toList();
+    _lastFetchTime = DateTime.now();
 
-    logDebug('Distinct items: ${distinctItems.length}');
+    final items = AmazonItem.listFromJson(jsonsRes.body);
+    logDebug('Fetched ${items.length} items.');
 
-    return _items = distinctItems;
+    return _items = items;
   }
+
+  bool _hasFetchedRecently() => _lastFetchTime.isAfter(DateTime.now().subtract(Duration(hours: 1)));
 }
