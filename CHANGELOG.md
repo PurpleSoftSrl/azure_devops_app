@@ -1,3 +1,10 @@
+## 3.6.0 - 2025-05-06
+- Add support for Amazon ads (#59)
+- profile: view repository commits on summary tap
+- commits: add repository filter
+- work_items: handle mentions in markdown comments
+- Add share extension (#58)
+
 ## 3.5.0 - 2025-04-22
 - msal: fix signout when token expired
 - work_items: handle PR links in comment
