@@ -5,7 +5,9 @@ import 'dart:io';
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
+import 'package:azure_devops/src/models/amazon/amazon_item.dart';
 import 'package:azure_devops/src/router/router.dart';
+import 'package:azure_devops/src/services/amazon_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -15,11 +17,13 @@ const _androidNativeAdId = String.fromEnvironment('ADMOB_NATIVE_ADID_ANDROID');
 const _iosNativeAdId = String.fromEnvironment('ADMOB_NATIVE_ADID_IOS');
 
 abstract interface class AdsService {
+  bool get hasAmazonAds;
   Future<void> init();
   Future<void> showInterstitialAd({VoidCallback? onDismiss});
   void removeAds();
   void reactivateAds();
   Future<List<AdWithView>> getNewNativeAds();
+  Future<List<AmazonItem>> getNewAmazonAds();
 }
 
 class AdsServiceImpl with AppLogger implements AdsService {
@@ -37,6 +41,10 @@ class AdsServiceImpl with AppLogger implements AdsService {
   InterstitialAd? _interstitialAd;
 
   bool _showAds = true;
+
+  @override
+  bool get hasAmazonAds => _hasAmazonAds;
+  bool _hasAmazonAds = true;
 
   @override
   Future<void> init() async {
@@ -168,6 +176,22 @@ class AdsServiceImpl with AppLogger implements AdsService {
     }
 
     return compl.future;
+  }
+
+  @override
+  Future<List<AmazonItem>> getNewAmazonAds() async {
+    if (!_showAds) return [];
+    if (!_hasAmazonAds) return [];
+
+    final items = await AmazonService().getItems();
+    if (items.isEmpty) {
+      logDebug('No Amazon ads found');
+      _hasAmazonAds = false;
+    } else {
+      _hasAmazonAds = true;
+    }
+
+    return items;
   }
 
   void _handleAdFailedToLoad(LoadAdError error, String adType) {

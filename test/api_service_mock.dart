@@ -2,6 +2,7 @@
 
 import 'dart:typed_data';
 
+import 'package:azure_devops/src/models/amazon/amazon_item.dart';
 import 'package:azure_devops/src/models/areas_and_iterations.dart';
 import 'package:azure_devops/src/models/board.dart';
 import 'package:azure_devops/src/models/commit.dart';
@@ -985,6 +986,14 @@ class AdsServiceMock implements AdsService {
   Future<List<AdWithView>> getNewNativeAds() async {
     return [];
   }
+
+  @override
+  Future<List<AmazonItem>> getNewAmazonAds() async {
+    return [];
+  }
+
+  @override
+  bool get hasAmazonAds => false;
 }
 
 class PurchaseServiceMock implements PurchaseService {

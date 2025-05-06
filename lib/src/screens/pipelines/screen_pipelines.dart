@@ -104,8 +104,8 @@ class _PipelinesScreen extends StatelessWidget {
                   );
 
                   if (ctrl.shouldShowNativeAd(pipelines, p, adsIndex)) {
-                    yield NativeAdWidget(
-                      ad: ctrl.nativeAds[adsIndex++],
+                    yield CustomAdWidget(
+                      item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++],
                     );
                   }
                 },
