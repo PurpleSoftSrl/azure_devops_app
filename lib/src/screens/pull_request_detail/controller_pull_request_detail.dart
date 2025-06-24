@@ -514,8 +514,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     await OverlayService.bottomsheet(
       isScrollControlled: true,
       title: 'Completion options',
-      builder: (context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      builder: (context) => ListView(
         children: [
           Row(
             children: [
