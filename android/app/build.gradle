@@ -80,6 +80,12 @@ android {
            manifestPlaceholders.msalProdPath = dartEnvironmentVariables.MSAL_PROD_PATH + "="
            manifestPlaceholders.admobAppId = dartEnvironmentVariables.ADMOB_APPID_ANDROID
         }
+        
+        profile {
+           manifestPlaceholders.msalDebugPath = dartEnvironmentVariables.MSAL_DEBUG_PATH + "="
+           manifestPlaceholders.msalProdPath = dartEnvironmentVariables.MSAL_PROD_PATH + "="
+           manifestPlaceholders.admobAppId = dartEnvironmentVariables.ADMOB_APPID_ANDROID
+        }
 
         release {
            signingConfig signingConfigs.release

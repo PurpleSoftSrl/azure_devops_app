@@ -79,26 +79,37 @@ class _PullRequestsScreen extends StatelessWidget {
                 ),
               ],
             ),
-      builder: (prs) {
+      sliverBuilder: (prs) {
         var adsIndex = 0;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: prs!.expand(
-            (pr) sync* {
-              yield PullRequestListTile(
+        return SliverList(
+          delegate: SliverChildBuilderDelegate(
+            childCount: prs?.length ?? 0,
+            (_, index) {
+              final pr = prs![index];
+
+              if (ctrl.shouldShowNativeAd(prs, pr, adsIndex)) {
+                return Column(
+                  children: [
+                    PullRequestListTile(
+                      pr: pr,
+                      onTap: () => ctrl.goToPullRequestDetail(pr),
+                      isLast: pr == prs.last,
+                    ),
+                    CustomAdWidget(
+                      item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++],
+                    ),
+                  ],
+                );
+              }
+
+              return PullRequestListTile(
                 pr: pr,
                 onTap: () => ctrl.goToPullRequestDetail(pr),
                 isLast: pr == prs.last,
               );
-
-              if (ctrl.shouldShowNativeAd(prs, pr, adsIndex)) {
-                yield CustomAdWidget(
-                  item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++],
-                );
-              }
             },
-          ).toList(),
+          ),
         );
       },
     );

@@ -11,7 +11,8 @@ import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 class AppPage<T extends Object?> extends StatefulWidget {
   const AppPage({
     super.key,
-    required this.builder,
+    this.builder,
+    this.sliverBuilder,
     this.onEmpty,
     required this.init,
     this.onLoading,
@@ -47,9 +48,11 @@ class AppPage<T extends Object?> extends StatefulWidget {
         fixedAppBar = false,
         onResetFilters = null,
         showBackButton = true,
+        sliverBuilder = null,
         _isEmpty = true;
 
-  final Widget Function(T) builder;
+  final Widget Function(T)? builder;
+  final Widget Function(T)? sliverBuilder;
   final String? onEmpty;
   final Future<dynamic> Function() init;
   final Future<bool> Function()? onLoading;
@@ -126,8 +129,13 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
 
   @override
   Widget build(BuildContext context) {
+    assert(
+      widget.builder != null || widget.sliverBuilder != null,
+      'Either builder or sliverBuilder must be provided',
+    );
+
     if (widget._isEmpty) {
-      return widget.builder(null as T);
+      return widget.sliverBuilder?.call(null as T) ?? widget.builder!(null as T);
     }
 
     final actions = <Widget>[...widget.actions ?? [], if (widget.actions != null) const SizedBox(width: 4)];
@@ -173,7 +181,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
                 ),
               SliverPadding(
                 padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
-                sliver: SliverToBoxAdapter(child: widget.builder(null as T)),
+                sliver: widget.sliverBuilder?.call(null as T) ?? SliverToBoxAdapter(child: widget.builder!(null as T)),
               ),
               SliverToBoxAdapter(
                 child: const SizedBox(
@@ -283,7 +291,8 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
                       else if (response?.data != null)
                         SliverPadding(
                           padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
-                          sliver: SliverToBoxAdapter(child: widget.builder(widget.notifier!.value!.data!)),
+                          sliver: widget.sliverBuilder?.call(widget.notifier!.value!.data!) ??
+                              SliverToBoxAdapter(child: widget.builder!(widget.notifier!.value!.data!)),
                         ),
                       SliverToBoxAdapter(
                         child: const SizedBox(

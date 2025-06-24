@@ -138,25 +138,33 @@ class _WorkItemsScreen extends StatelessWidget {
           ],
         );
       },
-      builder: (items) {
+      sliverBuilder: (items) {
         var adsIndex = 0;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: items!.expand((i) sync* {
-            yield SizedBox(
-              child: _WorkItemListTile(
-                item: i,
-                onTap: () => ctrl.goToWorkItemDetail(i),
-                isLast: i == items.last,
-              ),
-            );
+        return SliverList(
+          delegate: SliverChildBuilderDelegate(childCount: items?.length ?? 0, (_, index) {
+            final i = items![index];
 
             if (ctrl.shouldShowNativeAd(items, i, adsIndex)) {
-              yield CustomAdWidget(
-                item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++],
+              return Column(
+                children: [
+                  _WorkItemListTile(
+                    item: i,
+                    onTap: () => ctrl.goToWorkItemDetail(i),
+                    isLast: i == items.last,
+                  ),
+                  CustomAdWidget(
+                    item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++],
+                  ),
+                ],
               );
             }
-          }).toList(),
+
+            return _WorkItemListTile(
+              item: i,
+              onTap: () => ctrl.goToWorkItemDetail(i),
+              isLast: i == items.last,
+            );
+          }),
         );
       },
     );
