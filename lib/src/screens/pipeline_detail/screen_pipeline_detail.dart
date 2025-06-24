@@ -131,22 +131,24 @@ class _PipelineDetailScreen extends StatelessWidget {
                   SelectableText(
                     pipeline.triggerInfo!.ciMessage ?? '',
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    'CommitId',
-                    style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                  ),
-                  InkWell(
-                    onTap: pipeline.repository?.name == null ? null : ctrl.goToCommitDetail,
-                    child: Text(
-                      pipeline.triggerInfo!.ciSourceSha!,
-                      style: context.textTheme.titleSmall!.copyWith(
-                        decoration: pipeline.repository?.name == null ? null : TextDecoration.underline,
+                  if (pipeline.triggerInfo!.ciSourceSha != null) ...[
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'CommitId',
+                      style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                    ),
+                    InkWell(
+                      onTap: pipeline.repository?.name == null ? null : ctrl.goToCommitDetail,
+                      child: Text(
+                        pipeline.triggerInfo!.ciSourceSha!,
+                        style: context.textTheme.titleSmall!.copyWith(
+                          decoration: pipeline.repository?.name == null ? null : TextDecoration.underline,
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                   const SizedBox(
                     height: 20,
                   ),
