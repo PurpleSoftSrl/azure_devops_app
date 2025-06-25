@@ -91,6 +91,7 @@ class _PipelinesScreen extends StatelessWidget {
 
                 if (index == 0) {
                   return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(
                         height: 16,
