@@ -205,8 +205,8 @@ class AppTheme {
     );
   }
 
-  static DialogTheme _getDialogTheme(ColorScheme colorScheme) {
-    return DialogTheme(
+  static DialogThemeData _getDialogTheme(ColorScheme colorScheme) {
+    return DialogThemeData(
       backgroundColor: colorScheme.surface,
       shape: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
       shadowColor: Colors.transparent,
