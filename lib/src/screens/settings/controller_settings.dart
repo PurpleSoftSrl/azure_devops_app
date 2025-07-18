@@ -89,6 +89,13 @@ class _SettingsController with ShareMixin, AppLogger {
   }
 
   Future<void> _switchOrganization(UserTenant tenant) async {
+    try {
+      // Logout to avoid cached account errors
+      await MsalService().logout();
+    } catch (e) {
+      // ignore
+    }
+
     final token = await MsalService().login(authority: 'https://login.microsoftonline.com/${tenant.id}');
 
     storage.setTenantId(tenant.id);

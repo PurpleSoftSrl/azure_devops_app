@@ -13,3 +13,4 @@ key.properties
 **/*.jks
 
 app/.cxx/
+.kotlin/

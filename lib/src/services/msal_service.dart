@@ -47,9 +47,6 @@ class MsalService with AppLogger {
     try {
       if (_pca == null) await init();
 
-      // Logout to avoid cached account errors
-      await logout();
-
       final token = await _pca!.acquireToken(scopes: _scopes, prompt: Prompt.selectAccount, authority: authority);
       return token.accessToken;
     } on MsalUserCancelException catch (_) {
