@@ -43,11 +43,14 @@ class MsalService with AppLogger {
     }
   }
 
-  Future<String?> login() async {
+  Future<String?> login({String? authority}) async {
     try {
       if (_pca == null) await init();
 
-      final token = await _pca!.acquireToken(scopes: _scopes, prompt: Prompt.selectAccount);
+      // Logout to avoid cached account errors
+      await logout();
+
+      final token = await _pca!.acquireToken(scopes: _scopes, prompt: Prompt.selectAccount, authority: authority);
       return token.accessToken;
     } on MsalUserCancelException catch (_) {
       return null;
@@ -57,11 +60,11 @@ class MsalService with AppLogger {
     }
   }
 
-  Future<String?> loginSilently() async {
+  Future<String?> loginSilently({String? authority}) async {
     try {
       if (_pca == null) await init();
 
-      final token = await _pca!.acquireTokenSilent(scopes: _scopes);
+      final token = await _pca!.acquireTokenSilent(scopes: _scopes, authority: authority);
       return token.accessToken;
     } on MsalException catch (e, s) {
       logError(e, s);

@@ -52,6 +52,9 @@ abstract class StorageService {
 
   bool get hasSeenSubscriptionAddedBottomsheet;
   void setHasSeenSubscriptionAddedBottomsheet();
+
+  String getTenantId();
+  void setTenantId(String id);
 }
 
 class StorageServiceCore implements StorageService {
@@ -83,6 +86,16 @@ class StorageServiceCore implements StorageService {
   @override
   void setOrganization(String organization) {
     _helper.setString(_Keys.org, organization);
+  }
+
+  @override
+  String getTenantId() {
+    return _helper.getString(_Keys.tenantId) ?? '';
+  }
+
+  @override
+  void setTenantId(String id) {
+    _helper.setString(_Keys.tenantId, id);
   }
 
   @override
@@ -358,6 +371,7 @@ class _Keys {
   static const chosenProjects = 'chosenProjects';
   static const theme = 'theme';
   static const org = 'org';
+  static const tenantId = 'tenantId';
   static const numberOfSessions = 'numberOfSessions';
   static const filters = 'filters';
   static const shortcuts = 'shortcuts';

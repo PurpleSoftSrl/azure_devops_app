@@ -148,12 +148,12 @@ PODS:
     - GoogleUtilities/Privacy
   - in_app_review (2.0.0):
     - Flutter
-  - MSAL (1.7.0):
-    - MSAL/app-lib (= 1.7.0)
-  - MSAL/app-lib (1.7.0)
+  - MSAL (2.2.0):
+    - MSAL/app-lib (= 2.2.0)
+  - MSAL/app-lib (2.2.0)
   - msal_auth (2.0.2):
     - Flutter
-    - MSAL (~> 1.7.0)
+    - MSAL (~> 2.2.0)
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
     - nanopb/encode (= 3.30910.0)
@@ -308,8 +308,8 @@ SPEC CHECKSUMS:
   GoogleUserMessagingPlatform: f8d0cdad3ca835406755d0a69aa634f00e76d576
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   in_app_review: 5596fe56fab799e8edb3561c03d053363ab13457
-  MSAL: 088bc688c1ce1a62f0d9c13905ddb31f8f1ac700
-  msal_auth: 4b85b2f20923d88afe74f3ec09b2f3458ec6b335
+  MSAL: 551bfa97974d3f6a82f9f53312976b9fa5904a52
+  msal_auth: cb3f482e2f72e1181b1d476ff3a36c5ab560f29c
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   open_file_ios: 5ff7526df64e4394b4fe207636b67a95e83078bb
   OrderedSet: e539b66b644ff081c73a262d24ad552a69be3a94

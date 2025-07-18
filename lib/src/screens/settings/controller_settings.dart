@@ -10,17 +10,15 @@ class _SettingsController with ShareMixin, AppLogger {
 
   String appVersion = '';
 
-  final organizations = ValueNotifier<ApiResponse<List<Organization>>?>(null);
-
-  bool get hasMultiOrgs => (organizations.value?.data?.length ?? 0) > 1;
+  final directories = ValueNotifier<ApiResponse<List<UserTenant>>?>(null);
 
   Future<void> init() async {
     final info = await PackageInfo.fromPlatform();
     appVersion = info.version;
 
-    final orgs = await api.getOrganizations();
-    // copyWith is needed to make page visible even if getOrganizations returns 401
-    organizations.value = orgs.copyWith(isError: false, data: []);
+    final orgs = await api.getDirectories();
+    // copyWith is needed to make page visible even if getDirectories returns 401
+    directories.value = orgs.copyWith(isError: false, data: orgs.data ?? []);
   }
 
   void shareApp() {
@@ -78,44 +76,43 @@ class _SettingsController with ShareMixin, AppLogger {
     InAppReview.instance.openStoreListing(appStoreId: '1666994628');
   }
 
-  Future<void> switchOrganization() async {
-    final selectedOrg = await _selectOrganization(organizations.value!.data!);
-    if (selectedOrg == null) return;
-
-    api.switchOrganization(selectedOrg.accountName!);
-    unawaited(AppRouter.goToSplash());
-  }
-
-  Future<Organization?> _selectOrganization(List<Organization> organizations) async {
-    final currentOrg = storage.getOrganization();
-
-    Organization? selectedOrg;
-
+  Future<void> chooseDirectory() async {
     await OverlayService.bottomsheet(
-      title: 'Select your organization',
+      title: 'Switch directory',
       isScrollControlled: true,
-      heightPercentage: .7,
-      builder: (context) => ListView(
-        children: organizations
-            .map(
-              (org) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: LoadingButton(
-                  onPressed: () {
-                    selectedOrg = org;
-                    AppRouter.popRoute();
-                  },
-                  text: org.accountName == currentOrg ? '${org.accountName!} (current)' : org.accountName!,
-                ),
-              ),
-            )
-            .toList(),
+      heightPercentage: .6,
+      builder: (context) => _SwitchDirectoryWidget(
+        directories: directories.value?.data ?? [],
+        onSwitch: _switchOrganization,
       ),
     );
+  }
 
-    if (selectedOrg?.accountName == currentOrg) return null;
+  Future<void> _switchOrganization(UserTenant tenant) async {
+    final token = await MsalService().login(authority: 'https://login.microsoftonline.com/${tenant.id}');
 
-    return selectedOrg;
+    storage.setTenantId(tenant.id);
+
+    if (token != null) unawaited(_loginAndNavigate(token));
+  }
+
+  Future<void> _loginAndNavigate(String token) async {
+    storage.setOrganization('');
+
+    final isLogged = await api.login(token);
+
+    final isFailed = [LoginStatus.failed, LoginStatus.unauthorized].contains(isLogged);
+
+    logAnalytics('switch_directory_${isFailed ? 'failed' : 'success'}', {});
+
+    if (isLogged == LoginStatus.failed) {
+      return OverlayService.error(
+        'Login error',
+        description: 'Check that you have access to the organization you are trying to switch to.',
+      );
+    }
+
+    await AppRouter.goToChooseProjects();
   }
 
   Future<void> showChangelog() async {

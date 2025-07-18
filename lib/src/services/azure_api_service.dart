@@ -15,6 +15,7 @@ import 'package:azure_devops/src/models/board.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:azure_devops/src/models/commits_tags.dart';
+import 'package:azure_devops/src/models/directory.dart';
 import 'package:azure_devops/src/models/file_diff.dart';
 import 'package:azure_devops/src/models/identity_response.dart';
 import 'package:azure_devops/src/models/organization.dart';
@@ -391,6 +392,8 @@ abstract class AzureApiService {
     required String teamId,
     required String sprintId,
   });
+
+  Future<ApiResponse<List<UserTenant>>> getDirectories();
 }
 
 class AzureApiServiceImpl with AppLogger implements AzureApiService {
@@ -620,8 +623,10 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   Future<Response> _checkExpiredToken(Response res, Future<Response> Function() req) async {
     if (_isJwt && [203, 302].contains(res.statusCode)) {
+      final tenantId = storage.getTenantId();
       // refresh expired token
-      final newToken = await MsalService().loginSilently();
+      final newToken = await MsalService()
+          .loginSilently(authority: tenantId.isEmpty ? null : 'https://login.microsoftonline.com/$tenantId');
       _accessToken = newToken ?? _accessToken;
       final retry = await req();
       logDebug('Retry after token expired: ${retry.statusCode}');
@@ -641,7 +646,9 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     _accessToken = accessToken;
 
     if (_isJwt) {
-      final newToken = await MsalService().loginSilently();
+      final tenantId = storage.getTenantId();
+      final newToken = await MsalService()
+          .loginSilently(authority: tenantId.isEmpty ? null : 'https://login.microsoftonline.com/$tenantId');
       if (newToken != null) _accessToken = newToken;
     }
 
@@ -2591,6 +2598,29 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     _allUsers.clear();
     _user = null;
     dispose();
+  }
+
+  @override
+  Future<ApiResponse<List<UserTenant>>> getDirectories() async {
+    final directoriesRes = await _post(
+      '$_basePath/_apis/Contribution/HierarchyQuery?$_apiVersion-preview',
+      body: {
+        'contributionIds': ['ms.vss-tfs-web.tenant-picker-data-provider'],
+        'dataProviderContext': {'properties': <String, dynamic>{}}
+      },
+    );
+
+    if (directoriesRes.isError) return ApiResponse.error(directoriesRes);
+
+    final directoriesData = GetDirectoriesResponse.fromResponse(directoriesRes);
+
+    return ApiResponse.ok([
+      ...directoriesData.tenantData.tenants,
+      UserTenant.current(
+        displayName: directoriesData.user.tenant.displayName,
+        id: directoriesData.user.tenant.id,
+      )
+    ]);
   }
 
   Map<String, Set<String>> _parseXmlForm(String xmlForm) {

@@ -8,6 +8,7 @@ import 'package:azure_devops/src/models/board.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commit_detail.dart';
 import 'package:azure_devops/src/models/commits_tags.dart';
+import 'package:azure_devops/src/models/directory.dart';
 import 'package:azure_devops/src/models/file_diff.dart';
 import 'package:azure_devops/src/models/identity_response.dart';
 import 'package:azure_devops/src/models/organization.dart';
@@ -876,6 +877,11 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   List<GitRepository> get allRepositories => [];
+
+  @override
+  Future<ApiResponse<List<UserTenant>>> getDirectories() async {
+    return ApiResponse.ok([]);
+  }
 }
 
 class StorageServiceMock implements StorageService {
@@ -967,6 +973,14 @@ class StorageServiceMock implements StorageService {
 
   @override
   void setHasSeenSubscriptionAddedBottomsheet() {}
+
+  @override
+  String getTenantId() {
+    return '';
+  }
+
+  @override
+  void setTenantId(String id) {}
 }
 
 class AdsServiceMock implements AdsService {

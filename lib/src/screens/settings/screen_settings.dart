@@ -11,14 +11,14 @@ class _SettingsScreen extends StatelessWidget {
     return AppPage(
       init: ctrl.init,
       title: 'Settings',
-      notifier: ctrl.organizations,
+      notifier: ctrl.directories,
       actions: [
         IconButton(
           onPressed: ctrl.shareApp,
           icon: Icon(DevOpsIcons.share),
         ),
       ],
-      builder: (orgs) => Column(
+      builder: (directories) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SectionHeader.noMargin(
@@ -106,12 +106,12 @@ class _SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
-          if (orgs.length > 1) ...[
+          if (directories.length > 1) ...[
             const SizedBox(
               height: 20,
             ),
             NavigationButton(
-              onTap: ctrl.switchOrganization,
+              onTap: ctrl.chooseDirectory,
               child: Row(
                 children: [
                   Icon(DevOpsIcons.repository),
@@ -119,7 +119,7 @@ class _SettingsScreen extends StatelessWidget {
                     width: 20,
                   ),
                   Text(
-                    'Switch organization',
+                    'Switch directory',
                     style: context.textTheme.bodyLarge,
                   ),
                   const Spacer(),

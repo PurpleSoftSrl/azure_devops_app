@@ -623,10 +623,10 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: a08167b26d6041a941266a8e2ba6e322b815ffbe
+      resolved-ref: "66bd93eee2960f34751818425949236a48aeee72"
       url: "https://github.com/PurpleSoftSrl/msal_auth"
     source: git
-    version: "3.1.4"
+    version: "3.2.5"
   numberpicker:
     dependency: transitive
     description:
