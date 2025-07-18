@@ -14,13 +14,19 @@ class _ProfileScreen extends StatelessWidget {
       notifier: ctrl.recentCommits,
       showScrollbar: true,
       sliverBuilder: (commits) {
+        if (commits!.isEmpty) {
+          return SliverFillRemaining(
+            child: Center(child: Text('No commits found')),
+          );
+        }
+
         var adsIndex = 0;
 
         return SliverList(
           delegate: SliverChildBuilderDelegate(
-            childCount: commits?.length ?? 0,
+            childCount: commits.length,
             (_, index) {
-              final c = commits![index];
+              final c = commits[index];
 
               if (index == 0) {
                 return Column(
