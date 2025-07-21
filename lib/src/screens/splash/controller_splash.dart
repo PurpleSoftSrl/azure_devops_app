@@ -45,6 +45,10 @@ class _SplashController {
       await OverlayService.error('Error', description: 'Token expired');
       await api.logout();
       await MsalService().logout();
+
+      // Rebuild app to reset dependencies. This is needed to fix user null error after logout and login
+      rebuildApp();
+
       unawaited(AppRouter.goToLogin());
       return;
     }
