@@ -36,10 +36,8 @@ class MsalService with AppLogger {
       if (_pca == null) await init();
 
       await _pca!.signOut();
-    } on MsalUserCancelException catch (_) {
+    } catch (_) {
       // ignore
-    } on MsalException catch (e, s) {
-      logError(e, s);
     }
   }
 
