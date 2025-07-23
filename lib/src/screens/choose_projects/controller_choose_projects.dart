@@ -109,10 +109,16 @@ class _ChooseProjectsController {
     final orgs = orgsRes.data!;
 
     if (orgs.isEmpty) {
-      return OverlayService.error(
+      await OverlayService.error(
         'No organizations found for your account',
         description: "Check that your token has 'All accessible organizations' option enabled",
       );
+      await api.logout();
+      await MsalService().logout();
+      // Rebuild app to reset dependencies. This is needed to fix user null error after logout and login
+      rebuildApp();
+      unawaited(AppRouter.goToLogin());
+      return;
     }
 
     if (orgs.length < 2) {

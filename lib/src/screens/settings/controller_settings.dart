@@ -113,13 +113,24 @@ class _SettingsController with ShareMixin, AppLogger {
     logAnalytics('switch_directory_${isFailed ? 'failed' : 'success'}', {});
 
     if (isLogged == LoginStatus.failed) {
-      return OverlayService.error(
-        'Login error',
-        description: 'Check that you have access to the organization you are trying to switch to.',
-      );
+      return _switchDirectoryErrorAlert();
+    }
+
+    final orgsRes = await api.getOrganizations();
+
+    if (orgsRes.data?.isEmpty ?? true) {
+      return _switchDirectoryErrorAlert();
     }
 
     await AppRouter.goToChooseProjects();
+  }
+
+  Future<void> _switchDirectoryErrorAlert() {
+    return OverlayService.error(
+      'Error switching directory',
+      description:
+          'Check that you have access to this organization and that the organization has at least one project.',
+    );
   }
 
   Future<void> showChangelog() async {
