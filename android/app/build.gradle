@@ -41,8 +41,9 @@ if (project.hasProperty('dart-defines')) {
 
 android {
     namespace 'io.purplesoft.azuredevops'
+    ndkVersion "28.2.13676358"
 
-    compileSdkVersion 35
+    compileSdkVersion 36
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
@@ -60,7 +61,7 @@ android {
     defaultConfig {
         applicationId "io.purplesoft.azuredevops"
         minSdkVersion 24
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

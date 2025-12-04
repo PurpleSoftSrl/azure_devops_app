@@ -133,24 +133,25 @@ class _SettingsScreen extends StatelessWidget {
           ),
           NavigationButton(
             padding: const EdgeInsets.fromLTRB(15, 20, 15, 10),
-            child: Row(
-              children: [
-                _ThemeModeRadio(
-                  mode: 'System',
-                  onChanged: ctrl.changeThemeMode,
-                  icon: DevOpsIcons.phone,
-                ),
-                _ThemeModeRadio(
-                  mode: 'Dark',
-                  onChanged: ctrl.changeThemeMode,
-                  icon: DevOpsIcons.moon_star,
-                ),
-                _ThemeModeRadio(
-                  mode: 'Light',
-                  onChanged: ctrl.changeThemeMode,
-                  icon: DevOpsIcons.sun,
-                ),
-              ],
+            child: RadioGroup<String>(
+              onChanged: (m) => ctrl.changeThemeMode(m!),
+              groupValue: AppTheme.themeMode,
+              child: Row(
+                children: const [
+                  _ThemeModeRadio(
+                    mode: 'System',
+                    icon: DevOpsIcons.phone,
+                  ),
+                  _ThemeModeRadio(
+                    mode: 'Dark',
+                    icon: DevOpsIcons.moon_star,
+                  ),
+                  _ThemeModeRadio(
+                    mode: 'Light',
+                    icon: DevOpsIcons.sun,
+                  ),
+                ],
+              ),
             ),
           ),
           SectionHeader(

@@ -3,12 +3,10 @@ part of settings;
 class _ThemeModeRadio extends StatelessWidget {
   const _ThemeModeRadio({
     required this.mode,
-    required this.onChanged,
     required this.icon,
   });
 
   final String mode;
-  final void Function(String) onChanged;
   final IconData icon;
 
   @override
@@ -25,14 +23,13 @@ class _ThemeModeRadio extends StatelessWidget {
             mode,
             style: context.textTheme.titleSmall!.copyWith(color: isSelected ? null : context.colorScheme.onSecondary),
           ),
-          Radio(
-            groupValue: true,
-            activeColor: isSelected ? context.themeExtension.onBackground : context.colorScheme.onSecondary,
-            value: isSelected,
+          Radio<String>(
+            value: mode,
             fillColor: WidgetStateProperty.resolveWith(
-              (states) => states.contains(WidgetState.selected) ? null : context.colorScheme.onSecondary,
+              (states) => states.contains(WidgetState.selected)
+                  ? context.themeExtension.onBackground
+                  : context.colorScheme.onSecondary,
             ),
-            onChanged: (_) => onChanged(mode),
           ),
         ],
       ),

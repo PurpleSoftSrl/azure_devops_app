@@ -238,7 +238,6 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     return false;
   }
 
-  // ignore: use_setters_to_change_properties
   void selectPage(int i, TabController tabController) {
     visiblePage.value = i;
     tabController

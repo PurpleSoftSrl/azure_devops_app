@@ -56,6 +56,7 @@ Future<void> main() async {
               return null;
             }
 
+            // ignore: switch_on_type
             switch (evt.throwable.runtimeType.toString()) {
               case 'HttpExceptionWithStatus':
               case 'ClientException':

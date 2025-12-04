@@ -114,10 +114,10 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
   Future<PurchaseResult> buySubscription(AppProduct product) async {
     try {
       final storeProduct = _products.firstWhere((p) => p.identifier == product.id);
-      final res = await Purchases.purchaseStoreProduct(storeProduct);
+      final res = await Purchases.purchase(PurchaseParams.storeProduct(storeProduct));
 
       logDebug('Purchase result: $res');
-      return res.activeSubscriptions.isNotEmpty ? PurchaseResult.success : PurchaseResult.failed;
+      return res.customerInfo.activeSubscriptions.isNotEmpty ? PurchaseResult.success : PurchaseResult.failed;
     } catch (e, s) {
       if (e is PlatformException &&
           ['PURCHASE_CANCELLED', 'PurchaseCancelledError'].contains(e.details?['readableErrorCode'])) {

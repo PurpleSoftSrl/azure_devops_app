@@ -1,5 +1,3 @@
-// ignore_for_file: use_setters_to_change_properties
-
 part of create_or_edit_work_item;
 
 class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
@@ -718,7 +716,6 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
   }
 
   void addTag() {
-    // ignore: unawaited_futures, reason: to show a loader inside the bottomsheet while getting tags
     _getProjectTags();
 
     OverlayService.bottomsheet(

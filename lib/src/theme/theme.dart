@@ -234,7 +234,7 @@ class AppTheme {
   static AppBarTheme _getAppBarTheme(ColorScheme colorScheme, TextTheme textTheme, AppColorsExtension ext) {
     return AppBarTheme(
       elevation: 0,
-      color: ext.background,
+      backgroundColor: ext.background,
       titleTextStyle: textTheme.titleLarge!.copyWith(color: ext.onBackground),
       centerTitle: true,
       shadowColor: colorScheme.primary,

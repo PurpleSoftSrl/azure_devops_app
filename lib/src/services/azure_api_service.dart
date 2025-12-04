@@ -996,7 +996,6 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
             final projectsToSearch = proc.projects.where((p) => (_chosenProjects ?? _projects).contains(p));
             for (final proj in projectsToSearch) {
               if (_workItemAreas[proj.name!] == null) {
-                // ignore: unawaited_futures, reason: speed up work items page loading time
                 _get('$_basePath/${proj.name}/_apis/wit/classificationnodes?\$depth=14&$_apiVersion').then((areaRes) {
                   if (areaRes.isError) return;
 

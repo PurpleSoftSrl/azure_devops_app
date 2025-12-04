@@ -250,7 +250,6 @@ class _HomeController with AppLogger {
   void _maybeShowSubscriptionBottomsheet() {
     if (storage.hasSeenSubscriptionAddedBottomsheet) return;
 
-    // ignore: unawaited_futures
     OverlayService.bottomsheet(
       title: 'Hi there!',
       isDismissible: false,
