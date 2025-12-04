@@ -5,6 +5,7 @@ import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/widgets/empty_page.dart';
 import 'package:azure_devops/src/widgets/error_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
@@ -194,122 +195,127 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
       );
     }
 
-    return Scaffold(
-      body: ValueListenableBuilder<ApiResponse<T?>?>(
-        valueListenable: widget.notifier!,
-        builder: (_, response, __) => Stack(
-          alignment: Alignment.center,
-          children: [
-            SafeArea(
-              bottom: widget.safeAreaBottom,
-              child: Scrollbar(
-                controller: scrollController,
-                thickness: widget.showScrollbar ? null : 0,
-                child: SmartRefresher(
-                  controller: _refreshController,
-                  onRefresh: _onRefresh,
-                  onLoading: _onLoading,
-                  enablePullUp: widget.onLoading != null,
-                  footer: CustomFooter(
-                    builder: (context, mode) {
-                      var loadText = '';
-                      switch (mode) {
-                        case LoadStatus.canLoading:
-                          loadText = 'Load more';
-                        case LoadStatus.idle:
-                          loadText = 'Idle';
-                        case LoadStatus.loading:
-                          loadText = 'Loading';
-                        case LoadStatus.noMore:
-                        case LoadStatus.failed:
-                        default:
-                          break;
-                      }
-                      return SizedBox(
-                        height: 48,
-                        child: Center(child: Text(loadText)),
-                      );
-                    },
-                  ),
-                  child: CustomScrollView(
-                    controller: scrollController,
-                    slivers: [
-                      SliverAppBar(
-                        title: Text(widget.title),
-                        floating: true,
-                        snap: true,
-                        pinned: widget.fixedAppBar,
-                        actions: actions,
-                        surfaceTintColor: context.themeExtension.background,
-                        scrolledUnderElevation: 0,
-                        expandedHeight: 50,
-                        automaticallyImplyLeading: widget.showBackButton,
-                        bottom: widget.header == null
-                            ? null
-                            : _Header(
-                                child: Column(
-                                  children: [
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    widget.header!(),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                  ],
+    return RefreshConfiguration(
+      springDescription: defaultTargetPlatform == TargetPlatform.android
+          ? SpringDescription.withDurationAndBounce()
+          : const SpringDescription(mass: 1, stiffness: 364.718677686, damping: 35.2),
+      child: Scaffold(
+        body: ValueListenableBuilder<ApiResponse<T?>?>(
+          valueListenable: widget.notifier!,
+          builder: (_, response, __) => Stack(
+            alignment: Alignment.center,
+            children: [
+              SafeArea(
+                bottom: widget.safeAreaBottom,
+                child: Scrollbar(
+                  controller: scrollController,
+                  thickness: widget.showScrollbar ? null : 0,
+                  child: SmartRefresher(
+                    controller: _refreshController,
+                    onRefresh: _onRefresh,
+                    onLoading: _onLoading,
+                    enablePullUp: widget.onLoading != null,
+                    footer: CustomFooter(
+                      builder: (context, mode) {
+                        var loadText = '';
+                        switch (mode) {
+                          case LoadStatus.canLoading:
+                            loadText = 'Load more';
+                          case LoadStatus.idle:
+                            loadText = 'Idle';
+                          case LoadStatus.loading:
+                            loadText = 'Loading';
+                          case LoadStatus.noMore:
+                          case LoadStatus.failed:
+                          default:
+                            break;
+                        }
+                        return SizedBox(
+                          height: 48,
+                          child: Center(child: Text(loadText)),
+                        );
+                      },
+                    ),
+                    child: CustomScrollView(
+                      controller: scrollController,
+                      slivers: [
+                        SliverAppBar(
+                          title: Text(widget.title),
+                          floating: true,
+                          snap: true,
+                          pinned: widget.fixedAppBar,
+                          actions: actions,
+                          surfaceTintColor: context.themeExtension.background,
+                          scrolledUnderElevation: 0,
+                          expandedHeight: 50,
+                          automaticallyImplyLeading: widget.showBackButton,
+                          bottom: widget.header == null
+                              ? null
+                              : _Header(
+                                  child: Column(
+                                    children: [
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      widget.header!(),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                      ),
-                      if (widget.header == null)
-                        SliverToBoxAdapter(
-                          child: const SizedBox(
-                            height: 20,
-                          ),
                         ),
-                      if (response != null && response.isError)
-                        SliverPadding(
-                          padding: EdgeInsets.only(top: paddingTop),
-                          sliver: SliverToBoxAdapter(
-                            child: ErrorPage(
-                              description: (response.errorResponse?.reasonPhrase?.isEmpty ?? true)
-                                  ? 'Something went wrong'
-                                  : response.errorResponse!.reasonPhrase!,
-                              onRetry: widget.init,
+                        if (widget.header == null)
+                          SliverToBoxAdapter(
+                            child: const SizedBox(
+                              height: 20,
                             ),
                           ),
-                        )
-                      else if (response != null &&
-                          widget.onEmpty != null &&
-                          (response.data is List) &&
-                          (response.data as List).isEmpty)
-                        SliverPadding(
-                          padding: EdgeInsets.only(top: paddingTop),
-                          sliver: SliverToBoxAdapter(
-                            child: EmptyPage(widget: widget, onRefresh: _onRefresh),
+                        if (response != null && response.isError)
+                          SliverPadding(
+                            padding: EdgeInsets.only(top: paddingTop),
+                            sliver: SliverToBoxAdapter(
+                              child: ErrorPage(
+                                description: (response.errorResponse?.reasonPhrase?.isEmpty ?? true)
+                                    ? 'Something went wrong'
+                                    : response.errorResponse!.reasonPhrase!,
+                                onRetry: widget.init,
+                              ),
+                            ),
+                          )
+                        else if (response != null &&
+                            widget.onEmpty != null &&
+                            (response.data is List) &&
+                            (response.data as List).isEmpty)
+                          SliverPadding(
+                            padding: EdgeInsets.only(top: paddingTop),
+                            sliver: SliverToBoxAdapter(
+                              child: EmptyPage(widget: widget, onRefresh: _onRefresh),
+                            ),
+                          )
+                        else if (response?.data != null)
+                          SliverPadding(
+                            padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
+                            sliver: widget.sliverBuilder?.call(widget.notifier!.value!.data!) ??
+                                SliverToBoxAdapter(child: widget.builder!(widget.notifier!.value!.data!)),
                           ),
-                        )
-                      else if (response?.data != null)
-                        SliverPadding(
-                          padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
-                          sliver: widget.sliverBuilder?.call(widget.notifier!.value!.data!) ??
-                              SliverToBoxAdapter(child: widget.builder!(widget.notifier!.value!.data!)),
+                        SliverToBoxAdapter(
+                          child: const SizedBox(
+                            height: 40,
+                          ),
                         ),
-                      SliverToBoxAdapter(
-                        child: const SizedBox(
-                          height: 40,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            if (response == null)
-              Padding(
-                padding: EdgeInsets.only(top: paddingTop),
-                child: const CircularProgressIndicator(),
-              ),
-          ],
+              if (response == null)
+                Padding(
+                  padding: EdgeInsets.only(top: paddingTop),
+                  child: const CircularProgressIndicator(),
+                ),
+            ],
+          ),
         ),
       ),
     );
