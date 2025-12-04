@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
+import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/empty_page.dart';
 import 'package:azure_devops/src/widgets/error_page.dart';
 import 'package:flutter/foundation.dart';
@@ -331,7 +332,7 @@ class _Header extends StatefulWidget implements PreferredSizeWidget {
   State<_Header> createState() => _HeaderState();
 
   @override
-  Size get preferredSize => const Size(double.maxFinite, 40);
+  Size get preferredSize => Size(double.maxFinite, AppTheme.isTablet ? 60 : 40);
 }
 
 class _HeaderState extends State<_Header> {

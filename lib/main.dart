@@ -1,7 +1,9 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:azure_devops/firebase_options.dart';
 import 'package:azure_devops/src/app.dart';
+import 'package:azure_devops/src/bindings/fix_ipad_popup_autoclose_binding.dart';
 import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
@@ -16,6 +18,11 @@ const useFirebase = bool.fromEnvironment('FIREBASE');
 const _sentryDns = String.fromEnvironment('SENTRY_DNS');
 
 Future<void> main() async {
+  if (Platform.isIOS && AppTheme.isTablet) {
+    // Workaround to fix iPad popup menus auto-closing immediately. Issues: https://github.com/flutter/flutter/issues/175606 and https://github.com/flutter/flutter/issues/177992
+    FixIpadPopupAutocloseFlutterBinding();
+  }
+
   WidgetsFlutterBinding.ensureInitialized();
 
   if (useFirebase) {
