@@ -13,6 +13,7 @@ import 'package:azure_devops/src/mixins/share_mixin.dart';
 import 'package:azure_devops/src/models/commit.dart' as c;
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
+import 'package:azure_devops/src/models/pull_request_policies.dart';
 import 'package:azure_devops/src/models/pull_request_with_details.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/ads_service.dart';

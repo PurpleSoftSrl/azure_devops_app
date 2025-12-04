@@ -224,6 +224,16 @@ class _PullRequestOverview extends StatelessWidget {
                     groupedFiles: ctrl.groupedConflictingFiles,
                   ),
                 ),
+              ] else if (ctrl.mustSatisfyPolicies) ...[
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(AppTheme.radius),
+                    border: Border.all(color: context.colorScheme.error, width: 2),
+                  ),
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  child: _MissingPolicies(ctrl: ctrl),
+                ),
               ],
               Text(
                 'Title:',
@@ -371,6 +381,41 @@ class _PullRequestOverview extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _MissingPolicies extends StatelessWidget {
+  const _MissingPolicies({required this.ctrl});
+
+  final _PullRequestDetailController ctrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'This pull request cannot be completed because some requirements are not satisfied:',
+        ),
+        const SizedBox(height: 8),
+        ...ctrl.missingPolicies.map(
+          (p) => Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Row(
+              children: [
+                Icon(
+                  DevOpsIcons.failed,
+                  color: context.colorScheme.error,
+                  size: AppTheme.isTablet ? 24 : 16,
+                ),
+                const SizedBox(width: 8),
+                Text(p.configuration?.type?.displayName ?? 'Unknown policy'),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -2085,6 +2085,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
       prPath,
       body: threadId == null
           ? {
+              'status': ThreadStatus.active.intValue,
               'comments': [commentBody],
               if (filePath != null)
                 'threadContext': {

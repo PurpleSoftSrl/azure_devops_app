@@ -33,12 +33,14 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
   static const _requireMergeStrategyId = 'fa4e907d-c16b-4a4c-9dfa-4916e5d171ab';
 
-  bool get mustSatisfyPolicies =>
+  List<Policy> get missingPolicies =>
       prDetail.value?.data?.policies
           // filter out the merge strategy policy to allow completing the PR
           .where((p) => p.configuration?.type?.id != _requireMergeStrategyId && p.status != 'approved')
-          .isNotEmpty ??
-      false;
+          .toList() ??
+      [];
+
+  bool get mustSatisfyPolicies => missingPolicies.isNotEmpty;
 
   bool get mustBeApproved => reviewers.where((p) => p.reviewer.isRequired && p.reviewer.vote < 5).isNotEmpty;
 
