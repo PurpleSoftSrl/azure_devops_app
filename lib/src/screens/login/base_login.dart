@@ -6,6 +6,7 @@ import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/msal_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
+import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
@@ -28,7 +29,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBasePage(
-      initState: () => _LoginController._(context.api),
+      initState: () => _LoginController._(context.api, context.storage),
       smartphone: (ctrl) => _LoginScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _LoginScreen(ctrl, _tabletParameters),
     );

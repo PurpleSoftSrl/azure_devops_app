@@ -96,17 +96,30 @@ class _SettingsController with ShareMixin, AppLogger {
       // ignore
     }
 
-    final token = await MsalService().login(authority: 'https://login.microsoftonline.com/${tenant.id}');
+    final loginRes = await MsalService().login(authority: 'https://login.microsoftonline.com/${tenant.id}');
 
-    storage.setTenantId(tenant.id);
-
-    if (token != null) unawaited(_loginAndNavigate(token));
+    if (loginRes != null) unawaited(_loginAndNavigate(loginRes));
   }
 
-  Future<void> _loginAndNavigate(String token) async {
-    storage.setOrganization('');
+  Future<void> chooseAccount() async {
+    try {
+      // Logout to avoid cached account errors
+      await MsalService().logout();
+    } catch (e) {
+      // ignore
+    }
 
-    final isLogged = await api.login(token);
+    final loginRes = await MsalService().login();
+
+    if (loginRes != null) unawaited(_loginAndNavigate(loginRes));
+  }
+
+  Future<void> _loginAndNavigate(LoginResponse loginResponse) async {
+    storage
+      ..setOrganization('')
+      ..setTenantId(loginResponse.tenantId);
+
+    final isLogged = await api.login(loginResponse.accessToken);
 
     final isFailed = [LoginStatus.failed, LoginStatus.unauthorized].contains(isLogged);
 
@@ -122,6 +135,14 @@ class _SettingsController with ShareMixin, AppLogger {
       return _switchDirectoryErrorAlert();
     }
 
+    final directoryProjects = storage.getTenantChosenProjects(loginResponse.tenantId);
+
+    if (directoryProjects.isNotEmpty) {
+      await _chooseOrg(orgsRes.data!);
+      storage.setChosenProjects(directoryProjects);
+      return AppRouter.goToTabs();
+    }
+
     await AppRouter.goToChooseProjects();
   }
 
@@ -131,6 +152,46 @@ class _SettingsController with ShareMixin, AppLogger {
       description:
           'Check that you have access to this organization and that the organization has at least one project.',
     );
+  }
+
+  Future<void> _chooseOrg(List<Organization> orgs) async {
+    if (orgs.length < 2) {
+      await api.setOrganization(orgs.first.accountName!);
+      return;
+    }
+
+    final selectedOrg = await _selectOrganization(orgs);
+    if (selectedOrg == null) return;
+
+    await api.setOrganization(selectedOrg.accountName!);
+  }
+
+  Future<Organization?> _selectOrganization(List<Organization> orgs) async {
+    Organization? selectedOrg;
+
+    await OverlayService.bottomsheet(
+      isDismissible: false,
+      title: 'Select your organization',
+      isScrollControlled: true,
+      heightPercentage: .7,
+      builder: (context) => ListView(
+        children: [
+          ...orgs.map(
+            (u) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: LoadingButton(
+                onPressed: () {
+                  selectedOrg = u;
+                  AppRouter.popRoute();
+                },
+                text: u.accountName!,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    return selectedOrg;
   }
 
   Future<void> showChangelog() async {

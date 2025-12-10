@@ -41,12 +41,12 @@ class MsalService with AppLogger {
     }
   }
 
-  Future<String?> login({String? authority}) async {
+  Future<LoginResponse?> login({String? authority}) async {
     try {
       if (_pca == null) await init();
 
       final token = await _pca!.acquireToken(scopes: _scopes, prompt: Prompt.selectAccount, authority: authority);
-      return token.accessToken;
+      return LoginResponse(accessToken: token.accessToken, tenantId: token.tenantId ?? '');
     } on MsalUserCancelException catch (_) {
       return null;
     } on MsalException catch (e, s) {
@@ -66,4 +66,11 @@ class MsalService with AppLogger {
       return null;
     }
   }
+}
+
+class LoginResponse {
+  LoginResponse({required this.accessToken, required this.tenantId});
+
+  final String accessToken;
+  final String tenantId;
 }

@@ -981,6 +981,14 @@ class StorageServiceMock implements StorageService {
 
   @override
   void setTenantId(String id) {}
+
+  @override
+  Iterable<Project> getTenantChosenProjects(String tenant) {
+    return [];
+  }
+
+  @override
+  void setTenantChosenProjects(String tenant, Iterable<Project> projects) {}
 }
 
 class AdsServiceMock implements AdsService {

@@ -128,6 +128,26 @@ class _SettingsScreen extends StatelessWidget {
               ),
             ),
           ],
+          const SizedBox(
+            height: 20,
+          ),
+          NavigationButton(
+            onTap: ctrl.chooseAccount,
+            child: Row(
+              children: [
+                Icon(DevOpsIcons.users),
+                const SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  'Switch account',
+                  style: context.textTheme.bodyLarge,
+                ),
+                const Spacer(),
+                Icon(Icons.arrow_forward_ios),
+              ],
+            ),
+          ),
           SectionHeader(
             text: 'Theme',
           ),

@@ -1,8 +1,9 @@
 part of login;
 
 class _LoginController with AppLogger {
-  _LoginController._(this.api);
+  _LoginController._(this.api, this.storage);
 
+  final StorageService storage;
   final AzureApiService api;
 
   final formFieldKey = GlobalKey<FormFieldState<dynamic>>();
@@ -15,21 +16,21 @@ class _LoginController with AppLogger {
   }
 
   Future<void> loginWithMicrosoft() async {
-    final token = await MsalService().login();
-    if (token == null) return;
+    final loginRes = await MsalService().login();
+    if (loginRes == null) return;
 
-    await _loginAndNavigate(token, isPat: false);
+    await _loginAndNavigate(loginRes, isPat: false);
   }
 
   Future<void> login() async {
     final isValid = formFieldKey.currentState!.validate();
     if (!isValid) return;
 
-    await _loginAndNavigate(pat, isPat: true);
+    await _loginAndNavigate(LoginResponse(accessToken: pat, tenantId: ''), isPat: true);
   }
 
-  Future<void> _loginAndNavigate(String token, {required bool isPat}) async {
-    final isLogged = await api.login(token);
+  Future<void> _loginAndNavigate(LoginResponse loginResponse, {required bool isPat}) async {
+    final isLogged = await api.login(loginResponse.accessToken);
 
     final isFailed = [LoginStatus.failed, LoginStatus.unauthorized].contains(isLogged);
 
@@ -53,6 +54,8 @@ class _LoginController with AppLogger {
         return;
       }
     }
+
+    storage.setTenantId(loginResponse.tenantId);
 
     await AppRouter.goToChooseProjects();
   }

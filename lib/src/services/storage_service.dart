@@ -12,6 +12,9 @@ abstract class StorageService {
   Iterable<Project> getChosenProjects();
   void setChosenProjects(Iterable<Project> projects);
 
+  Iterable<Project> getTenantChosenProjects(String tenant);
+  void setTenantChosenProjects(String tenant, Iterable<Project> projects);
+
   String getThemeMode();
   void setThemeMode(String mode);
 
@@ -109,6 +112,28 @@ class StorageServiceCore implements StorageService {
     _helper.setStringList(
       _Keys.chosenProjects,
       projects.map(jsonEncode).toList(),
+    );
+  }
+
+  @override
+  Iterable<Project> getTenantChosenProjects(String tenant) {
+    final string = _helper.getString(_Keys.tenantChosenProjects) ?? '{}';
+    final decoded = jsonDecode(string) as Map<String, dynamic>;
+    final projects = (decoded[tenant] as List<dynamic>?)?.cast<String>() ?? [];
+    return projects.map((p) => Project.fromJson(jsonDecode(p) as Map<String, dynamic>));
+  }
+
+  @override
+  void setTenantChosenProjects(String tenant, Iterable<Project> projects) {
+    final string = _helper.getString(_Keys.tenantChosenProjects) ?? '{}';
+    final allProjects = jsonDecode(string) as Map<String, dynamic>;
+
+    final tenantProjects = projects.map(jsonEncode).toList();
+    allProjects[tenant] = tenantProjects;
+
+    _helper.setString(
+      _Keys.tenantChosenProjects,
+      jsonEncode(allProjects),
     );
   }
 
@@ -369,6 +394,7 @@ class _StorageServiceHelper {
 class _Keys {
   static const token = 'token';
   static const chosenProjects = 'chosenProjects';
+  static const tenantChosenProjects = 'tenantChosenProjects';
   static const theme = 'theme';
   static const org = 'org';
   static const tenantId = 'tenantId';

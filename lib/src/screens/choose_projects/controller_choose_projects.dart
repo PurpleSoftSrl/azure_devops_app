@@ -84,6 +84,11 @@ class _ChooseProjectsController {
       chosenProjects.value!.data!..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)),
     );
 
+    final tenant = storage.getTenantId();
+    if (tenant.isNotEmpty) {
+      storage.setTenantChosenProjects(tenant, chosenProjects.value!.data!);
+    }
+
     if (removeRoutes) {
       unawaited(AppRouter.goToTabs());
     } else {
@@ -127,7 +132,6 @@ class _ChooseProjectsController {
     }
 
     final selectedOrg = await _selectOrganization(orgs);
-
     if (selectedOrg == null) return;
 
     await api.setOrganization(selectedOrg.accountName!);
