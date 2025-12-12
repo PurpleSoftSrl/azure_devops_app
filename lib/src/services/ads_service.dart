@@ -138,9 +138,7 @@ class AdsServiceImpl with AppLogger implements AdsService {
       final nativeAd = NativeAd(
         adUnitId: _nativeAdUnitId,
         request: AdRequest(),
-        nativeAdOptions: NativeAdOptions(
-          mediaAspectRatio: MediaAspectRatio.portrait,
-        ),
+        nativeAdOptions: NativeAdOptions(mediaAspectRatio: MediaAspectRatio.portrait),
         listener: NativeAdListener(
           onAdLoaded: (ad) {
             logDebug('NativeAd loaded: ${ad.responseInfo?.responseId}.');
@@ -166,9 +164,7 @@ class AdsServiceImpl with AppLogger implements AdsService {
           templateType: TemplateType.small,
           mainBackgroundColor: ctx.themeExtension.background,
           callToActionTextStyle: NativeTemplateTextStyle(size: 16),
-          primaryTextStyle: NativeTemplateTextStyle(
-            textColor: ctx.themeExtension.onBackground,
-          ),
+          primaryTextStyle: NativeTemplateTextStyle(textColor: ctx.themeExtension.onBackground),
         ),
       );
 
@@ -217,13 +213,13 @@ class AdsServiceImpl with AppLogger implements AdsService {
   }
 
   bool _isNetworkError(String errorMessage) => [
-        'network error',
-        'error while connecting to ad server',
-        'the request timed out',
-        'timeout occurred',
-        'internet connection appears to be offline',
-        'network connection was lost',
-      ].any(errorMessage.toLowerCase().contains);
+    'network error',
+    'error while connecting to ad server',
+    'the request timed out',
+    'timeout occurred',
+    'internet connection appears to be offline',
+    'network connection was lost',
+  ].any(errorMessage.toLowerCase().contains);
 
   bool _isTooManyFailedRequests(String errorMessage) =>
       errorMessage.toLowerCase().contains('too many recently failed requests');
@@ -261,11 +257,7 @@ extension on NativeAd {
 }
 
 class AdsServiceWidget extends InheritedWidget {
-  const AdsServiceWidget({
-    super.key,
-    required super.child,
-    required this.ads,
-  });
+  const AdsServiceWidget({super.key, required super.child, required this.ads});
 
   final AdsService ads;
 

@@ -8,10 +8,6 @@ class ShortcutLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      label,
-      style: context.textTheme.bodyMedium,
-      textAlign: TextAlign.center,
-    );
+    return Text(label, style: context.textTheme.bodyMedium, textAlign: TextAlign.center);
   }
 }

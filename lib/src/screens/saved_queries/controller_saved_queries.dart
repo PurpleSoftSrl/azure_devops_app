@@ -41,19 +41,13 @@ class _SavedQueriesController with AdsMixin {
       return OverlayService.error('Error', description: 'Query not renamed');
     }
 
-    await showInterstitialAd(
-      ads,
-      onDismiss: () => OverlayService.snackbar('Query successfully renamed'),
-    );
+    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Query successfully renamed'));
 
     await init();
   }
 
   Future<void> deleteQuery(ChildQuery query) async {
-    final confirm = await OverlayService.confirm(
-      'Attention',
-      description: 'Do you really want to delete this query?',
-    );
+    final confirm = await OverlayService.confirm('Attention', description: 'Do you really want to delete this query?');
     if (!confirm) return;
 
     final res = await api.deleteSavedQuery(projectName: args.project, queryId: query.id);
@@ -62,10 +56,7 @@ class _SavedQueriesController with AdsMixin {
       return OverlayService.error('Error', description: 'Query not deleted');
     }
 
-    await showInterstitialAd(
-      ads,
-      onDismiss: () => OverlayService.snackbar('Query successfully deleted'),
-    );
+    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Query successfully deleted'));
 
     await init();
   }

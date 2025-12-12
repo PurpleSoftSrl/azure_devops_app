@@ -8,10 +8,10 @@ class GetWorkItemIds {
   GetWorkItemIds({required this.workItems});
 
   factory GetWorkItemIds.fromJson(Map<String, dynamic> json) => GetWorkItemIds(
-        workItems: List<_WorkItemId>.from(
-          (json['workItems'] as List<dynamic>? ?? []).map((w) => _WorkItemId.fromJson(w as Map<String, dynamic>)),
-        ),
-      );
+    workItems: List<_WorkItemId>.from(
+      (json['workItems'] as List<dynamic>? ?? []).map((w) => _WorkItemId.fromJson(w as Map<String, dynamic>)),
+    ),
+  );
 
   static List<_WorkItemId> fromResponse(Response res) =>
       GetWorkItemIds.fromJson(jsonDecode(res.body) as Map<String, dynamic>).workItems;
@@ -28,17 +28,14 @@ class _WorkItemId {
 }
 
 class GetWorkItemsResponse {
-  GetWorkItemsResponse({
-    required this.count,
-    required this.items,
-  });
+  GetWorkItemsResponse({required this.count, required this.items});
 
   factory GetWorkItemsResponse.fromJson(Map<String, dynamic> json) => GetWorkItemsResponse(
-        count: json['count'] as int,
-        items: List<WorkItem>.from(
-          (json['value'] as List<dynamic>).map((i) => WorkItem.fromJson(i as Map<String, dynamic>)),
-        ),
-      );
+    count: json['count'] as int,
+    items: List<WorkItem>.from(
+      (json['value'] as List<dynamic>).map((i) => WorkItem.fromJson(i as Map<String, dynamic>)),
+    ),
+  );
 
   static List<WorkItem> fromResponse(Response res) =>
       GetWorkItemsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).items;
@@ -48,10 +45,7 @@ class GetWorkItemsResponse {
 }
 
 class WorkItemWithUpdates {
-  WorkItemWithUpdates({
-    required this.item,
-    required this.updates,
-  });
+  WorkItemWithUpdates({required this.item, required this.updates});
 
   final WorkItem item;
   final List<ItemUpdate> updates;
@@ -61,21 +55,16 @@ class WorkItemWithUpdates {
 }
 
 class WorkItem {
-  WorkItem({
-    required this.id,
-    this.rev,
-    required this.fields,
-    this.links = const [],
-  });
+  WorkItem({required this.id, this.rev, required this.fields, this.links = const []});
 
   factory WorkItem.fromJson(Map<String, dynamic> json) => WorkItem(
-        id: json['id'] as int,
-        rev: json['rev'] as int?,
-        fields: ItemFields.fromJson(json['fields'] as Map<String, dynamic>),
-        links: (json['relations'] as List<dynamic>? ?? [])
-            .map((l) => Relation.fromJson(l as Map<String, dynamic>))
-            .toList(),
-      );
+    id: json['id'] as int,
+    rev: json['rev'] as int?,
+    fields: ItemFields.fromJson(json['fields'] as Map<String, dynamic>),
+    links: (json['relations'] as List<dynamic>? ?? [])
+        .map((l) => Relation.fromJson(l as Map<String, dynamic>))
+        .toList(),
+  );
 
   static WorkItem fromResponse(Response res) => WorkItem.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
@@ -86,17 +75,17 @@ class WorkItem {
 
   @visibleForTesting
   static WorkItem empty() => WorkItem(
-        id: -1,
-        fields: ItemFields(
-          systemWorkItemType: '',
-          systemAreaPath: '',
-          systemIterationPath: '',
-          systemState: '',
-          systemTeamProject: '',
-          systemTitle: '',
-          systemChangedDate: DateTime.now(),
-        ),
-      );
+    id: -1,
+    fields: ItemFields(
+      systemWorkItemType: '',
+      systemAreaPath: '',
+      systemIterationPath: '',
+      systemState: '',
+      systemTeamProject: '',
+      systemTitle: '',
+      systemChangedDate: DateTime.now(),
+    ),
+  );
 
   @override
   String toString() => 'WorkItem(id: $id, rev: $rev, fields: $fields)';
@@ -133,50 +122,51 @@ class ItemFields {
   });
 
   factory ItemFields.fromJson(Map<String, dynamic> json) => ItemFields(
-        systemTeamProject: json['System.TeamProject'] as String,
-        systemAreaPath: json['System.AreaPath'] as String,
-        systemIterationPath: json['System.IterationPath'] as String,
-        systemWorkItemType: json['System.WorkItemType'] as String,
-        systemState: json['System.State'] as String,
-        systemReason: json['System.Reason'] as String?,
-        systemAssignedTo: json['System.AssignedTo'] == null
-            ? null
-            : WorkItemUser.fromJson(json['System.AssignedTo'] as Map<String, dynamic>),
-        systemCreatedDate: DateTime.parse(json['System.CreatedDate']!.toString()).toLocal(),
-        systemCreatedBy: WorkItemUser.fromJson(json['System.CreatedBy'] as Map<String, dynamic>),
-        systemChangedDate: DateTime.parse(json['System.ChangedDate']!.toString()).toLocal(),
-        systemChangedBy: json['System.ChangedBy'] == null
-            ? null
-            : WorkItemUser.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
-        systemCommentCount: json['System.CommentCount'] as int?,
-        systemTitle: json['System.Title'] as String,
-        microsoftVstsCommonStateChangeDate: json['Microsoft.VSTS.Common.StateChangeDate'] == null
-            ? null
-            : DateTime.parse(json['Microsoft.VSTS.Common.StateChangeDate']!.toString()).toLocal(),
-        microsoftVstsCommonPriority:
-            json['Microsoft.VSTS.Common.Priority'] == null ? null : json['Microsoft.VSTS.Common.Priority'] as int,
-        systemDescription: json['System.Description'] as String?,
-        reproSteps: json['Microsoft.VSTS.TCM.ReproSteps'] as String?,
-        microsoftVstsCommonClosedDate: json['Microsoft.VSTS.Common.ClosedDate'] == null
-            ? null
-            : DateTime.parse(json['Microsoft.VSTS.Common.ClosedDate']!.toString()).toLocal(),
-        microsoftVstsCommonClosedBy: json['Microsoft.VSTS.Common.ClosedBy'] == null
-            ? null
-            : WorkItemUser.fromJson(json['Microsoft.VSTS.Common.ClosedBy'] as Map<String, dynamic>),
-        microsoftVstsCommonActivatedDate: json['Microsoft.VSTS.Common.ActivatedDate'] == null
-            ? null
-            : DateTime.parse(json['Microsoft.VSTS.Common.ActivatedDate']!.toString()).toLocal(),
-        microsoftVstsCommonActivatedBy: json['Microsoft.VSTS.Common.ActivatedBy'] == null
-            ? null
-            : WorkItemUser.fromJson(json['Microsoft.VSTS.Common.ActivatedBy'] as Map<String, dynamic>),
-        microsoftVstsCommonResolvedDate: json['Microsoft.VSTS.Common.ResolvedDate'] == null
-            ? null
-            : DateTime.parse(json['Microsoft.VSTS.Common.ResolvedDate']!.toString()).toLocal(),
-        systemHistory: json['System.History'] as String?,
-        systemTags: json['System.Tags'] as String?,
-        boardColumn: json['System.BoardColumn'] as String?,
-        jsonFields: json,
-      );
+    systemTeamProject: json['System.TeamProject'] as String,
+    systemAreaPath: json['System.AreaPath'] as String,
+    systemIterationPath: json['System.IterationPath'] as String,
+    systemWorkItemType: json['System.WorkItemType'] as String,
+    systemState: json['System.State'] as String,
+    systemReason: json['System.Reason'] as String?,
+    systemAssignedTo: json['System.AssignedTo'] == null
+        ? null
+        : WorkItemUser.fromJson(json['System.AssignedTo'] as Map<String, dynamic>),
+    systemCreatedDate: DateTime.parse(json['System.CreatedDate']!.toString()).toLocal(),
+    systemCreatedBy: WorkItemUser.fromJson(json['System.CreatedBy'] as Map<String, dynamic>),
+    systemChangedDate: DateTime.parse(json['System.ChangedDate']!.toString()).toLocal(),
+    systemChangedBy: json['System.ChangedBy'] == null
+        ? null
+        : WorkItemUser.fromJson(json['System.ChangedBy'] as Map<String, dynamic>),
+    systemCommentCount: json['System.CommentCount'] as int?,
+    systemTitle: json['System.Title'] as String,
+    microsoftVstsCommonStateChangeDate: json['Microsoft.VSTS.Common.StateChangeDate'] == null
+        ? null
+        : DateTime.parse(json['Microsoft.VSTS.Common.StateChangeDate']!.toString()).toLocal(),
+    microsoftVstsCommonPriority: json['Microsoft.VSTS.Common.Priority'] == null
+        ? null
+        : json['Microsoft.VSTS.Common.Priority'] as int,
+    systemDescription: json['System.Description'] as String?,
+    reproSteps: json['Microsoft.VSTS.TCM.ReproSteps'] as String?,
+    microsoftVstsCommonClosedDate: json['Microsoft.VSTS.Common.ClosedDate'] == null
+        ? null
+        : DateTime.parse(json['Microsoft.VSTS.Common.ClosedDate']!.toString()).toLocal(),
+    microsoftVstsCommonClosedBy: json['Microsoft.VSTS.Common.ClosedBy'] == null
+        ? null
+        : WorkItemUser.fromJson(json['Microsoft.VSTS.Common.ClosedBy'] as Map<String, dynamic>),
+    microsoftVstsCommonActivatedDate: json['Microsoft.VSTS.Common.ActivatedDate'] == null
+        ? null
+        : DateTime.parse(json['Microsoft.VSTS.Common.ActivatedDate']!.toString()).toLocal(),
+    microsoftVstsCommonActivatedBy: json['Microsoft.VSTS.Common.ActivatedBy'] == null
+        ? null
+        : WorkItemUser.fromJson(json['Microsoft.VSTS.Common.ActivatedBy'] as Map<String, dynamic>),
+    microsoftVstsCommonResolvedDate: json['Microsoft.VSTS.Common.ResolvedDate'] == null
+        ? null
+        : DateTime.parse(json['Microsoft.VSTS.Common.ResolvedDate']!.toString()).toLocal(),
+    systemHistory: json['System.History'] as String?,
+    systemTags: json['System.Tags'] as String?,
+    boardColumn: json['System.BoardColumn'] as String?,
+    jsonFields: json,
+  );
 
   final String systemTeamProject;
   final String systemAreaPath;
@@ -214,23 +204,16 @@ class ItemFields {
 }
 
 class WorkItemUser {
-  WorkItemUser({
-    this.displayName,
-    this.id,
-    this.uniqueName,
-    this.imageUrl,
-    this.descriptor,
-    this.inactive,
-  });
+  WorkItemUser({this.displayName, this.id, this.uniqueName, this.imageUrl, this.descriptor, this.inactive});
 
   factory WorkItemUser.fromJson(Map<String, dynamic> json) => WorkItemUser(
-        displayName: json['displayName'] as String?,
-        id: json['id'] as String?,
-        uniqueName: json['uniqueName'] as String?,
-        imageUrl: json['imageUrl'] as String?,
-        descriptor: json['descriptor'] as String?,
-        inactive: json['inactive'] as bool?,
-      );
+    displayName: json['displayName'] as String?,
+    id: json['id'] as String?,
+    uniqueName: json['uniqueName'] as String?,
+    imageUrl: json['imageUrl'] as String?,
+    descriptor: json['descriptor'] as String?,
+    inactive: json['inactive'] as bool?,
+  );
 
   final String? displayName;
   final String? id;

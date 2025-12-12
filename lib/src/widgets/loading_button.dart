@@ -3,13 +3,7 @@ import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:flutter/material.dart';
 
 class LoadingButton extends StatefulWidget {
-  const LoadingButton({
-    required this.onPressed,
-    required this.text,
-    this.backgroundColor,
-    this.textColor,
-    this.margin,
-  });
+  const LoadingButton({required this.onPressed, required this.text, this.backgroundColor, this.textColor, this.margin});
 
   final dynamic Function() onPressed;
   final String text;
@@ -46,9 +40,7 @@ class _LoadingButtonState extends State<LoadingButton> with AppLogger {
           if (mounted) setState(() => _isLoading = false);
         },
         child: _isLoading
-            ? CircularProgressIndicator(
-                backgroundColor: context.themeExtension.background,
-              )
+            ? CircularProgressIndicator(backgroundColor: context.themeExtension.background)
             : Text(
                 widget.text,
                 style: context.textTheme.labelLarge!.copyWith(color: widget.textColor ?? context.colorScheme.onPrimary),

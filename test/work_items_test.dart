@@ -14,29 +14,23 @@ void main() {
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets(
-    'Page building test',
-    (t) async {
-      final app = MaterialApp(
-        navigatorKey: AppRouter.navigatorKey,
-        theme: mockTheme,
-        home: StorageServiceWidget(
-          storage: StorageServiceMock(),
-          child: AdsServiceWidget(
-            ads: AdsServiceMock(),
-            child: AzureApiServiceWidget(
-              api: AzureApiServiceMock(),
-              child: WorkItemsPage(),
-            ),
-          ),
+  testWidgets('Page building test', (t) async {
+    final app = MaterialApp(
+      navigatorKey: AppRouter.navigatorKey,
+      theme: mockTheme,
+      home: StorageServiceWidget(
+        storage: StorageServiceMock(),
+        child: AdsServiceWidget(
+          ads: AdsServiceMock(),
+          child: AzureApiServiceWidget(api: AzureApiServiceMock(), child: WorkItemsPage()),
         ),
-      );
+      ),
+    );
 
-      await t.pumpWidget(app);
+    await t.pumpWidget(app);
 
-      await t.pump();
+    await t.pump();
 
-      expect(find.byType(WorkItemsPage), findsOneWidget);
-    },
-  );
+    expect(find.byType(WorkItemsPage), findsOneWidget);
+  });
 }

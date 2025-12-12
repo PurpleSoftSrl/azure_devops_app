@@ -11,12 +11,7 @@ class _FileDiffScreen extends StatelessWidget {
     return AppPage<Diff?>(
       init: ctrl.init,
       title: 'File diff',
-      actions: [
-        IconButton(
-          onPressed: ctrl.shareDiff,
-          icon: Icon(DevOpsIcons.share),
-        ),
-      ],
+      actions: [IconButton(onPressed: ctrl.shareDiff, icon: Icon(DevOpsIcons.share))],
       notifier: ctrl.diff,
       padding: EdgeInsets.zero,
       showScrollbar: true,

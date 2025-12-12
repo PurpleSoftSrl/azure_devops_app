@@ -10,7 +10,8 @@ class _RepositoryDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppPage<List<RepoItem>?>(
       init: ctrl.init,
-      title: (ctrl.args.filePath?.startsWith('/') ?? false ? ctrl.args.filePath?.substring(1) : ctrl.args.filePath) ??
+      title:
+          (ctrl.args.filePath?.startsWith('/') ?? false ? ctrl.args.filePath?.substring(1) : ctrl.args.filePath) ??
           ctrl.args.repositoryName,
       notifier: ctrl.repoItems,
       onEmpty: 'No items found',
@@ -24,9 +25,7 @@ class _RepositoryDetailScreen extends StatelessWidget {
                 .where((i) => i.isFolder && i.path != pathPrefix && i.path != '/')
                 .sorted((a, b) => a.path.compareTo(b.path))
                 .where((i) => i.isFolder)
-                .followedBy(
-                  items.where((i) => !i.isFolder).sorted((a, b) => a.path.compareTo(b.path)),
-                )
+                .followedBy(items.where((i) => !i.isFolder).sorted((a, b) => a.path.compareTo(b.path)))
                 .map(
                   (i) => InkWell(
                     onTap: () => ctrl.goToItem(i),

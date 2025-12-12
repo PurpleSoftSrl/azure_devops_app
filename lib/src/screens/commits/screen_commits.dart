@@ -16,9 +16,7 @@ class _CommitsScreen extends StatelessWidget {
       onResetFilters: ctrl.resetFilters,
       onEmpty: 'No commits found',
       header: () => ctrl.hasShortcut
-          ? ShortcutLabel(
-              label: ctrl.args!.shortcut!.label,
-            )
+          ? ShortcutLabel(label: ctrl.args!.shortcut!.label)
           : FiltersRow(
               resetFilters: ctrl.resetFilters,
               saveFilters: ctrl.saveFilters,
@@ -32,8 +30,9 @@ class _CommitsScreen extends StatelessWidget {
                     formatLabel: (p) => p.name!,
                     isDefaultFilter: ctrl.isDefaultProjectsFilter,
                     widgetBuilder: (p) => ProjectFilterWidget(project: p),
-                    onSearchChanged:
-                        ctrl.hasManyProjects(ctrl.storage) ? (s) => ctrl.searchProject(s, ctrl.storage) : null,
+                    onSearchChanged: ctrl.hasManyProjects(ctrl.storage)
+                        ? (s) => ctrl.searchProject(s, ctrl.storage)
+                        : null,
                   ),
                 if (ctrl.api.allRepositories.isNotEmpty)
                   FilterMenu<GitRepository>.custom(
@@ -63,33 +62,20 @@ class _CommitsScreen extends StatelessWidget {
         var adsIndex = 0;
 
         return SliverList(
-          delegate: SliverChildBuilderDelegate(
-            childCount: commits?.length ?? 0,
-            (_, index) {
-              final c = commits![index];
+          delegate: SliverChildBuilderDelegate(childCount: commits?.length ?? 0, (_, index) {
+            final c = commits![index];
 
-              if (ctrl.shouldShowNativeAd(commits, c, adsIndex)) {
-                return Column(
-                  children: [
-                    CommitListTile(
-                      commit: c,
-                      onTap: () => ctrl.goToCommitDetail(c),
-                      isLast: c == commits.last,
-                    ),
-                    CustomAdWidget(
-                      item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++],
-                    ),
-                  ],
-                );
-              }
-
-              return CommitListTile(
-                commit: c,
-                onTap: () => ctrl.goToCommitDetail(c),
-                isLast: c == commits.last,
+            if (ctrl.shouldShowNativeAd(commits, c, adsIndex)) {
+              return Column(
+                children: [
+                  CommitListTile(commit: c, onTap: () => ctrl.goToCommitDetail(c), isLast: c == commits.last),
+                  CustomAdWidget(item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++]),
+                ],
               );
-            },
-          ),
+            }
+
+            return CommitListTile(commit: c, onTap: () => ctrl.goToCommitDetail(c), isLast: c == commits.last);
+          }),
         );
       },
     );

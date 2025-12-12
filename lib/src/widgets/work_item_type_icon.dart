@@ -14,9 +14,6 @@ class WorkItemTypeIcon extends StatelessWidget {
 
     final colorQuery = type!.color != null ? 'color=${type!.color}&' : '';
     final url = 'https://tfsprodweu2.visualstudio.com/_apis/wit/workItemIcons/${type!.icon}?${colorQuery}v=2';
-    return SvgPicture.network(
-      url,
-      width: size,
-    );
+    return SvgPicture.network(url, width: size);
   }
 }

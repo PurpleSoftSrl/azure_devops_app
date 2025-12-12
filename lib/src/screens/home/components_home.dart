@@ -25,10 +25,7 @@ class _ShortcutRow extends StatelessWidget {
       child: Row(
         children: [
           DecoratedBox(
-            decoration: BoxDecoration(
-              color: context.colorScheme.primary,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: context.colorScheme.primary, shape: BoxShape.circle),
             child: Padding(
               padding: const EdgeInsets.all(4),
               child: Icon(
@@ -44,23 +41,13 @@ class _ShortcutRow extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(
-            width: 12,
-          ),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  shortcut.label,
-                  style: context.textTheme.bodyMedium,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  shortcut.area,
-                  style: context.textTheme.labelSmall,
-                ),
+                Text(shortcut.label, style: context.textTheme.bodyMedium, maxLines: 2, overflow: TextOverflow.ellipsis),
+                Text(shortcut.area, style: context.textTheme.labelSmall),
               ],
             ),
           ),
@@ -68,21 +55,9 @@ class _ShortcutRow extends StatelessWidget {
             tooltip: 'Shortcut ${shortcut.label} actions',
             offset: const Offset(0, 20),
             items: () => [
-              PopupItem(
-                onTap: () => onShowDetail(shortcut),
-                text: 'Show filters',
-                icon: DevOpsIcons.filter,
-              ),
-              PopupItem(
-                onTap: () => onRename(shortcut),
-                text: 'Rename',
-                icon: DevOpsIcons.edit,
-              ),
-              PopupItem(
-                onTap: () => onDelete(shortcut),
-                text: 'Delete',
-                icon: DevOpsIcons.trash,
-              ),
+              PopupItem(onTap: () => onShowDetail(shortcut), text: 'Show filters', icon: DevOpsIcons.filter),
+              PopupItem(onTap: () => onRename(shortcut), text: 'Rename', icon: DevOpsIcons.edit),
+              PopupItem(onTap: () => onDelete(shortcut), text: 'Delete', icon: DevOpsIcons.trash),
             ],
           ),
         ],
@@ -107,15 +82,9 @@ class _ProjectsHeaderWithSearchField extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Flexible(
-            child: SectionHeader.withIcon(
-              text: 'Projects',
-              icon: DevOpsIcons.list,
-              textHeight: 1,
-            ),
+            child: SectionHeader.withIcon(text: 'Projects', icon: DevOpsIcons.list, textHeight: 1),
           ),
-          SearchButton(
-            isSearching: ctrl.isSearchingProjects,
-          ),
+          SearchButton(isSearching: ctrl.isSearchingProjects),
         ],
       ),
     );
@@ -132,40 +101,20 @@ class _SubscriptionAddedBottomsheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        Image.asset(
-          'assets/illustrations/crying_smiling_guy.png',
-          height: 200,
-        ),
-        const SizedBox(
-          height: 40,
-        ),
-        Text(
-          '''
+        Image.asset('assets/illustrations/crying_smiling_guy.png', height: 200),
+        const SizedBox(height: 40),
+        Text('''
 In this release, we've introduced ads to help support the app's ongoing development and keep things running smoothly.
 
 We understand that ads can be disruptive, so we've also added an option for you to remove them with a paid subscription.
 
 Would you like to remove them?
-''',
-          style: context.textTheme.bodyLarge,
-        ),
-        const SizedBox(
-          height: 52,
-        ),
-        LoadingButton(
-          onPressed: onRemoveAds,
-          text: 'Remove ads',
-        ),
-        const SizedBox(
-          height: 16,
-        ),
-        TextButton(
-          onPressed: onSkip,
-          child: Text('Later'),
-        ),
-        const SizedBox(
-          height: 48,
-        ),
+''', style: context.textTheme.bodyLarge),
+        const SizedBox(height: 52),
+        LoadingButton(onPressed: onRemoveAds, text: 'Remove ads'),
+        const SizedBox(height: 16),
+        TextButton(onPressed: onSkip, child: Text('Later')),
+        const SizedBox(height: 48),
       ],
     );
   }

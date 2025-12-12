@@ -17,10 +17,7 @@ void main() {
         onGenerateRoute: (_) => MaterialPageRoute(
           builder: (_) => RepositoryDetailPage(),
           settings: RouteSettings(
-            arguments: RepoDetailArgs(
-              projectName: '',
-              repositoryName: '',
-            ),
+            arguments: RepoDetailArgs(projectName: '', repositoryName: ''),
           ),
         ),
       ),

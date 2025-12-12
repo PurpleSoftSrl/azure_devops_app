@@ -48,12 +48,7 @@ class FiltersService {
   }
 
   void saveWorkItemsAreaFilter(String area) {
-    storage.saveFilter(
-      organization,
-      FilterAreas.workItems,
-      WorkItemsFilters.areaKey,
-      area.isEmpty ? {} : {area},
-    );
+    storage.saveFilter(organization, FilterAreas.workItems, WorkItemsFilters.areaKey, area.isEmpty ? {} : {area});
   }
 
   void saveWorkItemsIterationFilter(String iteration) {
@@ -317,11 +312,7 @@ class WorkItemsFilters {
 }
 
 class CommitsFilters {
-  CommitsFilters({
-    required this.projects,
-    required this.authors,
-    required this.repository,
-  });
+  CommitsFilters({required this.projects, required this.authors, required this.repository});
 
   static const projectsKey = 'projects';
   static const authorsKey = 'authors';
@@ -373,12 +364,7 @@ class PipelinesFilters {
 }
 
 class PullRequestsFilters {
-  PullRequestsFilters({
-    required this.projects,
-    required this.status,
-    required this.openedBy,
-    required this.assignedTo,
-  });
+  PullRequestsFilters({required this.projects, required this.status, required this.openedBy, required this.assignedTo});
 
   static const projectsKey = 'projects';
   static const statusKey = 'status';

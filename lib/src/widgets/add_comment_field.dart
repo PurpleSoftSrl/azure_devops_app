@@ -55,14 +55,7 @@ class _AddCommentFieldState extends State<AddCommentField> with SingleTickerProv
     return SlideTransition(
       position: _animation,
       child: DecoratedBox(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: .2),
-              blurRadius: 10,
-            ),
-          ],
-        ),
+        decoration: BoxDecoration(boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .2), blurRadius: 10)]),
         child: ClipRRect(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(AppTheme.radius),
@@ -75,9 +68,7 @@ class _AddCommentFieldState extends State<AddCommentField> with SingleTickerProv
               child: Row(
                 children: [
                   if (me != null) MemberAvatar(userDescriptor: me.descriptor),
-                  const SizedBox(
-                    width: 20,
-                  ),
+                  const SizedBox(width: 20),
                   Expanded(
                     child: GestureDetector(
                       onTap: widget.onTap,
@@ -122,10 +113,7 @@ Future<bool> showEditor(
         child: !changed
             ? Align(
                 alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  onTap: AppRouter.popRoute,
-                  child: Icon(Icons.close),
-                ),
+                child: GestureDetector(onTap: AppRouter.popRoute, child: Icon(Icons.close)),
               )
             : TextButton(
                 onPressed: () {

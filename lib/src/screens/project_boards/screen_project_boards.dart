@@ -32,20 +32,13 @@ class _ProjectBoardsScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 marginTop: 0,
               ),
-              const SizedBox(
-                height: 8,
-              ),
+              const SizedBox(height: 8),
               ...teamBoards.entries.map(
                 (tb) => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      tb.key.name,
-                      style: context.textTheme.bodyMedium,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
+                    Text(tb.key.name, style: context.textTheme.bodyMedium),
+                    const SizedBox(height: 8),
                     ...tb.value.map(
                       (board) => NavigationButton(
                         onTap: () => ctrl.goToBoardDetail(tb.key, board),
@@ -60,9 +53,7 @@ class _ProjectBoardsScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
@@ -73,37 +64,24 @@ class _ProjectBoardsScreen extends StatelessWidget {
                 icon: DevOpsIcons.sprint,
                 mainAxisAlignment: MainAxisAlignment.center,
               ),
-              const SizedBox(
-                height: 8,
-              ),
-              ...teamSprints.entries.where((ts) => ts.value.isNotEmpty).map(
+              const SizedBox(height: 8),
+              ...teamSprints.entries
+                  .where((ts) => ts.value.isNotEmpty)
+                  .map(
                     (ts) => Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          ts.key.name,
-                          style: context.textTheme.bodyMedium,
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        ...groupBy(ts.value, (ts) => ts.attributes.timeFrame)
-                            .entries
+                        Text(ts.key.name, style: context.textTheme.bodyMedium),
+                        const SizedBox(height: 4),
+                        ...groupBy(ts.value, (ts) => ts.attributes.timeFrame).entries
                             .sortedBy((entry) => entry.key)
                             .map(
                               (entry) => Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    entry.key.titleCase,
-                                    style: context.textTheme.labelMedium,
-                                  ),
-                                  const SizedBox(
-                                    height: 4,
-                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(entry.key.titleCase, style: context.textTheme.labelMedium),
+                                  const SizedBox(height: 4),
                                   ...entry.value.map(
                                     (sprint) => NavigationButton(
                                       onTap: () => ctrl.goToSprintDetail(ts.key, sprint),
@@ -121,9 +99,7 @@ class _ProjectBoardsScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
-                        const SizedBox(
-                          height: 24,
-                        ),
+                        const SizedBox(height: 24),
                       ],
                     ),
                   ),

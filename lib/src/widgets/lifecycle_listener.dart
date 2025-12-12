@@ -7,10 +7,7 @@ import 'package:azure_devops/src/services/share_intent_service.dart';
 import 'package:flutter/material.dart';
 
 class LifecycleListener extends StatefulWidget {
-  const LifecycleListener({
-    super.key,
-    required this.child,
-  });
+  const LifecycleListener({super.key, required this.child});
 
   final Widget child;
 

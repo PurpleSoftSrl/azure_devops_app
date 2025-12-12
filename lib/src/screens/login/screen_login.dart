@@ -23,26 +23,14 @@ class _LoginScreen extends StatelessWidget {
                 fontFamily: AppTheme.defaultFont,
               ),
             ),
-            const SizedBox(
-              height: 40,
-            ),
+            const SizedBox(height: 40),
             Row(
               children: [
-                Expanded(
-                  child: Text(
-                    'Sign in with your Personal Access Token',
-                    style: context.textTheme.titleMedium,
-                  ),
-                ),
-                IconButton(
-                  onPressed: ctrl.showInfo,
-                  icon: Icon(Icons.info_outline),
-                ),
+                Expanded(child: Text('Sign in with your Personal Access Token', style: context.textTheme.titleMedium)),
+                IconButton(onPressed: ctrl.showInfo, icon: Icon(Icons.info_outline)),
               ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             Form(
               child: Column(
                 children: [
@@ -72,42 +60,25 @@ class _LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  LoadingButton(
-                    onPressed: ctrl.login,
-                    text: 'Submit',
-                  ),
+                  const SizedBox(height: 30),
+                  LoadingButton(onPressed: ctrl.login, text: 'Submit'),
                 ],
               ),
             ),
-            const SizedBox(
-              height: 50,
-            ),
+            const SizedBox(height: 50),
             Row(
               children: [
                 Expanded(child: const Divider()),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Text(
-                    'Or',
-                    style: context.textTheme.titleMedium,
-                  ),
+                  child: Text('Or', style: context.textTheme.titleMedium),
                 ),
                 Expanded(child: const Divider()),
               ],
             ),
-            const SizedBox(
-              height: 50,
-            ),
-            LoadingButton(
-              onPressed: ctrl.loginWithMicrosoft,
-              text: 'Sign in with Microsoft',
-            ),
-            const SizedBox(
-              height: 100,
-            ),
+            const SizedBox(height: 50),
+            LoadingButton(onPressed: ctrl.loginWithMicrosoft, text: 'Sign in with Microsoft'),
+            const SizedBox(height: 100),
             Link(
               uri: Uri.parse('https://github.com/PurpleSoftSrl/azure_devops_app'),
               builder: (_, link) => InkWell(
@@ -132,13 +103,9 @@ class _LoginScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             Link(
-              uri: Uri.parse(
-                'https://www.purplesoft.io?utm_source=azdevops_app&utm_medium=app&utm_campaign=azdevops',
-              ),
+              uri: Uri.parse('https://www.purplesoft.io?utm_source=azdevops_app&utm_medium=app&utm_campaign=azdevops'),
               builder: (_, link) => InkWell(
                 onTap: () => ctrl.openPurplesoftWebsite(link),
                 child: Text.rich(

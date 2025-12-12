@@ -40,9 +40,7 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   late final _adsCallbacks = _SubscriptionCallbacks(onPurchased: _removeAds, onExpired: _reactivateAds, name: 'No Ads');
 
-  late final Map<String, _SubscriptionCallbacks> _purchaseCallbacks = {
-    _noAdsEntitlement: _adsCallbacks,
-  };
+  late final Map<String, _SubscriptionCallbacks> _purchaseCallbacks = {_noAdsEntitlement: _adsCallbacks};
 
   List<String> _activeSubscriptions = [];
   List<StoreProduct> _products = [];
@@ -180,11 +178,7 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 }
 
 class _SubscriptionCallbacks {
-  _SubscriptionCallbacks({
-    required this.onPurchased,
-    required this.onExpired,
-    required this.name,
-  });
+  _SubscriptionCallbacks({required this.onPurchased, required this.onExpired, required this.name});
 
   final VoidCallback onPurchased;
   final VoidCallback onExpired;
@@ -213,18 +207,10 @@ class AppProduct {
   final bool isDefault;
 }
 
-enum PurchaseResult {
-  success,
-  cancelled,
-  failed,
-}
+enum PurchaseResult { success, cancelled, failed }
 
 class PurchaseServiceWidget extends InheritedWidget {
-  const PurchaseServiceWidget({
-    super.key,
-    required super.child,
-    required this.purchase,
-  });
+  const PurchaseServiceWidget({super.key, required super.child, required this.purchase});
 
   final PurchaseService purchase;
 

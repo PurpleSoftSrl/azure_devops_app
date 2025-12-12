@@ -13,12 +13,7 @@ class _SplashScreen extends StatelessWidget {
         color: context.themeExtension.background,
         child: AppPage.empty(
           init: ctrl.init,
-          builder: (_) => Center(
-            child: Image.asset(
-              'assets/logos/logo.png',
-              height: 250,
-            ),
-          ),
+          builder: (_) => Center(child: Image.asset('assets/logos/logo.png', height: 250)),
         ),
       ),
     );

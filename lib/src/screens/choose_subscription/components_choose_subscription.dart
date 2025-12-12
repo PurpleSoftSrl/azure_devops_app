@@ -1,11 +1,7 @@
 part of choose_subscription;
 
 class _SubscriptionCard extends StatelessWidget {
-  const _SubscriptionCard({
-    required this.product,
-    required this.onTap,
-    required this.isPurchasingThisProduct,
-  });
+  const _SubscriptionCard({required this.product, required this.onTap, required this.isPurchasingThisProduct});
 
   final AppProduct product;
   final void Function(AppProduct) onTap;
@@ -57,10 +53,7 @@ class _SubscriptionCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 18),
-                Text(
-                  product.durationAsFrequency.titleCase,
-                  style: context.textTheme.titleLarge,
-                ),
+                Text(product.durationAsFrequency.titleCase, style: context.textTheme.titleLarge),
                 const SizedBox(height: 10),
                 Text(
                   product.durationDescription,
@@ -80,15 +73,7 @@ class _SubscriptionCard extends StatelessWidget {
               ],
             ),
           ),
-          if (product.isDefault)
-            Positioned(
-              right: 5,
-              top: 5,
-              child: const Icon(
-                Icons.star_border_rounded,
-                size: 24,
-              ),
-            ),
+          if (product.isDefault) Positioned(right: 5, top: 5, child: const Icon(Icons.star_border_rounded, size: 24)),
         ],
       ),
     );

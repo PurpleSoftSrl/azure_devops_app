@@ -31,23 +31,13 @@ abstract class StorageService {
 
   List<StorageFilter> getFilters();
 
-  void saveFilter(
-    String organization,
-    String area,
-    String filterAttribute,
-    Set<String> filters,
-  );
+  void saveFilter(String organization, String area, String filterAttribute, Set<String> filters);
 
   void resetFilter(String organization, String area);
 
   List<SavedShortcut> getSavedShortcuts();
 
-  void saveShortcut(
-    String organization,
-    String area,
-    String label,
-    Map<String, Set<String>> filtersWithAttribute,
-  );
+  void saveShortcut(String organization, String area, String label, Map<String, Set<String>> filtersWithAttribute);
 
   void renameShortcut(SavedShortcut shortcut, String newLabel);
 
@@ -109,10 +99,7 @@ class StorageServiceCore implements StorageService {
 
   @override
   void setChosenProjects(Iterable<Project> projects) {
-    _helper.setStringList(
-      _Keys.chosenProjects,
-      projects.map(jsonEncode).toList(),
-    );
+    _helper.setStringList(_Keys.chosenProjects, projects.map(jsonEncode).toList());
   }
 
   @override
@@ -131,10 +118,7 @@ class StorageServiceCore implements StorageService {
     final tenantProjects = projects.map(jsonEncode).toList();
     allProjects[tenant] = tenantProjects;
 
-    _helper.setString(
-      _Keys.tenantChosenProjects,
-      jsonEncode(allProjects),
-    );
+    _helper.setString(_Keys.tenantChosenProjects, jsonEncode(allProjects));
   }
 
   @override
@@ -188,12 +172,7 @@ class StorageServiceCore implements StorageService {
   }
 
   @override
-  void saveFilter(
-    String organization,
-    String area,
-    String attribute,
-    Set<String> filters,
-  ) {
+  void saveFilter(String organization, String area, String attribute, Set<String> filters) {
     final savedFilters = getFilters();
 
     final attributeFilters = savedFilters.firstWhereOrNull(
@@ -214,24 +193,16 @@ class StorageServiceCore implements StorageService {
       savedFilters.add(filterToSave);
     }
 
-    _helper.setStringList(
-      _Keys.filters,
-      savedFilters.map((f) => f.toJson()).toList(),
-    );
+    _helper.setStringList(_Keys.filters, savedFilters.map((f) => f.toJson()).toList());
   }
 
   @override
   void resetFilter(String organization, String area) {
     final savedFilters = getFilters();
 
-    final otherFilters = savedFilters.whereNot(
-      (f) => f.organization == organization && f.area == area,
-    );
+    final otherFilters = savedFilters.whereNot((f) => f.organization == organization && f.area == area);
 
-    _helper.setStringList(
-      _Keys.filters,
-      otherFilters.map((f) => f.toJson()).toList(),
-    );
+    _helper.setStringList(_Keys.filters, otherFilters.map((f) => f.toJson()).toList());
   }
 
   @override
@@ -267,10 +238,7 @@ class StorageServiceCore implements StorageService {
       savedShortcuts.add(shortcutToSave);
     }
 
-    _helper.setStringList(
-      _Keys.shortcuts,
-      savedShortcuts.map((f) => f.toJson()).toList(),
-    );
+    _helper.setStringList(_Keys.shortcuts, savedShortcuts.map((f) => f.toJson()).toList());
   }
 
   @override
@@ -282,10 +250,7 @@ class StorageServiceCore implements StorageService {
         (f) => f.organization == shortcut.organization && f.area == shortcut.area && f.label == shortcut.label,
       )?.label = newLabel;
 
-    _helper.setStringList(
-      _Keys.shortcuts,
-      editedShortcuts.map((f) => f.toJson()).toList(),
-    );
+    _helper.setStringList(_Keys.shortcuts, editedShortcuts.map((f) => f.toJson()).toList());
   }
 
   @override
@@ -296,10 +261,7 @@ class StorageServiceCore implements StorageService {
       (f) => f.organization == shortcut.organization && f.label == shortcut.label,
     );
 
-    _helper.setStringList(
-      _Keys.shortcuts,
-      otherShortcuts.map((f) => f.toJson()).toList(),
-    );
+    _helper.setStringList(_Keys.shortcuts, otherShortcuts.map((f) => f.toJson()).toList());
   }
 
   @override
@@ -423,12 +385,7 @@ class StorageServiceWidget extends InheritedWidget {
 /// area can be one of (commits, pipelines, workItems, pullRequests) and
 /// attribute can be one of (projects, authors, states, etc.).
 class StorageFilter {
-  StorageFilter({
-    required this.organization,
-    required this.area,
-    required this.attribute,
-    required this.filters,
-  });
+  StorageFilter({required this.organization, required this.area, required this.attribute, required this.filters});
 
   factory StorageFilter.fromMap(Map<String, dynamic> map) {
     return StorageFilter(
@@ -457,10 +414,7 @@ class StorageFilter {
 
   String toJson() => json.encode(toMap());
 
-  static List<StorageFilter>? listFromJson(
-    String json, {
-    bool growable = false,
-  }) {
+  static List<StorageFilter>? listFromJson(String json, {bool growable = false}) {
     final list = jsonDecode(json) as List<dynamic>?;
     final result = <StorageFilter>[];
     if (list != null) {
@@ -475,12 +429,7 @@ class StorageFilter {
 
 /// Shortcuts are labeled lists of filters which belongs to an area inside an organization.
 class SavedShortcut {
-  SavedShortcut({
-    required this.organization,
-    required this.area,
-    required this.label,
-    required this.filters,
-  });
+  SavedShortcut({required this.organization, required this.area, required this.label, required this.filters});
 
   factory SavedShortcut.fromMap(Map<String, dynamic> map) {
     return SavedShortcut(
@@ -499,20 +448,12 @@ class SavedShortcut {
   final List<StorageFilter> filters;
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'organization': organization,
-      'area': area,
-      'label': label,
-      'filters': filters.toList(),
-    };
+    return <String, dynamic>{'organization': organization, 'area': area, 'label': label, 'filters': filters.toList()};
   }
 
   String toJson() => json.encode(toMap());
 
-  static List<SavedShortcut>? listFromJson(
-    String json, {
-    bool growable = false,
-  }) {
+  static List<SavedShortcut>? listFromJson(String json, {bool growable = false}) {
     final list = jsonDecode(json) as List<dynamic>?;
     final result = <SavedShortcut>[];
     if (list != null) {

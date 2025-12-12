@@ -71,14 +71,7 @@ mixin PullRequestHelper {
         final mentionGuids = _getMentionGuids(comment.content);
         if (mentionGuids.isNotEmpty) {
           for (final guid in mentionGuids) {
-            mentions.add(
-              (
-                threadId: thread.id,
-                commentId: comment.id,
-                mentionGuid: guid,
-                displayName: null,
-              ),
-            );
+            mentions.add((threadId: thread.id, commentId: comment.id, mentionGuid: guid, displayName: null));
           }
         }
       }
@@ -108,9 +101,7 @@ mixin PullRequestHelper {
   ) async {
     final distinctGuids = mentionsToReplace.map((m) => m.mentionGuid).toSet();
 
-    final res = await Future.wait([
-      for (final mention in distinctGuids) getIdentity(mention),
-    ]);
+    final res = await Future.wait([for (final mention in distinctGuids) getIdentity(mention)]);
 
     final identitites = res.where((r) => !r.isError && r.data != null).map((r) => r.data!);
 
@@ -120,8 +111,9 @@ mixin PullRequestHelper {
             threadId: m.threadId,
             commentId: m.commentId,
             mentionGuid: m.mentionGuid,
-            displayName:
-                identitites.firstWhereOrNull((i) => i.guid?.toLowerCase() == m.mentionGuid.toLowerCase())?.displayName
+            displayName: identitites
+                .firstWhereOrNull((i) => i.guid?.toLowerCase() == m.mentionGuid.toLowerCase())
+                ?.displayName,
           ),
         )
         .toList();

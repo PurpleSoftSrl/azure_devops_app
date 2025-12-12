@@ -82,9 +82,9 @@ class AppTheme {
   }
 
   static Map<String, ThemeData> get allThemes => {
-        'light': _getCustomTheme(_lightColorScheme),
-        'dark': _getCustomTheme(_darkColorScheme),
-      };
+    'light': _getCustomTheme(_lightColorScheme),
+    'dark': _getCustomTheme(_darkColorScheme),
+  };
 
   static final defaultFont = GoogleFonts.notoSans().fontFamily;
 
@@ -177,16 +177,11 @@ class AppTheme {
 
   static CheckboxThemeData _getCheckboxTheme(ColorScheme colorScheme, AppColorsExtension ext) {
     return CheckboxThemeData(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(6),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
       fillColor: WidgetStateProperty.resolveWith((states) {
         return states.contains(WidgetState.selected) ? colorScheme.primary : ext.background;
       }),
-      side: BorderSide(
-        width: .5,
-        color: ext.onBackground,
-      ),
+      side: BorderSide(width: .5, color: ext.onBackground),
     );
   }
 
@@ -194,10 +189,7 @@ class AppTheme {
     return BottomSheetThemeData(
       backgroundColor: colorScheme.primary,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(radius),
-          topRight: Radius.circular(radius),
-        ),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(radius), topRight: Radius.circular(radius)),
       ),
       elevation: 10,
       modalElevation: 10,
@@ -252,17 +244,11 @@ class AppTheme {
   }
 
   static IconThemeData _getIconTheme(AppColorsExtension ext) {
-    return IconThemeData(
-      color: ext.onBackground,
-      size: isTablet ? 30 : 20,
-    );
+    return IconThemeData(color: ext.onBackground, size: isTablet ? 30 : 20);
   }
 
   static DividerThemeData _getDividerTheme(ColorScheme colorScheme) {
-    return DividerThemeData(
-      thickness: 1,
-      color: colorScheme.secondaryContainer,
-    );
+    return DividerThemeData(thickness: 1, color: colorScheme.secondaryContainer);
   }
 
   static TextButtonThemeData _getTextButtonTheme(TextTheme textTheme, AppColorsExtension ext) {
@@ -282,18 +268,13 @@ class AppTheme {
       buttonColor: colorScheme.primary,
       disabledColor: colorScheme.surface,
       height: isTablet ? 70.0 : 60.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(radius),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
     );
   }
 }
 
 class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
-  AppColorsExtension({
-    required this.background,
-    required this.onBackground,
-  });
+  AppColorsExtension({required this.background, required this.onBackground});
 
   final Color background;
   final Color onBackground;

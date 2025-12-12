@@ -7,8 +7,8 @@ class SectionHeader extends StatelessWidget {
     this.textHeight,
     this.iconSize,
     this.mainAxisAlignment = MainAxisAlignment.start,
-  })  : icon = null,
-        marginTop = 24;
+  }) : icon = null,
+       marginTop = 24;
 
   const SectionHeader.withIcon({
     required this.text,
@@ -48,13 +48,8 @@ class SectionHeader extends StatelessWidget {
       body = Row(
         mainAxisAlignment: mainAxisAlignment,
         children: [
-          Icon(
-            icon,
-            size: iconSize,
-          ),
-          const SizedBox(
-            width: 12,
-          ),
+          Icon(icon, size: iconSize),
+          const SizedBox(width: 12),
           Flexible(child: body),
         ],
       );

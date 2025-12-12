@@ -31,10 +31,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
   bool get isDefaultStateFilter => statesFilter.isEmpty;
   bool get isDefaultStateCategoryFilter => stateCategoriesFilter.isEmpty;
 
-  late final filtersService = FiltersService(
-    storage: storage,
-    organization: api.organization,
-  );
+  late final filtersService = FiltersService(storage: storage, organization: api.organization);
 
   /// Read/write filters from local storage only if user is not coming from project page or from shortcut
   bool get shouldPersistFilters => args == null && !hasShortcut;

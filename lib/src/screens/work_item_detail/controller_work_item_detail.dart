@@ -88,9 +88,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
   }
 
   Future<List<_MentionGuidWithName>> _getIdentitiesFromGuids(Set<String> mentionsToReplace) async {
-    final res = await Future.wait([
-      for (final mention in mentionsToReplace) api.getIdentityFromGuid(guid: mention),
-    ]);
+    final res = await Future.wait([for (final mention in mentionsToReplace) api.getIdentityFromGuid(guid: mention)]);
 
     final identitites = res.where((r) => !r.isError && r.data != null).map((r) => r.data!);
     return identitites.map((i) => (guid: i.guid ?? '', name: i.displayName)).toList();
@@ -128,10 +126,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
       return OverlayService.error('Error', description: 'Work item not deleted');
     }
 
-    await showInterstitialAd(
-      ads,
-      onDismiss: () => OverlayService.snackbar('Work item successfully deleted'),
-    );
+    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Work item successfully deleted'));
 
     AppRouter.pop();
   }
@@ -205,11 +200,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
     final comment = await getTextFromEditor(editorController);
     if (comment == null) return;
 
-    final res = await api.addWorkItemComment(
-      projectName: args.project,
-      id: args.id,
-      text: comment,
-    );
+    final res = await api.addWorkItemComment(projectName: args.project, id: args.id, text: comment);
 
     logAnalytics('add_work_item_comment', {
       'work_item_type': itemDetail.value?.data?.item.fields.systemWorkItemType ?? 'unknown type',
@@ -294,10 +285,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
       return OverlayService.error('Error', description: 'Attachment not added');
     }
 
-    await showInterstitialAd(
-      ads,
-      onDismiss: () => OverlayService.snackbar('Attachment successfully added'),
-    );
+    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Attachment successfully added'));
 
     await init();
   }
@@ -309,9 +297,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
     if (fields.isEmpty) return false;
 
     final jsonFields = itemDetail.value!.data!.item.fields.jsonFields;
-    return fields.any(
-      (f) => jsonFields[f.referenceName] != null && jsonFields[f.referenceName]!.toString().isNotEmpty,
-    );
+    return fields.any((f) => jsonFields[f.referenceName] != null && jsonFields[f.referenceName]!.toString().isNotEmpty);
   }
 
   void openLinkedWorkItem(String id, Relation relation) {

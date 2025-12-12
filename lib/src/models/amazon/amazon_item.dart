@@ -14,20 +14,20 @@ class AmazonItem {
   });
 
   factory AmazonItem.fromJson(Map<String, dynamic> json) => AmazonItem(
-        id: json['id'] as String? ?? '',
-        itemUrl: json['itemUrl'] as String? ?? '',
-        title: json['title'] as String? ?? '',
-        imageUrl: json['imageUrl'] as String? ?? '',
-        isPrime: json['isPrime'] as bool? ?? false,
-        originalPrice: Price.fromJson(json['originalPrice'] as Map<String, dynamic>? ?? {}),
-        discount: json['discount'] == null ? null : Discount.fromJson(json['discount'] as Map<String, dynamic>? ?? {}),
-        discountedPrice: Price.fromJson(json['discountedPrice'] as Map<String, dynamic>? ?? {}),
-        currency: json['currency'] as String? ?? '',
-      );
+    id: json['id'] as String? ?? '',
+    itemUrl: json['itemUrl'] as String? ?? '',
+    title: json['title'] as String? ?? '',
+    imageUrl: json['imageUrl'] as String? ?? '',
+    isPrime: json['isPrime'] as bool? ?? false,
+    originalPrice: Price.fromJson(json['originalPrice'] as Map<String, dynamic>? ?? {}),
+    discount: json['discount'] == null ? null : Discount.fromJson(json['discount'] as Map<String, dynamic>? ?? {}),
+    discountedPrice: Price.fromJson(json['discountedPrice'] as Map<String, dynamic>? ?? {}),
+    currency: json['currency'] as String? ?? '',
+  );
 
   static List<AmazonItem> listFromJson(String str) => List<AmazonItem>.from(
-        (json.decode(str) as List<dynamic>? ?? []).map((x) => AmazonItem.fromJson(x as Map<String, dynamic>? ?? {})),
-      );
+    (json.decode(str) as List<dynamic>? ?? []).map((x) => AmazonItem.fromJson(x as Map<String, dynamic>? ?? {})),
+  );
 
   final String id;
   final String itemUrl;
@@ -53,15 +53,10 @@ class AmazonItem {
 }
 
 class Discount {
-  Discount({
-    required this.amount,
-    required this.percentage,
-  });
+  Discount({required this.amount, required this.percentage});
 
-  factory Discount.fromJson(Map<String, dynamic> json) => Discount(
-        amount: (json['amount'] as num?)?.toDouble() ?? 0,
-        percentage: json['percentage'] as int? ?? 0,
-      );
+  factory Discount.fromJson(Map<String, dynamic> json) =>
+      Discount(amount: (json['amount'] as num?)?.toDouble() ?? 0, percentage: json['percentage'] as int? ?? 0);
 
   final double amount;
   final int percentage;
@@ -70,9 +65,7 @@ class Discount {
 class Price {
   Price({required this.amount});
 
-  factory Price.fromJson(Map<String, dynamic> json) => Price(
-        amount: (json['amount'] as num?)?.toDouble() ?? 0,
-      );
+  factory Price.fromJson(Map<String, dynamic> json) => Price(amount: (json['amount'] as num?)?.toDouble() ?? 0);
 
   final double amount;
 }

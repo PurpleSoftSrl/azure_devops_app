@@ -38,26 +38,10 @@ class _TabsController {
 
   List<_TabPage> _getTabPages() {
     return <_TabPage>[
-      _TabPage(
-        pageName: AppRouter.home,
-        icon: DevOpsIcons.home,
-        key: GlobalKey<NavigatorState>(),
-      ),
-      _TabPage(
-        pageName: AppRouter.boards,
-        icon: DevOpsIcons.board,
-        key: GlobalKey<NavigatorState>(),
-      ),
-      _TabPage(
-        pageName: AppRouter.profile,
-        icon: DevOpsIcons.profile,
-        key: GlobalKey<NavigatorState>(),
-      ),
-      _TabPage(
-        pageName: AppRouter.settings,
-        icon: DevOpsIcons.settings,
-        key: GlobalKey<NavigatorState>(),
-      ),
+      _TabPage(pageName: AppRouter.home, icon: DevOpsIcons.home, key: GlobalKey<NavigatorState>()),
+      _TabPage(pageName: AppRouter.boards, icon: DevOpsIcons.board, key: GlobalKey<NavigatorState>()),
+      _TabPage(pageName: AppRouter.profile, icon: DevOpsIcons.profile, key: GlobalKey<NavigatorState>()),
+      _TabPage(pageName: AppRouter.settings, icon: DevOpsIcons.settings, key: GlobalKey<NavigatorState>()),
     ];
   }
 
@@ -86,11 +70,7 @@ class _TabsController {
 }
 
 class _TabPage {
-  _TabPage({
-    required this.pageName,
-    required this.icon,
-    required this.key,
-  });
+  _TabPage({required this.pageName, required this.icon, required this.key});
 
   final String pageName;
   final IconData icon;

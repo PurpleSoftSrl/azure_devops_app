@@ -9,26 +9,21 @@ import 'api_service_mock.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets(
-    'Page building test',
-    (t) async {
-      final app = AzureApiServiceWidget(
-        api: AzureApiServiceMock(),
-        child: MaterialApp(
-          theme: mockTheme,
-          onGenerateRoute: (_) => MaterialPageRoute(
-            builder: (_) => CommitDetailPage(),
-            settings: RouteSettings(
-              arguments: (commitId: '123456789', project: 'TestProject', repository: 'test_repo'),
-            ),
-          ),
+  testWidgets('Page building test', (t) async {
+    final app = AzureApiServiceWidget(
+      api: AzureApiServiceMock(),
+      child: MaterialApp(
+        theme: mockTheme,
+        onGenerateRoute: (_) => MaterialPageRoute(
+          builder: (_) => CommitDetailPage(),
+          settings: RouteSettings(arguments: (commitId: '123456789', project: 'TestProject', repository: 'test_repo')),
         ),
-      );
+      ),
+    );
 
-      await t.pumpWidget(app);
-      await t.pump();
+    await t.pumpWidget(app);
+    await t.pump();
 
-      expect(find.byType(CommitDetailPage), findsOneWidget);
-    },
-  );
+    expect(find.byType(CommitDetailPage), findsOneWidget);
+  });
 }

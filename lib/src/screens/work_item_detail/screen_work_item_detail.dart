@@ -24,39 +24,24 @@ class _WorkItemDetailScreen extends StatelessWidget {
                   : DevOpsPopupMenu(
                       tooltip: 'work item actions',
                       items: () => [
-                        PopupItem(
-                          onTap: ctrl.shareWorkItem,
-                          text: 'Share',
-                          icon: DevOpsIcons.share,
-                        ),
-                        PopupItem(
-                          onTap: ctrl.editWorkItem,
-                          text: 'Edit',
-                          icon: DevOpsIcons.edit,
-                        ),
-                        PopupItem(
-                          onTap: ctrl.addAttachment,
-                          text: 'Add attachment',
-                          icon: DevOpsIcons.link,
-                        ),
-                        if (!['Test Suite', 'Test Plan']
-                            .contains(ctrl.itemDetail.value?.data?.item.fields.systemWorkItemType))
-                          PopupItem(
-                            onTap: ctrl.deleteWorkItem,
-                            text: 'Delete',
-                            icon: DevOpsIcons.failed,
-                          ),
+                        PopupItem(onTap: ctrl.shareWorkItem, text: 'Share', icon: DevOpsIcons.share),
+                        PopupItem(onTap: ctrl.editWorkItem, text: 'Edit', icon: DevOpsIcons.edit),
+                        PopupItem(onTap: ctrl.addAttachment, text: 'Add attachment', icon: DevOpsIcons.link),
+                        if (![
+                          'Test Suite',
+                          'Test Plan',
+                        ].contains(ctrl.itemDetail.value?.data?.item.fields.systemWorkItemType))
+                          PopupItem(onTap: ctrl.deleteWorkItem, text: 'Delete', icon: DevOpsIcons.failed),
                       ],
                     ),
             ),
-            const SizedBox(
-              width: 8,
-            ),
+            const SizedBox(width: 8),
           ],
           builder: (detWithUpdates) {
             final detail = detWithUpdates!.item;
-            final wType = ctrl.api.workItemTypes[detail.fields.systemTeamProject]
-                ?.firstWhereOrNull((t) => t.name == detail.fields.systemWorkItemType);
+            final wType = ctrl.api.workItemTypes[detail.fields.systemTeamProject]?.firstWhereOrNull(
+              (t) => t.name == detail.fields.systemWorkItemType,
+            );
             final state = ctrl.api.workItemStates[detail.fields.systemTeamProject]?[detail.fields.systemWorkItemType]
                 ?.firstWhereOrNull((t) => t.name == detail.fields.systemState);
 
@@ -68,18 +53,12 @@ class _WorkItemDetailScreen extends StatelessWidget {
                   Row(
                     children: [
                       WorkItemTypeIcon(type: wType),
-                      const SizedBox(
-                        width: 20,
-                      ),
+                      const SizedBox(width: 20),
                       Text(detail.fields.systemWorkItemType),
-                      const SizedBox(
-                        width: 10,
-                      ),
+                      const SizedBox(width: 10),
                       Text(detail.id.toString()),
                       const Spacer(),
-                      const SizedBox(
-                        width: 10,
-                      ),
+                      const SizedBox(width: 10),
                       Text(
                         detail.fields.systemState,
                         style: context.textTheme.titleSmall!.copyWith(
@@ -88,9 +67,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   if (detail.fields.systemCreatedBy != null)
                     Row(
                       children: [
@@ -99,61 +76,27 @@ class _WorkItemDetailScreen extends StatelessWidget {
                           description: detail.fields.systemCreatedBy!.displayName!,
                         ),
                         if (ctrl.api.organization.isNotEmpty) ...[
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          MemberAvatar(
-                            userDescriptor: detail.fields.systemCreatedBy!.descriptor,
-                            radius: 30,
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
+                          const SizedBox(width: 10),
+                          MemberAvatar(userDescriptor: detail.fields.systemCreatedBy!.descriptor, radius: 30),
+                          const SizedBox(width: 10),
                         ],
                         const Spacer(),
                         Text(detail.fields.systemCreatedDate!.minutesAgo),
                       ],
                     ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  ProjectChip(
-                    onTap: ctrl.goToProject,
-                    projectName: detail.fields.systemTeamProject,
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  TextTitleDescription(
-                    title: 'Area:',
-                    description: detail.fields.systemAreaPath,
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  TextTitleDescription(
-                    title: 'Iteration:',
-                    description: detail.fields.systemIterationPath,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    'Title',
-                    style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                  ),
+                  const SizedBox(height: 20),
+                  ProjectChip(onTap: ctrl.goToProject, projectName: detail.fields.systemTeamProject),
+                  const SizedBox(height: 8),
+                  TextTitleDescription(title: 'Area:', description: detail.fields.systemAreaPath),
+                  const SizedBox(height: 8),
+                  TextTitleDescription(title: 'Iteration:', description: detail.fields.systemIterationPath),
+                  const SizedBox(height: 20),
+                  Text('Title', style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary)),
                   SelectableText(detail.fields.systemTitle),
                   if (detail.fields.systemTags != null) ...[
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      'Tags',
-                      style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
+                    const SizedBox(height: 20),
+                    Text('Tags', style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary)),
+                    const SizedBox(height: 5),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -165,25 +108,18 @@ class _WorkItemDetailScreen extends StatelessWidget {
                               color: context.colorScheme.secondaryContainer,
                               borderRadius: BorderRadius.circular(100),
                             ),
-                            child: Text(
-                              tag.trim(),
-                              style: context.textTheme.titleSmall!.copyWith(height: 1),
-                            ),
+                            child: Text(tag.trim(), style: context.textTheme.titleSmall!.copyWith(height: 1)),
                           ),
                       ],
                     ),
                   ],
                   if (detail.workItemLinks.isNotEmpty) ...[
-                    const SizedBox(
-                      height: 20,
-                    ),
+                    const SizedBox(height: 20),
                     Text(
                       'Links',
                       style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                     ),
-                    const SizedBox(
-                      height: 5,
-                    ),
+                    const SizedBox(height: 5),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
@@ -208,22 +144,12 @@ class _WorkItemDetailScreen extends StatelessWidget {
                                         style: context.textTheme.titleSmall!.copyWith(height: 1),
                                       ),
                                       if (hasComment) ...[
-                                        const SizedBox(
-                                          width: 8,
-                                        ),
+                                        const SizedBox(width: 8),
                                         DevOpsPopupMenu(
                                           tooltip: link.toReadableString(),
-                                          items: () => [
-                                            PopupItem(
-                                              text: link.attributes?.comment ?? '',
-                                              onTap: () {},
-                                            ),
-                                          ],
+                                          items: () => [PopupItem(text: link.attributes?.comment ?? '', onTap: () {})],
                                           offset: Offset(0, 20),
-                                          child: Icon(
-                                            Icons.forum_outlined,
-                                            size: 16,
-                                          ),
+                                          child: Icon(Icons.forum_outlined, size: 16),
                                         ),
                                       ],
                                     ],
@@ -236,22 +162,15 @@ class _WorkItemDetailScreen extends StatelessWidget {
                     ),
                   ],
                   if (detail.fields.systemAssignedTo != null) ...[
-                    const SizedBox(
-                      height: 20,
-                    ),
+                    const SizedBox(height: 20),
                     Row(
                       children: [
                         TextTitleDescription(
                           title: 'Assigned to:',
                           description: detail.fields.systemAssignedTo!.displayName!,
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        MemberAvatar(
-                          userDescriptor: detail.fields.systemAssignedTo!.descriptor,
-                          radius: 30,
-                        ),
+                        const SizedBox(width: 20),
+                        MemberAvatar(userDescriptor: detail.fields.systemAssignedTo!.descriptor, radius: 30),
                       ],
                     ),
                   ],
@@ -295,34 +214,22 @@ class _WorkItemDetailScreen extends StatelessWidget {
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const SizedBox(
-                                    height: 4,
-                                  ),
+                                  const SizedBox(height: 4),
                                   if (shouldShowFieldName)
                                     Text(
                                       field.name,
-                                      style: context.textTheme.titleSmall!
-                                          .copyWith(color: context.colorScheme.onSecondary),
+                                      style: context.textTheme.titleSmall!.copyWith(
+                                        color: context.colorScheme.onSecondary,
+                                      ),
                                     ),
                                   if (field.type == 'html')
-                                    HtmlWidget(
-                                      data: textToShow.toString(),
-                                      style: context.textTheme.titleSmall,
-                                    )
+                                    HtmlWidget(data: textToShow.toString(), style: context.textTheme.titleSmall)
                                   else if (field.isIdentity && userField != null)
                                     Row(
                                       children: [
-                                        Text(
-                                          userField.displayName ?? '-',
-                                          style: context.textTheme.titleSmall,
-                                        ),
-                                        const SizedBox(
-                                          width: 8,
-                                        ),
-                                        MemberAvatar(
-                                          userDescriptor: userField.descriptor,
-                                          radius: 20,
-                                        ),
+                                        Text(userField.displayName ?? '-', style: context.textTheme.titleSmall),
+                                        const SizedBox(width: 8),
+                                        MemberAvatar(userDescriptor: userField.descriptor, radius: 20),
                                       ],
                                     )
                                   else
@@ -333,23 +240,17 @@ class _WorkItemDetailScreen extends StatelessWidget {
                           ),
                       ],
                     ),
-                  const SizedBox(
-                    height: 40,
-                  ),
+                  const SizedBox(height: 40),
                   TextTitleDescription(
                     title: 'Created at:',
                     description: detail.fields.systemCreatedDate!.toSimpleDate(),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   TextTitleDescription(
                     title: 'Change date:',
                     description: detail.fields.systemChangedDate.toSimpleDate(),
                   ),
-                  const SizedBox(
-                    height: 40,
-                  ),
+                  const SizedBox(height: 40),
                   Column(
                     children: [
                       Row(
@@ -365,9 +266,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 5,
-                      ),
+                      const SizedBox(height: 5),
                       VisibilityDetector(
                         key: ctrl.historyKey,
                         onVisibilityChanged: ctrl.onHistoryVisibilityChanged,
@@ -375,18 +274,13 @@ class _WorkItemDetailScreen extends StatelessWidget {
                           valueListenable: ctrl.showUpdatesReversed,
                           builder: (_, showUpdatesReversed, _) {
                             final updates = showUpdatesReversed ? ctrl.updates.reversed.toList() : ctrl.updates;
-                            return _History(
-                              updates: updates,
-                              ctrl: ctrl,
-                            );
+                            return _History(updates: updates, ctrl: ctrl);
                           },
                         ),
                       ),
                       ValueListenableBuilder(
                         valueListenable: ctrl.showCommentField,
-                        builder: (_, value, _) => SizedBox(
-                          height: value ? 100 : 0,
-                        ),
+                        builder: (_, value, _) => SizedBox(height: value ? 100 : 0),
                       ),
                     ],
                   ),
@@ -395,10 +289,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
             );
           },
         ),
-        AddCommentField(
-          isVisible: ctrl.showCommentField,
-          onTap: ctrl.addComment,
-        ),
+        AddCommentField(isVisible: ctrl.showCommentField, onTap: ctrl.addComment),
       ],
     );
   }

@@ -23,10 +23,7 @@ class _AppBasePageState<T> extends State<AppBasePage<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return AppLayoutBuilder(
-      smartphone: widget.smartphone(_ctrl),
-      tablet: widget.tablet(_ctrl),
-    );
+    return AppLayoutBuilder(smartphone: widget.smartphone(_ctrl), tablet: widget.tablet(_ctrl));
   }
 }
 

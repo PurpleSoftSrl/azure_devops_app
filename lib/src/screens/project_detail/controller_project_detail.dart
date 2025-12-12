@@ -20,12 +20,7 @@ class _ProjectDetailController with ApiErrorHelper {
       .reversed;
 
   Future<void> init() async {
-    final allRes = await Future.wait<ApiResponse>([
-      _getLangs(),
-      _getTeams(),
-      _getRepos(),
-      _getQueries(),
-    ]);
+    final allRes = await Future.wait<ApiResponse>([_getLangs(), _getTeams(), _getRepos(), _getQueries()]);
 
     final projectRes = await api.getProject(projectName: projectName);
 
@@ -46,15 +41,11 @@ class _ProjectDetailController with ApiErrorHelper {
       return;
     }
 
-    AppRouter.goToRepositoryDetail(
-      RepoDetailArgs(projectName: projectName, repositoryName: repo.name!),
-    );
+    AppRouter.goToRepositoryDetail(RepoDetailArgs(projectName: projectName, repositoryName: repo.name!));
   }
 
   void goToSavedQueryDetail(SavedQuery query) {
-    AppRouter.goToSavedQueries(
-      args: (project: projectName, path: query.path, queryId: query.id),
-    );
+    AppRouter.goToSavedQueries(args: (project: projectName, path: query.path, queryId: query.id));
   }
 
   void goToBoards() {

@@ -9,10 +9,10 @@ class AreasAndIterationsResponse {
       AreasAndIterationsResponse._fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
   factory AreasAndIterationsResponse._fromJson(Map<String, dynamic> json) => AreasAndIterationsResponse(
-        areasAndIterations: List<AreaOrIteration>.from(
-          (json['value'] as List<dynamic>).map((v) => AreaOrIteration.fromJson(v as Map<String, dynamic>)),
-        ),
-      );
+    areasAndIterations: List<AreaOrIteration>.from(
+      (json['value'] as List<dynamic>).map((v) => AreaOrIteration.fromJson(v as Map<String, dynamic>)),
+    ),
+  );
 
   final List<AreaOrIteration> areasAndIterations;
 }
@@ -29,37 +29,24 @@ class AreaOrIteration {
   });
 
   factory AreaOrIteration.fromJson(Map<String, dynamic> json) => AreaOrIteration(
-        id: json['id'] as int,
-        name: json['name'] as String,
-        structureType: json['structureType'] as String,
-        hasChildren: json['hasChildren'] as bool,
-        children: json['children'] == null
-            ? []
-            : (json['children'] as List<dynamic>)
-                .map((c) => AreaOrIteration.fromJson(c as Map<String, dynamic>))
-                .toList(),
-        path: json['path'] as String,
-        attributes:
-            json['attributes'] == null ? null : _Attributes.fromJson(json['attributes'] as Map<String, dynamic>),
-      );
+    id: json['id'] as int,
+    name: json['name'] as String,
+    structureType: json['structureType'] as String,
+    hasChildren: json['hasChildren'] as bool,
+    children: json['children'] == null
+        ? []
+        : (json['children'] as List<dynamic>).map((c) => AreaOrIteration.fromJson(c as Map<String, dynamic>)).toList(),
+    path: json['path'] as String,
+    attributes: json['attributes'] == null ? null : _Attributes.fromJson(json['attributes'] as Map<String, dynamic>),
+  );
 
   /// Used to reset area filter
-  factory AreaOrIteration.all() => AreaOrIteration(
-        id: -1,
-        name: 'All',
-        structureType: '',
-        hasChildren: false,
-        path: 'All',
-      );
+  factory AreaOrIteration.all() =>
+      AreaOrIteration(id: -1, name: 'All', structureType: '', hasChildren: false, path: 'All');
 
   /// Used to create/edit work item
-  factory AreaOrIteration.onlyPath({required String path}) => AreaOrIteration(
-        id: -1,
-        name: path,
-        structureType: '',
-        hasChildren: false,
-        path: path,
-      );
+  factory AreaOrIteration.onlyPath({required String path}) =>
+      AreaOrIteration(id: -1, name: path, structureType: '', hasChildren: false, path: path);
 
   final int id;
   final String name;
@@ -76,15 +63,12 @@ class AreaOrIteration {
 }
 
 class _Attributes {
-  _Attributes({
-    required this.startDate,
-    required this.finishDate,
-  });
+  _Attributes({required this.startDate, required this.finishDate});
 
   factory _Attributes.fromJson(Map<String, dynamic> json) => _Attributes(
-        startDate: DateTime.parse(json['startDate']!.toString()).toLocal(),
-        finishDate: DateTime.parse(json['finishDate']!.toString()).toLocal(),
-      );
+    startDate: DateTime.parse(json['startDate']!.toString()).toLocal(),
+    finishDate: DateTime.parse(json['finishDate']!.toString()).toLocal(),
+  );
 
   final DateTime startDate;
   final DateTime finishDate;

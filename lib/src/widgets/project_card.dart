@@ -6,11 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ProjectCard extends StatelessWidget {
-  const ProjectCard({
-    required this.height,
-    required this.project,
-    required this.onTap,
-  });
+  const ProjectCard({required this.height, required this.project, required this.onTap});
 
   final double? height;
   final Project project;
@@ -31,11 +27,7 @@ class ProjectCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(100),
               child: api.isImageUnauthorized
-                  ? SizedBox(
-                      height: 30,
-                      width: 30,
-                      child: Icon(DevOpsIcons.project),
-                    )
+                  ? SizedBox(height: 30, width: 30, child: Icon(DevOpsIcons.project))
                   : CachedNetworkImage(
                       imageUrl: project.defaultTeamImageUrl!,
                       httpHeaders: api.headers,
@@ -44,9 +36,7 @@ class ProjectCard extends StatelessWidget {
                       height: 30,
                     ),
             ),
-            const SizedBox(
-              width: 15,
-            ),
+            const SizedBox(width: 15),
             Expanded(child: Text(project.name!)),
             Icon(Icons.arrow_forward_ios),
           ],

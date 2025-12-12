@@ -13,62 +13,50 @@ void main() {
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets(
-    'Page building test',
-    (t) async {
-      final app = MaterialApp(
-        theme: mockTheme,
-        home: StorageServiceWidget(
-          storage: StorageServiceMock(),
-          child: AdsServiceWidget(
-            ads: AdsServiceMock(),
-            child: AzureApiServiceWidget(
-              api: AzureApiServiceMock(),
-              child: PipelinesPage(),
-            ),
-          ),
+  testWidgets('Page building test', (t) async {
+    final app = MaterialApp(
+      theme: mockTheme,
+      home: StorageServiceWidget(
+        storage: StorageServiceMock(),
+        child: AdsServiceWidget(
+          ads: AdsServiceMock(),
+          child: AzureApiServiceWidget(api: AzureApiServiceMock(), child: PipelinesPage()),
         ),
-      );
+      ),
+    );
 
-      await t.pumpWidget(app);
+    await t.pumpWidget(app);
 
-      await t.pump();
+    await t.pump();
 
-      expect(find.byType(PipelinesPage), findsOneWidget);
-    },
-  );
+    expect(find.byType(PipelinesPage), findsOneWidget);
+  });
 
-  testWidgets(
-    'Pipelines are sorted by status',
-    (t) async {
-      final pipelinesPage = MaterialApp(
-        theme: mockTheme,
-        home: StorageServiceWidget(
-          storage: StorageServiceMock(),
-          child: AdsServiceWidget(
-            ads: AdsServiceMock(),
-            child: AzureApiServiceWidget(
-              api: AzureApiServiceMock(),
-              child: PipelinesPage(),
-            ),
-          ),
+  testWidgets('Pipelines are sorted by status', (t) async {
+    final pipelinesPage = MaterialApp(
+      theme: mockTheme,
+      home: StorageServiceWidget(
+        storage: StorageServiceMock(),
+        child: AdsServiceWidget(
+          ads: AdsServiceMock(),
+          child: AzureApiServiceWidget(api: AzureApiServiceMock(), child: PipelinesPage()),
         ),
-      );
+      ),
+    );
 
-      await t.pumpWidget(pipelinesPage);
+    await t.pumpWidget(pipelinesPage);
 
-      await t.pump();
+    await t.pump();
 
-      final tiles = find.textContaining('Test User');
+    final tiles = find.textContaining('Test User');
 
-      // running pipeline
-      expect((t.widget(tiles.at(0)) as Text).data, 'Test User 2');
+    // running pipeline
+    expect((t.widget(tiles.at(0)) as Text).data, 'Test User 2');
 
-      // queued pipeline
-      expect((t.widget(tiles.at(1)) as Text).data, 'Test User 3');
+    // queued pipeline
+    expect((t.widget(tiles.at(1)) as Text).data, 'Test User 3');
 
-      // completed pipeline
-      expect((t.widget(tiles.at(2)) as Text).data, 'Test User 1');
-    },
-  );
+    // completed pipeline
+    expect((t.widget(tiles.at(2)) as Text).data, 'Test User 1');
+  });
 }

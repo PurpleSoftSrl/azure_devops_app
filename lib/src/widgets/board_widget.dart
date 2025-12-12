@@ -42,10 +42,7 @@ class BoardWidget extends StatelessWidget {
             labelPadding: EdgeInsets.symmetric(horizontal: 48),
             indicatorPadding: EdgeInsets.fromLTRB(10, 45, 10, 0),
             tabAlignment: TabAlignment.start,
-            indicator: BoxDecoration(
-              color: context.colorScheme.primary,
-              borderRadius: BorderRadius.circular(5),
-            ),
+            indicator: BoxDecoration(color: context.colorScheme.primary, borderRadius: BorderRadius.circular(5)),
             indicatorSize: TabBarIndicatorSize.tab,
             tabs: columnItems.keys.map((c) {
               final columnItemCount = columnItems[c]!.length;
@@ -61,33 +58,31 @@ class BoardWidget extends StatelessWidget {
           ),
           Expanded(
             child: TabBarView(
-              children: columnItems.entries.map(
-                (col) {
-                  final columnName = col.key.name;
-                  final columnItems = col.value;
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: switch (columnItems) {
-                          [] => Center(child: Text('No $columnName items')),
-                          _ => ListView(
-                              padding: const EdgeInsets.fromLTRB(16, 16, 16, 200),
-                              children: columnItems
-                                  .map(
-                                    (i) => _WorkItemCard(
-                                      item: i,
-                                      onTap: onTapItem,
-                                      actions: actions != null ? () => actions!(i) : null,
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                        },
-                      ),
-                    ],
-                  );
-                },
-              ).toList(),
+              children: columnItems.entries.map((col) {
+                final columnName = col.key.name;
+                final columnItems = col.value;
+                return Column(
+                  children: [
+                    Expanded(
+                      child: switch (columnItems) {
+                        [] => Center(child: Text('No $columnName items')),
+                        _ => ListView(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 200),
+                          children: columnItems
+                              .map(
+                                (i) => _WorkItemCard(
+                                  item: i,
+                                  onTap: onTapItem,
+                                  actions: actions != null ? () => actions!(i) : null,
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      },
+                    ),
+                  ],
+                );
+              }).toList(),
             ),
           ),
         ],
@@ -106,8 +101,9 @@ class _WorkItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtitleStyle = context.textTheme.bodySmall!;
-    final wt = context.api.workItemTypes[item.fields.systemTeamProject]
-        ?.firstWhereOrNull((t) => t.name == item.fields.systemWorkItemType);
+    final wt = context.api.workItemTypes[item.fields.systemTeamProject]?.firstWhereOrNull(
+      (t) => t.name == item.fields.systemWorkItemType,
+    );
 
     final hasAssignee = item.fields.systemAssignedTo?.descriptor != null;
     final hasComments = (item.fields.systemCommentCount ?? 0) > 0;
@@ -138,22 +134,12 @@ class _WorkItemCard extends StatelessWidget {
           children: [
             Column(
               children: [
-                Text(
-                  '${item.id}',
-                  style: context.textTheme.bodyMedium,
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                WorkItemTypeIcon(
-                  type: wt,
-                  size: 24,
-                ),
+                Text('${item.id}', style: context.textTheme.bodyMedium),
+                const SizedBox(height: 16),
+                WorkItemTypeIcon(type: wt, size: 24),
               ],
             ),
-            const SizedBox(
-              width: 16,
-            ),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,25 +151,18 @@ class _WorkItemCard extends StatelessWidget {
                     style: context.textTheme.labelLarge,
                     textAlign: TextAlign.start,
                   ),
-                  const SizedBox(
-                    height: 8,
-                  ),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       if (hasAssignee) ...[
-                        MemberAvatar(
-                          userDescriptor: item.fields.systemAssignedTo?.descriptor,
-                          radius: 18,
-                        ),
+                        MemberAvatar(userDescriptor: item.fields.systemAssignedTo?.descriptor, radius: 18),
                         const SizedBox(width: 6),
                         Text(
                           item.fields.systemAssignedTo!.displayName!,
                           style: context.textTheme.labelSmall!.copyWith(height: 1),
                         ),
                       ],
-                      const SizedBox(
-                        width: 16,
-                      ),
+                      const SizedBox(width: 16),
                       if (hasComments) ...[
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -195,10 +174,7 @@ class _WorkItemCard extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Icon(
-                                DevOpsIcons.comments,
-                                size: 14,
-                              ),
+                              Icon(DevOpsIcons.comments, size: 14),
                               const SizedBox(width: 2),
                               Text(
                                 item.fields.systemCommentCount!.toString(),
@@ -210,9 +186,7 @@ class _WorkItemCard extends StatelessWidget {
                       ],
                     ],
                   ),
-                  const SizedBox(
-                    height: 8,
-                  ),
+                  const SizedBox(height: 8),
                   if (hasTags) ...[
                     Wrap(
                       spacing: 8,
@@ -227,8 +201,10 @@ class _WorkItemCard extends StatelessWidget {
                             ),
                             child: Text(
                               tag.trim(),
-                              style: context.textTheme.labelSmall!
-                                  .copyWith(height: 1, color: context.colorScheme.onSecondary),
+                              style: context.textTheme.labelSmall!.copyWith(
+                                height: 1,
+                                color: context.colorScheme.onSecondary,
+                              ),
                             ),
                           ),
                       ],
@@ -237,33 +213,18 @@ class _WorkItemCard extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(
-              width: 16,
-            ),
+            const SizedBox(width: 16),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 if (actions != null) ...[
                   const SizedBox(width: 8),
-                  DevOpsPopupMenu(
-                    tooltip: 'Work item board actions',
-                    items: actions!,
-                  ),
+                  DevOpsPopupMenu(tooltip: 'Work item board actions', items: actions!),
                 ],
-                const SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  item.fields.systemChangedDate.minutesAgo,
-                  style: subtitleStyle,
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Text(
-                  item.fields.systemState,
-                  style: subtitleStyle.copyWith(color: context.colorScheme.onSecondary),
-                ),
+                const SizedBox(height: 4),
+                Text(item.fields.systemChangedDate.minutesAgo, style: subtitleStyle),
+                const SizedBox(height: 16),
+                Text(item.fields.systemState, style: subtitleStyle.copyWith(color: context.colorScheme.onSecondary)),
               ],
             ),
           ],

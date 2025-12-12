@@ -3,18 +3,16 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 class WorkItemTagsResponse {
-  WorkItemTagsResponse({
-    required this.tags,
-  });
+  WorkItemTagsResponse({required this.tags});
 
   factory WorkItemTagsResponse.fromResponse(Response res) =>
       WorkItemTagsResponse.fromJson(json.decode(res.body) as Map<String, dynamic>);
 
   factory WorkItemTagsResponse.fromJson(Map<String, dynamic> json) => WorkItemTagsResponse(
-        tags: List<WorkItemTag>.from(
-          (json['value'] as List<dynamic>).map((x) => WorkItemTag.fromJson(x as Map<String, dynamic>)),
-        ),
-      );
+    tags: List<WorkItemTag>.from(
+      (json['value'] as List<dynamic>).map((x) => WorkItemTag.fromJson(x as Map<String, dynamic>)),
+    ),
+  );
 
   final List<WorkItemTag> tags;
 }

@@ -63,10 +63,7 @@ class DevOpsFormField extends StatelessWidget {
       onTap: onTap,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         hintText: hint,
         hintStyle: context.textTheme.labelLarge!.copyWith(color: context.colorScheme.onSurface.withValues(alpha: .4)),
@@ -82,13 +79,8 @@ class DevOpsFormField extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            label!,
-            style: context.textTheme.labelSmall!.copyWith(height: 1, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
+          Text(label!, style: context.textTheme.labelSmall!.copyWith(height: 1, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
           child,
         ],
       );

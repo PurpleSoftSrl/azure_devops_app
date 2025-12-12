@@ -16,9 +16,7 @@ void main() {
         theme: mockTheme,
         onGenerateRoute: (_) => MaterialPageRoute(
           builder: (_) => MemberDetailPage(),
-          settings: RouteSettings(
-            arguments: '',
-          ),
+          settings: RouteSettings(arguments: ''),
         ),
       ),
     );

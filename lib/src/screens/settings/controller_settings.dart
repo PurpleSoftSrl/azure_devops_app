@@ -30,10 +30,7 @@ class _SettingsController with ShareMixin, AppLogger {
   }
 
   Future<void> logout() async {
-    final confirm = await OverlayService.confirm(
-      'Attention',
-      description: 'Do you really want to logout?',
-    );
+    final confirm = await OverlayService.confirm('Attention', description: 'Do you really want to logout?');
     if (!confirm) return;
 
     await api.logout();
@@ -81,10 +78,8 @@ class _SettingsController with ShareMixin, AppLogger {
       title: 'Switch directory',
       isScrollControlled: true,
       heightPercentage: .6,
-      builder: (context) => _SwitchDirectoryWidget(
-        directories: directories.value?.data ?? [],
-        onSwitch: _switchOrganization,
-      ),
+      builder: (context) =>
+          _SwitchDirectoryWidget(directories: directories.value?.data ?? [], onSwitch: _switchOrganization),
     );
   }
 

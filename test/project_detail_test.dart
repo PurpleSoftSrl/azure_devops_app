@@ -16,9 +16,7 @@ void main() {
         theme: mockTheme,
         onGenerateRoute: (_) => MaterialPageRoute(
           builder: (_) => ProjectDetailPage(),
-          settings: RouteSettings(
-            arguments: 'test name',
-          ),
+          settings: RouteSettings(arguments: 'test name'),
         ),
       ),
     );

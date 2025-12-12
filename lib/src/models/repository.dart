@@ -93,10 +93,7 @@ class GitRepository {
     return null;
   }
 
-  static List<GitRepository>? listFromJson(
-    dynamic json, {
-    bool growable = false,
-  }) {
+  static List<GitRepository>? listFromJson(dynamic json, {bool growable = false}) {
     final result = <GitRepository>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -111,14 +108,7 @@ class GitRepository {
 }
 
 class _GitRepositoryRef {
-  _GitRepositoryRef({
-    this.id,
-    this.isFork,
-    this.name,
-    this.project,
-    this.remoteUrl,
-    this.url,
-  });
+  _GitRepositoryRef({this.id, this.isFork, this.name, this.project, this.remoteUrl, this.url});
 
   String? id;
   bool? isFork;
@@ -230,8 +220,9 @@ class TeamProjectReference {
         defaultTeamImageUrl: json['defaultTeamImageUrl'] as String?,
         description: json['description'] as String?,
         id: json['id'] as String,
-        lastUpdateTime:
-            json['lastUpdateTime'] == null ? null : DateTime.parse(json['lastUpdateTime'].toString()).toLocal(),
+        lastUpdateTime: json['lastUpdateTime'] == null
+            ? null
+            : DateTime.parse(json['lastUpdateTime'].toString()).toLocal(),
         name: json['name'] as String,
         revision: json['revision'] as int?,
         url: json['url'] as String?,

@@ -16,12 +16,7 @@ class GetProjectsResponse {
 }
 
 class ProjectDetail {
-  ProjectDetail({
-    required this.project,
-    this.gitmetrics,
-    this.workMetrics,
-    this.pipelinesMetrics,
-  });
+  ProjectDetail({required this.project, this.gitmetrics, this.workMetrics, this.pipelinesMetrics});
 
   final Project project;
   final Gitmetrics? gitmetrics;
@@ -46,19 +41,19 @@ class Project {
   factory Project.all() => Project(name: 'All');
 
   factory Project.fromJson(Map<String, dynamic> json) => Project(
-        id: json['id'] as String?,
-        name: json['name'] as String?,
-        description: json['description'] as String?,
-        url: json['url'] as String?,
-        state: json['state'] as String?,
-        revision: json['revision'] as int?,
-        visibility: json['visibility'] as String?,
-        lastUpdateTime:
-            json['lastUpdateTime'] == null ? null : DateTime.parse(json['lastUpdateTime'].toString()).toLocal(),
-        defaultTeamImageUrl: json['defaultTeamImageUrl'] as String?,
-        defaultTeam:
-            json['defaultTeam'] == null ? null : _DefaultTeam.fromJson(json['defaultTeam'] as Map<String, dynamic>),
-      );
+    id: json['id'] as String?,
+    name: json['name'] as String?,
+    description: json['description'] as String?,
+    url: json['url'] as String?,
+    state: json['state'] as String?,
+    revision: json['revision'] as int?,
+    visibility: json['visibility'] as String?,
+    lastUpdateTime: json['lastUpdateTime'] == null ? null : DateTime.parse(json['lastUpdateTime'].toString()).toLocal(),
+    defaultTeamImageUrl: json['defaultTeamImageUrl'] as String?,
+    defaultTeam: json['defaultTeam'] == null
+        ? null
+        : _DefaultTeam.fromJson(json['defaultTeam'] as Map<String, dynamic>),
+  );
 
   final String? id;
   final String? name;
@@ -84,10 +79,7 @@ class Project {
     );
   }
 
-  static List<Project>? listFromJson(
-    dynamic json, {
-    bool growable = false,
-  }) {
+  static List<Project>? listFromJson(dynamic json, {bool growable = false}) {
     final result = <Project>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -99,17 +91,17 @@ class Project {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'description': description,
-        'url': url,
-        'state': state,
-        'revision': revision,
-        'visibility': visibility,
-        'lastUpdateTime': lastUpdateTime?.toIso8601String(),
-        'defaultTeam': defaultTeam?.toJson(),
-        'defaultTeamImageUrl': defaultTeamImageUrl,
-      };
+    'id': id,
+    'name': name,
+    'description': description,
+    'url': url,
+    'state': state,
+    'revision': revision,
+    'visibility': visibility,
+    'lastUpdateTime': lastUpdateTime?.toIso8601String(),
+    'defaultTeam': defaultTeam?.toJson(),
+    'defaultTeamImageUrl': defaultTeamImageUrl,
+  };
 
   @override
   bool operator ==(Object other) {
@@ -130,11 +122,7 @@ class Project {
 }
 
 class _DefaultTeam {
-  _DefaultTeam({
-    required this.id,
-    required this.name,
-    required this.url,
-  });
+  _DefaultTeam({required this.id, required this.name, required this.url});
 
   factory _DefaultTeam.fromJson(Map<String, dynamic> source) => _DefaultTeam.fromMap(source);
 
@@ -151,11 +139,7 @@ class _DefaultTeam {
   final String url;
 
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'url': url,
-    };
+    return {'id': id, 'name': name, 'url': url};
   }
 
   String toJson() => json.encode(toMap());
@@ -180,18 +164,14 @@ class CommitsAndWorkItems {
   factory CommitsAndWorkItems.fromResponse(Response res) =>
       CommitsAndWorkItems.fromJson(json.decode(res.body) as Map<String, dynamic>);
 
-  factory CommitsAndWorkItems.fromJson(Map<String, dynamic> json) => CommitsAndWorkItems(
-        dataProviders: _DataProviders.fromJson(json['dataProviders'] as Map<String, dynamic>),
-      );
+  factory CommitsAndWorkItems.fromJson(Map<String, dynamic> json) =>
+      CommitsAndWorkItems(dataProviders: _DataProviders.fromJson(json['dataProviders'] as Map<String, dynamic>));
 
   final _DataProviders dataProviders;
 }
 
 class _DataProviders {
-  _DataProviders({
-    required this.workItemsSummary,
-    required this.commitsSummary,
-  });
+  _DataProviders({required this.workItemsSummary, required this.commitsSummary});
 
   factory _DataProviders.fromJson(Map<String, dynamic> json) {
     final workItems = json['ms.vss-work-web.work-item-metrics-data-provider-verticals'];
@@ -210,8 +190,8 @@ class _CommitsSummary {
   _CommitsSummary({this.gitmetrics});
 
   factory _CommitsSummary.fromJson(Map<String, dynamic> json) => _CommitsSummary(
-        gitmetrics: json['gitmetrics'] == null ? null : Gitmetrics.fromJson(json['gitmetrics'] as Map<String, dynamic>),
-      );
+    gitmetrics: json['gitmetrics'] == null ? null : Gitmetrics.fromJson(json['gitmetrics'] as Map<String, dynamic>),
+  );
 
   final Gitmetrics? gitmetrics;
 }
@@ -225,11 +205,11 @@ class Gitmetrics {
   });
 
   factory Gitmetrics.fromJson(Map<String, dynamic> json) => Gitmetrics(
-        commitsPushedCount: json['commitsPushedCount'] as int? ?? 0,
-        pullRequestsCreatedCount: json['pullRequestsCreatedCount'] as int? ?? 0,
-        pullRequestsCompletedCount: json['pullRequestsCompletedCount'] as int? ?? 0,
-        authorsCount: json['authorsCount'] as int? ?? 0,
-      );
+    commitsPushedCount: json['commitsPushedCount'] as int? ?? 0,
+    pullRequestsCreatedCount: json['pullRequestsCreatedCount'] as int? ?? 0,
+    pullRequestsCompletedCount: json['pullRequestsCompletedCount'] as int? ?? 0,
+    authorsCount: json['authorsCount'] as int? ?? 0,
+  );
 
   final int commitsPushedCount;
   final int pullRequestsCreatedCount;
@@ -241,23 +221,19 @@ class _WorkItemsSummary {
   _WorkItemsSummary({this.workMetrics});
 
   factory _WorkItemsSummary.fromJson(Map<String, dynamic> json) => _WorkItemsSummary(
-        workMetrics:
-            json['workMetrics'] == null ? null : WorkMetrics.fromJson(json['workMetrics'] as Map<String, dynamic>),
-      );
+    workMetrics: json['workMetrics'] == null ? null : WorkMetrics.fromJson(json['workMetrics'] as Map<String, dynamic>),
+  );
 
   final WorkMetrics? workMetrics;
 }
 
 class WorkMetrics {
-  WorkMetrics({
-    required this.workItemsCreated,
-    required this.workItemsCompleted,
-  });
+  WorkMetrics({required this.workItemsCreated, required this.workItemsCompleted});
 
   factory WorkMetrics.fromJson(Map<String, dynamic> json) => WorkMetrics(
-        workItemsCreated: json['workItemsCreated'] as int? ?? 0,
-        workItemsCompleted: json['workItemsCompleted'] as int? ?? 0,
-      );
+    workItemsCreated: json['workItemsCreated'] as int? ?? 0,
+    workItemsCompleted: json['workItemsCompleted'] as int? ?? 0,
+  );
 
   final int workItemsCreated;
   final int workItemsCompleted;
@@ -270,26 +246,22 @@ class PipelinesSummary {
       PipelinesSummary.fromJson(json.decode(res.body) as Map<String, dynamic>);
 
   factory PipelinesSummary.fromJson(Map<String, dynamic> json) => PipelinesSummary(
-        metrics: List<_Metric>.from(
-          (json['value'] as List<dynamic>).map((p) => _Metric.fromJson(p as Map<String, dynamic>)),
-        ),
-      );
+    metrics: List<_Metric>.from(
+      (json['value'] as List<dynamic>).map((p) => _Metric.fromJson(p as Map<String, dynamic>)),
+    ),
+  );
 
   final List<_Metric> metrics;
 }
 
 class _Metric {
-  _Metric({
-    required this.name,
-    required this.intValue,
-    this.date,
-  });
+  _Metric({required this.name, required this.intValue, this.date});
 
   factory _Metric.fromJson(Map<String, dynamic> json) => _Metric(
-        name: json['name'] as String,
-        intValue: json['intValue'] as int? ?? 0,
-        date: json['date'] == null ? null : DateTime.parse(json['date']!.toString()),
-      );
+    name: json['name'] as String,
+    intValue: json['intValue'] as int? ?? 0,
+    date: json['date'] == null ? null : DateTime.parse(json['date']!.toString()),
+  );
 
   final String name;
   final int intValue;

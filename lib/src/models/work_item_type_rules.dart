@@ -9,32 +9,25 @@ class WorkItemTypeRulesResponse {
       WorkItemTypeRulesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
   factory WorkItemTypeRulesResponse.fromJson(Map<String, dynamic> json) => WorkItemTypeRulesResponse(
-        rules: List<Rule>.from(
-          (json['value'] as List<dynamic>).map((v) => Rule.fromJson(v as Map<String, dynamic>)),
-        ),
-      );
+    rules: List<Rule>.from((json['value'] as List<dynamic>).map((v) => Rule.fromJson(v as Map<String, dynamic>))),
+  );
 
   final List<Rule> rules;
 }
 
 class Rule {
-  Rule({
-    required this.id,
-    required this.conditions,
-    required this.actions,
-    required this.isDisabled,
-  });
+  Rule({required this.id, required this.conditions, required this.actions, required this.isDisabled});
 
   factory Rule.fromJson(Map<String, dynamic> json) => Rule(
-        id: json['id'] as String,
-        conditions: List<Condition>.from(
-          (json['conditions'] as List<dynamic>).map((c) => Condition.fromJson(c as Map<String, dynamic>)),
-        ),
-        actions: List<Action>.from(
-          (json['actions'] as List<dynamic>).map((a) => Action.fromJson(a as Map<String, dynamic>)),
-        ),
-        isDisabled: json['isDisabled'] as bool? ?? false,
-      );
+    id: json['id'] as String,
+    conditions: List<Condition>.from(
+      (json['conditions'] as List<dynamic>).map((c) => Condition.fromJson(c as Map<String, dynamic>)),
+    ),
+    actions: List<Action>.from(
+      (json['actions'] as List<dynamic>).map((a) => Action.fromJson(a as Map<String, dynamic>)),
+    ),
+    isDisabled: json['isDisabled'] as bool? ?? false,
+  );
 
   final String id;
   final List<Condition> conditions;
@@ -43,17 +36,13 @@ class Rule {
 }
 
 class Action {
-  Action({
-    required this.actionType,
-    required this.targetField,
-    this.value,
-  });
+  Action({required this.actionType, required this.targetField, this.value});
 
   factory Action.fromJson(Map<String, dynamic> json) => Action(
-        actionType: ActionType.fromString(json['actionType']?.toString() ?? ''),
-        targetField: json['targetField'] as String,
-        value: json['value'] as String?,
-      );
+    actionType: ActionType.fromString(json['actionType']?.toString() ?? ''),
+    targetField: json['targetField'] as String,
+    value: json['value'] as String?,
+  );
 
   final ActionType actionType;
   final String targetField;
@@ -90,17 +79,13 @@ enum ActionType {
 }
 
 class Condition {
-  Condition({
-    required this.conditionType,
-    required this.field,
-    required this.value,
-  });
+  Condition({required this.conditionType, required this.field, required this.value});
 
   factory Condition.fromJson(Map<String, dynamic> json) => Condition(
-        conditionType: ConditionType.fromString(json['conditionType'] as String? ?? ''),
-        field: json['field'] as String? ?? '',
-        value: json['value'] as String?,
-      );
+    conditionType: ConditionType.fromString(json['conditionType'] as String? ?? ''),
+    field: json['field'] as String? ?? '',
+    value: json['value'] as String?,
+  );
 
   final ConditionType conditionType;
   final String field;

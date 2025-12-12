@@ -4,19 +4,16 @@ import 'package:azure_devops/src/models/shared.dart';
 import 'package:http/http.dart';
 
 class GetUsersResponse {
-  GetUsersResponse({
-    required this.count,
-    required this.users,
-  });
+  GetUsersResponse({required this.count, required this.users});
 
   factory GetUsersResponse.fromJson(Map<String, dynamic> json) => GetUsersResponse(
-        count: json['count'] as int?,
-        users: json['value'] == null
-            ? []
-            : List<GraphUser>.from(
-                (json['value'] as List<dynamic>).map((x) => GraphUser.fromJson(x as Map<String, dynamic>)),
-              ),
-      );
+    count: json['count'] as int?,
+    users: json['value'] == null
+        ? []
+        : List<GraphUser>.from(
+            (json['value'] as List<dynamic>).map((x) => GraphUser.fromJson(x as Map<String, dynamic>)),
+          ),
+  );
 
   static List<GraphUser> fromResponse(Response res) =>
       GetUsersResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).users ?? [];
@@ -44,19 +41,19 @@ class GraphUser {
   factory GraphUser.all() => GraphUser(displayName: 'All', mailAddress: 'all');
 
   factory GraphUser.fromJson(Map<String, dynamic> json) => GraphUser(
-        subjectKind: json['subjectKind'] as String?,
-        domain: json['domain'] as String?,
-        principalName: json['principalName'] as String?,
-        mailAddress: json['mailAddress'] as String?,
-        origin: json['origin'] as String?,
-        originId: json['originId'] as String?,
-        displayName: json['displayName'] as String?,
-        links: json['Links'] == null ? null : Links.fromJson(json['Links'] as Map<String, dynamic>),
-        url: json['url'] as String?,
-        descriptor: json['descriptor'] as String?,
-        metaType: json['metaType'] as String?,
-        directoryAlias: json['directoryAlias'] as String?,
-      );
+    subjectKind: json['subjectKind'] as String?,
+    domain: json['domain'] as String?,
+    principalName: json['principalName'] as String?,
+    mailAddress: json['mailAddress'] as String?,
+    origin: json['origin'] as String?,
+    originId: json['originId'] as String?,
+    displayName: json['displayName'] as String?,
+    links: json['Links'] == null ? null : Links.fromJson(json['Links'] as Map<String, dynamic>),
+    url: json['url'] as String?,
+    descriptor: json['descriptor'] as String?,
+    metaType: json['metaType'] as String?,
+    directoryAlias: json['directoryAlias'] as String?,
+  );
 
   final String? subjectKind;
   final String? domain;
@@ -118,14 +115,14 @@ class UserMe {
   });
 
   factory UserMe.fromJson(Map<String, dynamic> json) => UserMe(
-        displayName: json['displayName'] as String?,
-        publicAlias: json['publicAlias'] as String?,
-        emailAddress: json['emailAddress'] as String?,
-        coreRevision: json['coreRevision'] as int?,
-        timeStamp: json['timeStamp'] == null ? null : DateTime.parse(json['timeStamp'].toString()).toLocal(),
-        id: json['id'] as String?,
-        revision: json['revision'] as int?,
-      );
+    displayName: json['displayName'] as String?,
+    publicAlias: json['publicAlias'] as String?,
+    emailAddress: json['emailAddress'] as String?,
+    coreRevision: json['coreRevision'] as int?,
+    timeStamp: json['timeStamp'] == null ? null : DateTime.parse(json['timeStamp'].toString()).toLocal(),
+    id: json['id'] as String?,
+    revision: json['revision'] as int?,
+  );
 
   final String? displayName;
   final String? publicAlias;
@@ -171,9 +168,7 @@ class UserIdentity {
 
   factory UserIdentity.fromResponse(Response res) {
     final json = jsonDecode(res.body) as Map<String, dynamic>?;
-    return UserIdentity(
-      id: (json?['value'] as List<dynamic>?)?.firstOrNull?['id']?.toString(),
-    );
+    return UserIdentity(id: (json?['value'] as List<dynamic>?)?.firstOrNull?['id']?.toString());
   }
 
   final String? id;

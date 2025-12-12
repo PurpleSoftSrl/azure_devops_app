@@ -29,10 +29,7 @@ class _History extends StatelessWidget {
 }
 
 class _SimpleUpdateWidget extends StatelessWidget {
-  const _SimpleUpdateWidget({
-    required this.ctrl,
-    required this.update,
-  });
+  const _SimpleUpdateWidget({required this.ctrl, required this.update});
 
   final _WorkItemDetailController ctrl;
   final SimpleItemUpdate update;
@@ -40,10 +37,7 @@ class _SimpleUpdateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTextStyle(
-      style: context.textTheme.labelSmall!.copyWith(
-        fontFamily: AppTheme.defaultFont,
-        fontWeight: FontWeight.w200,
-      ),
+      style: context.textTheme.labelSmall!.copyWith(fontFamily: AppTheme.defaultFont, fontWeight: FontWeight.w200),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -51,21 +45,13 @@ class _SimpleUpdateWidget extends StatelessWidget {
             children: [
               MemberAvatar(userDescriptor: update.updatedBy.descriptor, radius: 15),
               const SizedBox(width: 10),
-              Text(
-                update.updatedBy.displayName,
-                style: context.textTheme.titleSmall,
-              ),
+              Text(update.updatedBy.displayName, style: context.textTheme.titleSmall),
               const Spacer(),
               Text(update.updateDate.minutesAgo),
             ],
           ),
-          const SizedBox(
-            height: 5,
-          ),
-          if (update.isFirst)
-            Text(
-              'Created work item',
-            ),
+          const SizedBox(height: 5),
+          if (update.isFirst) Text('Created work item'),
           if (update.type != null)
             Text(
               update.type!.oldValue == null
@@ -83,8 +69,8 @@ class _SimpleUpdateWidget extends StatelessWidget {
               update.assignedTo!.oldValue == null
                   ? 'Assigned to ${update.assignedTo!.newValue?.displayName}'
                   : update.assignedTo!.newValue == null
-                      ? 'Unassigned ${update.assignedTo!.oldValue?.displayName}'
-                      : 'Changed assignee: ${update.assignedTo!.newValue?.displayName}',
+                  ? 'Unassigned ${update.assignedTo!.oldValue?.displayName}'
+                  : 'Changed assignee: ${update.assignedTo!.newValue?.displayName}',
             ),
           if (update.effort != null)
             Text(
@@ -111,10 +97,7 @@ class _SimpleUpdateWidget extends StatelessWidget {
 }
 
 class _CommentWidget extends StatelessWidget {
-  const _CommentWidget({
-    required this.ctrl,
-    required this.update,
-  });
+  const _CommentWidget({required this.ctrl, required this.update});
 
   final _WorkItemDetailController ctrl;
   final CommentItemUpdate update;
@@ -138,14 +121,8 @@ class _CommentWidget extends StatelessWidget {
                     TextSpan(
                       children: [
                         TextSpan(text: update.updatedBy.displayName),
-                        TextSpan(
-                          text: '  ${update.isEdited ? '(edited)' : ''}',
-                          style: context.textTheme.labelSmall,
-                        ),
-                        TextSpan(
-                          text: '  ${update.updateDate.minutesAgo}',
-                          style: context.textTheme.labelSmall,
-                        ),
+                        TextSpan(text: '  ${update.isEdited ? '(edited)' : ''}', style: context.textTheme.labelSmall),
+                        TextSpan(text: '  ${update.updateDate.minutesAgo}', style: context.textTheme.labelSmall),
                       ],
                     ),
                   ),
@@ -159,19 +136,13 @@ class _CommentWidget extends StatelessWidget {
                         text: 'Delete',
                         icon: DevOpsIcons.failed,
                       ),
-                      PopupItem(
-                        onTap: () => ctrl.editWorkItemComment(update),
-                        text: 'Edit',
-                        icon: DevOpsIcons.edit,
-                      ),
+                      PopupItem(onTap: () => ctrl.editWorkItemComment(update), text: 'Edit', icon: DevOpsIcons.edit),
                     ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(
-              height: 5,
-            ),
+            const SizedBox(height: 5),
             if (update.format == 'markdown')
               Padding(
                 padding: const EdgeInsets.only(left: 8, bottom: 8, right: 8),
@@ -189,13 +160,8 @@ class _CommentWidget extends StatelessWidget {
                 ),
               )
             else if (update.format == 'html')
-              HtmlWidget(
-                data: update.text,
-                padding: const EdgeInsets.all(3),
-              ),
-            const SizedBox(
-              height: 4,
-            ),
+              HtmlWidget(data: update.text, padding: const EdgeInsets.all(3)),
+            const SizedBox(height: 4),
           ],
         ),
       ),
@@ -222,15 +188,8 @@ class _AttachmentRow extends StatelessWidget {
             ValueListenableBuilder(
               valueListenable: ctrl.isDownloadingAttachment,
               builder: (_, isDownloading, _) => (isDownloading[att.attributes?.id] ?? false)
-                  ? SizedBox(
-                      width: 15,
-                      height: 15,
-                      child: const CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : RotatedBox(
-                      quarterTurns: 1,
-                      child: Icon(Icons.attachment, size: 15),
-                    ),
+                  ? SizedBox(width: 15, height: 15, child: const CircularProgressIndicator(strokeWidth: 2))
+                  : RotatedBox(quarterTurns: 1, child: Icon(Icons.attachment, size: 15)),
             ),
             const SizedBox(width: 10),
             Flexible(
@@ -242,14 +201,14 @@ class _AttachmentRow extends StatelessWidget {
                         text: isRemoved
                             ? 'Removed '
                             : isEdited
-                                ? 'Edited '
-                                : 'Added ',
+                            ? 'Edited '
+                            : 'Added ',
                       ),
                       TextSpan(
                         text: att.attributes?.name ?? '-',
-                        style: DefaultTextStyle.of(ctx)
-                            .style
-                            .copyWith(decoration: isRemoved ? null : TextDecoration.underline),
+                        style: DefaultTextStyle.of(
+                          ctx,
+                        ).style.copyWith(decoration: isRemoved ? null : TextDecoration.underline),
                       ),
                     ],
                   ),
@@ -276,10 +235,7 @@ class _LinkWidget extends StatelessWidget {
     final addedLinks = relations.added ?? <Relation>[];
     final removedLinks = relations.removed ?? <Relation>[];
     return DefaultTextStyle(
-      style: context.textTheme.labelSmall!.copyWith(
-        fontFamily: AppTheme.defaultFont,
-        fontWeight: FontWeight.w200,
-      ),
+      style: context.textTheme.labelSmall!.copyWith(fontFamily: AppTheme.defaultFont, fontWeight: FontWeight.w200),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -287,34 +243,19 @@ class _LinkWidget extends StatelessWidget {
             children: [
               MemberAvatar(userDescriptor: update.updatedBy.descriptor, radius: 15),
               const SizedBox(width: 10),
-              Text(
-                update.updatedBy.displayName,
-                style: context.textTheme.titleSmall,
-              ),
+              Text(update.updatedBy.displayName, style: context.textTheme.titleSmall),
               const Spacer(),
               Text(update.updateDate.minutesAgo),
             ],
           ),
-          const SizedBox(
-            height: 5,
-          ),
+          const SizedBox(height: 5),
           for (final link in addedLinks) ...[
-            _LinkRow(
-              link: link,
-              ctrl: ctrl,
-            ),
+            _LinkRow(link: link, ctrl: ctrl),
             if (link != addedLinks.last) const SizedBox(height: 5),
           ],
-          if (removedLinks.isNotEmpty)
-            const SizedBox(
-              height: 5,
-            ),
+          if (removedLinks.isNotEmpty) const SizedBox(height: 5),
           for (final link in removedLinks) ...[
-            _LinkRow(
-              link: link,
-              ctrl: ctrl,
-              isRemoved: true,
-            ),
+            _LinkRow(link: link, ctrl: ctrl, isRemoved: true),
             if (link != removedLinks.last) const SizedBox(height: 5),
           ],
         ],
@@ -324,11 +265,7 @@ class _LinkWidget extends StatelessWidget {
 }
 
 class _LinkRow extends StatelessWidget {
-  const _LinkRow({
-    required this.link,
-    required this.ctrl,
-    this.isRemoved = false,
-  });
+  const _LinkRow({required this.link, required this.ctrl, this.isRemoved = false});
 
   final Relation link;
   final _WorkItemDetailController ctrl;

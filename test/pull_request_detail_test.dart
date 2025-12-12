@@ -14,33 +14,28 @@ void main() {
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets(
-    'Page building test',
-    (t) async {
-      final app = AdsServiceWidget(
-        ads: AdsServiceMock(),
-        child: AzureApiServiceWidget(
-          api: AzureApiServiceMock(),
-          child: StorageServiceWidget(
-            storage: StorageServiceMock(),
-            child: MaterialApp(
-              theme: mockTheme,
-              onGenerateRoute: (_) => MaterialPageRoute(
-                builder: (_) => PullRequestDetailPage(),
-                settings: RouteSettings(
-                  arguments: (id: 1234, project: 'TestProject', repository: 'TestRepo'),
-                ),
-              ),
+  testWidgets('Page building test', (t) async {
+    final app = AdsServiceWidget(
+      ads: AdsServiceMock(),
+      child: AzureApiServiceWidget(
+        api: AzureApiServiceMock(),
+        child: StorageServiceWidget(
+          storage: StorageServiceMock(),
+          child: MaterialApp(
+            theme: mockTheme,
+            onGenerateRoute: (_) => MaterialPageRoute(
+              builder: (_) => PullRequestDetailPage(),
+              settings: RouteSettings(arguments: (id: 1234, project: 'TestProject', repository: 'TestRepo')),
             ),
           ),
         ),
-      );
+      ),
+    );
 
-      await t.pumpWidget(app);
+    await t.pumpWidget(app);
 
-      await t.pump();
+    await t.pump();
 
-      expect(find.byType(PullRequestDetailPage), findsOneWidget);
-    },
-  );
+    expect(find.byType(PullRequestDetailPage), findsOneWidget);
+  });
 }

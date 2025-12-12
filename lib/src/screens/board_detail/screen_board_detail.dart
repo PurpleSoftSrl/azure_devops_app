@@ -14,9 +14,7 @@ class _BoardDetailScreen extends StatelessWidget {
         title: ctrl.args.boardName,
         notifier: ctrl.boardWithItems,
         padding: EdgeInsets.zero,
-        actions: [
-          _Actions(ctrl: ctrl),
-        ],
+        actions: [_Actions(ctrl: ctrl)],
         header: () => _Filters(ctrl: ctrl),
         builder: (_) => DefaultTabController(
           length: ctrl.columnItems.length,

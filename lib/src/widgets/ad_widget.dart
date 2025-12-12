@@ -35,10 +35,7 @@ class NativeAdWidget extends StatelessWidget {
       height: 160,
       child: Padding(
         padding: const EdgeInsets.only(top: 32),
-        child: AdWidget(
-          key: ad.key,
-          ad: ad.ad,
-        ),
+        child: AdWidget(key: ad.key, ad: ad.ad),
       ),
     );
   }
@@ -61,12 +58,7 @@ class AmazonAdWidget extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(4),
-                child: Image.network(
-                  item.imageUrl,
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
-                ),
+                child: Image.network(item.imageUrl, width: 80, height: 80, fit: BoxFit.cover),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -74,12 +66,7 @@ class AmazonAdWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      item.title,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textTheme.titleSmall,
-                    ),
+                    Text(item.title, maxLines: 3, overflow: TextOverflow.ellipsis, style: context.textTheme.titleSmall),
                     const SizedBox(height: 8),
                     Row(
                       children: [
@@ -107,10 +94,7 @@ class AmazonAdWidget extends StatelessWidget {
                         ),
                         if (item.isPrime) ...[
                           const Spacer(),
-                          SvgPicture.network(
-                            'https://m.media-amazon.com/images/G/29/perc/prime-logo.png',
-                            width: 45,
-                          ),
+                          SvgPicture.network('https://m.media-amazon.com/images/G/29/perc/prime-logo.png', width: 45),
                         ],
                       ],
                     ),

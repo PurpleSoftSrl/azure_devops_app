@@ -32,26 +32,22 @@ class AppPage<T extends Object?> extends StatefulWidget {
     this.showBackButton = true,
   }) : _isEmpty = false;
 
-  const AppPage.empty({
-    super.key,
-    required this.builder,
-    required this.init,
-    this.dispose,
-  })  : title = '',
-        actions = null,
-        header = null,
-        notifier = null,
-        onEmpty = null,
-        onLoading = null,
-        padding = null,
-        refreshController = null,
-        safeAreaBottom = true,
-        showScrollbar = false,
-        fixedAppBar = false,
-        onResetFilters = null,
-        showBackButton = true,
-        sliverBuilder = null,
-        _isEmpty = true;
+  const AppPage.empty({super.key, required this.builder, required this.init, this.dispose})
+    : title = '',
+      actions = null,
+      header = null,
+      notifier = null,
+      onEmpty = null,
+      onLoading = null,
+      padding = null,
+      refreshController = null,
+      safeAreaBottom = true,
+      showScrollbar = false,
+      fixedAppBar = false,
+      onResetFilters = null,
+      showBackButton = true,
+      sliverBuilder = null,
+      _isEmpty = true;
 
   final Widget Function(T)? builder;
   final Widget Function(T)? sliverBuilder;
@@ -86,16 +82,14 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
   void initState() {
     super.initState();
 
-    widget.init().onError(
-      (e, s) {
-        logDebug('Exception on init: $e');
-        if (widget.notifier != null) {
-          widget.notifier!.value = widget.notifier!.value?.copyWith(isError: true) ?? ApiResponse.error(null);
-        }
+    widget.init().onError((e, s) {
+      logDebug('Exception on init: $e');
+      if (widget.notifier != null) {
+        widget.notifier!.value = widget.notifier!.value?.copyWith(isError: true) ?? ApiResponse.error(null);
+      }
 
-        logError(e, s);
-      },
-    );
+      logError(e, s);
+    });
 
     _refreshController = widget.refreshController ?? RefreshController();
     _onRefresh = () async {
@@ -131,10 +125,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
 
   @override
   Widget build(BuildContext context) {
-    assert(
-      widget.builder != null || widget.sliverBuilder != null,
-      'Either builder or sliverBuilder must be provided',
-    );
+    assert(widget.builder != null || widget.sliverBuilder != null, 'Either builder or sliverBuilder must be provided');
 
     if (widget._isEmpty) {
       return widget.sliverBuilder?.call(null as T) ?? widget.builder!(null as T);
@@ -163,33 +154,16 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
                     ? null
                     : _Header(
                         child: Column(
-                          children: [
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            widget.header!(),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                          ],
+                          children: [const SizedBox(height: 10), widget.header!(), const SizedBox(height: 10)],
                         ),
                       ),
               ),
-              if (widget.header == null)
-                SliverToBoxAdapter(
-                  child: const SizedBox(
-                    height: 20,
-                  ),
-                ),
+              if (widget.header == null) SliverToBoxAdapter(child: const SizedBox(height: 20)),
               SliverPadding(
                 padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
                 sliver: widget.sliverBuilder?.call(null as T) ?? SliverToBoxAdapter(child: widget.builder!(null as T)),
               ),
-              SliverToBoxAdapter(
-                child: const SizedBox(
-                  height: 40,
-                ),
-              ),
+              SliverToBoxAdapter(child: const SizedBox(height: 40)),
             ],
           ),
         ),
@@ -231,10 +205,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
                           default:
                             break;
                         }
-                        return SizedBox(
-                          height: 48,
-                          child: Center(child: Text(loadText)),
-                        );
+                        return SizedBox(height: 48, child: Center(child: Text(loadText)));
                       },
                     ),
                     child: CustomScrollView(
@@ -255,23 +226,14 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
                               : _Header(
                                   child: Column(
                                     children: [
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
+                                      const SizedBox(height: 10),
                                       widget.header!(),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
+                                      const SizedBox(height: 10),
                                     ],
                                   ),
                                 ),
                         ),
-                        if (widget.header == null)
-                          SliverToBoxAdapter(
-                            child: const SizedBox(
-                              height: 20,
-                            ),
-                          ),
+                        if (widget.header == null) SliverToBoxAdapter(child: const SizedBox(height: 20)),
                         if (response != null && response.isError)
                           SliverPadding(
                             padding: EdgeInsets.only(top: paddingTop),
@@ -297,14 +259,11 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
                         else if (response?.data != null)
                           SliverPadding(
                             padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
-                            sliver: widget.sliverBuilder?.call(widget.notifier!.value!.data!) ??
+                            sliver:
+                                widget.sliverBuilder?.call(widget.notifier!.value!.data!) ??
                                 SliverToBoxAdapter(child: widget.builder!(widget.notifier!.value!.data!)),
                           ),
-                        SliverToBoxAdapter(
-                          child: const SizedBox(
-                            height: 40,
-                          ),
-                        ),
+                        SliverToBoxAdapter(child: const SizedBox(height: 40)),
                       ],
                     ),
                   ),

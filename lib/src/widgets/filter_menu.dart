@@ -14,11 +14,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class FiltersRow extends StatelessWidget {
-  const FiltersRow({
-    required this.filters,
-    required this.resetFilters,
-    this.saveFilters,
-  });
+  const FiltersRow({required this.filters, required this.resetFilters, this.saveFilters});
 
   final List<FilterMenu<Object?>> filters;
   final VoidCallback resetFilters;
@@ -70,9 +66,9 @@ class FilterMenu<T> extends StatelessWidget {
     this.body,
     this.onSearchChanged,
     this.showLeading = true,
-  })  : currentFilters = null,
-        onSelectedMultiple = null,
-        _isMultiple = false;
+  }) : currentFilters = null,
+       onSelectedMultiple = null,
+       _isMultiple = false;
 
   const FilterMenu.custom({
     required this.body,
@@ -81,14 +77,14 @@ class FilterMenu<T> extends StatelessWidget {
     this.formatLabel,
     required this.isDefaultFilter,
     this.child,
-  })  : widgetBuilder = null,
-        values = const [],
-        onSelected = null,
-        onSearchChanged = null,
-        currentFilters = null,
-        onSelectedMultiple = null,
-        showLeading = true,
-        _isMultiple = false;
+  }) : widgetBuilder = null,
+       values = const [],
+       onSelected = null,
+       onSearchChanged = null,
+       currentFilters = null,
+       onSelectedMultiple = null,
+       showLeading = true,
+       _isMultiple = false;
 
   const FilterMenu.multiple({
     this.body,
@@ -102,9 +98,9 @@ class FilterMenu<T> extends StatelessWidget {
     required this.widgetBuilder,
     this.onSearchChanged,
     this.showLeading = true,
-  })  : onSelected = null,
-        currentFilter = null,
-        _isMultiple = true;
+  }) : onSelected = null,
+       currentFilter = null,
+       _isMultiple = true;
 
   final void Function(T)? onSelected;
   final List<T> values;
@@ -126,9 +122,10 @@ class FilterMenu<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final chipLabel = switch (isDefaultFilter) {
       true => title,
-      false when _isMultiple => currentFilters!.length > 1
-          ? '$title - ${currentFilters!.length}'
-          : formatLabel?.call(currentFilters!.single) ?? currentFilters!.single.toString(),
+      false when _isMultiple =>
+        currentFilters!.length > 1
+            ? '$title - ${currentFilters!.length}'
+            : formatLabel?.call(currentFilters!.single) ?? currentFilters!.single.toString(),
       _ => formatLabel?.call(currentFilter!) ?? currentFilter.toString(),
     };
 
@@ -146,13 +143,8 @@ class FilterMenu<T> extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          const SizedBox(
-            width: 4,
-          ),
-          Icon(
-            Icons.keyboard_arrow_down_outlined,
-            color: context.themeExtension.onBackground,
-          ),
+          const SizedBox(width: 4),
+          Icon(Icons.keyboard_arrow_down_outlined, color: context.themeExtension.onBackground),
         ],
       ),
     );
@@ -267,9 +259,9 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                             height: 30,
                             child: TextButton(
                               style: Theme.of(context).textButtonTheme.style!.copyWith(
-                                    backgroundColor: WidgetStatePropertyAll(context.colorScheme.primary),
-                                    padding: WidgetStatePropertyAll(EdgeInsets.zero),
-                                  ),
+                                backgroundColor: WidgetStatePropertyAll(context.colorScheme.primary),
+                                padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                              ),
                               onPressed: () {
                                 onSelectedMultiple?.call(selectedValues.value);
                                 AppRouter.popRoute();
@@ -324,9 +316,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                                                   width: imageSize,
                                                   child: widgetBuilder?.call(v),
                                                 ),
-                                                const SizedBox(
-                                                  width: 20,
-                                                ),
+                                                const SizedBox(width: 20),
                                               ],
                                               Expanded(child: Text(formatLabel?.call(v) ?? v.toString())),
                                               if (isMultiple) ...[
@@ -346,10 +336,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                                               ],
                                             ],
                                           ),
-                                          if (v != visibleValues.last)
-                                            const Divider(
-                                              height: 20,
-                                            ),
+                                          if (v != visibleValues.last) const Divider(height: 20),
                                         ],
                                       ),
                                     ),
@@ -371,11 +358,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
 }
 
 class _FiltersActionsMenu extends StatelessWidget {
-  const _FiltersActionsMenu({
-    required this.resetFilters,
-    this.saveFilters,
-    required this.selectedFiltersCount,
-  });
+  const _FiltersActionsMenu({required this.resetFilters, this.saveFilters, required this.selectedFiltersCount});
 
   final VoidCallback resetFilters;
   final VoidCallback? saveFilters;
@@ -387,26 +370,15 @@ class _FiltersActionsMenu extends StatelessWidget {
       tooltip: 'Reset or save filters',
       offset: const Offset(0, 20),
       items: () => [
-        PopupItem(
-          onTap: resetFilters,
-          text: 'Reset filters',
-          icon: DevOpsIcons.failed,
-        ),
-        if (saveFilters != null)
-          PopupItem(
-            onTap: saveFilters!,
-            text: 'Save filters',
-            icon: Icons.save_outlined,
-          ),
+        PopupItem(onTap: resetFilters, text: 'Reset filters', icon: DevOpsIcons.failed),
+        if (saveFilters != null) PopupItem(onTap: saveFilters!, text: 'Save filters', icon: Icons.save_outlined),
       ],
       child: Chip(
         visualDensity: VisualDensity.compact,
         label: Row(
           children: [
             Icon(DevOpsIcons.filter),
-            const SizedBox(
-              width: 5,
-            ),
+            const SizedBox(width: 5),
             CircleAvatar(
               radius: 10,
               backgroundColor: context.themeExtension.onBackground,
@@ -429,11 +401,7 @@ class UserFilterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return user.descriptor == null
-        ? const SizedBox()
-        : MemberAvatar(
-            userDescriptor: user.descriptor,
-          );
+    return user.descriptor == null ? const SizedBox() : MemberAvatar(userDescriptor: user.descriptor);
   }
 }
 
@@ -462,8 +430,9 @@ class WorkItemStateFilterWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: CircleAvatar(
-        backgroundColor:
-            state == WorkItemState.all || color == null ? Colors.transparent : Color(color).withValues(alpha: 1),
+        backgroundColor: state == WorkItemState.all || color == null
+            ? Colors.transparent
+            : Color(color).withValues(alpha: 1),
       ),
     );
   }
@@ -522,9 +491,7 @@ class WorkItemTypeFilterMenu extends FilterMenu<WorkItemType> {
     required super.isDefaultFilter,
     required super.widgetBuilder,
     super.formatLabel,
-  }) : super(
-          values: values.where((t) => !_typesToSkip.contains(t.name)).toList(),
-        );
+  }) : super(values: values.where((t) => !_typesToSkip.contains(t.name)).toList());
 
   WorkItemTypeFilterMenu.multiple({
     required super.title,
@@ -534,9 +501,7 @@ class WorkItemTypeFilterMenu extends FilterMenu<WorkItemType> {
     required super.isDefaultFilter,
     required super.widgetBuilder,
     super.formatLabel,
-  }) : super.multiple(
-          values: values.where((t) => !_typesToSkip.contains(t.name)).toList(),
-        );
+  }) : super.multiple(values: values.where((t) => !_typesToSkip.contains(t.name)).toList());
 
   // skip test types to align with devops website
   static const _typesToSkip = ['Test Plan', 'Test Suite'];

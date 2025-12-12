@@ -13,24 +13,18 @@ class _WorkItemsScreen extends StatelessWidget {
       title: 'Work items',
       notifier: ctrl.workItems,
       showScrollbar: true,
-      actions: [
-        _Actions(ctrl: ctrl),
-      ],
+      actions: [_Actions(ctrl: ctrl)],
       onResetFilters: ctrl.resetFilters,
       onEmpty: 'No work items found',
       header: () {
         if (ctrl.hasShortcut) {
-          return ShortcutLabel(
-            label: ctrl.args!.shortcut!.label,
-          );
+          return ShortcutLabel(label: ctrl.args!.shortcut!.label);
         }
 
         if (ctrl.hasSavedQuery) {
           return ValueListenableBuilder(
             valueListenable: ctrl.savedQuery,
-            builder: (_, query, _) => ShortcutLabel(
-              label: query?.name ?? '',
-            ),
+            builder: (_, query, _) => ShortcutLabel(label: query?.name ?? ''),
           );
         }
 
@@ -117,10 +111,7 @@ class _WorkItemsScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text('Show active'),
-                          Checkbox(
-                            value: showActive,
-                            onChanged: (_) => ctrl.toggleShowActiveIterations(),
-                          ),
+                          Checkbox(value: showActive, onChanged: (_) => ctrl.toggleShowActiveIterations()),
                         ],
                       ),
                       Expanded(
@@ -147,23 +138,13 @@ class _WorkItemsScreen extends StatelessWidget {
             if (ctrl.shouldShowNativeAd(items, i, adsIndex)) {
               return Column(
                 children: [
-                  _WorkItemListTile(
-                    item: i,
-                    onTap: () => ctrl.goToWorkItemDetail(i),
-                    isLast: i == items.last,
-                  ),
-                  CustomAdWidget(
-                    item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++],
-                  ),
+                  _WorkItemListTile(item: i, onTap: () => ctrl.goToWorkItemDetail(i), isLast: i == items.last),
+                  CustomAdWidget(item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++]),
                 ],
               );
             }
 
-            return _WorkItemListTile(
-              item: i,
-              onTap: () => ctrl.goToWorkItemDetail(i),
-              isLast: i == items.last,
-            );
+            return _WorkItemListTile(item: i, onTap: () => ctrl.goToWorkItemDetail(i), isLast: i == items.last);
           }),
         );
       },

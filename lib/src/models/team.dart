@@ -9,10 +9,10 @@ class GetTeamsResponse {
   GetTeamsResponse({required this.teams});
 
   factory GetTeamsResponse.fromJson(Map<String, dynamic> json) => GetTeamsResponse(
-        teams: List<Team>.from(
-          (json['value'] as List<dynamic>? ?? []).map((x) => Team.fromJson(x as Map<String, dynamic>)),
-        ),
-      );
+    teams: List<Team>.from(
+      (json['value'] as List<dynamic>? ?? []).map((x) => Team.fromJson(x as Map<String, dynamic>)),
+    ),
+  );
 
   static List<Team> fromResponse(Response res) =>
       GetTeamsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).teams;
@@ -30,12 +30,12 @@ class Team {
   });
 
   factory Team.fromJson(Map<String, dynamic> json) => Team(
-        id: json['id'] as String? ?? '',
-        name: json['name'] as String? ?? '',
-        description: json['description'] as String? ?? '',
-        projectName: json['projectName'] as String? ?? '',
-        projectId: json['projectId'] as String? ?? '',
-      );
+    id: json['id'] as String? ?? '',
+    name: json['name'] as String? ?? '',
+    description: json['description'] as String? ?? '',
+    projectName: json['projectName'] as String? ?? '',
+    projectId: json['projectId'] as String? ?? '',
+  );
 
   final String id;
   final String name;

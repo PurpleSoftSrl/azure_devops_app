@@ -35,11 +35,11 @@ class AreaFilterBody extends StatelessWidget {
             },
             showActive: showActive,
           ),
-          const SizedBox(
-            height: 16,
-          ),
+          const SizedBox(height: 16),
         ],
-        ...areasToShow.sortedBy((a) => a.path.toLowerCase()).map(
+        ...areasToShow
+            .sortedBy((a) => a.path.toLowerCase())
+            .map(
               (a) => _ProjectAreas(
                 area: a,
                 currentFilter: currentFilter,
@@ -79,10 +79,7 @@ class _ProjectAreas extends StatelessWidget {
           onTap: () => onTap(area),
           child: Row(
             children: [
-              CircleAvatar(
-                radius: 2.5,
-                backgroundColor: context.themeExtension.onBackground,
-              ),
+              CircleAvatar(radius: 2.5, backgroundColor: context.themeExtension.onBackground),
               const SizedBox(width: 8),
               Text(area.name),
               if (currentFilter != null && (currentFilter!.escapedAreaPath == area.escapedAreaPath)) ...[
@@ -96,12 +93,7 @@ class _ProjectAreas extends StatelessWidget {
         ...(area.children ?? []).map(
           (c) => Padding(
             padding: EdgeInsets.only(left: 16, bottom: c == area.children!.last ? 16 : 0),
-            child: _ProjectAreas(
-              area: c,
-              onTap: onTap,
-              currentFilter: currentFilter,
-              showActive: showActive,
-            ),
+            child: _ProjectAreas(area: c, onTap: onTap, currentFilter: currentFilter, showActive: showActive),
           ),
         ),
       ],

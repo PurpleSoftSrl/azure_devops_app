@@ -14,9 +14,7 @@ class _SprintDetailScreen extends StatelessWidget {
         title: ctrl.args.sprintName,
         notifier: ctrl.sprintWithItems,
         padding: EdgeInsets.zero,
-        actions: [
-          _Actions(ctrl: ctrl),
-        ],
+        actions: [_Actions(ctrl: ctrl)],
         header: () => _Filters(ctrl: ctrl),
         builder: (_) => DefaultTabController(
           length: ctrl.columnItems.length,
@@ -26,9 +24,7 @@ class _SprintDetailScreen extends StatelessWidget {
               tabController: DefaultTabController.of(ctx),
               columnItems: ctrl.columnItems,
               onTapItem: ctrl.goToDetail,
-              actions: (item) => [
-                PopupItem(text: 'Edit', onTap: () => ctrl.editItem(item)),
-              ],
+              actions: (item) => [PopupItem(text: 'Edit', onTap: () => ctrl.editItem(item))],
             ),
           ),
         ),

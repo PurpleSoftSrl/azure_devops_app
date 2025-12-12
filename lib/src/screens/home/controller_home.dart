@@ -15,10 +15,7 @@ class _HomeController with AppLogger {
   int _projectsCount = 0;
   bool get hasManyProjects => _projectsCount > 10;
 
-  late final filtersService = FiltersService(
-    storage: storage,
-    organization: api.organization,
-  );
+  late final filtersService = FiltersService(storage: storage, organization: api.organization);
 
   List<SavedShortcut> shortcuts = [];
 
@@ -28,10 +25,7 @@ class _HomeController with AppLogger {
     final allProjectsRes = await api.getProjects();
     allProjects = allProjectsRes.data ?? [];
 
-    await purchase.init(
-      userId: api.user?.emailAddress,
-      userName: api.user?.displayName,
-    );
+    await purchase.init(userId: api.user?.emailAddress, userName: api.user?.displayName);
 
     // avoid resetting projects if response is error (and thus contains zero projects)
     if (allProjectsRes.isError) {
@@ -190,30 +184,17 @@ class _HomeController with AppLogger {
               (f) => Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    f.attribute.titleCase,
-                    style: context.textTheme.bodyMedium,
-                  ),
+                  Text(f.attribute.titleCase, style: context.textTheme.bodyMedium),
                   ...f.filters.map(
                     (f2) => Row(
                       children: [
-                        CircleAvatar(
-                          radius: 2,
-                          backgroundColor: context.themeExtension.onBackground,
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          f2,
-                          style: context.textTheme.labelMedium,
-                        ),
+                        CircleAvatar(radius: 2, backgroundColor: context.themeExtension.onBackground),
+                        const SizedBox(width: 8),
+                        Text(f2, style: context.textTheme.labelMedium),
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 16,
-                  ),
+                  const SizedBox(height: 16),
                 ],
               ),
             )

@@ -10,18 +10,12 @@ class _StageRow extends StatelessWidget {
     return Row(
       children: [
         if (stage.state == TaskStatus.inProgress)
-          InProgressPipelineIcon(
-            child: stage.state.icon,
-          )
+          InProgressPipelineIcon(child: stage.state.icon)
         else
           stage.state == TaskStatus.completed && stage.result != null ? stage.result!.icon : stage.state.icon,
-        const SizedBox(
-          width: 10,
-        ),
+        const SizedBox(width: 10),
         Expanded(child: Text('${stage.name} (${stage.type})')),
-        const SizedBox(
-          width: 8,
-        ),
+        const SizedBox(width: 8),
         Text(stage.getRunTime()),
       ],
     );
@@ -38,18 +32,12 @@ class _PhaseRow extends StatelessWidget {
     return Row(
       children: [
         if (phase.state == TaskStatus.inProgress)
-          InProgressPipelineIcon(
-            child: phase.state.icon,
-          )
+          InProgressPipelineIcon(child: phase.state.icon)
         else
           phase.state == TaskStatus.completed && phase.result != null ? phase.result!.icon : phase.state.icon,
-        const SizedBox(
-          width: 10,
-        ),
+        const SizedBox(width: 10),
         Expanded(child: Text('${phase.name} (Job)')),
-        const SizedBox(
-          width: 8,
-        ),
+        const SizedBox(width: 8),
         Text(phase.getRunTime()),
       ],
     );
@@ -66,18 +54,12 @@ class _JobRow extends StatelessWidget {
     return Row(
       children: [
         if (job.state == TaskStatus.inProgress)
-          InProgressPipelineIcon(
-            child: job.state.icon,
-          )
+          InProgressPipelineIcon(child: job.state.icon)
         else
           job.state == TaskStatus.completed && job.result != null ? job.result!.icon : job.state.icon,
-        const SizedBox(
-          width: 10,
-        ),
+        const SizedBox(width: 10),
         Expanded(child: Text('${job.name} (${job.type})')),
-        const SizedBox(
-          width: 8,
-        ),
+        const SizedBox(width: 8),
         Text(job.getRunTime()),
       ],
     );
@@ -94,26 +76,18 @@ class _TaskRow extends StatelessWidget {
     return Row(
       children: [
         if (task.state == TaskStatus.inProgress)
-          InProgressPipelineIcon(
-            child: task.state.icon,
-          )
+          InProgressPipelineIcon(child: task.state.icon)
         else
           task.state == TaskStatus.completed && task.result != null ? task.result!.icon : task.state.icon,
-        const SizedBox(
-          width: 10,
-        ),
+        const SizedBox(width: 10),
         Expanded(
           child: Text(
             task.name,
-            style: context.textTheme.titleSmall!.copyWith(
-              decoration: TextDecoration.underline,
-            ),
+            style: context.textTheme.titleSmall!.copyWith(decoration: TextDecoration.underline),
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        const SizedBox(
-          width: 8,
-        ),
+        const SizedBox(width: 8),
         Text(task.getRunTime()),
       ],
     );
@@ -139,9 +113,7 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sortedApprovals = approvals.sorted(
-      (a, b) => max(a.getLastStepTimestamp(), b.getLastStepTimestamp()),
-    );
+    final sortedApprovals = approvals.sorted((a, b) => max(a.getLastStepTimestamp(), b.getLastStepTimestamp()));
 
     return ListView(
       children: [
@@ -151,33 +123,22 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
             children: [
               Text('Requirement'),
               const SizedBox(height: 5),
-              Text(
-                approval.executionOrderDescription,
-                style: context.textTheme.bodySmall,
-              ),
+              Text(approval.executionOrderDescription, style: context.textTheme.bodySmall),
               const SizedBox(height: 10),
-              ...approval.steps.sortedBy((s) => s.lastModifiedOn ?? DateTime.now()).map(
+              ...approval.steps
+                  .sortedBy((s) => s.lastModifiedOn ?? DateTime.now())
+                  .map(
                     (step) => Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Row(
                         children: [
-                          MemberAvatar(
-                            userDescriptor: step.assignedApprover.descriptor,
-                            radius: 20,
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
+                          MemberAvatar(userDescriptor: step.assignedApprover.descriptor, radius: 20),
+                          const SizedBox(width: 20),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                step.assignedApprover.displayName,
-                              ),
-                              Text(
-                                step.statusDescription,
-                                style: context.textTheme.bodySmall,
-                              ),
+                              Text(step.assignedApprover.displayName),
+                              Text(step.statusDescription, style: context.textTheme.bodySmall),
                             ],
                           ),
                           const Spacer(),
@@ -194,16 +155,8 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
                                     text: 'Approve',
                                     icon: DevOpsIcons.success,
                                   ),
-                                  PopupItem(
-                                    onTap: () => onDefer(approval),
-                                    text: 'Defer',
-                                    icon: DevOpsIcons.queued,
-                                  ),
-                                  PopupItem(
-                                    onTap: () => onReject(approval),
-                                    text: 'Reject',
-                                    icon: DevOpsIcons.failed,
-                                  ),
+                                  PopupItem(onTap: () => onDefer(approval), text: 'Defer', icon: DevOpsIcons.queued),
+                                  PopupItem(onTap: () => onReject(approval), text: 'Reject', icon: DevOpsIcons.failed),
                                 ],
                               ),
                             ),
@@ -216,10 +169,7 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
               if (approval.instructions.isNotEmpty) ...[
                 Text('Instructions'),
                 const SizedBox(height: 5),
-                Text(
-                  approval.instructions,
-                  style: context.textTheme.bodySmall,
-                ),
+                Text(approval.instructions, style: context.textTheme.bodySmall),
               ],
               if (isBlockedApprover(approval)) ...[
                 Container(
@@ -231,13 +181,8 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
                   margin: const EdgeInsets.symmetric(vertical: 12),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.warning,
-                        color: Colors.orange,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
+                      Icon(Icons.warning, color: Colors.orange),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           'Configurations on this approval prevent you from approving your own run.',
@@ -248,10 +193,7 @@ class _PendingApprovalsBottomSheet extends StatelessWidget {
                   ),
                 ),
               ],
-              if (approval != sortedApprovals.last)
-                const Divider(
-                  height: 60,
-                ),
+              if (approval != sortedApprovals.last) const Divider(height: 60),
             ],
           ),
         ),
@@ -291,10 +233,7 @@ class _DeferApprovalBottomSheetState extends State<_DeferApprovalBottomSheet> {
   }
 
   Future<void> _showTimePicker() async {
-    final time = await showTimePicker(
-      context: AppRouter.rootNavigator!.context,
-      initialTime: TimeOfDay.now(),
-    );
+    final time = await showTimePicker(context: AppRouter.rootNavigator!.context, initialTime: TimeOfDay.now());
 
     if (time == null) return;
 
@@ -328,9 +267,7 @@ class _DeferApprovalBottomSheetState extends State<_DeferApprovalBottomSheet> {
             readOnly: true,
             onTap: _showDatePicker,
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           DevOpsFormField(
             label: 'Time',
             controller: _timeController,
@@ -338,9 +275,7 @@ class _DeferApprovalBottomSheetState extends State<_DeferApprovalBottomSheet> {
             readOnly: true,
             onTap: _showTimePicker,
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           Text(
             'Time zone: (UTC$_timeZoneOffset) $_timeZone',
             style: context.textTheme.bodySmall,
@@ -358,9 +293,7 @@ class _DeferApprovalBottomSheetState extends State<_DeferApprovalBottomSheet> {
             },
             text: 'Defer',
           ),
-          const SizedBox(
-            height: 40,
-          ),
+          const SizedBox(height: 40),
         ],
       ),
     );

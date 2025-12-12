@@ -45,7 +45,8 @@ mixin FilterMixin {
 
   String getFormattedUser(GraphUser user, AzureApiService api) {
     final users = getSortedUsers(api);
-    final hasHomonyms = users
+    final hasHomonyms =
+        users
             .where((u) => user.displayName != null && u.displayName?.toLowerCase() == user.displayName?.toLowerCase())
             .length >
         1;

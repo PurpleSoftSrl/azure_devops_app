@@ -19,11 +19,7 @@ class _HomeScreen extends StatelessWidget {
         builder: (projects) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SectionHeader.withIcon(
-              text: 'Work',
-              icon: DevOpsIcons.repository,
-              marginTop: 0,
-            ),
+            SectionHeader.withIcon(text: 'Work', icon: DevOpsIcons.repository, marginTop: 0),
             GridView.count(
               crossAxisCount: 2,
               physics: NeverScrollableScrollPhysics(),
@@ -32,24 +28,9 @@ class _HomeScreen extends StatelessWidget {
               crossAxisSpacing: 13,
               mainAxisSpacing: 18,
               children: [
-                WorkCard(
-                  title: 'Commits',
-                  icon: DevOpsIcons.commit,
-                  onTap: ctrl.goToCommits,
-                  index: i++,
-                ),
-                WorkCard(
-                  title: 'Pipelines',
-                  icon: DevOpsIcons.pipeline,
-                  onTap: ctrl.goToPipelines,
-                  index: i++,
-                ),
-                WorkCard(
-                  title: 'Work items',
-                  icon: DevOpsIcons.task,
-                  onTap: ctrl.goToWorkItems,
-                  index: i++,
-                ),
+                WorkCard(title: 'Commits', icon: DevOpsIcons.commit, onTap: ctrl.goToCommits, index: i++),
+                WorkCard(title: 'Pipelines', icon: DevOpsIcons.pipeline, onTap: ctrl.goToPipelines, index: i++),
+                WorkCard(title: 'Work items', icon: DevOpsIcons.task, onTap: ctrl.goToWorkItems, index: i++),
                 WorkCard(
                   title: 'Pull requests',
                   icon: DevOpsIcons.pullrequest,
@@ -59,10 +40,7 @@ class _HomeScreen extends StatelessWidget {
               ],
             ),
             if (ctrl.shortcuts.isNotEmpty) ...[
-              SectionHeader.withIcon(
-                text: 'Saved filters',
-                icon: DevOpsIcons.filter,
-              ),
+              SectionHeader.withIcon(text: 'Saved filters', icon: DevOpsIcons.filter),
               ...ctrl.shortcuts.map(
                 (s) => _ShortcutRow(
                   shortcut: s,
@@ -76,26 +54,14 @@ class _HomeScreen extends StatelessWidget {
             if (ctrl.hasManyProjects)
               _ProjectsHeaderWithSearchField(ctrl: ctrl)
             else
-              SectionHeader.withIcon(
-                text: 'Projects',
-                icon: DevOpsIcons.list,
-              ),
+              SectionHeader.withIcon(text: 'Projects', icon: DevOpsIcons.list),
             if (projects.isEmpty)
-              Text(
-                'No project found',
-                style: context.textTheme.labelLarge,
-              )
+              Text('No project found', style: context.textTheme.labelLarge)
             else
               ...projects.map(
-                (p) => ProjectCard(
-                  height: parameters.projectCardHeight,
-                  project: p,
-                  onTap: ctrl.goToProjectDetail,
-                ),
+                (p) => ProjectCard(height: parameters.projectCardHeight, project: p, onTap: ctrl.goToProjectDetail),
               ),
-            const SizedBox(
-              height: 40,
-            ),
+            const SizedBox(height: 40),
           ],
         ),
       ),

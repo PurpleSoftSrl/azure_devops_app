@@ -29,18 +29,12 @@ class NavigationButton extends StatelessWidget {
           color: backgroundColor ?? context.colorScheme.surface,
           borderRadius: BorderRadius.circular(AppTheme.radius),
         ),
-        child: Padding(
-          padding: padding,
-          child: child,
-        ),
+        child: Padding(padding: padding, child: child),
       ),
     );
 
     if (margin != null) {
-      button = Padding(
-        padding: margin!,
-        child: button,
-      );
+      button = Padding(padding: margin!, child: button);
     }
 
     return button;

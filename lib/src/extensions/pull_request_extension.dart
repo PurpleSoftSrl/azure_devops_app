@@ -45,20 +45,11 @@ extension PullRequestStringExt on String {
     switch (parsedVote) {
       case 10:
       case 5:
-        return Icon(
-          DevOpsIcons.success,
-          color: Colors.green,
-        );
+        return Icon(DevOpsIcons.success, color: Colors.green);
       case -10:
-        return Icon(
-          DevOpsIcons.failed,
-          color: Colors.red,
-        );
+        return Icon(DevOpsIcons.failed, color: Colors.red);
       case -5:
-        return Icon(
-          DevOpsIcons.queuedsolid,
-          color: Colors.orange,
-        );
+        return Icon(DevOpsIcons.queuedsolid, color: Colors.orange);
       default:
         return null;
     }

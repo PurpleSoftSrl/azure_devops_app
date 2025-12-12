@@ -16,14 +16,14 @@ class GetTimelineResponse {
   });
 
   factory GetTimelineResponse.fromJson(Map<String, dynamic> json) => GetTimelineResponse(
-        records: List<Record>.from(
-          (json['records'] as List<dynamic>).map((r) => Record.fromJson(r as Map<String, dynamic>)),
-        ),
-        lastChangedBy: json['lastChangedBy'] as String,
-        lastChangedOn: DateTime.parse(json['lastChangedOn'] as String),
-        id: json['id'] as String,
-        changeId: json['changeId'] as int,
-      );
+    records: List<Record>.from(
+      (json['records'] as List<dynamic>).map((r) => Record.fromJson(r as Map<String, dynamic>)),
+    ),
+    lastChangedBy: json['lastChangedBy'] as String,
+    lastChangedOn: DateTime.parse(json['lastChangedOn'] as String),
+    id: json['id'] as String,
+    changeId: json['changeId'] as int,
+  );
 
   static List<Record> fromResponse(Response res) =>
       GetTimelineResponse.fromJson(json.decode(res.body) as Map<String, dynamic>).records;
@@ -66,37 +66,35 @@ class Record {
   });
 
   factory Record.fromJson(Map<String, dynamic> json) => Record(
-        previousAttempts: List<dynamic>.from((json['previousAttempts'] as List<dynamic>).map((x) => x)),
-        id: json['id'] as String,
-        parentId: json['parentId'] as String?,
-        type: json['type'] as String,
-        name: json['name'] as String,
-        startTime: json['startTime'] == null ? null : DateTime.parse(json['startTime'] as String),
-        finishTime: json['finishTime'] == null ? null : DateTime.parse(json['finishTime'] as String),
-        currentOperation: json['currentOperation'],
-        percentComplete: json['percentComplete'] as int?,
-        state: TaskStatus.fromString(json['state'] as String),
-        result: json['result'] == null ? null : TaskResult.fromString(json['result'] as String),
-        resultCode: json['resultCode'],
-        changeId: json['changeId'] as int,
-        lastModified: DateTime.parse(json['lastModified'] as String),
-        workerName: json['workerName'] as String?,
-        order: json['order'] as int? ?? 0,
-        details: json['details'],
-        errorCount: json['errorCount'] as int,
-        warningCount: json['warningCount'] as int,
-        url: json['url'],
-        log: json['log'] == null ? null : _Log.fromJson(json['log'] as Map<String, dynamic>),
-        task: json['task'] == null ? null : _Task.fromJson(json['task'] as Map<String, dynamic>),
-        attempt: json['attempt'] as int,
-        identifier: json['identifier'] as String?,
-        queueId: json['queueId'] as int?,
-        issues: json['issues'] == null
-            ? []
-            : List<_Issue>.from(
-                (json['issues'] as List<dynamic>).map((i) => _Issue.fromJson(i as Map<String, dynamic>)),
-              ),
-      );
+    previousAttempts: List<dynamic>.from((json['previousAttempts'] as List<dynamic>).map((x) => x)),
+    id: json['id'] as String,
+    parentId: json['parentId'] as String?,
+    type: json['type'] as String,
+    name: json['name'] as String,
+    startTime: json['startTime'] == null ? null : DateTime.parse(json['startTime'] as String),
+    finishTime: json['finishTime'] == null ? null : DateTime.parse(json['finishTime'] as String),
+    currentOperation: json['currentOperation'],
+    percentComplete: json['percentComplete'] as int?,
+    state: TaskStatus.fromString(json['state'] as String),
+    result: json['result'] == null ? null : TaskResult.fromString(json['result'] as String),
+    resultCode: json['resultCode'],
+    changeId: json['changeId'] as int,
+    lastModified: DateTime.parse(json['lastModified'] as String),
+    workerName: json['workerName'] as String?,
+    order: json['order'] as int? ?? 0,
+    details: json['details'],
+    errorCount: json['errorCount'] as int,
+    warningCount: json['warningCount'] as int,
+    url: json['url'],
+    log: json['log'] == null ? null : _Log.fromJson(json['log'] as Map<String, dynamic>),
+    task: json['task'] == null ? null : _Task.fromJson(json['task'] as Map<String, dynamic>),
+    attempt: json['attempt'] as int,
+    identifier: json['identifier'] as String?,
+    queueId: json['queueId'] as int?,
+    issues: json['issues'] == null
+        ? []
+        : List<_Issue>.from((json['issues'] as List<dynamic>).map((i) => _Issue.fromJson(i as Map<String, dynamic>))),
+  );
 
   final List<dynamic> previousAttempts;
   final String id;
@@ -132,17 +130,10 @@ class Record {
 }
 
 class _Issue {
-  _Issue({
-    required this.type,
-    this.category,
-    required this.message,
-  });
+  _Issue({required this.type, this.category, required this.message});
 
-  factory _Issue.fromJson(Map<String, dynamic> json) => _Issue(
-        type: json['type'] as String,
-        category: json['category'] as String?,
-        message: json['message'] as String,
-      );
+  factory _Issue.fromJson(Map<String, dynamic> json) =>
+      _Issue(type: json['type'] as String, category: json['category'] as String?, message: json['message'] as String);
 
   final String type;
   final dynamic category;
@@ -150,17 +141,10 @@ class _Issue {
 }
 
 class _Log {
-  _Log({
-    required this.id,
-    required this.type,
-    required this.url,
-  });
+  _Log({required this.id, required this.type, required this.url});
 
-  factory _Log.fromJson(Map<String, dynamic> json) => _Log(
-        id: json['id'] as int,
-        type: json['type'] as String,
-        url: json['url'] as String,
-      );
+  factory _Log.fromJson(Map<String, dynamic> json) =>
+      _Log(id: json['id'] as int, type: json['type'] as String, url: json['url'] as String);
 
   final int id;
   final String type;
@@ -168,17 +152,10 @@ class _Log {
 }
 
 class _Task {
-  _Task({
-    required this.id,
-    required this.name,
-    required this.version,
-  });
+  _Task({required this.id, required this.name, required this.version});
 
-  factory _Task.fromJson(Map<String, dynamic> json) => _Task(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        version: json['version'] as String,
-      );
+  factory _Task.fromJson(Map<String, dynamic> json) =>
+      _Task(id: json['id'] as String, name: json['name'] as String, version: json['version'] as String);
 
   final String id;
   final String name;
@@ -216,23 +193,11 @@ enum TaskStatus {
 
     switch (this) {
       case TaskStatus.inProgress:
-        return Icon(
-          DevOpsIcons.running,
-          color: Colors.blue,
-          size: size,
-        );
+        return Icon(DevOpsIcons.running, color: Colors.blue, size: size);
       case TaskStatus.completed:
-        return Icon(
-          DevOpsIcons.success,
-          color: Colors.green,
-          size: size,
-        );
+        return Icon(DevOpsIcons.success, color: Colors.green, size: size);
       case TaskStatus.pending:
-        return Icon(
-          DevOpsIcons.queued,
-          color: Colors.blue,
-          size: size,
-        );
+        return Icon(DevOpsIcons.queued, color: Colors.blue, size: size);
     }
   }
 }
@@ -284,11 +249,7 @@ enum TaskResult {
           size: size,
         );
       case TaskResult.failed:
-        return Icon(
-          DevOpsIcons.failed,
-          color: Colors.red,
-          size: size,
-        );
+        return Icon(DevOpsIcons.failed, color: Colors.red, size: size);
       case TaskResult.skipped:
         return Icon(
           DevOpsIcons.skipped,
@@ -297,11 +258,7 @@ enum TaskResult {
         );
       case TaskResult.succeeded:
       case TaskResult.succeededWithIssues:
-        return Icon(
-          DevOpsIcons.success,
-          color: Colors.green,
-          size: size,
-        );
+        return Icon(DevOpsIcons.success, color: Colors.green, size: size);
     }
   }
 }

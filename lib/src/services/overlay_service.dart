@@ -25,23 +25,13 @@ class OverlayService {
       builder: (ctx) => Center(
         child: AlertDialog(
           surfaceTintColor: context.themeExtension.background,
-          title: Text(
-            title,
-            style: context.textTheme.headlineSmall,
-            textAlign: TextAlign.center,
-          ),
+          title: Text(title, style: context.textTheme.headlineSmall, textAlign: TextAlign.center),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (description != null)
-                Text(
-                  description,
-                  style: context.textTheme.titleSmall,
-                  textAlign: TextAlign.center,
-                ),
-              const SizedBox(
-                height: 40,
-              ),
+                Text(description, style: context.textTheme.titleSmall, textAlign: TextAlign.center),
+              const SizedBox(height: 40),
               Row(
                 children: [
                   Expanded(
@@ -57,9 +47,7 @@ class OverlayService {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 20,
-                  ),
+                  const SizedBox(width: 20),
                   Expanded(
                     child: TextButton(
                       onPressed: () {
@@ -72,9 +60,7 @@ class OverlayService {
                       ),
                       child: Text(
                         'Confirm',
-                        style: context.textTheme.titleSmall!.copyWith(
-                          color: context.colorScheme.onPrimary,
-                        ),
+                        style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onPrimary),
                       ),
                     ),
                   ),
@@ -96,23 +82,13 @@ class OverlayService {
       builder: (ctx) => Center(
         child: AlertDialog(
           surfaceTintColor: context.themeExtension.background,
-          title: Text(
-            title,
-            style: context.textTheme.headlineSmall,
-            textAlign: TextAlign.center,
-          ),
+          title: Text(title, style: context.textTheme.headlineSmall, textAlign: TextAlign.center),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (description != null)
-                SelectableText(
-                  description,
-                  style: context.textTheme.titleSmall,
-                  textAlign: TextAlign.center,
-                ),
-              const SizedBox(
-                height: 40,
-              ),
+                SelectableText(description, style: context.textTheme.titleSmall, textAlign: TextAlign.center),
+              const SizedBox(height: 40),
               TextButton(
                 onPressed: AppRouter.popRoute,
                 style: ButtonStyle(
@@ -121,10 +97,7 @@ class OverlayService {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    'Close',
-                    style: context.textTheme.titleSmall,
-                  ),
+                  child: Text('Close', style: context.textTheme.titleSmall),
                 ),
               ),
             ],
@@ -155,15 +128,10 @@ class OverlayService {
       isScrollControlled: isScrollControlled,
       routeSettings: RouteSettings(name: 'bs_${name ?? title}'),
       builder: (ctx) => ClipRRect(
-        borderRadius: BorderRadius.only(
-          topLeft: const Radius.circular(12),
-          topRight: const Radius.circular(12),
-        ),
+        borderRadius: BorderRadius.only(topLeft: const Radius.circular(12), topRight: const Radius.circular(12)),
         child: Container(
           height: context.height * heightPercentage,
-          decoration: BoxDecoration(
-            color: context.themeExtension.background,
-          ),
+          decoration: BoxDecoration(color: context.themeExtension.background),
           child: Scaffold(
             body: Padding(
               padding: padding,
@@ -173,29 +141,22 @@ class OverlayService {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const SizedBox(
-                          width: 80,
-                        ),
+                        const SizedBox(width: 80),
                         Flexible(child: Text(title)),
                         SizedBox(
                           width: 80,
-                          child: topRight ??
+                          child:
+                              topRight ??
                               (isDismissible
                                   ? Align(
                                       alignment: Alignment.centerRight,
-                                      child: GestureDetector(
-                                        onTap: AppRouter.popRoute,
-                                        child: Icon(Icons.close),
-                                      ),
+                                      child: GestureDetector(onTap: AppRouter.popRoute, child: Icon(Icons.close)),
                                     )
                                   : null),
                         ),
                       ],
                     ),
-                  if (spaceUnderTitle)
-                    const SizedBox(
-                      height: 20,
-                    ),
+                  if (spaceUnderTitle) const SizedBox(height: 20),
                   Expanded(child: builder(ctx)),
                 ],
               ),
@@ -226,9 +187,7 @@ class OverlayService {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(child: Text(title)),
-              const SizedBox(
-                width: 10,
-              ),
+              const SizedBox(width: 10),
               Icon(isError ? DevOpsIcons.failed : DevOpsIcons.success),
             ],
           ),
@@ -254,11 +213,7 @@ class OverlayService {
     await OverlayService.bottomsheet(
       title: title,
       isScrollControlled: true,
-      builder: (_) => DevOpsFormField(
-        onChanged: (s) => result = s,
-        label: label,
-        initialValue: initialValue,
-      ),
+      builder: (_) => DevOpsFormField(onChanged: (s) => result = s, label: label, initialValue: initialValue),
       topRight: Builder(
         builder: (context) => TextButton(
           onPressed: () {
@@ -266,10 +221,7 @@ class OverlayService {
             AppRouter.popRoute();
           },
           style: TextButtonTheme.of(context).style!.copyWith(padding: WidgetStatePropertyAll(EdgeInsets.zero)),
-          child: Text(
-            'Confirm',
-            style: context.textTheme.bodyMedium!.copyWith(color: context.colorScheme.primary),
-          ),
+          child: Text('Confirm', style: context.textTheme.bodyMedium!.copyWith(color: context.colorScheme.primary)),
         ),
       ),
     );

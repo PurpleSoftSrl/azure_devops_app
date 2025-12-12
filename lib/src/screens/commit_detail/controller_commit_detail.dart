@@ -53,7 +53,12 @@ class _CommitDetailController with ShareMixin {
         directory: directory,
         fileName: fileName,
         path: path,
-        changeType: switch (file.changeType) { 'add' => 'added', 'edit' => 'edited', 'delete' => 'deleted', _ => '' },
+        changeType: switch (file.changeType) {
+          'add' => 'added',
+          'edit' => 'edited',
+          'delete' => 'deleted',
+          _ => '',
+        },
       );
       if (file.changeType == 'add') {
         groupedAddedFiles.putIfAbsent(directory, () => {diff});
@@ -86,14 +91,12 @@ class _CommitDetailController with ShareMixin {
   }
 
   void goToFileDiff({required ChangedFileDiff diff, bool isAdded = false, bool isDeleted = false}) {
-    AppRouter.goToFileDiff(
-      (
-        commit: commit!,
-        filePath: diff.path,
-        isAdded: isAdded,
-        isDeleted: isDeleted,
-        pullRequestId: null,
-      ),
-    );
+    AppRouter.goToFileDiff((
+      commit: commit!,
+      filePath: diff.path,
+      isAdded: isAdded,
+      isDeleted: isDeleted,
+      pullRequestId: null,
+    ));
   }
 }

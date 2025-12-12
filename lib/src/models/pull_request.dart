@@ -9,16 +9,15 @@ typedef PullRequestCompletionOptions = ({
   String? commitMessage,
   bool completeWorkItems,
   bool deleteSourceBranch,
-  int mergeType
+  int mergeType,
 });
 
 class GetPullRequestsResponse {
   GetPullRequestsResponse({required this.pullRequests});
 
   factory GetPullRequestsResponse.fromJson(Map<String, dynamic> json) => GetPullRequestsResponse(
-        pullRequests:
-            (json['value'] as List<dynamic>).map((e) => PullRequest.fromJson(e as Map<String, dynamic>)).toList(),
-      );
+    pullRequests: (json['value'] as List<dynamic>).map((e) => PullRequest.fromJson(e as Map<String, dynamic>)).toList(),
+  );
 
   static List<PullRequest> fromResponse(Response res) =>
       GetPullRequestsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).pullRequests;
@@ -47,27 +46,27 @@ class PullRequest {
   });
 
   factory PullRequest.fromJson(Map<String, dynamic> json) => PullRequest(
-        repository: Repository.fromJson(json['repository'] as Map<String, dynamic>),
-        pullRequestId: json['pullRequestId'] as int,
-        codeReviewId: json['codeReviewId'] as int,
-        status: PullRequestStatus.fromString(json['status'] as String),
-        createdBy: CreatedBy.fromJson(json['createdBy'] as Map<String, dynamic>),
-        creationDate: DateTime.parse(json['creationDate']!.toString()).toLocal(),
-        title: json['title'] as String,
-        description: json['description'] as String?,
-        sourceRefName: json['sourceRefName'] as String,
-        targetRefName: json['targetRefName'] as String,
-        mergeStatus: json['mergeStatus'] as String?,
-        isDraft: json['isDraft'] as bool,
-        mergeId: json['mergeId'] as String,
-        reviewers: List<Reviewer>.from(
-          (json['reviewers'] as List<dynamic>).map((e) => Reviewer.fromJson(e as Map<String, dynamic>)),
-        ),
-        labels: (json['labels'] as List<dynamic>?)?.map((e) => _Label.fromJson(e as Map<String, dynamic>)).toList(),
-        autoCompleteSetBy: json['autoCompleteSetBy'] == null
-            ? null
-            : _AutoCompleteSetBy.fromJson(json['autoCompleteSetBy'] as Map<String, dynamic>),
-      );
+    repository: Repository.fromJson(json['repository'] as Map<String, dynamic>),
+    pullRequestId: json['pullRequestId'] as int,
+    codeReviewId: json['codeReviewId'] as int,
+    status: PullRequestStatus.fromString(json['status'] as String),
+    createdBy: CreatedBy.fromJson(json['createdBy'] as Map<String, dynamic>),
+    creationDate: DateTime.parse(json['creationDate']!.toString()).toLocal(),
+    title: json['title'] as String,
+    description: json['description'] as String?,
+    sourceRefName: json['sourceRefName'] as String,
+    targetRefName: json['targetRefName'] as String,
+    mergeStatus: json['mergeStatus'] as String?,
+    isDraft: json['isDraft'] as bool,
+    mergeId: json['mergeId'] as String,
+    reviewers: List<Reviewer>.from(
+      (json['reviewers'] as List<dynamic>).map((e) => Reviewer.fromJson(e as Map<String, dynamic>)),
+    ),
+    labels: (json['labels'] as List<dynamic>?)?.map((e) => _Label.fromJson(e as Map<String, dynamic>)).toList(),
+    autoCompleteSetBy: json['autoCompleteSetBy'] == null
+        ? null
+        : _AutoCompleteSetBy.fromJson(json['autoCompleteSetBy'] as Map<String, dynamic>),
+  );
 
   static PullRequest fromResponse(Response res) => PullRequest.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
@@ -90,44 +89,38 @@ class PullRequest {
 
   @visibleForTesting
   static PullRequest empty() => PullRequest(
-        repository: Repository(
-          id: '',
-          name: '',
-          url: '',
-          project: RepositoryProject(
-            id: '',
-            name: '',
-            state: '',
-            visibility: '',
-            lastUpdateTime: DateTime.now(),
-          ),
-        ),
-        pullRequestId: -1,
-        codeReviewId: -1,
-        status: PullRequestStatus.notSet,
-        createdBy: CreatedBy(
-          displayName: '',
-          url: '',
-          links: Links(
-            self: Avatar(href: ''),
-            memberships: Avatar(href: ''),
-            membershipState: Avatar(href: ''),
-            storageKey: Avatar(href: ''),
-            avatar: Avatar(href: ''),
-          ),
-          id: '',
-          uniqueName: '',
-          imageUrl: '',
-          descriptor: '',
-        ),
-        creationDate: DateTime.now(),
-        title: '',
-        sourceRefName: '',
-        targetRefName: '',
-        isDraft: false,
-        mergeId: '',
-        reviewers: [],
-      );
+    repository: Repository(
+      id: '',
+      name: '',
+      url: '',
+      project: RepositoryProject(id: '', name: '', state: '', visibility: '', lastUpdateTime: DateTime.now()),
+    ),
+    pullRequestId: -1,
+    codeReviewId: -1,
+    status: PullRequestStatus.notSet,
+    createdBy: CreatedBy(
+      displayName: '',
+      url: '',
+      links: Links(
+        self: Avatar(href: ''),
+        memberships: Avatar(href: ''),
+        membershipState: Avatar(href: ''),
+        storageKey: Avatar(href: ''),
+        avatar: Avatar(href: ''),
+      ),
+      id: '',
+      uniqueName: '',
+      imageUrl: '',
+      descriptor: '',
+    ),
+    creationDate: DateTime.now(),
+    title: '',
+    sourceRefName: '',
+    targetRefName: '',
+    isDraft: false,
+    mergeId: '',
+    reviewers: [],
+  );
 
   @override
   String toString() {
@@ -206,19 +199,14 @@ class PullRequest {
 }
 
 class _AutoCompleteSetBy {
-  _AutoCompleteSetBy({
-    required this.displayName,
-    required this.id,
-    required this.uniqueName,
-    required this.descriptor,
-  });
+  _AutoCompleteSetBy({required this.displayName, required this.id, required this.uniqueName, required this.descriptor});
 
   factory _AutoCompleteSetBy.fromJson(Map<String, dynamic> json) => _AutoCompleteSetBy(
-        descriptor: json['descriptor'] as String,
-        displayName: json['displayName'] as String,
-        id: json['id'] as String,
-        uniqueName: json['uniqueName'] as String,
-      );
+    descriptor: json['descriptor'] as String,
+    displayName: json['displayName'] as String,
+    id: json['id'] as String,
+    uniqueName: json['uniqueName'] as String,
+  );
 
   final String displayName;
   final String id;
@@ -238,14 +226,14 @@ class CreatedBy {
   });
 
   factory CreatedBy.fromJson(Map<String, dynamic> json) => CreatedBy(
-        displayName: json['displayName'] as String,
-        url: json['url'] as String,
-        links: json['Links'] == null ? null : Links.fromJson(json['Links'] as Map<String, dynamic>),
-        id: json['id'] as String,
-        uniqueName: json['uniqueName'] as String,
-        imageUrl: json['imageUrl'] as String,
-        descriptor: json['descriptor'] as String,
-      );
+    displayName: json['displayName'] as String,
+    url: json['url'] as String,
+    links: json['Links'] == null ? null : Links.fromJson(json['Links'] as Map<String, dynamic>),
+    id: json['id'] as String,
+    uniqueName: json['uniqueName'] as String,
+    imageUrl: json['imageUrl'] as String,
+    descriptor: json['descriptor'] as String,
+  );
 
   final String displayName;
   final String url;
@@ -262,17 +250,10 @@ class CreatedBy {
 }
 
 class _Label {
-  _Label({
-    required this.id,
-    required this.name,
-    required this.active,
-  });
+  _Label({required this.id, required this.name, required this.active});
 
-  factory _Label.fromJson(Map<String, dynamic> json) => _Label(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        active: json['active'] as bool,
-      );
+  factory _Label.fromJson(Map<String, dynamic> json) =>
+      _Label(id: json['id'] as String, name: json['name'] as String, active: json['active'] as bool);
 
   final String id;
   final String name;
@@ -283,19 +264,14 @@ class _Label {
 }
 
 class Repository {
-  Repository({
-    required this.id,
-    required this.name,
-    required this.url,
-    required this.project,
-  });
+  Repository({required this.id, required this.name, required this.url, required this.project});
 
   factory Repository.fromJson(Map<String, dynamic> json) => Repository(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        url: json['url'] as String,
-        project: RepositoryProject.fromJson(json['project'] as Map<String, dynamic>),
-      );
+    id: json['id'] as String,
+    name: json['name'] as String,
+    url: json['url'] as String,
+    project: RepositoryProject.fromJson(json['project'] as Map<String, dynamic>),
+  );
 
   final String id;
   final String name;
@@ -318,12 +294,12 @@ class RepositoryProject {
   });
 
   factory RepositoryProject.fromJson(Map<String, dynamic> json) => RepositoryProject(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        state: json['state'] as String,
-        visibility: json['visibility'] as String,
-        lastUpdateTime: DateTime.parse(json['lastUpdateTime']!.toString()).toLocal(),
-      );
+    id: json['id'] as String,
+    name: json['name'] as String,
+    state: json['state'] as String,
+    visibility: json['visibility'] as String,
+    lastUpdateTime: DateTime.parse(json['lastUpdateTime']!.toString()).toLocal(),
+  );
 
   final String id;
   final String name;
@@ -405,14 +381,14 @@ class Reviewer {
   });
 
   factory Reviewer.fromJson(Map<String, dynamic> json) => Reviewer(
-        vote: json['vote'] as int,
-        hasDeclined: json['hasDeclined'] as bool,
-        isFlagged: json['isFlagged'] as bool,
-        isRequired: json['isRequired'] as bool? ?? false,
-        displayName: json['displayName'] as String,
-        id: json['id'] as String,
-        uniqueName: json['uniqueName'] as String,
-      );
+    vote: json['vote'] as int,
+    hasDeclined: json['hasDeclined'] as bool,
+    isFlagged: json['isFlagged'] as bool,
+    isRequired: json['isRequired'] as bool? ?? false,
+    displayName: json['displayName'] as String,
+    id: json['id'] as String,
+    uniqueName: json['uniqueName'] as String,
+  );
 
   final int vote;
   final bool hasDeclined;

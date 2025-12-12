@@ -30,10 +30,7 @@ class _TabsScreen extends StatelessWidget {
                     (p) => BottomNavigationBarItem(
                       icon: Padding(
                         padding: const EdgeInsets.only(top: 5),
-                        child: Icon(
-                          p.icon,
-                          size: parameters.tabIconHeight,
-                        ),
+                        child: Icon(p.icon, size: parameters.tabIconHeight),
                       ),
                     ),
                   )
@@ -42,9 +39,7 @@ class _TabsScreen extends StatelessWidget {
             tabBuilder: (_, i) => CupertinoTabView(
               navigatorKey: ctrl.navPages[i].key,
               navigatorObservers: [
-                SentryNavigatorObserver(
-                  routeNameExtractor: (settings) => ctrl.getRouteSettingsName(settings, i),
-                ),
+                SentryNavigatorObserver(routeNameExtractor: (settings) => ctrl.getRouteSettingsName(settings, i)),
                 if (useFirebase)
                   FirebaseAnalyticsObserver(
                     analytics: FirebaseAnalytics.instance,

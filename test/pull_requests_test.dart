@@ -15,72 +15,62 @@ void main() {
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets(
-    'Page building test',
-    (t) async {
-      final app = MaterialApp(
-        navigatorKey: AppRouter.navigatorKey,
-        theme: mockTheme,
-        home: StorageServiceWidget(
-          storage: StorageServiceMock(),
-          child: AdsServiceWidget(
-            ads: AdsServiceMock(),
-            child: AzureApiServiceWidget(
-              api: AzureApiServiceMock(),
-              child: PullRequestsPage(),
-            ),
-          ),
+  testWidgets('Page building test', (t) async {
+    final app = MaterialApp(
+      navigatorKey: AppRouter.navigatorKey,
+      theme: mockTheme,
+      home: StorageServiceWidget(
+        storage: StorageServiceMock(),
+        child: AdsServiceWidget(
+          ads: AdsServiceMock(),
+          child: AzureApiServiceWidget(api: AzureApiServiceMock(), child: PullRequestsPage()),
         ),
-      );
+      ),
+    );
 
-      await t.pumpWidget(app);
+    await t.pumpWidget(app);
 
-      await t.pump();
+    await t.pump();
 
-      expect(find.byType(PullRequestsPage), findsOneWidget);
-    },
-  );
+    expect(find.byType(PullRequestsPage), findsOneWidget);
+  });
 
-  testWidgets(
-    'Pull requests are visible, with their title, creator and repository and are sorted by creation date',
-    (t) async {
-      final workitemsPage = MaterialApp(
-        navigatorKey: AppRouter.navigatorKey,
-        theme: mockTheme,
-        home: StorageServiceWidget(
-          storage: StorageServiceMock(),
-          child: AdsServiceWidget(
-            ads: AdsServiceMock(),
-            child: AzureApiServiceWidget(
-              api: AzureApiServiceMock(),
-              child: PullRequestsPage(),
-            ),
-          ),
+  testWidgets('Pull requests are visible, with their title, creator and repository and are sorted by creation date', (
+    t,
+  ) async {
+    final workitemsPage = MaterialApp(
+      navigatorKey: AppRouter.navigatorKey,
+      theme: mockTheme,
+      home: StorageServiceWidget(
+        storage: StorageServiceMock(),
+        child: AdsServiceWidget(
+          ads: AdsServiceMock(),
+          child: AzureApiServiceWidget(api: AzureApiServiceMock(), child: PullRequestsPage()),
         ),
-      );
+      ),
+    );
 
-      await t.pumpWidget(workitemsPage);
+    await t.pumpWidget(workitemsPage);
 
-      await t.pump();
+    await t.pump();
 
-      final titles = find.textContaining('Pull request title');
-      final creators = find.textContaining('Test User');
-      final repos = find.textContaining('Repository name');
+    final titles = find.textContaining('Pull request title');
+    final creators = find.textContaining('Test User');
+    final repos = find.textContaining('Repository name');
 
-      // most recently created pull request
-      expect((t.widget(titles.at(0)) as Text).data, 'Pull request title 3');
-      expect((t.widget(creators.at(0)) as Text).data, '!3 Test User 3');
-      expect((t.widget(repos.at(0)) as Text).data, 'Repository name 3');
+    // most recently created pull request
+    expect((t.widget(titles.at(0)) as Text).data, 'Pull request title 3');
+    expect((t.widget(creators.at(0)) as Text).data, '!3 Test User 3');
+    expect((t.widget(repos.at(0)) as Text).data, 'Repository name 3');
 
-      // second most recently created pull request
-      expect((t.widget(titles.at(1)) as Text).data, 'Pull request title 2');
-      expect((t.widget(creators.at(1)) as Text).data, '!2 Test User 2');
-      expect((t.widget(repos.at(1)) as Text).data, 'Repository name 2');
+    // second most recently created pull request
+    expect((t.widget(titles.at(1)) as Text).data, 'Pull request title 2');
+    expect((t.widget(creators.at(1)) as Text).data, '!2 Test User 2');
+    expect((t.widget(repos.at(1)) as Text).data, 'Repository name 2');
 
-      // least recently created pull request
-      expect((t.widget(titles.at(2)) as Text).data, 'Pull request title 1');
-      expect((t.widget(creators.at(2)) as Text).data, '!1 Test User 1');
-      expect((t.widget(repos.at(2)) as Text).data, 'Repository name 1');
-    },
-  );
+    // least recently created pull request
+    expect((t.widget(titles.at(2)) as Text).data, 'Pull request title 1');
+    expect((t.widget(creators.at(2)) as Text).data, '!1 Test User 1');
+    expect((t.widget(repos.at(2)) as Text).data, 'Repository name 1');
+  });
 }

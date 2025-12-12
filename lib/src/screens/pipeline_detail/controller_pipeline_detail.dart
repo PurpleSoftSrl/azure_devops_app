@@ -82,12 +82,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
                   phase: p,
                   jobs: jobs
                       .where((j) => j.parentId == p.id)
-                      .map(
-                        (j) => _Job(
-                          job: j,
-                          tasks: tasks.where((t) => t.parentId == j.id).toList(),
-                        ),
-                      )
+                      .map((j) => _Job(job: j, tasks: tasks.where((t) => t.parentId == j.id).toList()))
                       .toList(),
                 ),
               )
@@ -209,15 +204,13 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
       return;
     }
 
-    AppRouter.goToPipelineLogs(
-      (
-        project: pipeline.project!.name!,
-        pipelineId: pipeline.id!,
-        taskId: t.id,
-        parentTaskId: t.parentId!,
-        logId: t.log!.id
-      ),
-    );
+    AppRouter.goToPipelineLogs((
+      project: pipeline.project!.name!,
+      pipelineId: pipeline.id!,
+      taskId: t.id,
+      parentTaskId: t.parentId!,
+      logId: t.log!.id,
+    ));
   }
 
   void visibilityChanged(VisibilityInfo info) {
@@ -287,10 +280,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
   }
 
   Future<void> _approveApproval(Approval approval) async {
-    final conf = await OverlayService.confirm(
-      'Attention',
-      description: 'Do you really want to approve this approval?',
-    );
+    final conf = await OverlayService.confirm('Attention', description: 'Do you really want to approve this approval?');
 
     if (!conf) return;
 
@@ -331,10 +321,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
   }
 
   Future<void> _rejectApproval(Approval approval) async {
-    final conf = await OverlayService.confirm(
-      'Attention',
-      description: 'Do you really want to reject this approval?',
-    );
+    final conf = await OverlayService.confirm('Attention', description: 'Do you really want to reject this approval?');
 
     if (!conf) return;
 
@@ -352,30 +339,21 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
 }
 
 class _Stage {
-  _Stage({
-    required this.stage,
-    required this.phases,
-  });
+  _Stage({required this.stage, required this.phases});
 
   final Record stage;
   final List<_Phase> phases;
 }
 
 class _Phase {
-  _Phase({
-    required this.phase,
-    required this.jobs,
-  });
+  _Phase({required this.phase, required this.jobs});
 
   final Record phase;
   final List<_Job> jobs;
 }
 
 class _Job {
-  _Job({
-    required this.job,
-    required this.tasks,
-  });
+  _Job({required this.job, required this.tasks});
 
   final Record job;
   final List<Record> tasks;

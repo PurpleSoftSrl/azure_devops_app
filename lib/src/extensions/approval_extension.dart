@@ -18,9 +18,9 @@ extension ApprovalExt on Approval {
   }
 
   int getLastStepTimestamp() => steps.fold(
-        DateTime(1900).millisecondsSinceEpoch,
-        (prev, step) => max(prev, (step.lastModifiedOn ?? DateTime.now()).millisecondsSinceEpoch),
-      );
+    DateTime(1900).millisecondsSinceEpoch,
+    (prev, step) => max(prev, (step.lastModifiedOn ?? DateTime.now()).millisecondsSinceEpoch),
+  );
 
   bool get isPending => status == 'pending';
 }
@@ -31,36 +31,18 @@ extension StepExt on ApprovalStep {
   Icon get statusIcon {
     switch (status) {
       case 'approved':
-        return Icon(
-          DevOpsIcons.success,
-          color: Colors.green,
-        );
+        return Icon(DevOpsIcons.success, color: Colors.green);
       case 'rejected':
-        return Icon(
-          DevOpsIcons.failed,
-          color: AppRouter.navigatorKey.currentContext!.colorScheme.error,
-        );
+        return Icon(DevOpsIcons.failed, color: AppRouter.navigatorKey.currentContext!.colorScheme.error);
       case 'pending':
-        return Icon(
-          DevOpsIcons.queued,
-          color: Colors.blue,
-        );
+        return Icon(DevOpsIcons.queued, color: Colors.blue);
       case 'deferred':
-        return Icon(
-          DevOpsIcons.queued,
-          color: Colors.blue,
-        );
+        return Icon(DevOpsIcons.queued, color: Colors.blue);
       case 'timedOut':
-        return Icon(
-          DevOpsIcons.skipped,
-          color: AppRouter.rootNavigator!.context.themeExtension.onBackground,
-        );
+        return Icon(DevOpsIcons.skipped, color: AppRouter.rootNavigator!.context.themeExtension.onBackground);
 
       default:
-        return Icon(
-          Icons.question_mark,
-          color: Colors.transparent,
-        );
+        return Icon(Icons.question_mark, color: Colors.transparent);
     }
   }
 

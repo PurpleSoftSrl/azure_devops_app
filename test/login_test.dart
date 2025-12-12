@@ -36,10 +36,7 @@ void main() {
       theme: mockTheme,
       home: AzureApiServiceWidget(
         api: AzureApiServiceMock(),
-        child: StorageServiceWidget(
-          storage: StorageServiceMock(),
-          child: LoginPage(),
-        ),
+        child: StorageServiceWidget(storage: StorageServiceMock(), child: LoginPage()),
       ),
     );
 
@@ -69,10 +66,7 @@ void main() {
       theme: mockTheme,
       home: AzureApiServiceWidget(
         api: AzureApiServiceMock(),
-        child: StorageServiceWidget(
-          storage: StorageServiceMock(),
-          child: LoginPage(),
-        ),
+        child: StorageServiceWidget(storage: StorageServiceMock(), child: LoginPage()),
       ),
     );
 

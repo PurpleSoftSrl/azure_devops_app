@@ -14,10 +14,7 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
   final recentCommits = ValueNotifier<ApiResponse<List<Commit>?>?>(null);
 
-  late final filtersService = FiltersService(
-    storage: storage,
-    organization: api.organization,
-  );
+  late final filtersService = FiltersService(storage: storage, organization: api.organization);
 
   /// Read/write filters from local storage only if user is not coming from project page or from shortcut
   bool get shouldPersistFilters => args?.project == null && !hasShortcut;
@@ -91,15 +88,14 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     final projectRepos = groupBy(commits, (c) => '${c.projectId}_${c.repositoryId}');
     final allTags = <TagsData?>[
-      ...await Future.wait([
-        for (final repoEntry in projectRepos.entries) api.getTags(repoEntry.value),
-      ]),
+      ...await Future.wait([for (final repoEntry in projectRepos.entries) api.getTags(repoEntry.value)]),
     ]..removeWhere((data) => data == null || data.tags.isEmpty);
 
     if (allTags.isNotEmpty) {
       for (final commit in commits) {
-        final repoTags =
-            allTags.firstWhereOrNull((t) => t!.projectId == commit.projectId && t.repositoryId == commit.repositoryId);
+        final repoTags = allTags.firstWhereOrNull(
+          (t) => t!.projectId == commit.projectId && t.repositoryId == commit.repositoryId,
+        );
         commit.tags = repoTags?.tags[commit.commitId];
       }
     }
@@ -182,9 +178,7 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
   List<GitRepository> getRepositoriesToShow() {
     return api.allRepositories
-        .where(
-          (r) => isDefaultProjectsFilter || (projectsFilter.map((p) => p.id).contains(r.project!.id)),
-        )
+        .where((r) => isDefaultProjectsFilter || (projectsFilter.map((p) => p.id).contains(r.project!.id)))
         .toList();
   }
 

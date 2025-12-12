@@ -17,16 +17,8 @@ class _Actions extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SearchButton(
-              isSearching: ctrl.isSearching,
-            ),
-            IconButton(
-              onPressed: ctrl.createWorkItem,
-              icon: Icon(
-                DevOpsIcons.plus,
-                size: 24,
-              ),
-            ),
+            SearchButton(isSearching: ctrl.isSearching),
+            IconButton(onPressed: ctrl.createWorkItem, icon: Icon(DevOpsIcons.plus, size: 24)),
           ],
         ),
       ),
@@ -35,11 +27,7 @@ class _Actions extends StatelessWidget {
 }
 
 class _WorkItemListTile extends StatelessWidget {
-  const _WorkItemListTile({
-    required this.item,
-    required this.onTap,
-    required this.isLast,
-  });
+  const _WorkItemListTile({required this.item, required this.onTap, required this.isLast});
 
   final VoidCallback onTap;
   final WorkItem item;
@@ -49,10 +37,12 @@ class _WorkItemListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final subtitleStyle = context.textTheme.bodySmall!;
     final api = context.api;
-    final wt = api.workItemTypes[item.fields.systemTeamProject]
-        ?.firstWhereOrNull((t) => t.name == item.fields.systemWorkItemType);
-    final state = api.workItemStates[item.fields.systemTeamProject]?[item.fields.systemWorkItemType]
-        ?.firstWhereOrNull((t) => t.name == item.fields.systemState);
+    final wt = api.workItemTypes[item.fields.systemTeamProject]?.firstWhereOrNull(
+      (t) => t.name == item.fields.systemWorkItemType,
+    );
+    final state = api.workItemStates[item.fields.systemTeamProject]?[item.fields.systemWorkItemType]?.firstWhereOrNull(
+      (t) => t.name == item.fields.systemState,
+    );
 
     final hasAssignee = item.fields.systemAssignedTo?.descriptor != null;
     final hasComments = (item.fields.systemCommentCount ?? 0) > 0;
@@ -90,22 +80,14 @@ class _WorkItemListTile extends StatelessWidget {
             ),
             subtitle: Column(
               children: [
-                const SizedBox(
-                  height: 8,
-                ),
+                const SizedBox(height: 8),
                 Row(
                   children: [
                     Flexible(
                       child: Row(
                         children: [
-                          Text(
-                            '#${item.id}',
-                            style: subtitleStyle,
-                          ),
-                          Text(
-                            ' in ',
-                            style: subtitleStyle.copyWith(color: context.colorScheme.onSecondary),
-                          ),
+                          Text('#${item.id}', style: subtitleStyle),
+                          Text(' in ', style: subtitleStyle.copyWith(color: context.colorScheme.onSecondary)),
                           Flexible(
                             child: Text(
                               item.fields.systemTeamProject,
@@ -125,10 +107,7 @@ class _WorkItemListTile extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Icon(
-                                    Icons.forum_outlined,
-                                    size: 14,
-                                  ),
+                                  Icon(Icons.forum_outlined, size: 14),
                                   const SizedBox(width: 2),
                                   Text(
                                     item.fields.systemCommentCount!.toString(),
@@ -140,19 +119,13 @@ class _WorkItemListTile extends StatelessWidget {
                           ],
                           if (hasAssignee) ...[
                             const SizedBox(width: 8),
-                            MemberAvatar(
-                              userDescriptor: item.fields.systemAssignedTo?.descriptor,
-                              radius: 18,
-                            ),
+                            MemberAvatar(userDescriptor: item.fields.systemAssignedTo?.descriptor, radius: 18),
                           ],
                         ],
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      item.fields.systemChangedDate.minutesAgo,
-                      style: subtitleStyle,
-                    ),
+                    Text(item.fields.systemChangedDate.minutesAgo, style: subtitleStyle),
                   ],
                 ),
               ],

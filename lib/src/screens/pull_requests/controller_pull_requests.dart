@@ -20,10 +20,7 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
   final isSearching = ValueNotifier<bool>(false);
   String? _currentSearchQuery;
 
-  late final filtersService = FiltersService(
-    storage: storage,
-    organization: api.organization,
-  );
+  late final filtersService = FiltersService(storage: storage, organization: api.organization);
 
   /// Read/write filters from local storage only if user is not coming from project page or from shortcut
   bool get shouldPersistFilters => args?.project == null && !hasShortcut;

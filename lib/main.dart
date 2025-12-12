@@ -76,13 +76,7 @@ Future<void> main() async {
           };
       },
       appRunner: () async {
-        runApp(
-          SentryScreenshotWidget(
-            child: SentryUserInteractionWidget(
-              child: const AzureDevOps(),
-            ),
-          ),
-        );
+        runApp(SentryScreenshotWidget(child: SentryUserInteractionWidget(child: const AzureDevOps())));
       },
     );
   }

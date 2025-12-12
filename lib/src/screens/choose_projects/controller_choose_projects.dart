@@ -34,9 +34,7 @@ class _ChooseProjectsController {
     // sort projects by last change date, already chosen projects go first.
     if (alreadyChosenProjects.isNotEmpty) {
       allProjects
-        ..addAll(
-          alreadyChosenProjects.toList()..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)),
-        )
+        ..addAll(alreadyChosenProjects.toList()..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)))
         ..addAll(
           projects.where((p) => !alreadyChosenProjects.contains(p)).toList()
             ..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)),
@@ -74,15 +72,10 @@ class _ChooseProjectsController {
 
   Future<void> goToHome() async {
     if (chosenProjects.value!.data!.isEmpty) {
-      return OverlayService.error(
-        'No projects chosen',
-        description: 'You have to choose at least one project',
-      );
+      return OverlayService.error('No projects chosen', description: 'You have to choose at least one project');
     }
 
-    api.setChosenProjects(
-      chosenProjects.value!.data!..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)),
-    );
+    api.setChosenProjects(chosenProjects.value!.data!..sort((a, b) => b.lastUpdateTime!.compareTo(a.lastUpdateTime!)));
 
     final tenant = storage.getTenantId();
     if (tenant.isNotEmpty) {

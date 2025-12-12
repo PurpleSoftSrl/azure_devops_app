@@ -32,10 +32,7 @@ class _ProjectBoardsController {
       final boards = entry.value;
       final sprints = teamSprints?[team] ?? [];
 
-      res[team] = _BoardsAndSprints(
-        boards: boards,
-        sprints: sprints,
-      );
+      res[team] = _BoardsAndSprints(boards: boards, sprints: sprints);
     }
 
     projectBoards.value = ApiResponse.ok(res);
@@ -65,10 +62,7 @@ class _ProjectBoardsController {
 }
 
 class _BoardsAndSprints {
-  _BoardsAndSprints({
-    required this.boards,
-    required this.sprints,
-  });
+  _BoardsAndSprints({required this.boards, required this.sprints});
 
   final List<Board> boards;
   final List<Sprint> sprints;

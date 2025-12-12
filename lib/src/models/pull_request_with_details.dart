@@ -44,10 +44,10 @@ class IterationsRes {
       IterationsRes.fromJson(json.decode(res.body) as Map<String, dynamic>);
 
   factory IterationsRes.fromJson(Map<String, dynamic> json) => IterationsRes(
-        iterations: List<Iteration>.from(
-          (json['value'] as List<dynamic>).map((i) => Iteration.fromJson(i as Map<String, dynamic>)),
-        ),
-      );
+    iterations: List<Iteration>.from(
+      (json['value'] as List<dynamic>).map((i) => Iteration.fromJson(i as Map<String, dynamic>)),
+    ),
+  );
 
   final List<Iteration> iterations;
 }
@@ -65,15 +65,15 @@ class Iteration {
   });
 
   factory Iteration.fromJson(Map<String, dynamic> json) => Iteration(
-        id: json['id'] as int,
-        description: json['description'] as String,
-        author: _Author.fromJson(json['author'] as Map<String, dynamic>),
-        createdDate: DateTime.parse(json['createdDate']!.toString()).toLocal(),
-        updatedDate: DateTime.parse(json['updatedDate']!.toString()).toLocal(),
-        sourceRefCommit: _RefCommit.fromJson(json['sourceRefCommit'] as Map<String, dynamic>? ?? {}),
-        commonRefCommit: _RefCommit.fromJson(json['commonRefCommit'] as Map<String, dynamic>? ?? {}),
-        commits: (json['commits'] as List<dynamic>?)?.map((e) => Commit.fromJson(e as Map<String, dynamic>)).toList(),
-      );
+    id: json['id'] as int,
+    description: json['description'] as String,
+    author: _Author.fromJson(json['author'] as Map<String, dynamic>),
+    createdDate: DateTime.parse(json['createdDate']!.toString()).toLocal(),
+    updatedDate: DateTime.parse(json['updatedDate']!.toString()).toLocal(),
+    sourceRefCommit: _RefCommit.fromJson(json['sourceRefCommit'] as Map<String, dynamic>? ?? {}),
+    commonRefCommit: _RefCommit.fromJson(json['commonRefCommit'] as Map<String, dynamic>? ?? {}),
+    commits: (json['commits'] as List<dynamic>?)?.map((e) => Commit.fromJson(e as Map<String, dynamic>)).toList(),
+  );
 
   final int id;
   final String description;
@@ -86,19 +86,14 @@ class Iteration {
 }
 
 class _Author {
-  _Author({
-    required this.displayName,
-    required this.id,
-    required this.uniqueName,
-    required this.descriptor,
-  });
+  _Author({required this.displayName, required this.id, required this.uniqueName, required this.descriptor});
 
   factory _Author.fromJson(Map<String, dynamic> json) => _Author(
-        displayName: json['displayName'] as String,
-        id: json['id'] as String,
-        uniqueName: json['uniqueName'] as String,
-        descriptor: json['descriptor'] as String,
-      );
+    displayName: json['displayName'] as String,
+    id: json['id'] as String,
+    uniqueName: json['uniqueName'] as String,
+    descriptor: json['descriptor'] as String,
+  );
 
   final String displayName;
   final String id;
@@ -120,10 +115,10 @@ class ChangesRes {
   factory ChangesRes.fromResponse(Response res) => ChangesRes.fromJson(json.decode(res.body) as Map<String, dynamic>);
 
   factory ChangesRes.fromJson(Map<String, dynamic> json) => ChangesRes(
-        changes: List<ChangeEntry>.from(
-          (json['changeEntries'] as List<dynamic>).map((e) => ChangeEntry.fromJson(e as Map<String, dynamic>)),
-        ),
-      );
+    changes: List<ChangeEntry>.from(
+      (json['changeEntries'] as List<dynamic>).map((e) => ChangeEntry.fromJson(e as Map<String, dynamic>)),
+    ),
+  );
 
   final List<ChangeEntry> changes;
 }
@@ -145,12 +140,12 @@ class ChangeEntry {
   });
 
   factory ChangeEntry.fromJson(Map<String, dynamic> json) => ChangeEntry(
-        changeTrackingId: json['changeTrackingId'] as int,
-        changeId: json['changeId'] as int,
-        item: _Item.fromJson(json['item'] as Map<String, dynamic>),
-        changeType: json['changeType'] as String,
-        originalPath: json['originalPath'] as String?,
-      );
+    changeTrackingId: json['changeTrackingId'] as int,
+    changeId: json['changeId'] as int,
+    item: _Item.fromJson(json['item'] as Map<String, dynamic>),
+    changeType: json['changeType'] as String,
+    originalPath: json['originalPath'] as String?,
+  );
 
   final int changeTrackingId;
   final int changeId;
@@ -163,10 +158,10 @@ class _Item {
   _Item({this.objectId, this.originalObjectId, this.path});
 
   factory _Item.fromJson(Map<String, dynamic> json) => _Item(
-        objectId: json['objectId'] as String?,
-        originalObjectId: json['originalObjectId'] as String?,
-        path: json['path'] as String?,
-      );
+    objectId: json['objectId'] as String?,
+    originalObjectId: json['originalObjectId'] as String?,
+    path: json['path'] as String?,
+  );
 
   final String? objectId;
   final String? originalObjectId;
@@ -179,9 +174,8 @@ class ThreadsRes {
   factory ThreadsRes.fromResponse(Response res) => ThreadsRes.fromJson(json.decode(res.body) as Map<String, dynamic>);
 
   factory ThreadsRes.fromJson(Map<String, dynamic> json) => ThreadsRes(
-        threads:
-            List<Thread>.from((json['value'] as List<dynamic>).map((t) => Thread.fromJson(t as Map<String, dynamic>))),
-      );
+    threads: List<Thread>.from((json['value'] as List<dynamic>).map((t) => Thread.fromJson(t as Map<String, dynamic>))),
+  );
 
   final List<Thread> threads;
 }
@@ -200,21 +194,20 @@ class Thread {
   });
 
   factory Thread.fromJson(Map<String, dynamic> json) => Thread(
-        id: json['id'] as int,
-        publishedDate: DateTime.parse(json['publishedDate']!.toString()).toLocal(),
-        lastUpdatedDate: DateTime.parse(json['lastUpdatedDate']!.toString()).toLocal(),
-        comments: List<PrComment>.from(
-          (json['comments'] as List<dynamic>).map((c) => PrComment.fromJson(c as Map<String, dynamic>)),
-        ),
-        isDeleted: json['isDeleted'] as bool,
-        properties:
-            json['properties'] == null ? null : _Properties.fromJson(json['properties'] as Map<String, dynamic>),
-        identities: json['identities'] == null ? null : json['identities'] as Map<String, dynamic>,
-        threadContext: json['threadContext'] == null
-            ? null
-            : ThreadContext.fromJson(json['threadContext'] as Map<String, dynamic>),
-        status: ThreadStatus.fromString(json['status'] as String?),
-      );
+    id: json['id'] as int,
+    publishedDate: DateTime.parse(json['publishedDate']!.toString()).toLocal(),
+    lastUpdatedDate: DateTime.parse(json['lastUpdatedDate']!.toString()).toLocal(),
+    comments: List<PrComment>.from(
+      (json['comments'] as List<dynamic>).map((c) => PrComment.fromJson(c as Map<String, dynamic>)),
+    ),
+    isDeleted: json['isDeleted'] as bool,
+    properties: json['properties'] == null ? null : _Properties.fromJson(json['properties'] as Map<String, dynamic>),
+    identities: json['identities'] == null ? null : json['identities'] as Map<String, dynamic>,
+    threadContext: json['threadContext'] == null
+        ? null
+        : ThreadContext.fromJson(json['threadContext'] as Map<String, dynamic>),
+    status: ThreadStatus.fromString(json['status'] as String?),
+  );
 
   final int id;
   final DateTime publishedDate;
@@ -243,16 +236,16 @@ class _Properties {
   _Properties({this.type, this.newCommits, this.newCommitsCount});
 
   factory _Properties.fromJson(Map<String, dynamic> json) => _Properties(
-        type: json['CodeReviewThreadType'] == null
-            ? null
-            : _Property.fromJson(json['CodeReviewThreadType'] as Map<String, dynamic>),
-        newCommits: json['CodeReviewRefNewCommits'] == null
-            ? null
-            : _Property.fromJson(json['CodeReviewRefNewCommits'] as Map<String, dynamic>),
-        newCommitsCount: json['CodeReviewRefNewCommitsCount'] == null
-            ? null
-            : _Property.fromJson(json['CodeReviewRefNewCommitsCount'] as Map<String, dynamic>),
-      );
+    type: json['CodeReviewThreadType'] == null
+        ? null
+        : _Property.fromJson(json['CodeReviewThreadType'] as Map<String, dynamic>),
+    newCommits: json['CodeReviewRefNewCommits'] == null
+        ? null
+        : _Property.fromJson(json['CodeReviewRefNewCommits'] as Map<String, dynamic>),
+    newCommitsCount: json['CodeReviewRefNewCommitsCount'] == null
+        ? null
+        : _Property.fromJson(json['CodeReviewRefNewCommitsCount'] as Map<String, dynamic>),
+  );
 
   final _Property<String>? type;
   final _Property<String>? newCommits;
@@ -262,10 +255,8 @@ class _Properties {
 class _Property<T> {
   _Property({required this.type, required this.value});
 
-  factory _Property.fromJson(Map<String, dynamic> json) => _Property(
-        type: json['\u0024type'] as String,
-        value: json['\u0024value'] as T,
-      );
+  factory _Property.fromJson(Map<String, dynamic> json) =>
+      _Property(type: json['\u0024type'] as String, value: json['\u0024value'] as T);
   final String type;
   final T value;
 }
@@ -283,15 +274,15 @@ class PrComment {
   });
 
   factory PrComment.fromJson(Map<String, dynamic> json) => PrComment(
-        id: json['id'] as int,
-        parentCommentId: json['parentCommentId'] as int,
-        author: _Author.fromJson(json['author'] as Map<String, dynamic>),
-        content: json['content'] as String? ?? '',
-        publishedDate: DateTime.parse(json['publishedDate']!.toString()).toLocal(),
-        lastUpdatedDate: DateTime.parse(json['lastUpdatedDate']!.toString()).toLocal(),
-        commentType: json['commentType'] as String?,
-        isDeleted: json['isDeleted'] as bool? ?? false,
-      );
+    id: json['id'] as int,
+    parentCommentId: json['parentCommentId'] as int,
+    author: _Author.fromJson(json['author'] as Map<String, dynamic>),
+    content: json['content'] as String? ?? '',
+    publishedDate: DateTime.parse(json['publishedDate']!.toString()).toLocal(),
+    lastUpdatedDate: DateTime.parse(json['lastUpdatedDate']!.toString()).toLocal(),
+    commentType: json['commentType'] as String?,
+    isDeleted: json['isDeleted'] as bool? ?? false,
+  );
 
   final int id;
   final int parentCommentId;
@@ -323,26 +314,22 @@ class ConflictsResponse {
       ConflictsResponse.fromJson(json.decode(res.body) as Map<String, dynamic>);
 
   factory ConflictsResponse.fromJson(Map<String, dynamic> json) => ConflictsResponse(
-        conflicts: List<Conflict>.from(
-          (json['value'] as List<dynamic>).map((c) => Conflict.fromJson(c as Map<String, dynamic>)),
-        ),
-      );
+    conflicts: List<Conflict>.from(
+      (json['value'] as List<dynamic>).map((c) => Conflict.fromJson(c as Map<String, dynamic>)),
+    ),
+  );
 
   final List<Conflict> conflicts;
 }
 
 class Conflict {
-  Conflict({
-    required this.conflictId,
-    required this.conflictType,
-    required this.conflictPath,
-  });
+  Conflict({required this.conflictId, required this.conflictType, required this.conflictPath});
 
   factory Conflict.fromJson(Map<String, dynamic> json) => Conflict(
-        conflictId: json['conflictId'] as int,
-        conflictType: json['conflictType'] as String,
-        conflictPath: json['conflictPath'] as String,
-      );
+    conflictId: json['conflictId'] as int,
+    conflictType: json['conflictType'] as String,
+    conflictPath: json['conflictPath'] as String,
+  );
 
   final int conflictId;
   final String conflictType;
@@ -359,16 +346,18 @@ class ThreadContext {
   });
 
   factory ThreadContext.fromJson(Map<String, dynamic> json) => ThreadContext(
-        filePath: json['filePath'] as String,
-        rightFileStart:
-            json['rightFileStart'] == null ? null : _RightFile.fromJson(json['rightFileStart'] as Map<String, dynamic>),
-        rightFileEnd:
-            json['rightFileEnd'] == null ? null : _RightFile.fromJson(json['rightFileEnd'] as Map<String, dynamic>),
-        leftFileStart:
-            json['leftFileStart'] == null ? null : _RightFile.fromJson(json['leftFileStart'] as Map<String, dynamic>),
-        leftFileEnd:
-            json['leftFileEnd'] == null ? null : _RightFile.fromJson(json['leftFileEnd'] as Map<String, dynamic>),
-      );
+    filePath: json['filePath'] as String,
+    rightFileStart: json['rightFileStart'] == null
+        ? null
+        : _RightFile.fromJson(json['rightFileStart'] as Map<String, dynamic>),
+    rightFileEnd: json['rightFileEnd'] == null
+        ? null
+        : _RightFile.fromJson(json['rightFileEnd'] as Map<String, dynamic>),
+    leftFileStart: json['leftFileStart'] == null
+        ? null
+        : _RightFile.fromJson(json['leftFileStart'] as Map<String, dynamic>),
+    leftFileEnd: json['leftFileEnd'] == null ? null : _RightFile.fromJson(json['leftFileEnd'] as Map<String, dynamic>),
+  );
 
   final String filePath;
   final _RightFile? rightFileStart;
@@ -378,15 +367,10 @@ class ThreadContext {
 }
 
 class _RightFile {
-  _RightFile({
-    required this.line,
-    required this.offset,
-  });
+  _RightFile({required this.line, required this.offset});
 
-  factory _RightFile.fromJson(Map<String, dynamic> json) => _RightFile(
-        line: json['line'] as int,
-        offset: json['offset'] as int,
-      );
+  factory _RightFile.fromJson(Map<String, dynamic> json) =>
+      _RightFile(line: json['line'] as int, offset: json['offset'] as int);
 
   final int line;
   final int offset;
@@ -453,15 +437,15 @@ final class ThreadUpdate extends PullRequestUpdate {
   final ThreadStatus? status;
 
   ThreadUpdate copyWith({String? content, List<PrComment>? comments}) => ThreadUpdate(
-        id: id,
-        content: content ?? this.content,
-        author: author,
-        date: date,
-        identity: identity,
-        comments: comments ?? this.comments,
-        threadContext: threadContext,
-        status: status,
-      );
+    id: id,
+    content: content ?? this.content,
+    author: author,
+    date: date,
+    identity: identity,
+    comments: comments ?? this.comments,
+    threadContext: threadContext,
+    status: status,
+  );
 }
 
 final class IterationUpdate extends PullRequestUpdate {

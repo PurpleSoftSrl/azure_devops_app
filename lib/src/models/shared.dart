@@ -8,12 +8,12 @@ class Links {
   });
 
   factory Links.fromJson(Map<String, dynamic> json) => Links(
-        self: Avatar.fromJson(json['self'] as Map<String, dynamic>),
-        memberships: Avatar.fromJson(json['memberships'] as Map<String, dynamic>),
-        membershipState: Avatar.fromJson(json['membershipState'] as Map<String, dynamic>),
-        storageKey: Avatar.fromJson(json['storageKey'] as Map<String, dynamic>),
-        avatar: Avatar.fromJson(json['avatar'] as Map<String, dynamic>),
-      );
+    self: Avatar.fromJson(json['self'] as Map<String, dynamic>),
+    memberships: Avatar.fromJson(json['memberships'] as Map<String, dynamic>),
+    membershipState: Avatar.fromJson(json['membershipState'] as Map<String, dynamic>),
+    storageKey: Avatar.fromJson(json['storageKey'] as Map<String, dynamic>),
+    avatar: Avatar.fromJson(json['avatar'] as Map<String, dynamic>),
+  );
 
   final Avatar? self;
   final Avatar? memberships;
@@ -25,9 +25,7 @@ class Links {
 class Avatar {
   Avatar({required this.href});
 
-  factory Avatar.fromJson(Map<String, dynamic> json) => Avatar(
-        href: json['href'] as String?,
-      );
+  factory Avatar.fromJson(Map<String, dynamic> json) => Avatar(href: json['href'] as String?);
 
   final String? href;
 }

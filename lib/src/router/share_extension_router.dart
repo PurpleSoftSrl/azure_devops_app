@@ -77,8 +77,12 @@ class ShareExtensionRouter {
 
       final isFile = (path ?? '').isNotEmpty && path!.contains('.') && allLanguages.keys.contains(path.split('.').last);
 
-      final repoDetailArgs =
-          RepoDetailArgs(projectName: project, repositoryName: repository, filePath: path, branch: branch);
+      final repoDetailArgs = RepoDetailArgs(
+        projectName: project,
+        repositoryName: repository,
+        filePath: path,
+        branch: branch,
+      );
 
       if (isFile) return AppRouter.goToFileDetail(repoDetailArgs);
 

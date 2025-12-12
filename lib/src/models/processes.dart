@@ -7,11 +7,11 @@ class GetProcessesResponse {
   GetProcessesResponse({required this.count, required this.processes});
 
   factory GetProcessesResponse.fromJson(Map<String, dynamic> json) => GetProcessesResponse(
-        count: json['count'] as int,
-        processes: List<WorkProcess>.from(
-          (json['value'] as List<dynamic>).map((p) => WorkProcess.fromJson(p as Map<String, dynamic>)),
-        ),
-      );
+    count: json['count'] as int,
+    processes: List<WorkProcess>.from(
+      (json['value'] as List<dynamic>).map((p) => WorkProcess.fromJson(p as Map<String, dynamic>)),
+    ),
+  );
 
   static List<WorkProcess> fromResponse(Response res) =>
       GetProcessesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).processes;
@@ -34,17 +34,18 @@ class WorkProcess {
   });
 
   factory WorkProcess.fromJson(Map<String, dynamic> json) => WorkProcess(
-        typeId: json['typeId'] as String,
-        name: json['name'] as String,
-        referenceName: json['referenceName'] as String?,
-        description: json['description'] as String,
-        parentProcessTypeId: json['parentProcessTypeId'] as String,
-        isEnabled: json['isEnabled'] as bool,
-        isDefault: json['isDefault'] as bool,
-        customizationType: json['customizationType'] as String,
-        projects:
-            (json['projects'] as List<dynamic>? ?? []).map((e) => Project.fromJson(e as Map<String, dynamic>)).toList(),
-      );
+    typeId: json['typeId'] as String,
+    name: json['name'] as String,
+    referenceName: json['referenceName'] as String?,
+    description: json['description'] as String,
+    parentProcessTypeId: json['parentProcessTypeId'] as String,
+    isEnabled: json['isEnabled'] as bool,
+    isDefault: json['isDefault'] as bool,
+    customizationType: json['customizationType'] as String,
+    projects: (json['projects'] as List<dynamic>? ?? [])
+        .map((e) => Project.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 
   final String typeId;
   final String name;
@@ -73,11 +74,11 @@ class GetWorkItemTypesResponse {
   GetWorkItemTypesResponse({required this.count, required this.types});
 
   factory GetWorkItemTypesResponse.fromJson(Map<String, dynamic> json) => GetWorkItemTypesResponse(
-        count: json['count'] as int,
-        types: List<WorkItemType>.from(
-          (json['value'] as List<dynamic>).map((t) => WorkItemType.fromJson(t as Map<String, dynamic>)),
-        ),
-      );
+    count: json['count'] as int,
+    types: List<WorkItemType>.from(
+      (json['value'] as List<dynamic>).map((t) => WorkItemType.fromJson(t as Map<String, dynamic>)),
+    ),
+  );
 
   static List<WorkItemType> fromResponse(Response res) =>
       GetWorkItemTypesResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).types;
@@ -98,33 +99,22 @@ class WorkItemType {
   });
 
   factory WorkItemType.fromJson(Map<String, dynamic> json) => WorkItemType(
-        referenceName: json['referenceName'] as String,
-        name: json['name'] as String,
-        color: json['color'] as String?,
-        icon: json['icon'] as String,
-        isDisabled: json['isDisabled'] as bool,
-        customization: json['customization'] as String?,
-        states: (json['states'] as List<dynamic>? ?? [])
-            .map((s) => WorkItemState.fromJson(s as Map<String, dynamic>))
-            .toList(),
-      );
+    referenceName: json['referenceName'] as String,
+    name: json['name'] as String,
+    color: json['color'] as String?,
+    icon: json['icon'] as String,
+    isDisabled: json['isDisabled'] as bool,
+    customization: json['customization'] as String?,
+    states: (json['states'] as List<dynamic>? ?? [])
+        .map((s) => WorkItemState.fromJson(s as Map<String, dynamic>))
+        .toList(),
+  );
 
-  static WorkItemType get all => WorkItemType(
-        name: 'All',
-        referenceName: 'All',
-        isDisabled: false,
-        icon: '',
-        states: [],
-      );
+  static WorkItemType get all =>
+      WorkItemType(name: 'All', referenceName: 'All', isDisabled: false, icon: '', states: []);
 
   static WorkItemType onlyName({required String name}) {
-    return WorkItemType(
-      name: name,
-      referenceName: name,
-      isDisabled: false,
-      icon: '',
-      states: [],
-    );
+    return WorkItemType(name: name, referenceName: name, isDisabled: false, icon: '', states: []);
   }
 
   final String referenceName;
@@ -152,23 +142,15 @@ class WorkItemState {
   WorkItemState({required this.id, required this.name, required this.color, this.stateCategory = ''});
 
   factory WorkItemState.fromJson(Map<String, dynamic> json) => WorkItemState(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        color: json['color'] as String,
-        stateCategory: json['stateCategory'] as String? ?? '',
-      );
+    id: json['id'] as String,
+    name: json['name'] as String,
+    color: json['color'] as String,
+    stateCategory: json['stateCategory'] as String? ?? '',
+  );
 
-  static WorkItemState get all => WorkItemState(
-        name: 'All',
-        color: '',
-        id: '',
-      );
+  static WorkItemState get all => WorkItemState(name: 'All', color: '', id: '');
 
-  static WorkItemState onlyName({required String name}) => WorkItemState(
-        name: name,
-        color: '',
-        id: '',
-      );
+  static WorkItemState onlyName({required String name}) => WorkItemState(name: name, color: '', id: '');
 
   final String id;
   final String name;

@@ -13,10 +13,7 @@ class _RepositoryDetailController {
   Branch? currentBranch;
 
   Future<void> init() async {
-    final branchesRes = await api.getRepositoryBranches(
-      projectName: args.projectName,
-      repoName: args.repositoryName,
-    );
+    final branchesRes = await api.getRepositoryBranches(projectName: args.projectName, repoName: args.repositoryName);
 
     branches = branchesRes.data ?? [];
 

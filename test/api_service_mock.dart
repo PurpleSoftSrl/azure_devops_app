@@ -40,7 +40,9 @@ import 'package:azure_devops/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/src/ad_containers.dart';
 
-final mockTheme = ThemeData(extensions: [AppColorsExtension(background: Colors.white, onBackground: Colors.black)]);
+final mockTheme = ThemeData(
+  extensions: [AppColorsExtension(background: Colors.white, onBackground: Colors.black)],
+);
 
 class AzureApiServiceMock implements AzureApiService {
   @override
@@ -77,11 +79,7 @@ class AzureApiServiceMock implements AzureApiService {
         commit: Commit(
           commitId: '123456789',
           comment: 'Test commit message',
-          author: Author(
-            name: 'Test author',
-            email: 'test@author.email',
-            date: DateTime.now(),
-          ),
+          author: Author(name: 'Test author', email: 'test@author.email', date: DateTime.now()),
           remoteUrl: 'https://dev.azure.com/xamapps/TestProject/_git/test_repo/commit/123456789',
         ),
         changes: CommitChanges(
@@ -245,13 +243,7 @@ class AzureApiServiceMock implements AzureApiService {
 
   @override
   Future<ApiResponse<List<Project>>> getProjects() async {
-    return ApiResponse.ok([
-      Project(
-        id: '0',
-        name: 'p1',
-        description: 'p1 desc',
-      ),
-    ]);
+    return ApiResponse.ok([Project(id: '0', name: 'p1', description: 'p1 desc')]);
   }
 
   @override
@@ -265,34 +257,22 @@ class AzureApiServiceMock implements AzureApiService {
     final firstItem = emptyPullRequest.copyWith(
       pullRequestId: 1,
       title: 'Pull request title 1',
-      createdBy: emptyPullRequest.createdBy.copyWith(
-        displayName: 'Test User 1',
-      ),
-      repository: emptyPullRequest.repository.copyWith(
-        name: 'Repository name 1',
-      ),
+      createdBy: emptyPullRequest.createdBy.copyWith(displayName: 'Test User 1'),
+      repository: emptyPullRequest.repository.copyWith(name: 'Repository name 1'),
       creationDate: DateTime(2000, 1, 5),
     );
     final secondItem = emptyPullRequest.copyWith(
       pullRequestId: 2,
       title: 'Pull request title 2',
-      createdBy: emptyPullRequest.createdBy.copyWith(
-        displayName: 'Test User 2',
-      ),
-      repository: emptyPullRequest.repository.copyWith(
-        name: 'Repository name 2',
-      ),
+      createdBy: emptyPullRequest.createdBy.copyWith(displayName: 'Test User 2'),
+      repository: emptyPullRequest.repository.copyWith(name: 'Repository name 2'),
       creationDate: DateTime(2000, 1, 7),
     );
     final thirdItem = emptyPullRequest.copyWith(
       pullRequestId: 3,
       title: 'Pull request title 3',
-      createdBy: emptyPullRequest.createdBy.copyWith(
-        displayName: 'Test User 3',
-      ),
-      repository: emptyPullRequest.repository.copyWith(
-        name: 'Repository name 3',
-      ),
+      createdBy: emptyPullRequest.createdBy.copyWith(displayName: 'Test User 3'),
+      repository: emptyPullRequest.repository.copyWith(name: 'Repository name 3'),
       creationDate: DateTime(2000, 1, 9),
     );
     return ApiResponse.ok([firstItem, secondItem, thirdItem]);
@@ -337,24 +317,15 @@ class AzureApiServiceMock implements AzureApiService {
     final emptyWorkItem = WorkItem.empty();
     final firstItem = emptyWorkItem.copyWith(
       id: 1,
-      fields: emptyWorkItem.fields.copyWith(
-        systemTitle: 'Work item title 1',
-        systemTeamProject: 'Project 1',
-      ),
+      fields: emptyWorkItem.fields.copyWith(systemTitle: 'Work item title 1', systemTeamProject: 'Project 1'),
     );
     final secondItem = emptyWorkItem.copyWith(
       id: 2,
-      fields: emptyWorkItem.fields.copyWith(
-        systemTitle: 'Work item title 2',
-        systemTeamProject: 'Project 2',
-      ),
+      fields: emptyWorkItem.fields.copyWith(systemTitle: 'Work item title 2', systemTeamProject: 'Project 2'),
     );
     final thirdItem = emptyWorkItem.copyWith(
       id: 3,
-      fields: emptyWorkItem.fields.copyWith(
-        systemTitle: 'Work item title 3',
-        systemTeamProject: 'Project 3',
-      ),
+      fields: emptyWorkItem.fields.copyWith(systemTitle: 'Work item title 3', systemTeamProject: 'Project 3'),
     );
     return ApiResponse.ok([firstItem, secondItem, thirdItem]);
   }
@@ -589,12 +560,7 @@ class AzureApiServiceMock implements AzureApiService {
   @override
   Future<ApiResponse<ProjectDetail>> getProject({required String projectName}) async {
     final data = ProjectDetail(
-      project: Project(
-        id: 'project id',
-        name: 'project name',
-        description: 'description',
-        url: '',
-      ),
+      project: Project(id: 'project id', name: 'project name', description: 'description', url: ''),
     );
     return ApiResponse.ok(data);
   }
@@ -662,10 +628,7 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
-  Future<ApiResponse<bool>> deleteWorkItemComment({
-    required String projectName,
-    required CommentItemUpdate update,
-  }) {
+  Future<ApiResponse<bool>> deleteWorkItemComment({required String projectName, required CommentItemUpdate update}) {
     throw UnimplementedError();
   }
 
@@ -691,18 +654,8 @@ class AzureApiServiceMock implements AzureApiService {
     required String path,
     String? branch,
   }) async {
-    final item1 = RepoItem(
-      objectId: 'item 1 ID',
-      commitId: '111111',
-      path: 'item 1',
-      url: '',
-    );
-    final item2 = RepoItem(
-      objectId: 'item 2 ID',
-      commitId: '222222',
-      path: 'item 2',
-      url: '',
-    );
+    final item1 = RepoItem(objectId: 'item 1 ID', commitId: '111111', path: 'item 1', url: '');
+    final item2 = RepoItem(objectId: 'item 2 ID', commitId: '222222', path: 'item 2', url: '');
     return ApiResponse.ok([item1, item2]);
   }
 
@@ -723,9 +676,7 @@ class AzureApiServiceMock implements AzureApiService {
     String? commitId,
     bool previousChange = false,
   }) async {
-    return ApiResponse.ok(
-      FileDetailResponse(content: 'body test', isBinary: false),
-    );
+    return ApiResponse.ok(FileDetailResponse(content: 'body test', isBinary: false));
   }
 
   @override
@@ -869,7 +820,12 @@ class AzureApiServiceMock implements AzureApiService {
   }) async {
     return ApiResponse.ok(
       SprintDetailWithItems(
-        sprint: Sprint(id: '', name: '', path: '', attributes: SprintAttributes(timeFrame: 'current')),
+        sprint: Sprint(
+          id: '',
+          name: '',
+          path: '',
+          attributes: SprintAttributes(timeFrame: 'current'),
+        ),
         items: [],
       ),
     );
@@ -1057,16 +1013,8 @@ class PurchaseServiceMock implements PurchaseService {
 }
 
 extension on WorkItem {
-  WorkItem copyWith({
-    int? id,
-    int? rev,
-    ItemFields? fields,
-  }) {
-    return WorkItem(
-      id: id ?? this.id,
-      rev: rev ?? this.rev,
-      fields: fields ?? this.fields,
-    );
+  WorkItem copyWith({int? id, int? rev, ItemFields? fields}) {
+    return WorkItem(id: id ?? this.id, rev: rev ?? this.rev, fields: fields ?? this.fields);
   }
 }
 
@@ -1107,16 +1055,7 @@ extension on CreatedBy {
 }
 
 extension on Repository {
-  Repository copyWith({
-    String? id,
-    String? name,
-    String? url,
-  }) {
-    return Repository(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      url: url ?? this.url,
-      project: project,
-    );
+  Repository copyWith({String? id, String? name, String? url}) {
+    return Repository(id: id ?? this.id, name: name ?? this.name, url: url ?? this.url, project: project);
   }
 }

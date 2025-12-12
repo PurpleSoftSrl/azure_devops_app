@@ -31,11 +31,7 @@ class DevOpsAnimatedSearchField extends StatelessWidget {
           child: isSearching
               ? Padding(
                   padding: margin,
-                  child: DevOpsSearchField(
-                    onChanged: onChanged,
-                    onResetSearch: onResetSearch,
-                    hint: hint,
-                  ),
+                  child: DevOpsSearchField(onChanged: onChanged, onResetSearch: onResetSearch, hint: hint),
                 )
               : child,
         ),
@@ -83,10 +79,7 @@ class _DevOpsSearchFieldState extends State<DevOpsSearchField> {
           _controller.clear();
           widget.onResetSearch();
         },
-        child: Icon(
-          Icons.close,
-          color: context.themeExtension.onBackground,
-        ),
+        child: Icon(Icons.close, color: context.themeExtension.onBackground),
       ),
     );
   }
@@ -103,10 +96,7 @@ class SearchButton extends StatelessWidget {
       onPressed: () {
         isSearching.value = true;
       },
-      icon: Icon(
-        Icons.search,
-        size: 24,
-      ),
+      icon: Icon(Icons.search, size: 24),
     );
   }
 }

@@ -71,10 +71,7 @@ class _LoginController with AppLogger {
   }
 
   void _showLoginErrorAlert() {
-    OverlayService.error(
-      'Login error',
-      description: 'Check that your PAT is correct and retry',
-    );
+    OverlayService.error('Login error', description: 'Check that your PAT is correct and retry');
   }
 
   Future<bool> _setOrgManually() async {
@@ -95,9 +92,7 @@ class _LoginController with AppLogger {
             },
             maxLines: 1,
           ),
-          const SizedBox(
-            height: 40,
-          ),
+          const SizedBox(height: 40),
           LoadingButton(
             onPressed: () {
               hasSetOrg = true;

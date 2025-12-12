@@ -21,9 +21,7 @@ class _PipelinesScreen extends StatelessWidget {
         onResetFilters: ctrl.resetFilters,
         onEmpty: 'No pipelines found',
         header: () => ctrl.hasShortcut
-            ? ShortcutLabel(
-                label: ctrl.args!.shortcut!.label,
-              )
+            ? ShortcutLabel(label: ctrl.args!.shortcut!.label)
             : FiltersRow(
                 resetFilters: ctrl.resetFilters,
                 saveFilters: ctrl.saveFilters,
@@ -37,8 +35,9 @@ class _PipelinesScreen extends StatelessWidget {
                       formatLabel: (p) => p.name!,
                       isDefaultFilter: ctrl.isDefaultProjectsFilter,
                       widgetBuilder: (p) => ProjectFilterWidget(project: p),
-                      onSearchChanged:
-                          ctrl.hasManyProjects(ctrl.storage) ? (s) => ctrl.searchProject(s, ctrl.storage) : null,
+                      onSearchChanged: ctrl.hasManyProjects(ctrl.storage)
+                          ? (s) => ctrl.searchProject(s, ctrl.storage)
+                          : null,
                     ),
                   if (ctrl.showPipelineNamesFilter)
                     FilterMenu<String>.multiple(
@@ -84,55 +83,35 @@ class _PipelinesScreen extends StatelessWidget {
           var adsIndex = 0;
 
           return SliverList(
-            delegate: SliverChildBuilderDelegate(
-              childCount: pipelines?.length ?? 0,
-              (_, index) {
-                final p = pipelines![index];
+            delegate: SliverChildBuilderDelegate(childCount: pipelines?.length ?? 0, (_, index) {
+              final p = pipelines![index];
 
-                if (index == 0) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      if (ctrl.inProgressPipelines > 0) Text('Running pipelines: ${ctrl.inProgressPipelines}'),
-                      if (ctrl.queuedPipelines > 0) Text('Queued pipelines: ${ctrl.queuedPipelines}'),
-                      if (ctrl.inProgressPipelines > 0 || ctrl.queuedPipelines > 0)
-                        const SizedBox(
-                          height: 24,
-                        ),
-                      PipelineListTile(
-                        pipe: p,
-                        onTap: () => ctrl.goToPipelineDetail(p),
-                        isLast: p == pipelines.last,
-                      ),
-                    ],
-                  );
-                }
-
-                if (ctrl.shouldShowNativeAd(pipelines, p, adsIndex)) {
-                  return Column(
-                    children: [
-                      PipelineListTile(
-                        pipe: p,
-                        onTap: () => ctrl.goToPipelineDetail(p),
-                        isLast: p == pipelines.last,
-                      ),
-                      CustomAdWidget(
-                        item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++],
-                      ),
-                    ],
-                  );
-                }
-
-                return PipelineListTile(
-                  pipe: p,
-                  onTap: () => ctrl.goToPipelineDetail(p),
-                  isLast: p == pipelines.last,
+              if (index == 0) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    if (ctrl.inProgressPipelines > 0) Text('Running pipelines: ${ctrl.inProgressPipelines}'),
+                    if (ctrl.queuedPipelines > 0) Text('Queued pipelines: ${ctrl.queuedPipelines}'),
+                    if (ctrl.inProgressPipelines > 0 || ctrl.queuedPipelines > 0) const SizedBox(height: 24),
+                    PipelineListTile(pipe: p, onTap: () => ctrl.goToPipelineDetail(p), isLast: p == pipelines.last),
+                  ],
                 );
-              },
-            ),
+              }
+
+              if (ctrl.shouldShowNativeAd(pipelines, p, adsIndex)) {
+                return Column(
+                  children: [
+                    PipelineListTile(pipe: p, onTap: () => ctrl.goToPipelineDetail(p), isLast: p == pipelines.last),
+                    CustomAdWidget(
+                      item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++],
+                    ),
+                  ],
+                );
+              }
+
+              return PipelineListTile(pipe: p, onTap: () => ctrl.goToPipelineDetail(p), isLast: p == pipelines.last);
+            }),
           );
         },
       ),

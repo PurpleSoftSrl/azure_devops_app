@@ -57,10 +57,10 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
     if (!ctx.mounted) return;
 
     await Scrollable.of(ctx).position.ensureVisible(
-          ctx.findRenderObject()!,
-          duration: Duration(milliseconds: 250),
-          alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
-        );
+      ctx.findRenderObject()!,
+      duration: Duration(milliseconds: 250),
+      alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+    );
   }
 
   Future<void> _addMention(GraphUser u, AzureApiService api) async {
@@ -147,10 +147,7 @@ class _DevOpsHtmlEditorState extends State<DevOpsHtmlEditor> with FilterMixin {
                 isDefaultFilter: true,
                 widgetBuilder: (u) => UserFilterWidget(user: u),
                 onSearchChanged: hasManyUsers(api) ? (s) => searchUser(s, api) : null,
-                child: Text(
-                  '@',
-                  style: context.textTheme.headlineSmall,
-                ),
+                child: Text('@', style: context.textTheme.headlineSmall),
               ),
             ],
           ),

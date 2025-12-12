@@ -13,62 +13,50 @@ void main() {
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets(
-    'Page building test',
-    (t) async {
-      final app = MaterialApp(
-        theme: mockTheme,
-        home: AzureApiServiceWidget(
-          api: AzureApiServiceMock(),
-          child: AdsServiceWidget(
-            ads: AdsServiceMock(),
-            child: StorageServiceWidget(
-              storage: StorageServiceMock(),
-              child: CommitsPage(),
-            ),
-          ),
+  testWidgets('Page building test', (t) async {
+    final app = MaterialApp(
+      theme: mockTheme,
+      home: AzureApiServiceWidget(
+        api: AzureApiServiceMock(),
+        child: AdsServiceWidget(
+          ads: AdsServiceMock(),
+          child: StorageServiceWidget(storage: StorageServiceMock(), child: CommitsPage()),
         ),
-      );
+      ),
+    );
 
-      await t.pumpWidget(app);
+    await t.pumpWidget(app);
 
-      await t.pump();
+    await t.pump();
 
-      expect(find.byType(CommitsPage), findsOneWidget);
-    },
-  );
+    expect(find.byType(CommitsPage), findsOneWidget);
+  });
 
-  testWidgets(
-    'Commits are sorted by date descending',
-    (t) async {
-      final commitsPage = MaterialApp(
-        theme: mockTheme,
-        home: AzureApiServiceWidget(
-          api: AzureApiServiceMock(),
-          child: AdsServiceWidget(
-            ads: AdsServiceMock(),
-            child: StorageServiceWidget(
-              storage: StorageServiceMock(),
-              child: CommitsPage(),
-            ),
-          ),
+  testWidgets('Commits are sorted by date descending', (t) async {
+    final commitsPage = MaterialApp(
+      theme: mockTheme,
+      home: AzureApiServiceWidget(
+        api: AzureApiServiceMock(),
+        child: AdsServiceWidget(
+          ads: AdsServiceMock(),
+          child: StorageServiceWidget(storage: StorageServiceMock(), child: CommitsPage()),
         ),
-      );
+      ),
+    );
 
-      await t.pumpWidget(commitsPage);
+    await t.pumpWidget(commitsPage);
 
-      await t.pump();
+    await t.pump();
 
-      final tiles = find.textContaining('Test User');
+    final tiles = find.textContaining('Test User');
 
-      // most recent commit
-      expect((t.widget(tiles.at(0)) as Text).data, 'Test User 2');
+    // most recent commit
+    expect((t.widget(tiles.at(0)) as Text).data, 'Test User 2');
 
-      // queued pipeline
-      expect((t.widget(tiles.at(1)) as Text).data, 'Test User 3');
+    // queued pipeline
+    expect((t.widget(tiles.at(1)) as Text).data, 'Test User 3');
 
-      // least recent commit
-      expect((t.widget(tiles.at(2)) as Text).data, 'Test User 1');
-    },
-  );
+    // least recent commit
+    expect((t.widget(tiles.at(2)) as Text).data, 'Test User 1');
+  });
 }

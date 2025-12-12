@@ -25,10 +25,7 @@ class _ChooseSubscriptionScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (purchasedProducts.isNotEmpty) ...[
-                  Text(
-                    'Current Plan',
-                    style: titleStyle,
-                  ),
+                  Text('Current Plan', style: titleStyle),
                   const SizedBox(height: 18),
                   ...purchasedProducts.map(
                     (p) => ValueListenableBuilder(
@@ -43,10 +40,7 @@ class _ChooseSubscriptionScreen extends StatelessWidget {
                   const SizedBox(height: 32),
                 ],
                 if (availableProducts.isNotEmpty) ...[
-                  Text(
-                    'Available',
-                    style: titleStyle,
-                  ),
+                  Text('Available', style: titleStyle),
                   const SizedBox(height: 18),
                   ...availableProducts.map(
                     (p) => ValueListenableBuilder(

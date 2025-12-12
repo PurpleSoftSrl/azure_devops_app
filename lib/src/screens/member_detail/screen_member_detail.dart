@@ -15,20 +15,9 @@ class _MemberDetailScreen extends StatelessWidget {
       builder: (user) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: MemberAvatar(
-              userDescriptor: ctrl.userDescriptor,
-              radius: 100,
-              tappable: false,
-            ),
-          ),
-          const SizedBox(
-            height: 32,
-          ),
-          TextTitleDescription(
-            title: 'Name: ',
-            description: user!.displayName!,
-          ),
+          Center(child: MemberAvatar(userDescriptor: ctrl.userDescriptor, radius: 100, tappable: false)),
+          const SizedBox(height: 32),
+          TextTitleDescription(title: 'Name: ', description: user!.displayName!),
           Link(
             uri: Uri.parse('mailto:${user.mailAddress}'),
             builder: (_, link) => SizedBox(
@@ -37,22 +26,15 @@ class _MemberDetailScreen extends StatelessWidget {
                 onTap: link,
                 child: Row(
                   children: [
-                    TextTitleDescription(
-                      title: 'Email: ',
-                      description: user.mailAddress!,
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
+                    TextTitleDescription(title: 'Email: ', description: user.mailAddress!),
+                    const SizedBox(width: 20),
                     Icon(DevOpsIcons.mail),
                   ],
                 ),
               ),
             ),
           ),
-          const SizedBox(
-            height: 8,
-          ),
+          const SizedBox(height: 8),
           ValueListenableBuilder(
             valueListenable: ctrl.recentCommits,
             builder: (_, commits, _) {
@@ -66,19 +48,14 @@ class _MemberDetailScreen extends StatelessWidget {
               if (commits.isEmpty) {
                 return Padding(
                   padding: const EdgeInsets.only(top: 100),
-                  child: Center(
-                    child: Text('No commits found'),
-                  ),
+                  child: Center(child: Text('No commits found')),
                 );
               }
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SectionHeader.withIcon(
-                    text: 'Recent commits',
-                    icon: DevOpsIcons.commit,
-                  ),
+                  SectionHeader.withIcon(text: 'Recent commits', icon: DevOpsIcons.commit),
                   ...commits.map(
                     (c) => CommitListTile(
                       commit: c,

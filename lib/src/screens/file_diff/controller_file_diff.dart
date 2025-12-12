@@ -122,10 +122,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
       maxLines: 1,
       textScaler: MediaQuery.of(AppRouter.navigatorKey.currentContext!).textScaler,
       textDirection: TextDirection.ltr,
-    )..layout())
-        .size
-        .width
-        .toInt();
+    )..layout()).size.width.toInt();
   }
 
   Future<void> addPrComment({
@@ -138,11 +135,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
     final editorController = HtmlEditorController();
     final editorGlobalKey = GlobalKey<State>();
 
-    final hasConfirmed = await showEditor(
-      editorController,
-      editorGlobalKey,
-      title: 'Add comment on line $lineNumber',
-    );
+    final hasConfirmed = await showEditor(editorController, editorGlobalKey, title: 'Add comment on line $lineNumber');
     if (!hasConfirmed) return;
 
     final comment = await getTextFromEditor(editorController);
@@ -241,9 +234,7 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
       comment: comment,
     );
 
-    logAnalytics('delete_pr_comment_from_file_diff', {
-      'is_error': res.isError.toString(),
-    });
+    logAnalytics('delete_pr_comment_from_file_diff', {'is_error': res.isError.toString()});
 
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not deleted');

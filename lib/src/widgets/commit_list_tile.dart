@@ -33,57 +33,29 @@ class CommitListTile extends StatelessWidget {
         children: [
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(
-              '${commit.comment}',
-              overflow: TextOverflow.ellipsis,
-              style: context.textTheme.labelLarge,
-            ),
+            title: Text('${commit.comment}', overflow: TextOverflow.ellipsis, style: context.textTheme.labelLarge),
             subtitle: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(
-                  height: 5,
-                ),
+                const SizedBox(height: 5),
                 Row(
                   children: [
-                    if (showAuthor)
-                      Text(
-                        '${commit.author?.name}',
-                        style: subtitleStyle,
-                      ),
+                    if (showAuthor) Text('${commit.author?.name}', style: subtitleStyle),
                     if (showRepo && showAuthor)
-                      Text(
-                        ' in ',
-                        style: subtitleStyle.copyWith(color: context.colorScheme.onSecondary),
-                      ),
+                      Text(' in ', style: subtitleStyle.copyWith(color: context.colorScheme.onSecondary)),
                     if (showRepo)
                       Expanded(
-                        child: Text(
-                          commit.repositoryName,
-                          overflow: TextOverflow.ellipsis,
-                          style: subtitleStyle,
-                        ),
+                        child: Text(commit.repositoryName, overflow: TextOverflow.ellipsis, style: subtitleStyle),
                       ),
                     if (!showRepo) const Spacer(),
-                    const SizedBox(
-                      width: 8,
-                    ),
+                    const SizedBox(width: 8),
                     if (commit.tags?.isNotEmpty ?? false)
                       if (commit.tags!.length > 1)
-                        TagChipMultiple(
-                          tags: commit.tags!,
-                        )
+                        TagChipMultiple(tags: commit.tags!)
                       else
-                        TagChip(
-                          tag: commit.tags!.first,
-                        ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      commit.author?.date?.minutesAgo ?? '',
-                      style: subtitleStyle,
-                    ),
+                        TagChip(tag: commit.tags!.first),
+                    const SizedBox(width: 8),
+                    Text(commit.author?.date?.minutesAgo ?? '', style: subtitleStyle),
                   ],
                 ),
               ],
@@ -118,13 +90,7 @@ class TagChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return DevOpsPopupMenu(
       tooltip: tag.name,
-      items: () => [
-        if (_getTagDescription.isNotEmpty)
-          PopupItem(
-            text: _getTagDescription,
-            onTap: () {},
-          ),
-      ],
+      items: () => [if (_getTagDescription.isNotEmpty) PopupItem(text: _getTagDescription, onTap: () {})],
       offset: const Offset(0, 20),
       child: _TagChip(label: tag.name),
     );
@@ -140,13 +106,7 @@ class TagChipMultiple extends StatelessWidget {
   Widget build(BuildContext context) {
     return DevOpsPopupMenu(
       tooltip: tags.map((tag) => tag.name).join(', '),
-      items: () => [
-        for (final tag in tags)
-          PopupItem(
-            text: tag.name,
-            onTap: () {},
-          ),
-      ],
+      items: () => [for (final tag in tags) PopupItem(text: tag.name, onTap: () {})],
       offset: const Offset(0, 20),
       child: _TagChip(label: '${tags.length} tags'),
     );
@@ -170,20 +130,9 @@ class _TagChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.sell_outlined,
-            size: 10,
-            color: context.themeExtension.onBackground,
-          ),
-          const SizedBox(
-            width: 4,
-          ),
-          Flexible(
-            child: Text(
-              label,
-              style: subtitleStyle,
-            ),
-          ),
+          Icon(Icons.sell_outlined, size: 10, color: context.themeExtension.onBackground),
+          const SizedBox(width: 4),
+          Flexible(child: Text(label, style: subtitleStyle)),
         ],
       ),
     );

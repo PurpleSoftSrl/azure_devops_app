@@ -89,19 +89,11 @@ class PullRequestCommentCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  if (lineNumber != null)
-                    Text(
-                      '(line $lineNumber)',
-                      style: context.textTheme.labelSmall,
-                    ),
+                  const SizedBox(width: 5),
+                  if (lineNumber != null) Text('(line $lineNumber)', style: context.textTheme.labelSmall),
                 ],
               ),
-              const SizedBox(
-                height: 8,
-              ),
+              const SizedBox(height: 8),
             ],
             Row(
               children: [
@@ -112,10 +104,7 @@ class PullRequestCommentCard extends StatelessWidget {
                     TextSpan(
                       children: [
                         TextSpan(text: comment.author.displayName),
-                        TextSpan(
-                          text: '  $commentText',
-                          style: context.textTheme.labelSmall,
-                        ),
+                        TextSpan(text: '  $commentText', style: context.textTheme.labelSmall),
                       ],
                     ),
                   ),
@@ -126,12 +115,7 @@ class PullRequestCommentCard extends StatelessWidget {
                     offset: const Offset(0, 20),
                     items: () => ThreadStatus.values
                         .where((s) => s != status && s != ThreadStatus.unknown && s != ThreadStatus.byDesign)
-                        .map(
-                          (s) => PopupItem(
-                            text: s.description,
-                            onTap: () => onSetStatus?.call(s),
-                          ),
-                        )
+                        .map((s) => PopupItem(text: s.description, onTap: () => onSetStatus?.call(s)))
                         .toList(),
                     child: Text(
                       status!.description,
@@ -141,40 +125,23 @@ class PullRequestCommentCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 16,
-                  ),
+                  const SizedBox(width: 16),
                 ],
                 if (!comment.isDeleted)
                   DevOpsPopupMenu(
                     tooltip: 'pull request comment',
                     offset: const Offset(0, 20),
                     items: () => [
-                      if (onEditComment != null)
-                        PopupItem(
-                          onTap: onEditComment!,
-                          text: 'Edit',
-                          icon: DevOpsIcons.edit,
-                        ),
-                      PopupItem(
-                        onTap: onAddComment,
-                        text: 'Reply',
-                        icon: DevOpsIcons.send,
-                      ),
+                      if (onEditComment != null) PopupItem(onTap: onEditComment!, text: 'Edit', icon: DevOpsIcons.edit),
+                      PopupItem(onTap: onAddComment, text: 'Reply', icon: DevOpsIcons.send),
                       if (onDeleteComment != null)
-                        PopupItem(
-                          onTap: onDeleteComment!,
-                          text: 'Delete',
-                          icon: DevOpsIcons.failed,
-                        ),
+                        PopupItem(onTap: onDeleteComment!, text: 'Delete', icon: DevOpsIcons.failed),
                     ],
                   ),
               ],
             ),
             const SizedBox(height: 10),
-            HtmlWidget(
-              data: comment.content,
-            ),
+            HtmlWidget(data: comment.content),
           ],
         ),
       ),

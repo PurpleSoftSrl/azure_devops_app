@@ -291,12 +291,7 @@ class AppRouter {
 }
 
 class RepoDetailArgs {
-  RepoDetailArgs({
-    required this.projectName,
-    required this.repositoryName,
-    this.filePath,
-    this.branch,
-  });
+  RepoDetailArgs({required this.projectName, required this.repositoryName, this.filePath, this.branch});
 
   final String projectName;
   final String repositoryName;
@@ -324,12 +319,7 @@ class RepoDetailArgs {
     return 'RepoDetailArgs(projectName: $projectName, repositoryName: $repositoryName, filePath: $filePath, branch: $branch)';
   }
 
-  RepoDetailArgs copyWith({
-    String? projectName,
-    String? repositoryName,
-    String? filePath,
-    String? branch,
-  }) {
+  RepoDetailArgs copyWith({String? projectName, String? repositoryName, String? filePath, String? branch}) {
     return RepoDetailArgs(
       projectName: projectName ?? this.projectName,
       repositoryName: repositoryName ?? this.repositoryName,

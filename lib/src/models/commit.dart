@@ -52,16 +52,17 @@ class Commit {
   factory Commit.fromResponse(Response res) => Commit.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
   factory Commit.fromJson(Map<String, dynamic> json) => Commit(
-        commitId: json['commitId'] as String?,
-        author: Author.fromJson(json['author'] as Map<String, dynamic>),
-        committer: Author.fromJson(json['committer'] as Map<String, dynamic>),
-        comment: json['comment'] as String?,
-        changeCounts:
-            json['changeCounts'] == null ? null : _ChangeCounts.fromJson(json['changeCounts'] as Map<String, dynamic>),
-        url: json['url'] as String?,
-        remoteUrl: json['remoteUrl'] as String?,
-        parents: json['parents'] == null ? null : List<String>.from(json['parents'] as List<dynamic>),
-      );
+    commitId: json['commitId'] as String?,
+    author: Author.fromJson(json['author'] as Map<String, dynamic>),
+    committer: Author.fromJson(json['committer'] as Map<String, dynamic>),
+    comment: json['comment'] as String?,
+    changeCounts: json['changeCounts'] == null
+        ? null
+        : _ChangeCounts.fromJson(json['changeCounts'] as Map<String, dynamic>),
+    url: json['url'] as String?,
+    remoteUrl: json['remoteUrl'] as String?,
+    parents: json['parents'] == null ? null : List<String>.from(json['parents'] as List<dynamic>),
+  );
 
   final String? commitId;
   final Author? author;
@@ -81,13 +82,12 @@ class Commit {
   }
 
   Commit copyWithDateAndAuthorName(DateTime newDate, String newAuthorName) {
-    return copyWith(author: author!.copyWith(date: newDate, name: newAuthorName));
+    return copyWith(
+      author: author!.copyWith(date: newDate, name: newAuthorName),
+    );
   }
 
-  static List<Commit>? listFromJson(
-    dynamic json, {
-    bool growable = false,
-  }) {
+  static List<Commit>? listFromJson(dynamic json, {bool growable = false}) {
     final result = <Commit>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -150,35 +150,22 @@ class Commit {
 }
 
 class Author {
-  Author({
-    this.name,
-    this.email,
-    this.date,
-    this.imageUrl,
-  });
+  Author({this.name, this.email, this.date, this.imageUrl});
 
   factory Author.fromJson(Map<String, dynamic> json) => Author(
-        name: json['name'] as String?,
-        email: json['email'] as String?,
-        date: json['date'] == null ? null : DateTime.parse(json['date'].toString()).toLocal(),
-        imageUrl: json['imageUrl'] as String?,
-      );
+    name: json['name'] as String?,
+    email: json['email'] as String?,
+    date: json['date'] == null ? null : DateTime.parse(json['date'].toString()).toLocal(),
+    imageUrl: json['imageUrl'] as String?,
+  );
 
   final String? name;
   final String? email;
   final DateTime? date;
   final String? imageUrl;
 
-  Author copyWith({
-    String? name,
-    String? email,
-    DateTime? date,
-  }) {
-    return Author(
-      name: name ?? this.name,
-      email: email ?? this.email,
-      date: date ?? this.date,
-    );
+  Author copyWith({String? name, String? email, DateTime? date}) {
+    return Author(name: name ?? this.name, email: email ?? this.email, date: date ?? this.date);
   }
 
   @override
@@ -186,17 +173,10 @@ class Author {
 }
 
 class _ChangeCounts {
-  _ChangeCounts({
-    required this.add,
-    required this.edit,
-    required this.delete,
-  });
+  _ChangeCounts({required this.add, required this.edit, required this.delete});
 
-  factory _ChangeCounts.fromJson(Map<String, dynamic> json) => _ChangeCounts(
-        add: json['Add'] as int?,
-        edit: json['Edit'] as int?,
-        delete: json['Delete'] as int?,
-      );
+  factory _ChangeCounts.fromJson(Map<String, dynamic> json) =>
+      _ChangeCounts(add: json['Add'] as int?, edit: json['Edit'] as int?, delete: json['Delete'] as int?);
 
   final int? add;
   final int? edit;

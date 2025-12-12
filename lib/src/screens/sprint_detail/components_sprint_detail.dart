@@ -21,14 +21,8 @@ class _Actions extends StatelessWidget {
             children: sprint == null
                 ? const []
                 : [
-                    SearchButton(
-                      isSearching: ctrl.isSearching,
-                    ),
-                    IconButton(
-                      icon: const Icon(DevOpsIcons.plus),
-                      onPressed: ctrl.addNewItem,
-                      iconSize: 24,
-                    ),
+                    SearchButton(isSearching: ctrl.isSearching),
+                    IconButton(icon: const Icon(DevOpsIcons.plus), onPressed: ctrl.addNewItem, iconSize: 24),
                   ],
           ),
         ),

@@ -6,10 +6,10 @@ class BacklogsResponse {
   BacklogsResponse({required this.boards});
 
   factory BacklogsResponse.fromJson(Map<String, dynamic> json) => BacklogsResponse(
-        boards: List<Backlog>.from(
-          (json['value'] as List<dynamic>? ?? []).map((x) => Backlog.fromJson(x as Map<String, dynamic>)),
-        ),
-      );
+    boards: List<Backlog>.from(
+      (json['value'] as List<dynamic>? ?? []).map((x) => Backlog.fromJson(x as Map<String, dynamic>)),
+    ),
+  );
 
   final List<Backlog> boards;
 
@@ -18,15 +18,10 @@ class BacklogsResponse {
 }
 
 class Backlog {
-  Backlog({
-    required this.id,
-    required this.name,
-  });
+  Backlog({required this.id, required this.name});
 
-  factory Backlog.fromJson(Map<String, dynamic> json) => Backlog(
-        id: json['id'] as String? ?? '',
-        name: json['name'] as String? ?? '',
-      );
+  factory Backlog.fromJson(Map<String, dynamic> json) =>
+      Backlog(id: json['id'] as String? ?? '', name: json['name'] as String? ?? '');
 
   final String id;
   final String name;

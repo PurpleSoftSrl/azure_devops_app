@@ -9,37 +9,17 @@ extension PipelineStatusExt on PipelineStatus? {
   Widget get icon {
     switch (this) {
       case PipelineStatus.notStarted:
-        return Icon(
-          DevOpsIcons.queued,
-          color: Colors.blue,
-        );
+        return Icon(DevOpsIcons.queued, color: Colors.blue);
       case PipelineStatus.cancelling:
-        return Icon(
-          DevOpsIcons.cancelled,
-          color: Colors.blue,
-        );
+        return Icon(DevOpsIcons.cancelled, color: Colors.blue);
       case PipelineStatus.inProgress:
-        return InProgressPipelineIcon(
-          child: Icon(
-            DevOpsIcons.running,
-            color: Colors.blue,
-          ),
-        );
+        return InProgressPipelineIcon(child: Icon(DevOpsIcons.running, color: Colors.blue));
       case PipelineStatus.completed:
-        return Icon(
-          DevOpsIcons.success,
-          color: Colors.blue,
-        );
+        return Icon(DevOpsIcons.success, color: Colors.blue);
       case PipelineStatus.postponed:
-        return Icon(
-          DevOpsIcons.queuedsolid,
-          color: Colors.blue,
-        );
+        return Icon(DevOpsIcons.queuedsolid, color: Colors.blue);
       default:
-        return Icon(
-          Icons.warning,
-          color: Colors.transparent,
-        );
+        return Icon(Icons.warning, color: Colors.transparent);
     }
   }
 
@@ -69,35 +49,17 @@ extension PipelineResultExt on PipelineResult? {
   Widget get icon {
     switch (this) {
       case PipelineResult.canceled:
-        return Icon(
-          DevOpsIcons.cancelled,
-          color: AppRouter.rootNavigator!.context.themeExtension.onBackground,
-        );
+        return Icon(DevOpsIcons.cancelled, color: AppRouter.rootNavigator!.context.themeExtension.onBackground);
       case PipelineResult.failed:
-        return Icon(
-          DevOpsIcons.failed,
-          color: Colors.red,
-        );
+        return Icon(DevOpsIcons.failed, color: Colors.red);
       case PipelineResult.none:
-        return Icon(
-          Icons.question_mark,
-          color: Colors.grey,
-        );
+        return Icon(Icons.question_mark, color: Colors.grey);
       case PipelineResult.partiallySucceeded:
-        return Icon(
-          Icons.checklist,
-          color: Colors.cyanAccent,
-        );
+        return Icon(Icons.checklist, color: Colors.cyanAccent);
       case PipelineResult.succeeded:
-        return Icon(
-          DevOpsIcons.success,
-          color: Colors.green,
-        );
+        return Icon(DevOpsIcons.success, color: Colors.green);
       default:
-        return Icon(
-          Icons.question_mark,
-          color: Colors.transparent,
-        );
+        return Icon(Icons.question_mark, color: Colors.transparent);
     }
   }
 }

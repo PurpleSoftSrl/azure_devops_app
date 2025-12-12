@@ -20,16 +20,16 @@ class _ProjectDetailScreen extends StatelessWidget {
             valueListenable: ctrl.project,
             builder: (_, project, _) =>
                 project?.data?.project.defaultTeam?.id != null && ctrl.api.organization.isNotEmpty
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: CachedNetworkImage(
-                          imageUrl:
-                              '${ctrl.api.basePath}/_apis/GraphProfile/MemberAvatars/${project!.data!.project.defaultTeam!.id}?overrideDisplayName=${project.data!.project.name}&size=large',
-                          httpHeaders: ctrl.api.headers,
-                          errorWidget: (_, _, _) => const SizedBox(),
-                        ),
-                      )
-                    : const SizedBox(),
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          '${ctrl.api.basePath}/_apis/GraphProfile/MemberAvatars/${project!.data!.project.defaultTeam!.id}?overrideDisplayName=${project.data!.project.name}&size=large',
+                      httpHeaders: ctrl.api.headers,
+                      errorWidget: (_, _, _) => const SizedBox(),
+                    ),
+                  )
+                : const SizedBox(),
           ),
         ),
       ],
@@ -39,10 +39,7 @@ class _ProjectDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (project.description != null) ...[
-              Text(
-                project.description!,
-                style: context.textTheme.bodyLarge,
-              ),
+              Text(project.description!, style: context.textTheme.bodyLarge),
               const SizedBox(height: 24),
             ],
             if (ctrl.teamsWithMembers.isNotEmpty) ...[
@@ -50,18 +47,10 @@ class _ProjectDetailScreen extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SectionHeader.noMargin(
-                      text: team.team.name,
-                      icon: DevOpsIcons.users,
-                    ),
+                    SectionHeader.noMargin(text: team.team.name, icon: DevOpsIcons.users),
                     if (team.team.description.isNotEmpty) ...[
-                      Text(
-                        team.team.description,
-                        style: context.textTheme.labelMedium,
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
+                      Text(team.team.description, style: context.textTheme.labelMedium),
+                      const SizedBox(height: 16),
                     ],
                     Wrap(
                       children: team.members
@@ -75,9 +64,7 @@ class _ProjectDetailScreen extends StatelessWidget {
                                     userDescriptor: m.identity!.descriptor,
                                     radius: parameters.memberAvatarSize,
                                   ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
+                                  const SizedBox(height: 5),
                                   Text(
                                     m.identity!.displayName!.split(' ').first,
                                     style: context.textTheme.labelSmall,
@@ -90,37 +77,20 @@ class _ProjectDetailScreen extends StatelessWidget {
                           )
                           .toList(),
                     ),
-                    if (team != ctrl.teamsWithMembers.last)
-                      const SizedBox(
-                        height: 16,
-                      ),
+                    if (team != ctrl.teamsWithMembers.last) const SizedBox(height: 16),
                   ],
                 ),
             ] else
-              SectionHeader.noMargin(
-                text: project.defaultTeam!.name,
-                icon: DevOpsIcons.users,
-              ),
+              SectionHeader.noMargin(text: project.defaultTeam!.name, icon: DevOpsIcons.users),
             if (ctrl.meaningfulLanguages.isNotEmpty) ...[
-              SectionHeader.withIcon(
-                text: 'Languages',
-                icon: DevOpsIcons.languages,
-              ),
+              SectionHeader.withIcon(text: 'Languages', icon: DevOpsIcons.languages),
               Wrap(
                 children: ctrl.meaningfulLanguages
-                    .map(
-                      (r) => _StatsChip(
-                        name: r.name,
-                        value: '${r.languagePercentage?.round()}%',
-                      ),
-                    )
+                    .map((r) => _StatsChip(name: r.name, value: '${r.languagePercentage?.round()}%'))
                     .toList(),
               ),
             ],
-            SectionHeader.withIcon(
-              text: 'Work',
-              icon: DevOpsIcons.repository,
-            ),
+            SectionHeader.withIcon(text: 'Work', icon: DevOpsIcons.repository),
             GridView.count(
               crossAxisCount: 2,
               physics: NeverScrollableScrollPhysics(),
@@ -129,24 +99,9 @@ class _ProjectDetailScreen extends StatelessWidget {
               crossAxisSpacing: 13,
               mainAxisSpacing: 18,
               children: [
-                WorkCard(
-                  title: 'Commits',
-                  icon: DevOpsIcons.commit,
-                  onTap: ctrl.goToCommits,
-                  index: i++,
-                ),
-                WorkCard(
-                  title: 'Pipelines',
-                  icon: DevOpsIcons.pipeline,
-                  onTap: ctrl.goToPipelines,
-                  index: i++,
-                ),
-                WorkCard(
-                  title: 'Work items',
-                  icon: DevOpsIcons.task,
-                  onTap: ctrl.goToWorkItems,
-                  index: i++,
-                ),
+                WorkCard(title: 'Commits', icon: DevOpsIcons.commit, onTap: ctrl.goToCommits, index: i++),
+                WorkCard(title: 'Pipelines', icon: DevOpsIcons.pipeline, onTap: ctrl.goToPipelines, index: i++),
+                WorkCard(title: 'Work items', icon: DevOpsIcons.task, onTap: ctrl.goToWorkItems, index: i++),
                 WorkCard(
                   title: 'Pull requests',
                   icon: DevOpsIcons.pullrequest,
@@ -155,9 +110,7 @@ class _ProjectDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 8,
-            ),
+            const SizedBox(height: 8),
             Builder(
               builder: (context) {
                 final gitMetrics = detail.gitmetrics;
@@ -182,96 +135,45 @@ class _ProjectDetailScreen extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SectionHeader.withIcon(
-                      text: 'Stats (last 7 days)',
-                      icon: Icons.query_stats,
-                    ),
+                    SectionHeader.withIcon(text: 'Stats (last 7 days)', icon: Icons.query_stats),
                     Wrap(
                       children: [
                         if (hasWorkStats) ...[
-                          SizedBox(
-                            width: double.maxFinite,
-                            child: Text('Work items'),
-                          ),
-                          _StatsChip(
-                            name: 'Created',
-                            value: '${workMetrics.workItemsCreated}',
-                          ),
-                          _StatsChip(
-                            name: 'Closed',
-                            value: '${workMetrics.workItemsCompleted}',
-                          ),
+                          SizedBox(width: double.maxFinite, child: Text('Work items')),
+                          _StatsChip(name: 'Created', value: '${workMetrics.workItemsCreated}'),
+                          _StatsChip(name: 'Closed', value: '${workMetrics.workItemsCompleted}'),
                         ],
                         if (hasGitStats) ...[
                           Padding(
                             padding: const EdgeInsets.only(top: 5),
-                            child: SizedBox(
-                              width: double.maxFinite,
-                              child: Text('Commits'),
-                            ),
+                            child: SizedBox(width: double.maxFinite, child: Text('Commits')),
                           ),
-                          _StatsChip(
-                            name: 'Pushed',
-                            value: '${gitMetrics.commitsPushedCount}',
-                          ),
-                          _StatsChip(
-                            name: 'Authors',
-                            value: '${gitMetrics.authorsCount}',
-                          ),
+                          _StatsChip(name: 'Pushed', value: '${gitMetrics.commitsPushedCount}'),
+                          _StatsChip(name: 'Authors', value: '${gitMetrics.authorsCount}'),
                         ],
                         if (hasPRStats) ...[
                           Padding(
                             padding: const EdgeInsets.only(top: 5),
-                            child: SizedBox(
-                              width: double.maxFinite,
-                              child: Text('Pull requests'),
-                            ),
+                            child: SizedBox(width: double.maxFinite, child: Text('Pull requests')),
                           ),
-                          _StatsChip(
-                            name: 'Created',
-                            value: '${gitMetrics.pullRequestsCreatedCount}',
-                          ),
-                          _StatsChip(
-                            name: 'Closed',
-                            value: '${gitMetrics.pullRequestsCompletedCount}',
-                          ),
+                          _StatsChip(name: 'Created', value: '${gitMetrics.pullRequestsCreatedCount}'),
+                          _StatsChip(name: 'Closed', value: '${gitMetrics.pullRequestsCompletedCount}'),
                         ],
                         if (hasPipelinesStats) ...[
                           Padding(
                             padding: const EdgeInsets.only(top: 5),
-                            child: SizedBox(
-                              width: double.maxFinite,
-                              child: Text('Pipelines'),
-                            ),
+                            child: SizedBox(width: double.maxFinite, child: Text('Pipelines')),
                           ),
-                          _StatsChip(
-                            name: 'Total',
-                            value: '${pipelinesMetrics.total}',
-                          ),
+                          _StatsChip(name: 'Total', value: '${pipelinesMetrics.total}'),
                           if (pipelinesMetrics.successful > 0)
-                            _StatsChip(
-                              name: 'Successful',
-                              value: '${pipelinesMetrics.successful}',
-                            ),
+                            _StatsChip(name: 'Successful', value: '${pipelinesMetrics.successful}'),
                           if (pipelinesMetrics.partiallySuccessful > 0)
-                            _StatsChip(
-                              name: 'Partially successful',
-                              value: '${pipelinesMetrics.partiallySuccessful}',
-                            ),
+                            _StatsChip(name: 'Partially successful', value: '${pipelinesMetrics.partiallySuccessful}'),
                           if (pipelinesMetrics.failed > 0)
-                            _StatsChip(
-                              name: 'Failed',
-                              value: '${pipelinesMetrics.failed}',
-                            ),
+                            _StatsChip(name: 'Failed', value: '${pipelinesMetrics.failed}'),
                           if (pipelinesMetrics.canceled > 0)
-                            _StatsChip(
-                              name: 'Canceled',
-                              value: '${pipelinesMetrics.canceled}',
-                            ),
-                          _StatsChip(
-                            name: 'Success ratio',
-                            value: pipeSuccessStr,
-                          ),
+                            _StatsChip(name: 'Canceled', value: '${pipelinesMetrics.canceled}'),
+                          _StatsChip(name: 'Success ratio', value: pipeSuccessStr),
                         ],
                       ],
                     ),
@@ -279,10 +181,7 @@ class _ProjectDetailScreen extends StatelessWidget {
                 );
               },
             ),
-            SectionHeader.withIcon(
-              text: 'Boards',
-              icon: DevOpsIcons.board,
-            ),
+            SectionHeader.withIcon(text: 'Boards', icon: DevOpsIcons.board),
             NavigationButton(
               onTap: ctrl.goToBoards,
               margin: EdgeInsets.zero,
@@ -296,10 +195,7 @@ class _ProjectDetailScreen extends StatelessWidget {
               ),
             ),
             if (ctrl.repos.isNotEmpty) ...[
-              SectionHeader.withIcon(
-                text: 'Repositories',
-                icon: DevOpsIcons.list,
-              ),
+              SectionHeader.withIcon(text: 'Repositories', icon: DevOpsIcons.list),
               ...ctrl.repos.map(
                 (r) => NavigationButton(
                   onTap: () => ctrl.goToRepoDetail(r),
@@ -316,11 +212,7 @@ class _ProjectDetailScreen extends StatelessWidget {
               ),
             ],
             if (ctrl.savedQueries.isNotEmpty) ...[
-              SectionHeader.withIcon(
-                text: 'Saved Queries',
-                icon: Icons.manage_search_rounded,
-                iconSize: 24,
-              ),
+              SectionHeader.withIcon(text: 'Saved Queries', icon: Icons.manage_search_rounded, iconSize: 24),
               ...ctrl.savedQueries.map(
                 (q) => NavigationButton(
                   onTap: () => ctrl.goToSavedQueryDetail(q),

@@ -64,9 +64,6 @@ mixin AppLogger {
       prefixedParameters.putIfAbsent(prefixedKey, () => value ?? '');
     }
 
-    FirebaseAnalytics.instance.logEvent(
-      name: prefixedName,
-      parameters: prefixedParameters,
-    );
+    FirebaseAnalytics.instance.logEvent(name: prefixedName, parameters: prefixedParameters);
   }
 }

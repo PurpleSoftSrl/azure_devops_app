@@ -15,13 +15,7 @@ class _BoardsScreen extends StatelessWidget {
       showScrollbar: true,
       builder: (projects) => Column(
         children: projects!
-            .map(
-              (p) => ProjectCard(
-                height: parameters.projectCardHeight,
-                project: p,
-                onTap: ctrl.goToProjectBoards,
-              ),
-            )
+            .map((p) => ProjectCard(height: parameters.projectCardHeight, project: p, onTap: ctrl.goToProjectBoards))
             .toList(),
       ),
     );

@@ -4,19 +4,16 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 class GetOrganizationsResponse {
-  GetOrganizationsResponse({
-    required this.count,
-    required this.organizations,
-  });
+  GetOrganizationsResponse({required this.count, required this.organizations});
 
   factory GetOrganizationsResponse.fromJson(Map<String, dynamic> json) => GetOrganizationsResponse(
-        count: json['count'] as int?,
-        organizations: json['value'] == null
-            ? []
-            : List<Organization>.from(
-                (json['value'] as List<dynamic>).map((x) => Organization.fromJson(x as Map<String, dynamic>)),
-              ),
-      );
+    count: json['count'] as int?,
+    organizations: json['value'] == null
+        ? []
+        : List<Organization>.from(
+            (json['value'] as List<dynamic>).map((x) => Organization.fromJson(x as Map<String, dynamic>)),
+          ),
+  );
 
   static List<Organization> fromResponse(Response res) =>
       GetOrganizationsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).organizations ?? [];
@@ -34,11 +31,11 @@ class Organization {
   });
 
   factory Organization.fromJson(Map<String, dynamic> json) => Organization(
-        accountId: json['accountId'] as String?,
-        accountUri: json['accountUri'] as String?,
-        accountName: json['accountName'] as String?,
-        properties: json['properties'] as Map<String, dynamic>,
-      );
+    accountId: json['accountId'] as String?,
+    accountUri: json['accountUri'] as String?,
+    accountName: json['accountName'] as String?,
+    properties: json['properties'] as Map<String, dynamic>,
+  );
 
   final String? accountId;
   final String? accountUri;

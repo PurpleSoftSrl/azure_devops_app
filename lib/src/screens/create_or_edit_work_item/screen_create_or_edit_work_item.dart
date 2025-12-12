@@ -34,13 +34,8 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           if (!ctrl.isEditing) ...[
             Row(
               children: [
-                Text(
-                  'Project:',
-                  style: style,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
+                Text('Project:', style: style),
+                const SizedBox(width: 10),
                 FilterMenu<Project>(
                   title: 'Project',
                   values: ctrl.getProjects(ctrl.storage).where((p) => p != ctrl.projectAll).toList(),
@@ -49,25 +44,19 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                   formatLabel: (p) => p.name!,
                   isDefaultFilter: ctrl.newWorkItemProject == ctrl.projectAll,
                   widgetBuilder: (p) => ProjectFilterWidget(project: p),
-                  onSearchChanged:
-                      ctrl.hasManyProjects(ctrl.storage) ? (s) => ctrl.searchProject(s, ctrl.storage) : null,
+                  onSearchChanged: ctrl.hasManyProjects(ctrl.storage)
+                      ? (s) => ctrl.searchProject(s, ctrl.storage)
+                      : null,
                 ),
               ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
           ],
           if (ctrl.newWorkItemProject != ctrl.projectAll) ...[
             Row(
               children: [
-                Text(
-                  'Type:',
-                  style: style,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
+                Text('Type:', style: style),
+                const SizedBox(width: 10),
                 WorkItemTypeFilterMenu(
                   title: 'Type',
                   values: ctrl.projectWorkItemTypes,
@@ -80,20 +69,13 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
           ],
           if (ctrl.isEditing) ...[
             Row(
               children: [
-                Text(
-                  'Status:',
-                  style: style,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
+                Text('Status:', style: style),
+                const SizedBox(width: 10),
                 FilterMenu<WorkItemState>(
                   title: 'Status',
                   values: ctrl.allWorkItemStates,
@@ -105,19 +87,12 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
           ],
           Row(
             children: [
-              Text(
-                'Assigned to:',
-                style: style,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
+              Text('Assigned to:', style: style),
+              const SizedBox(width: 10),
               Flexible(
                 child: FilterMenu<GraphUser>(
                   title: 'Assigned to',
@@ -132,19 +107,12 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(
-            height: 10,
-          ),
+          const SizedBox(height: 10),
           if (ctrl.shouldShowArea())
             Row(
               children: [
-                Text(
-                  'Area:',
-                  style: style,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
+                Text('Area:', style: style),
+                const SizedBox(width: 10),
                 Flexible(
                   child: FilterMenu<AreaOrIteration?>.custom(
                     title: 'Area',
@@ -161,19 +129,12 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 ),
               ],
             ),
-          const SizedBox(
-            height: 10,
-          ),
+          const SizedBox(height: 10),
           if (ctrl.shouldShowIteration())
             Row(
               children: [
-                Text(
-                  'Iteration:',
-                  style: style,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
+                Text('Iteration:', style: style),
+                const SizedBox(width: 10),
                 Flexible(
                   child: FilterMenu<AreaOrIteration?>.custom(
                     title: 'Iteration',
@@ -190,23 +151,16 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 ),
               ],
             ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           if (ctrl.newWorkItemProject != ctrl.projectAll || ctrl.isEditing)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 6),
-                  child: Text(
-                    'Tags:',
-                    style: style,
-                  ),
+                  child: Text('Tags:', style: style),
                 ),
-                const SizedBox(
-                  width: 10,
-                ),
+                const SizedBox(width: 10),
                 Flexible(
                   child: Wrap(
                     spacing: 8,
@@ -224,38 +178,23 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                tag,
-                                style: context.textTheme.labelSmall!.copyWith(height: 1),
-                              ),
-                              const SizedBox(
-                                width: 8,
-                              ),
+                              Text(tag, style: context.textTheme.labelSmall!.copyWith(height: 1)),
+                              const SizedBox(width: 8),
                               GestureDetector(
                                 onTap: () => ctrl.removeTag(tag),
-                                child: Icon(
-                                  DevOpsIcons.failedsolid,
-                                  size: 14,
-                                  color: context.colorScheme.onSecondary,
-                                ),
+                                child: Icon(DevOpsIcons.failedsolid, size: 14, color: context.colorScheme.onSecondary),
                               ),
                             ],
                           ),
                         ),
-                      const SizedBox(
-                        width: 4,
-                      ),
+                      const SizedBox(width: 4),
                       CircleAvatar(
                         backgroundColor: context.colorScheme.tertiaryContainer,
                         radius: 12,
                         child: IconButton(
                           onPressed: ctrl.addTag,
                           padding: EdgeInsets.zero,
-                          icon: Icon(
-                            DevOpsIcons.plus,
-                            size: 18,
-                            color: context.themeExtension.onBackground,
-                          ),
+                          icon: Icon(DevOpsIcons.plus, size: 18, color: context.themeExtension.onBackground),
                         ),
                       ),
                     ],
@@ -263,22 +202,15 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                 ),
               ],
             ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 6),
-                child: Text(
-                  'Links:',
-                  style: style,
-                ),
+                child: Text('Links:', style: style),
               ),
-              const SizedBox(
-                width: 10,
-              ),
+              const SizedBox(width: 10),
               Flexible(
                 child: Wrap(
                   spacing: 8,
@@ -300,34 +232,22 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                               '${link.linkedWorkItemId} - ${link.linkTypeName}',
                               style: context.textTheme.labelSmall!.copyWith(height: 1),
                             ),
-                            const SizedBox(
-                              width: 8,
-                            ),
+                            const SizedBox(width: 8),
                             GestureDetector(
                               onTap: () => ctrl.removeLink(link),
-                              child: Icon(
-                                DevOpsIcons.failedsolid,
-                                size: 14,
-                                color: context.colorScheme.onSecondary,
-                              ),
+                              child: Icon(DevOpsIcons.failedsolid, size: 14, color: context.colorScheme.onSecondary),
                             ),
                           ],
                         ),
                       ),
-                    const SizedBox(
-                      width: 4,
-                    ),
+                    const SizedBox(width: 4),
                     CircleAvatar(
                       backgroundColor: context.colorScheme.tertiaryContainer,
                       radius: 12,
                       child: IconButton(
                         onPressed: ctrl.addLink,
                         padding: EdgeInsets.zero,
-                        icon: Icon(
-                          DevOpsIcons.plus,
-                          size: 18,
-                          color: context.themeExtension.onBackground,
-                        ),
+                        icon: Icon(DevOpsIcons.plus, size: 18, color: context.themeExtension.onBackground),
                       ),
                     ),
                   ],
@@ -335,9 +255,7 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           DevOpsFormField(
             initialValue: ctrl.newWorkItemTitle,
             onChanged: ctrl.onTitleChanged,
@@ -346,16 +264,11 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
             textCapitalization: TextCapitalization.sentences,
             textInputAction: TextInputAction.next,
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           ValueListenableBuilder(
             valueListenable: ctrl.isGettingFields,
             builder: (context, isGettingFields, _) => isGettingFields
-                ? SizedBox(
-                    height: 100,
-                    child: const Center(child: CircularProgressIndicator()),
-                  )
+                ? SizedBox(height: 100, child: const Center(child: CircularProgressIndicator()))
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -377,8 +290,10 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                                 'html' => _HtmlFormField(field: field, ctrl: ctrl),
                                 'dateTime' => _DateFormField(field: field, ctrl: ctrl),
                                 _ when field.isIdentity => _UserFormField(field: field, ctrl: ctrl),
-                                _ when field.hasMeaningfulAllowedValues =>
-                                  _SelectionFormField(ctrl: ctrl, field: field),
+                                _ when field.hasMeaningfulAllowedValues => _SelectionFormField(
+                                  ctrl: ctrl,
+                                  field: field,
+                                ),
                                 _ => _DefaultFormField(ctrl: ctrl, field: field),
                               },
                           ],

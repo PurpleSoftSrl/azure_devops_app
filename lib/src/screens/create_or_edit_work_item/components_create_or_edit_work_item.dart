@@ -1,10 +1,7 @@
 part of create_or_edit_work_item;
 
 class _HtmlFormField extends StatelessWidget {
-  const _HtmlFormField({
-    required this.field,
-    required this.ctrl,
-  });
+  const _HtmlFormField({required this.field, required this.ctrl});
 
   final WorkItemField field;
   final _CreateOrEditWorkItemController ctrl;
@@ -19,9 +16,7 @@ class _HtmlFormField extends StatelessWidget {
           ctrl.getFieldName(field),
           style: context.textTheme.labelSmall!.copyWith(height: 1, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(
-          height: 10,
-        ),
+        const SizedBox(height: 10),
         DevOpsHtmlEditor(
           editorController: formField.editorController!,
           editorGlobalKey: formField.editorGlobalKey!,
@@ -29,23 +24,15 @@ class _HtmlFormField extends StatelessWidget {
           onKeyUp: (_) => ctrl._setHasChanged(),
           readOnly: field.readOnly,
         ),
-        SizedBox(
-          key: formField.editorGlobalKey,
-          height: 0,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
+        SizedBox(key: formField.editorGlobalKey, height: 0),
+        const SizedBox(height: 10),
       ],
     );
   }
 }
 
 class _DateFormField extends StatelessWidget {
-  const _DateFormField({
-    required this.field,
-    required this.ctrl,
-  });
+  const _DateFormField({required this.field, required this.ctrl});
 
   final WorkItemField field;
   final _CreateOrEditWorkItemController ctrl;
@@ -97,19 +84,14 @@ class _UserFormField extends StatelessWidget {
           isDefaultFilter: true,
           widgetBuilder: (u) => UserFilterWidget(user: u),
         ),
-        const SizedBox(
-          height: 16,
-        ),
+        const SizedBox(height: 16),
       ],
     );
   }
 }
 
 class _SelectionFormField extends StatelessWidget {
-  const _SelectionFormField({
-    required this.ctrl,
-    required this.field,
-  });
+  const _SelectionFormField({required this.ctrl, required this.field});
 
   final _CreateOrEditWorkItemController ctrl;
   final WorkItemField field;
@@ -136,10 +118,7 @@ class _SelectionFormField extends StatelessWidget {
                 offset: const Offset(0, 20),
                 items: () => [
                   for (final value in field.allowedValues)
-                    PopupItem(
-                      onTap: () => ctrl.onFieldChanged(value, field.referenceName),
-                      text: value,
-                    ),
+                    PopupItem(onTap: () => ctrl.onFieldChanged(value, field.referenceName), text: value),
                 ],
               ),
       ),
@@ -148,10 +127,7 @@ class _SelectionFormField extends StatelessWidget {
 }
 
 class _DefaultFormField extends StatelessWidget {
-  const _DefaultFormField({
-    required this.ctrl,
-    required this.field,
-  });
+  const _DefaultFormField({required this.ctrl, required this.field});
 
   final _CreateOrEditWorkItemController ctrl;
   final WorkItemField field;
@@ -217,37 +193,32 @@ class _AddTagBottomsheet extends StatelessWidget {
           ),
           onFieldSubmitted: _onSubmit,
         ),
-        const SizedBox(
-          height: 20,
-        ),
+        const SizedBox(height: 20),
         ValueListenableBuilder(
           valueListenable: projectTags,
           builder: (_, tags, _) => switch (tags) {
             null => const CircularProgressIndicator(),
             [] => const Text('No tags available'),
             _ => Expanded(
-                child: ListView.separated(
-                  itemCount: tags.length,
-                  separatorBuilder: (_, _) => const Divider(),
-                  itemBuilder: (context, index) {
-                    final t = tags.toList().sortedBy((t) => t.toLowerCase())[index];
-                    return GestureDetector(
-                      onTap: () => addExistingTag(t),
-                      behavior: HitTestBehavior.opaque,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(t),
-                            if (workItemTags.contains(t)) const Icon(DevOpsIcons.success),
-                          ],
-                        ),
+              child: ListView.separated(
+                itemCount: tags.length,
+                separatorBuilder: (_, _) => const Divider(),
+                itemBuilder: (context, index) {
+                  final t = tags.toList().sortedBy((t) => t.toLowerCase())[index];
+                  return GestureDetector(
+                    onTap: () => addExistingTag(t),
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [Text(t), if (workItemTags.contains(t)) const Icon(DevOpsIcons.success)],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
+            ),
           },
         ),
       ],
@@ -356,17 +327,11 @@ class _AddLinkBottomsheetState extends State<_AddLinkBottomsheet> {
             suffix: DevOpsPopupMenu(
               tooltip: 'Link types',
               items: () => [
-                for (final type in widget.linkTypes)
-                  PopupItem(
-                    onTap: () => _setLinkType(type),
-                    text: type.name,
-                  ),
+                for (final type in widget.linkTypes) PopupItem(onTap: () => _setLinkType(type), text: type.name),
               ],
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           ValueListenableBuilder(
             valueListenable: _hasSelectedWorkItem,
             builder: (_, hasSelected, _) => DevOpsFormField(
@@ -387,9 +352,7 @@ class _AddLinkBottomsheetState extends State<_AddLinkBottomsheet> {
               ),
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           ValueListenableBuilder(
             valueListenable: _workItems,
             builder: (_, items, _) => AnimatedContainer(
@@ -398,42 +361,38 @@ class _AddLinkBottomsheetState extends State<_AddLinkBottomsheet> {
               child: switch (items) {
                 null => Center(child: const CircularProgressIndicator()),
                 [] when _linkedItemController.text.isNotEmpty && !_hasSelectedWorkItem.value => Text(
-                    'No work items found',
-                    style: context.textTheme.labelLarge,
-                    textAlign: TextAlign.center,
-                  ),
+                  'No work items found',
+                  style: context.textTheme.labelLarge,
+                  textAlign: TextAlign.center,
+                ),
                 _ => ListView.separated(
-                    itemCount: items.length,
-                    separatorBuilder: (_, _) => const Divider(),
-                    itemBuilder: (context, index) {
-                      final item = items[index];
+                  itemCount: items.length,
+                  separatorBuilder: (_, _) => const Divider(),
+                  itemBuilder: (context, index) {
+                    final item = items[index];
 
-                      final wt = context.api.workItemTypes[item.fields.systemTeamProject]
-                          ?.firstWhereOrNull((t) => t.name == item.fields.systemWorkItemType);
+                    final wt = context.api.workItemTypes[item.fields.systemTeamProject]?.firstWhereOrNull(
+                      (t) => t.name == item.fields.systemWorkItemType,
+                    );
 
-                      return GestureDetector(
-                        onTap: () => _addLinkedItem(item),
-                        behavior: HitTestBehavior.opaque,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Row(
-                            children: [
-                              WorkItemTypeIcon(type: wt),
-                              const SizedBox(
-                                width: 16,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  '${item.id} - ${item.fields.systemTitle}',
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
+                    return GestureDetector(
+                      onTap: () => _addLinkedItem(item),
+                      behavior: HitTestBehavior.opaque,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          children: [
+                            WorkItemTypeIcon(type: wt),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Text('${item.id} - ${item.fields.systemTitle}', overflow: TextOverflow.ellipsis),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
+                ),
               },
             ),
           ),
@@ -453,9 +412,7 @@ class _AddLinkBottomsheetState extends State<_AddLinkBottomsheet> {
               ),
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
         ],
       ),
     );

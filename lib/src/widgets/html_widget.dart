@@ -36,12 +36,7 @@ class HtmlWidget extends StatelessWidget {
     return SelectionArea(
       child: Html(
         data: data,
-        style: {
-          'div': htmlTextStyle,
-          'p': htmlTextStyle,
-          'body': htmlTextStyle,
-          'html': htmlTextStyle,
-        },
+        style: {'div': htmlTextStyle, 'p': htmlTextStyle, 'body': htmlTextStyle, 'html': htmlTextStyle},
         onLinkTap: (str, _, _) async {
           final url = str.toString();
           if (await canLaunchUrlString(url)) await launchUrlString(url);
@@ -82,19 +77,9 @@ class HtmlWidget extends StatelessWidget {
               void goFullScreen() {
                 entry = OverlayEntry(
                   builder: (context) => Scaffold(
-                    appBar: AppBar(
-                      actions: [
-                        CloseButton(
-                          onPressed: exitFullScreen,
-                        ),
-                      ],
-                    ),
+                    appBar: AppBar(actions: [CloseButton(onPressed: exitFullScreen)]),
                     body: InteractiveViewer(
-                      child: SizedBox(
-                        height: context.height,
-                        width: context.width,
-                        child: image,
-                      ),
+                      child: SizedBox(height: context.height, width: context.width, child: image),
                     ),
                   ),
                 );
@@ -102,16 +87,10 @@ class HtmlWidget extends StatelessWidget {
                 Overlay.of(context).insert(entry);
               }
 
-              return GestureDetector(
-                onTap: goFullScreen,
-                child: image,
-              );
+              return GestureDetector(onTap: goFullScreen, child: image);
             },
           ),
-          TagExtension(
-            tagsToExtend: {'br'},
-            builder: (_) => const Text(''),
-          ),
+          TagExtension(tagsToExtend: {'br'}, builder: (_) => const Text('')),
           TagExtension(
             tagsToExtend: {'a'},
             builder: (ctx) {

@@ -12,12 +12,7 @@ class _CommitDetailScreen extends StatelessWidget {
     return AppPage<CommitWithChanges?>(
       init: ctrl.init,
       title: 'Commit detail',
-      actions: [
-        IconButton(
-          onPressed: ctrl.shareDiff,
-          icon: Icon(DevOpsIcons.share),
-        ),
-      ],
+      actions: [IconButton(onPressed: ctrl.shareDiff, icon: Icon(DevOpsIcons.share))],
       notifier: ctrl.commitChanges,
       padding: const EdgeInsets.only(left: 16),
       builder: (detail) {
@@ -35,82 +30,40 @@ class _CommitDetailScreen extends StatelessWidget {
                     if (author != null)
                       Row(
                         children: [
-                          Text(
-                            'Author: ',
-                            style: labelStyle,
-                          ),
-                          Text(
-                            author.name!,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                          Text('Author: ', style: labelStyle),
+                          Text(author.name!, overflow: TextOverflow.ellipsis),
                           if (ctrl.api.organization.isNotEmpty && author.imageUrl != null) ...[
-                            const SizedBox(
-                              width: 20,
-                            ),
+                            const SizedBox(width: 20),
                             MemberAvatar(
                               // shows placeholder image for committers not inside the organization
                               imageUrl: author.imageUrl!.startsWith(ctrl.api.basePath) ? null : author.imageUrl,
                               userDescriptor: author.imageUrl!.split('/').last,
                               radius: 30,
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
+                            const SizedBox(width: 10),
                           ],
                           const Spacer(),
                           Text(author.date!.minutesAgo),
                         ],
                       ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ProjectChip(
-                      onTap: ctrl.goToProject,
-                      projectName: ctrl.args.project,
-                    ),
-                    RepositoryChip(
-                      onTap: ctrl.goToRepo,
-                      repositoryName: ctrl.args.repository,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Message',
-                      style: labelStyle,
-                    ),
-                    SelectableText(
-                      detail.commit.comment!,
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      'CommitId',
-                      style: labelStyle,
-                    ),
+                    const SizedBox(height: 20),
+                    ProjectChip(onTap: ctrl.goToProject, projectName: ctrl.args.project),
+                    RepositoryChip(onTap: ctrl.goToRepo, repositoryName: ctrl.args.repository),
+                    const SizedBox(height: 10),
+                    Text('Message', style: labelStyle),
+                    SelectableText(detail.commit.comment!),
+                    const SizedBox(height: 20),
+                    Text('CommitId', style: labelStyle),
                     SelectableText(ctrl.args.commitId),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    TextTitleDescription(
-                      title: 'Committed at:',
-                      description: author?.date?.toSimpleDate() ?? '-',
-                    ),
+                    const SizedBox(height: 20),
+                    TextTitleDescription(title: 'Committed at:', description: author?.date?.toSimpleDate() ?? '-'),
                     if (detail.commit.tags?.isNotEmpty ?? false) ...[
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        'Tags: ',
-                        style: labelStyle,
-                      ),
+                      const SizedBox(height: 20),
+                      Text('Tags: ', style: labelStyle),
                       for (final tag in detail.commit.tags!)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: TagChip(
-                            tag: tag,
-                          ),
+                          child: TagChip(tag: tag),
                         ),
                     ],
                   ],
@@ -121,9 +74,7 @@ class _CommitDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      height: 60,
-                    ),
+                    const SizedBox(height: 60),
                     if (ctrl.addedFilesCount > 0)
                       GroupedFiles(
                         groupedFiles: ctrl.groupedAddedFiles,

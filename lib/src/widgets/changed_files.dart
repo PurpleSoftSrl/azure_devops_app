@@ -29,9 +29,7 @@ class GroupedFiles extends StatelessWidget {
             Expanded(child: const Divider(thickness: .5)),
           ],
         ),
-        const SizedBox(
-          height: 20,
-        ),
+        const SizedBox(height: 20),
         ...groupedFiles.entries.map(
           (entry) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,10 +40,7 @@ class GroupedFiles extends StatelessWidget {
                   children: [
                     SizedBox(
                       width: 30,
-                      child: Icon(
-                        DevOpsIcons.repository,
-                        color: context.colorScheme.secondary.withValues(alpha: .8),
-                      ),
+                      child: Icon(DevOpsIcons.repository, color: context.colorScheme.secondary.withValues(alpha: .8)),
                     ),
                     Flexible(child: Text(entry.key.startsWith('/') ? entry.key.substring(1) : entry.key)),
                   ],
@@ -57,10 +52,7 @@ class GroupedFiles extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 5),
                     child: Row(
                       children: [
-                        const SizedBox(
-                          width: 30,
-                          child: Icon(Icons.circle, size: 5),
-                        ),
+                        const SizedBox(width: 30, child: Icon(Icons.circle, size: 5)),
                         Flexible(
                           child: Text(
                             fileName.fileName,
@@ -78,10 +70,7 @@ class GroupedFiles extends StatelessWidget {
             ],
           ),
         ),
-        if (bottomSpace)
-          const SizedBox(
-            height: 40,
-          ),
+        if (bottomSpace) const SizedBox(height: 40),
       ],
     );
   }

@@ -111,11 +111,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       _repositoryId = pullRequest.repository.id;
     }
 
-    final res = await api.getPullRequest(
-      projectName: args.project,
-      repositoryId: _repositoryId,
-      id: args.id,
-    );
+    final res = await api.getPullRequest(projectName: args.project, repositoryId: _repositoryId, id: args.id);
 
     final pr = res.data?.pr;
     pr?.reviewers.sort((a, b) => a.isRequired ? -1 : 1);
@@ -145,7 +141,9 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       getIdentity: (mention) => api.getIdentityFromGuid(guid: mention),
     );
 
-    prDetail.value = res.copyWith(data: res.data?.copyWith(pr: prAndThreads.pr, updates: prAndThreads.updates));
+    prDetail.value = res.copyWith(
+      data: res.data?.copyWith(pr: prAndThreads.pr, updates: prAndThreads.updates),
+    );
   }
 
   /// Search all PRs in project args.project and find the one with id = args.id
@@ -186,7 +184,12 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
           directory: directory,
           fileName: fileName,
           path: path,
-          changeType: switch (file.changeType) { 'add' => 'added', 'edit' => 'edited', 'delete' => 'deleted', _ => '' },
+          changeType: switch (file.changeType) {
+            'add' => 'added',
+            'edit' => 'edited',
+            'delete' => 'deleted',
+            _ => '',
+          },
         );
         if (file.changeType == 'add') {
           groupedAddedFiles.putIfAbsent(directory, () => {diff});
@@ -224,10 +227,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   /// An abandoned PR can be reactivated only if sourceBranch has not been deleted
   Future<bool> _checkIfCanBeReactivated(PullRequest pr) async {
     final sourceBranch = pr.sourceBranch;
-    final res = await api.getRepositoryBranches(
-      projectName: pr.repository.project.id,
-      repoName: pr.repository.name,
-    );
+    final res = await api.getRepositoryBranches(projectName: pr.repository.project.id, repoName: pr.repository.name);
     if (res.isError) return false;
 
     final branches = res.data ?? [];
@@ -315,15 +315,13 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       url: '$basePath/_apis/git/repositories/$repository/commits/$commitId',
     );
 
-    await AppRouter.goToFileDiff(
-      (
-        commit: commit,
-        filePath: diff?.path ?? filePath!,
-        isAdded: isAdded,
-        isDeleted: isDeleted,
-        pullRequestId: args.id
-      ),
-    );
+    await AppRouter.goToFileDiff((
+      commit: commit,
+      filePath: diff?.path ?? filePath!,
+      isAdded: isAdded,
+      isDeleted: isDeleted,
+      pullRequestId: args.id,
+    ));
   }
 
   Future<void> approve() async {
@@ -369,7 +367,8 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
   Future<void> _votePr({required int vote}) async {
     final user = api.user!;
-    final reviewer = prDetail.value!.data!.pr.reviewers.firstWhereOrNull((r) => r.uniqueName == user.emailAddress) ??
+    final reviewer =
+        prDetail.value!.data!.pr.reviewers.firstWhereOrNull((r) => r.uniqueName == user.emailAddress) ??
         Reviewer(
           vote: vote,
           hasDeclined: false,
@@ -387,10 +386,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       reviewer: reviewer.copyWith(vote: vote),
     );
 
-    logAnalytics('pr_vote', {
-      'vote': vote,
-      'is_error': res.isError,
-    });
+    logAnalytics('pr_vote', {'vote': vote, 'is_error': res.isError});
 
     if (res.isError) {
       final errorMsg = _getErrorMessage(res);
@@ -480,8 +476,10 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
   // ignore: long-method
   Future<PullRequestCompletionOptions?> _getCompletionOptions() async {
     final policies = prDetail.value?.data?.policies ?? [];
-    final mergeStrategyPolicy =
-        policies.where((p) => p.configuration?.type?.id == _requireMergeStrategyId).firstOrNull?.configuration;
+    final mergeStrategyPolicy = policies
+        .where((p) => p.configuration?.type?.id == _requireMergeStrategyId)
+        .firstOrNull
+        ?.configuration;
 
     final hasMergePolicy =
         mergeStrategyPolicy != null && !mergeStrategyPolicy.isDeleted && mergeStrategyPolicy.isEnabled;
@@ -520,11 +518,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
           Row(
             children: [
               Expanded(
-                child: DevOpsFormField(
-                  onChanged: (_) => true,
-                  enabled: false,
-                  controller: mergeTypeFieldController,
-                ),
+                child: DevOpsFormField(onChanged: (_) => true, enabled: false, controller: mergeTypeFieldController),
               ),
               const SizedBox(width: 20),
               DevOpsPopupMenu(
@@ -539,8 +533,9 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
                             Text(
                               entry.value.text,
                               style: context.textTheme.titleSmall!.copyWith(
-                                color:
-                                    entry.value.isAllowed ? null : context.colorScheme.onPrimary.withValues(alpha: .4),
+                                color: entry.value.isAllowed
+                                    ? null
+                                    : context.colorScheme.onPrimary.withValues(alpha: .4),
                               ),
                             ),
                             if (!entry.value.isAllowed)
@@ -563,20 +558,14 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
             ],
           ),
           const SizedBox(height: 40),
-          Text(
-            'Post-completion options',
-            style: context.textTheme.labelMedium,
-          ),
+          Text('Post-completion options', style: context.textTheme.labelMedium),
           const SizedBox(height: 10),
           StatefulBuilder(
             builder: (context, setState) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CheckboxListTile(
-                  title: Text(
-                    'Complete associated work items after merging',
-                    style: context.textTheme.bodySmall,
-                  ),
+                  title: Text('Complete associated work items after merging', style: context.textTheme.bodySmall),
                   value: completeWorkItems,
                   onChanged: (_) => setState(() => completeWorkItems = !completeWorkItems),
                   contentPadding: EdgeInsets.zero,
@@ -592,10 +581,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
                     contentPadding: EdgeInsets.zero,
                   ),
                 CheckboxListTile(
-                  title: Text(
-                    'Customize merge commit message',
-                    style: context.textTheme.bodySmall,
-                  ),
+                  title: Text('Customize merge commit message', style: context.textTheme.bodySmall),
                   value: customizeCommitMessage,
                   onChanged: (_) => setState(() => customizeCommitMessage = !customizeCommitMessage),
                   contentPadding: EdgeInsets.zero,
@@ -627,7 +613,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       mergeType: mergeType,
       completeWorkItems: completeWorkItems,
       deleteSourceBranch: deleteSourceBranch,
-      commitMessage: commitMessage
+      commitMessage: commitMessage,
     );
   }
 
@@ -643,11 +629,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     final editorController = HtmlEditorController();
     final editorGlobalKey = GlobalKey<State>();
 
-    final hasConfirmed = await showEditor(
-      editorController,
-      editorGlobalKey,
-      title: 'Add comment',
-    );
+    final hasConfirmed = await showEditor(editorController, editorGlobalKey, title: 'Add comment');
     if (!hasConfirmed) return;
 
     final comment = await getTextFromEditor(editorController);
@@ -664,10 +646,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       repositoryId: args.repository,
     );
 
-    logAnalytics('add_pr_comment', {
-      'comment_length': comment.length,
-      'is_error': res.isError.toString(),
-    });
+    logAnalytics('add_pr_comment', {'comment_length': comment.length, 'is_error': res.isError.toString()});
 
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not added');
@@ -704,10 +683,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       text: newComment,
     );
 
-    logAnalytics('edit_pr_comment', {
-      'comment_length': newComment.length,
-      'is_error': res.isError.toString(),
-    });
+    logAnalytics('edit_pr_comment', {'comment_length': newComment.length, 'is_error': res.isError.toString()});
 
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not edited');
@@ -733,9 +709,7 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       comment: comment,
     );
 
-    logAnalytics('delete_pr_comment', {
-      'is_error': res.isError.toString(),
-    });
+    logAnalytics('delete_pr_comment', {'is_error': res.isError.toString()});
 
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not deleted');

@@ -15,12 +15,12 @@ extension WorkItemRelationExt on Relation {
   int get linkedWorkItemId => int.tryParse(url?.split('/').lastOrNull ?? '') ?? 0;
 
   WorkItemLink toWorkItemLink({required int index}) => WorkItemLink(
-        linkTypeReferenceName: rel ?? '',
-        linkTypeName: attributes?.name ?? '',
-        linkedWorkItemId: int.tryParse(url?.split('/').lastOrNull ?? '') ?? 0,
-        comment: attributes?.comment ?? '',
-        index: index,
-      );
+    linkTypeReferenceName: rel ?? '',
+    linkTypeName: attributes?.name ?? '',
+    linkedWorkItemId: int.tryParse(url?.split('/').lastOrNull ?? '') ?? 0,
+    comment: attributes?.comment ?? '',
+    index: index,
+  );
 
   bool get isWorkItemLink => rel?.startsWith('System.LinkTypes.') ?? false;
 }

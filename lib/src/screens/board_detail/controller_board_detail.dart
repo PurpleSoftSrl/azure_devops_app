@@ -51,22 +51,22 @@ class _BoardDetailController with ApiErrorHelper, AdsMixin, FilterMixin {
       final filteredByUsers = usersFilter.isEmpty
           ? filteredByTypes
           : filteredByTypes
-              .where(
-                (i) => usersFilter
-                    .map((u) => u.displayName == 'Unassigned' ? '' : u.mailAddress)
-                    .contains(i.fields.systemAssignedTo?.uniqueName ?? ''),
-              )
-              .toList();
+                .where(
+                  (i) => usersFilter
+                      .map((u) => u.displayName == 'Unassigned' ? '' : u.mailAddress)
+                      .contains(i.fields.systemAssignedTo?.uniqueName ?? ''),
+                )
+                .toList();
 
       final matchedItems = (_currentSearchQuery ?? '').isEmpty
           ? filteredByUsers
           : filteredByUsers
-              .where(
-                (i) =>
-                    i.id.toString().contains(_currentSearchQuery!) ||
-                    i.fields.systemTitle.toLowerCase().contains(_currentSearchQuery!),
-              )
-              .toList();
+                .where(
+                  (i) =>
+                      i.id.toString().contains(_currentSearchQuery!) ||
+                      i.fields.systemTitle.toLowerCase().contains(_currentSearchQuery!),
+                )
+                .toList();
 
       columnItems[column]!.addAll(matchedItems);
     }
@@ -118,10 +118,7 @@ class _BoardDetailController with ApiErrorHelper, AdsMixin, FilterMixin {
                   column = c;
                   AppRouter.popRoute();
                 },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Text(c)],
-                ),
+                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [Text(c)]),
               ),
             )
             .toList(),

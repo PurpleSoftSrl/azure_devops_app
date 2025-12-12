@@ -9,12 +9,10 @@ class CommitChanges {
       CommitChanges.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
   factory CommitChanges.fromJson(Map<String, dynamic> json) => CommitChanges(
-        changes: json['changes'] == null
-            ? []
-            : List<Change?>.from(
-                (json['changes'] as List<dynamic>).map((e) => Change.fromJson(e as Map<String, dynamic>)),
-              ),
-      );
+    changes: json['changes'] == null
+        ? []
+        : List<Change?>.from((json['changes'] as List<dynamic>).map((e) => Change.fromJson(e as Map<String, dynamic>))),
+  );
 
   final List<Change?>? changes;
 
@@ -23,15 +21,10 @@ class CommitChanges {
 }
 
 class Change {
-  Change({
-    required this.item,
-    required this.changeType,
-  });
+  Change({required this.item, required this.changeType});
 
-  factory Change.fromJson(Map<String, dynamic> json) => Change(
-        item: Item.fromJson(json['item'] as Map<String, dynamic>),
-        changeType: json['changeType'] as String?,
-      );
+  factory Change.fromJson(Map<String, dynamic> json) =>
+      Change(item: Item.fromJson(json['item'] as Map<String, dynamic>), changeType: json['changeType'] as String?);
 
   final Item? item;
   final String? changeType;
@@ -51,13 +44,13 @@ class Item {
   });
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
-        objectId: json['objectId'] as String?,
-        originalObjectId: json['originalObjectId'] as String?,
-        gitObjectType: json['gitObjectType'] as String?,
-        commitId: json['commitId'] as String?,
-        path: json['path'] as String?,
-        url: json['url'] as String?,
-      );
+    objectId: json['objectId'] as String?,
+    originalObjectId: json['originalObjectId'] as String?,
+    gitObjectType: json['gitObjectType'] as String?,
+    commitId: json['commitId'] as String?,
+    path: json['path'] as String?,
+    url: json['url'] as String?,
+  );
 
   final String? objectId;
   final String? originalObjectId;

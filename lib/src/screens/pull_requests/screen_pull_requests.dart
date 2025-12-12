@@ -28,9 +28,7 @@ class _PullRequestsScreen extends StatelessWidget {
         ),
       ],
       header: () => ctrl.hasShortcut
-          ? ShortcutLabel(
-              label: ctrl.args!.shortcut!.label,
-            )
+          ? ShortcutLabel(label: ctrl.args!.shortcut!.label)
           : FiltersRow(
               resetFilters: ctrl.resetFilters,
               saveFilters: ctrl.saveFilters,
@@ -43,8 +41,9 @@ class _PullRequestsScreen extends StatelessWidget {
                   formatLabel: (p) => p.name!,
                   isDefaultFilter: ctrl.isDefaultProjectsFilter,
                   widgetBuilder: (p) => ProjectFilterWidget(project: p),
-                  onSearchChanged:
-                      ctrl.hasManyProjects(ctrl.storage) ? (s) => ctrl.searchProject(s, ctrl.storage) : null,
+                  onSearchChanged: ctrl.hasManyProjects(ctrl.storage)
+                      ? (s) => ctrl.searchProject(s, ctrl.storage)
+                      : null,
                 ),
                 FilterMenu<PullRequestStatus>(
                   title: 'Status',
@@ -83,33 +82,20 @@ class _PullRequestsScreen extends StatelessWidget {
         var adsIndex = 0;
 
         return SliverList(
-          delegate: SliverChildBuilderDelegate(
-            childCount: prs?.length ?? 0,
-            (_, index) {
-              final pr = prs![index];
+          delegate: SliverChildBuilderDelegate(childCount: prs?.length ?? 0, (_, index) {
+            final pr = prs![index];
 
-              if (ctrl.shouldShowNativeAd(prs, pr, adsIndex)) {
-                return Column(
-                  children: [
-                    PullRequestListTile(
-                      pr: pr,
-                      onTap: () => ctrl.goToPullRequestDetail(pr),
-                      isLast: pr == prs.last,
-                    ),
-                    CustomAdWidget(
-                      item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++],
-                    ),
-                  ],
-                );
-              }
-
-              return PullRequestListTile(
-                pr: pr,
-                onTap: () => ctrl.goToPullRequestDetail(pr),
-                isLast: pr == prs.last,
+            if (ctrl.shouldShowNativeAd(prs, pr, adsIndex)) {
+              return Column(
+                children: [
+                  PullRequestListTile(pr: pr, onTap: () => ctrl.goToPullRequestDetail(pr), isLast: pr == prs.last),
+                  CustomAdWidget(item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++]),
+                ],
               );
-            },
-          ),
+            }
+
+            return PullRequestListTile(pr: pr, onTap: () => ctrl.goToPullRequestDetail(pr), isLast: pr == prs.last);
+          }),
         );
       },
     );

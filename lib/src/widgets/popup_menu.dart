@@ -31,16 +31,12 @@ class DevOpsPopupMenu extends StatelessWidget {
           onTap: item.onTap,
           padding: const EdgeInsets.symmetric(horizontal: 10),
           height: 30,
-          child: item.child ??
+          child:
+              item.child ??
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Flexible(
-                    child: Text(
-                      item.text,
-                      style: context.textTheme.titleSmall,
-                    ),
-                  ),
+                  Flexible(child: Text(item.text, style: context.textTheme.titleSmall)),
                   Icon(item.icon),
                 ],
               ),
@@ -65,22 +61,14 @@ class DevOpsPopupMenu extends StatelessWidget {
       offset: offset,
       color: color,
       constraints: constraints,
-      shape: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
-      ),
+      shape: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
       child: child ?? Icon(DevOpsIcons.dots_horizontal),
     );
   }
 }
 
 class PopupItem {
-  PopupItem({
-    required this.text,
-    this.icon,
-    required this.onTap,
-    this.child,
-  });
+  PopupItem({required this.text, this.icon, required this.onTap, this.child});
 
   final String text;
   final IconData? icon;

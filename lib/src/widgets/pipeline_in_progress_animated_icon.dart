@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 class InProgressPipelineIcon extends StatefulWidget {
-  const InProgressPipelineIcon({
-    required this.child,
-  });
+  const InProgressPipelineIcon({required this.child});
 
   final Widget child;
 
@@ -40,9 +38,6 @@ class _InProgressPipelineIconState extends State<InProgressPipelineIcon> with Si
 
   @override
   Widget build(BuildContext context) {
-    return RotationTransition(
-      turns: _animation,
-      child: widget.child,
-    );
+    return RotationTransition(turns: _animation, child: widget.child);
   }
 }

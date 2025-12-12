@@ -13,10 +13,7 @@ void main() {
       final checker = RulesChecker(
         allRules: {
           _fieldNameToCheck: [
-            (
-              action: ActionCreator.fromActionType(ActionType.makeRequired),
-              conditions: [ConditionCreator.onCreate()],
-            ),
+            (action: ActionCreator.fromActionType(ActionType.makeRequired), conditions: [ConditionCreator.onCreate()]),
           ],
         },
         initialFormFields: {},
@@ -35,10 +32,7 @@ void main() {
       final checker = RulesChecker(
         allRules: {
           _fieldNameToCheck: [
-            (
-              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
-              conditions: [ConditionCreator.onCreate()],
-            ),
+            (action: ActionCreator.fromActionType(ActionType.makeReadOnly), conditions: [ConditionCreator.onCreate()]),
           ],
         },
         initialFormFields: {},
@@ -82,16 +76,10 @@ void main() {
       final checker = RulesChecker(
         allRules: {
           requiredFieldName: [
-            (
-              action: ActionCreator.fromActionType(ActionType.makeRequired),
-              conditions: [ConditionCreator.onCreate()],
-            ),
+            (action: ActionCreator.fromActionType(ActionType.makeRequired), conditions: [ConditionCreator.onCreate()]),
           ],
           readOnlyFieldName: [
-            (
-              action: ActionCreator.fromActionType(ActionType.makeReadOnly),
-              conditions: [ConditionCreator.onCreate()],
-            ),
+            (action: ActionCreator.fromActionType(ActionType.makeReadOnly), conditions: [ConditionCreator.onCreate()]),
           ],
         },
         initialFormFields: {},
@@ -769,10 +757,7 @@ void main() {
           ],
         },
         initialFormFields: {notChangedFieldName: notChangedField},
-        formFields: {
-          _fieldNameToCheck: DynamicFieldData(required: false),
-          notChangedFieldName: notChangedField,
-        },
+        formFields: {_fieldNameToCheck: DynamicFieldData(required: false), notChangedFieldName: notChangedField},
         isEditing: true,
         initialState: null,
         state: null,
@@ -797,10 +782,7 @@ void main() {
           ],
         },
         initialFormFields: {notChangedFieldName: notChangedField},
-        formFields: {
-          _fieldNameToCheck: DynamicFieldData(required: false),
-          notChangedFieldName: notChangedField,
-        },
+        formFields: {_fieldNameToCheck: DynamicFieldData(required: false), notChangedFieldName: notChangedField},
         isEditing: true,
         initialState: null,
         state: null,
@@ -825,10 +807,7 @@ void main() {
           ],
         },
         initialFormFields: {notChangedFieldName: notChangedField},
-        formFields: {
-          _fieldNameToCheck: DynamicFieldData(required: false),
-          notChangedFieldName: notChangedField,
-        },
+        formFields: {_fieldNameToCheck: DynamicFieldData(required: false), notChangedFieldName: notChangedField},
         isEditing: true,
         initialState: null,
         state: null,

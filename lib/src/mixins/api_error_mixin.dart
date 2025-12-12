@@ -68,11 +68,7 @@ mixin ApiErrorHelper {
       final apiErrorMessage = jsonDecode(responseBody) as Map<String, dynamic>;
       final msg = apiErrorMessage['message'] as String? ?? '';
 
-      errorMsg = msg.splitMapJoin(
-        RegExp("«'(.*)'»"),
-        onMatch: (m) => m.group(1) ?? '',
-        onNonMatch: (_) => '',
-      );
+      errorMsg = msg.splitMapJoin(RegExp("«'(.*)'»"), onMatch: (m) => m.group(1) ?? '', onNonMatch: (_) => '');
     } catch (_) {
       // ignore
     }

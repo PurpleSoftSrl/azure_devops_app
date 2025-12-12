@@ -4,13 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class MemberAvatar extends StatelessWidget {
-  const MemberAvatar({
-    super.key,
-    required this.userDescriptor,
-    this.imageUrl,
-    this.radius = 40,
-    this.tappable = true,
-  });
+  const MemberAvatar({super.key, required this.userDescriptor, this.imageUrl, this.radius = 40, this.tappable = true});
 
   final String? imageUrl;
   final String? userDescriptor;

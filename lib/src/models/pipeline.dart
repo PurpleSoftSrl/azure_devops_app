@@ -55,26 +55,26 @@ class Pipeline {
   factory Pipeline.fromResponse(Response res) => Pipeline.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
 
   factory Pipeline.fromJson(Map<String, dynamic> json) => Pipeline(
-        triggerInfo: TriggerInfo.fromJson(json['triggerInfo'] as Map<String, dynamic>),
-        id: json['id'] as int?,
-        buildNumber: json['buildNumber'] as String?,
-        status: PipelineStatus.fromString(json['status'] as String),
-        result: json['result'] == null ? null : PipelineResult.fromString(json['result'] as String),
-        queueTime: json['queueTime'] == null ? null : DateTime.parse(json['queueTime'].toString()).toLocal(),
-        startTime: json['startTime'] == null ? null : DateTime.parse(json['startTime'].toString()).toLocal(),
-        finishTime: json['finishTime'] == null ? null : DateTime.parse(json['finishTime'].toString()).toLocal(),
-        url: json['url'] as String?,
-        definition: _Definition.fromJson(json['definition'] as Map<String, dynamic>),
-        buildNumberRevision: json['buildNumberRevision'] as int?,
-        project: Project.fromJson(json['project'] as Map<String, dynamic>),
-        uri: json['uri'] as String?,
-        sourceBranch: json['sourceBranch'] as String?,
-        sourceVersion: json['sourceVersion'] as String?,
-        reason: json['reason'] as String?,
-        requestedFor: LastChangedBy.fromJson(json['requestedFor'] as Map<String, dynamic>),
-        requestedBy: LastChangedBy.fromJson(json['requestedBy'] as Map<String, dynamic>),
-        repository: PipelineRepository.fromJson(json['repository'] as Map<String, dynamic>),
-      );
+    triggerInfo: TriggerInfo.fromJson(json['triggerInfo'] as Map<String, dynamic>),
+    id: json['id'] as int?,
+    buildNumber: json['buildNumber'] as String?,
+    status: PipelineStatus.fromString(json['status'] as String),
+    result: json['result'] == null ? null : PipelineResult.fromString(json['result'] as String),
+    queueTime: json['queueTime'] == null ? null : DateTime.parse(json['queueTime'].toString()).toLocal(),
+    startTime: json['startTime'] == null ? null : DateTime.parse(json['startTime'].toString()).toLocal(),
+    finishTime: json['finishTime'] == null ? null : DateTime.parse(json['finishTime'].toString()).toLocal(),
+    url: json['url'] as String?,
+    definition: _Definition.fromJson(json['definition'] as Map<String, dynamic>),
+    buildNumberRevision: json['buildNumberRevision'] as int?,
+    project: Project.fromJson(json['project'] as Map<String, dynamic>),
+    uri: json['uri'] as String?,
+    sourceBranch: json['sourceBranch'] as String?,
+    sourceVersion: json['sourceVersion'] as String?,
+    reason: json['reason'] as String?,
+    requestedFor: LastChangedBy.fromJson(json['requestedFor'] as Map<String, dynamic>),
+    requestedBy: LastChangedBy.fromJson(json['requestedBy'] as Map<String, dynamic>),
+    repository: PipelineRepository.fromJson(json['repository'] as Map<String, dynamic>),
+  );
 
   final TriggerInfo? triggerInfo;
   final int? id;
@@ -100,11 +100,7 @@ class Pipeline {
 
   @visibleForTesting
   static Pipeline empty() {
-    return Pipeline(
-      id: 1,
-      buildNumber: '123',
-      queueTime: DateTime(2000),
-    );
+    return Pipeline(id: 1, buildNumber: '123', queueTime: DateTime(2000));
   }
 
   Pipeline copyWithStatus(PipelineStatus newStatus) {
@@ -119,10 +115,7 @@ class Pipeline {
     return copyWith(requestedFor: (requestedFor ?? LastChangedBy()).copyWith(displayName: newName));
   }
 
-  static List<Pipeline>? listFromJson(
-    dynamic json, {
-    bool growable = true,
-  }) {
+  static List<Pipeline>? listFromJson(dynamic json, {bool growable = true}) {
     final result = <Pipeline>[];
     if (json is List && json.isNotEmpty) {
       for (final row in json) {
@@ -233,19 +226,14 @@ class Pipeline {
 }
 
 class _Definition {
-  _Definition({
-    required this.id,
-    required this.name,
-    required this.revision,
-    required this.project,
-  });
+  _Definition({required this.id, required this.name, required this.revision, required this.project});
 
   factory _Definition.fromJson(Map<String, dynamic> json) => _Definition(
-        id: json['id'] as int?,
-        name: json['name'] as String?,
-        revision: json['revision'] as int?,
-        project: Project.fromJson(json['project'] as Map<String, dynamic>),
-      );
+    id: json['id'] as int?,
+    name: json['name'] as String?,
+    revision: json['revision'] as int?,
+    project: Project.fromJson(json['project'] as Map<String, dynamic>),
+  );
 
   final int? id;
   final String? name;
@@ -259,23 +247,16 @@ class _Definition {
 }
 
 class LastChangedBy {
-  LastChangedBy({
-    this.displayName,
-    this.url,
-    this.id,
-    this.uniqueName,
-    this.imageUrl,
-    this.descriptor,
-  });
+  LastChangedBy({this.displayName, this.url, this.id, this.uniqueName, this.imageUrl, this.descriptor});
 
   factory LastChangedBy.fromJson(Map<String, dynamic> json) => LastChangedBy(
-        displayName: json['displayName'] as String?,
-        url: json['url'] as String?,
-        id: json['id'] as String?,
-        uniqueName: json['uniqueName'] as String?,
-        imageUrl: json['imageUrl'] as String?,
-        descriptor: json['descriptor'] as String?,
-      );
+    displayName: json['displayName'] as String?,
+    url: json['url'] as String?,
+    id: json['id'] as String?,
+    uniqueName: json['uniqueName'] as String?,
+    imageUrl: json['imageUrl'] as String?,
+    descriptor: json['descriptor'] as String?,
+  );
 
   final String? displayName;
   final String? url;
@@ -309,19 +290,14 @@ class LastChangedBy {
 }
 
 class PipelineRepository {
-  PipelineRepository({
-    required this.id,
-    required this.type,
-    required this.name,
-    required this.url,
-  });
+  PipelineRepository({required this.id, required this.type, required this.name, required this.url});
 
   factory PipelineRepository.fromJson(Map<String, dynamic> json) => PipelineRepository(
-        id: json['id'] as String?,
-        type: json['type'] as String?,
-        name: json['name'] as String?,
-        url: json['url'] as String?,
-      );
+    id: json['id'] as String?,
+    type: json['type'] as String?,
+    name: json['name'] as String?,
+    url: json['url'] as String?,
+  );
 
   final String? id;
   final String? type;
@@ -335,31 +311,21 @@ class PipelineRepository {
 }
 
 class TriggerInfo {
-  TriggerInfo({
-    this.ciSourceBranch,
-    this.ciSourceSha,
-    this.ciMessage,
-    this.ciTriggerRepository,
-  });
+  TriggerInfo({this.ciSourceBranch, this.ciSourceSha, this.ciMessage, this.ciTriggerRepository});
 
   factory TriggerInfo.fromJson(Map<String, dynamic> json) => TriggerInfo(
-        ciSourceBranch: json['ci.sourceBranch'] as String?,
-        ciSourceSha: json['ci.sourceSha'] as String?,
-        ciMessage: json['ci.message'] as String?,
-        ciTriggerRepository: json['ci.triggerRepository'] as String?,
-      );
+    ciSourceBranch: json['ci.sourceBranch'] as String?,
+    ciSourceSha: json['ci.sourceSha'] as String?,
+    ciMessage: json['ci.message'] as String?,
+    ciTriggerRepository: json['ci.triggerRepository'] as String?,
+  );
 
   final String? ciSourceBranch;
   final String? ciSourceSha;
   final String? ciMessage;
   final String? ciTriggerRepository;
 
-  TriggerInfo copyWith({
-    String? ciSourceBranch,
-    String? ciSourceSha,
-    String? ciMessage,
-    String? ciTriggerRepository,
-  }) {
+  TriggerInfo copyWith({String? ciSourceBranch, String? ciSourceSha, String? ciMessage, String? ciTriggerRepository}) {
     return TriggerInfo(
       ciSourceBranch: ciSourceBranch ?? this.ciSourceBranch,
       ciSourceSha: ciSourceSha ?? this.ciSourceSha,

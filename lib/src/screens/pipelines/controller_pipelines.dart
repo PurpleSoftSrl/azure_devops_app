@@ -25,10 +25,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
   final visibilityKey = GlobalKey();
   var _hasStoppedTimer = false;
 
-  late final filtersService = FiltersService(
-    storage: storage,
-    organization: api.organization,
-  );
+  late final filtersService = FiltersService(storage: storage, organization: api.organization);
 
   bool get isDefaultPipelineNamesFilter => pipelineNamesFilter.isEmpty;
 
@@ -132,12 +129,10 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     // sort by start date. Pipelines in progress go first, then queued pipelines, and finally all the completed pipelines.
     pipes = pipes
-      ..sort(
-        (a, b) {
-          final statusOrder = a.status!.order.compareTo(b.status.order);
-          return statusOrder != 0 ? statusOrder : (b.startTime ?? now).compareTo(a.startTime ?? now);
-        },
-      );
+      ..sort((a, b) {
+        final statusOrder = a.status!.order.compareTo(b.status.order);
+        return statusOrder != 0 ? statusOrder : (b.startTime ?? now).compareTo(a.startTime ?? now);
+      });
 
     pipes = pipes.take(100).toList();
 

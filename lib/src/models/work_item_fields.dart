@@ -4,15 +4,13 @@ import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:http/http.dart';
 
 class WorkItemTypeFieldsResponse {
-  WorkItemTypeFieldsResponse({
-    required this.fields,
-  });
+  WorkItemTypeFieldsResponse({required this.fields});
 
   factory WorkItemTypeFieldsResponse.fromJson(Map<String, dynamic> json) => WorkItemTypeFieldsResponse(
-        fields: List<WorkItemField>.from(
-          (json['value'] as List<dynamic>).map((f) => WorkItemField.fromJson(f as Map<String, dynamic>)),
-        ),
-      );
+    fields: List<WorkItemField>.from(
+      (json['value'] as List<dynamic>).map((f) => WorkItemField.fromJson(f as Map<String, dynamic>)),
+    ),
+  );
 
   static List<WorkItemField> fromResponse(Response res) =>
       WorkItemTypeFieldsResponse.fromJson(jsonDecode(res.body) as Map<String, dynamic>).fields;

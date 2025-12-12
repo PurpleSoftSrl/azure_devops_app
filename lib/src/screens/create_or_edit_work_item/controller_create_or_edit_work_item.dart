@@ -115,25 +115,16 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
     if (fields.systemAssignedTo != null) {
       newWorkItemAssignedTo =
           getSortedUsers(api).firstWhereOrNull((u) => u.mailAddress == fields.systemAssignedTo?.uniqueName) ??
-              unassigned;
+          unassigned;
     }
 
-    newWorkItemType = projectWorkItemTypes.firstWhereOrNull((t) => t.name == workItemType) ??
-        WorkItemType(
-          name: workItemType,
-          referenceName: workItemType,
-          isDisabled: false,
-          icon: '',
-          states: [],
-        );
+    newWorkItemType =
+        projectWorkItemTypes.firstWhereOrNull((t) => t.name == workItemType) ??
+        WorkItemType(name: workItemType, referenceName: workItemType, isDisabled: false, icon: '', states: []);
 
     _initialWorkItemState = newWorkItemState =
         api.workItemStates[project]?[workItemType]?.firstWhereOrNull((s) => s.name == fields.systemState) ??
-            WorkItemState(
-              id: '',
-              name: fields.systemState,
-              color: 'FFFFFF',
-            );
+        WorkItemState(id: '', name: fields.systemState, color: 'FFFFFF');
 
     newWorkItemArea = AreaOrIteration.onlyPath(path: fields.systemAreaPath);
     newWorkItemIteration = AreaOrIteration.onlyPath(path: fields.systemIterationPath);
@@ -315,16 +306,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
         }
       }
 
-      return OverlayService.error(
-        'Error',
-        description: description,
-      );
+      return OverlayService.error('Error', description: description);
     }
 
-    await showInterstitialAd(
-      ads,
-      onDismiss: () => OverlayService.snackbar('Changes saved'),
-    );
+    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Changes saved'));
 
     hasChanged.value = ApiResponse.ok(false);
 
@@ -386,8 +371,10 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
     };
 
     if (isEditing) {
-      allWorkItemStates =
-          _getTransitionableStates(project: newWorkItemProject.name!, workItemType: newWorkItemType.name);
+      allWorkItemStates = _getTransitionableStates(
+        project: newWorkItemProject.name!,
+        workItemType: newWorkItemType.name,
+      );
     }
 
     _checkRules();
@@ -485,10 +472,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
 
     isGettingFields.value = true;
 
-    final res = await api.getWorkItemTypeFields(
-      projectName: projectName,
-      workItemName: newWorkItemType.name,
-    );
+    final res = await api.getWorkItemTypeFields(projectName: projectName, workItemName: newWorkItemType.name);
 
     isGettingFields.value = false;
 
@@ -751,10 +735,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
           child: !changed
               ? Align(
                   alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: AppRouter.popRoute,
-                    child: Icon(Icons.close),
-                  ),
+                  child: GestureDetector(onTap: AppRouter.popRoute, child: Icon(Icons.close)),
                 )
               : TextButton(
                   onPressed: () {
@@ -792,10 +773,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
 
     if (loweredQuery.isEmpty && queryId == null) return [];
 
-    final itemsRes = await api.getWorkItems(
-      title: queryId == null ? loweredQuery : null,
-      id: queryId,
-    );
+    final itemsRes = await api.getWorkItems(title: queryId == null ? loweredQuery : null, id: queryId);
 
     final workItems = itemsRes.data ?? [];
 

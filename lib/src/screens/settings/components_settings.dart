@@ -1,10 +1,7 @@
 part of settings;
 
 class _ThemeModeRadio extends StatelessWidget {
-  const _ThemeModeRadio({
-    required this.mode,
-    required this.icon,
-  });
+  const _ThemeModeRadio({required this.mode, required this.icon});
 
   final String mode;
   final IconData icon;
@@ -16,9 +13,7 @@ class _ThemeModeRadio extends StatelessWidget {
       child: Column(
         children: [
           Icon(icon, color: isSelected ? null : context.colorScheme.onSecondary),
-          const SizedBox(
-            height: 5,
-          ),
+          const SizedBox(height: 5),
           Text(
             mode,
             style: context.textTheme.titleSmall!.copyWith(color: isSelected ? null : context.colorScheme.onSecondary),
@@ -38,10 +33,7 @@ class _ThemeModeRadio extends StatelessWidget {
 }
 
 class _SwitchDirectoryWidget extends StatelessWidget {
-  const _SwitchDirectoryWidget({
-    required this.directories,
-    required this.onSwitch,
-  });
+  const _SwitchDirectoryWidget({required this.directories, required this.onSwitch});
 
   final List<UserTenant> directories;
   final Future<void> Function(UserTenant) onSwitch;

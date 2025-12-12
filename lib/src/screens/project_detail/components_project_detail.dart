@@ -1,10 +1,7 @@
 part of project_detail;
 
 class _StatsChip extends StatelessWidget {
-  const _StatsChip({
-    required this.name,
-    required this.value,
-  });
+  const _StatsChip({required this.name, required this.value});
 
   final String name;
   final String value;

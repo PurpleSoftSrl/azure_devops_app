@@ -30,9 +30,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(
-                  height: 40,
-                ),
+                const SizedBox(height: 40),
                 if (ctrl.allProjects.length > projectsCountThreshold)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16),
@@ -51,10 +49,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          SectionHeader.noMargin(
-                            text: 'Projects',
-                            textHeight: 1,
-                          ),
+                          SectionHeader.noMargin(text: 'Projects', textHeight: 1),
                           ValueListenableBuilder<bool>(
                             valueListenable: ctrl.chooseAllVisible,
                             builder: (_, chooseAllVisible, _) => Row(
@@ -63,10 +58,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
                                   chooseAllVisible ? 'Unselect all' : 'Select all',
                                   style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
                                 ),
-                                Checkbox(
-                                  value: chooseAllVisible,
-                                  onChanged: (_) => ctrl.toggleChooseAll(),
-                                ),
+                                Checkbox(value: chooseAllVisible, onChanged: (_) => ctrl.toggleChooseAll()),
                               ],
                             ),
                           ),
@@ -83,9 +75,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 100,
-                ),
+                const SizedBox(height: 100),
               ],
             ),
           ),
@@ -97,10 +87,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
               valueListenable: ctrl.chosenProjects,
               builder: (_, projects, _) => projects?.data == null || projects!.data!.isEmpty
                   ? const SizedBox()
-                  : LoadingButton(
-                      onPressed: ctrl.goToHome,
-                      text: 'Confirm',
-                    ),
+                  : LoadingButton(onPressed: ctrl.goToHome, text: 'Confirm'),
             ),
           ),
         ],

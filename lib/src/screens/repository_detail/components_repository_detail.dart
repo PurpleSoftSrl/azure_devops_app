@@ -21,25 +21,15 @@ class _BranchRow extends StatelessWidget {
           ),
         const Spacer(),
         if (ctrl.currentBranch != null && ctrl.currentBranch!.behindCount > 0) ...[
-          Icon(
-            Icons.remove,
-            size: 12,
-            color: Colors.red,
-          ),
+          Icon(Icons.remove, size: 12, color: Colors.red),
           Text(
             ctrl.currentBranch!.behindCount.toString(),
             style: context.textTheme.titleSmall!.copyWith(color: Colors.red),
           ),
-          const SizedBox(
-            width: 10,
-          ),
+          const SizedBox(width: 10),
         ],
         if (ctrl.currentBranch != null && ctrl.currentBranch!.aheadCount > 0) ...[
-          Icon(
-            DevOpsIcons.plus,
-            size: 12,
-            color: Colors.green,
-          ),
+          Icon(DevOpsIcons.plus, size: 12, color: Colors.green),
           Text(
             ctrl.currentBranch!.aheadCount.toString(),
             style: context.textTheme.titleSmall!.copyWith(color: Colors.green),

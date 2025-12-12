@@ -15,10 +15,7 @@ class _SplashController {
     final token = StorageServiceCore().getToken();
 
     // wait at least [_splashMinDuration] before navigating
-    await Future.wait([
-      Future<void>.delayed(_splashMinDuration),
-      _login(token),
-    ]);
+    await Future.wait([Future<void>.delayed(_splashMinDuration), _login(token)]);
 
     await _init(token);
   }
