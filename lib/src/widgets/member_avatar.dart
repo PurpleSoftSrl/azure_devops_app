@@ -38,7 +38,7 @@ class MemberAvatar extends StatelessWidget {
                 height: radius,
                 width: radius,
                 httpHeaders: api.headers,
-                errorWidget: (_, __, ___) => const SizedBox(),
+                errorWidget: (_, _, _) => const SizedBox(),
                 fit: BoxFit.cover,
               ),
       ),

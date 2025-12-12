@@ -53,9 +53,9 @@ class _TabsScreen extends StatelessWidget {
                   ),
               ],
               onGenerateRoute: (route) => MaterialPageRoute(
-                builder: (_) => route.name == '/'
-                    ? AppRouter.routes[ctrl.navPages[i].pageName]!(_)
-                    : AppRouter.routes[route.name!]!(_),
+                builder: (ctx) => route.name == '/'
+                    ? AppRouter.routes[ctrl.navPages[i].pageName]!(ctx)
+                    : AppRouter.routes[route.name!]!(ctx),
                 settings: route,
               ),
             ),

@@ -221,7 +221,7 @@ class _AttachmentRow extends StatelessWidget {
           children: [
             ValueListenableBuilder(
               valueListenable: ctrl.isDownloadingAttachment,
-              builder: (_, isDownloading, __) => (isDownloading[att.attributes?.id] ?? false)
+              builder: (_, isDownloading, _) => (isDownloading[att.attributes?.id] ?? false)
                   ? SizedBox(
                       width: 15,
                       height: 15,

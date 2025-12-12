@@ -40,7 +40,7 @@ class _PullRequestDetailScreen extends StatelessWidget {
               actions: [
                 ValueListenableBuilder(
                   valueListenable: ctrl.prDetail,
-                  builder: (_, pr, __) => pr == null || pr.isError ? const SizedBox() : _PullRequestActions(ctrl: ctrl),
+                  builder: (_, pr, _) => pr == null || pr.isError ? const SizedBox() : _PullRequestActions(ctrl: ctrl),
                 ),
                 const SizedBox(
                   width: 8,
@@ -48,7 +48,7 @@ class _PullRequestDetailScreen extends StatelessWidget {
               ],
               builder: (prWithDetails) => ValueListenableBuilder(
                 valueListenable: ctrl.visiblePage,
-                builder: (context, visiblePage, __) => Column(
+                builder: (context, visiblePage, _) => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
@@ -59,7 +59,7 @@ class _PullRequestDetailScreen extends StatelessWidget {
                     ),
                     ValueListenableBuilder(
                       valueListenable: ctrl.showCommentField,
-                      builder: (_, value, __) => SizedBox(
+                      builder: (_, value, _) => SizedBox(
                         height: value ? 100 : 0,
                       ),
                     ),

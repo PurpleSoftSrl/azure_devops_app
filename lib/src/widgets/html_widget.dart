@@ -42,7 +42,7 @@ class HtmlWidget extends StatelessWidget {
           'body': htmlTextStyle,
           'html': htmlTextStyle,
         },
-        onLinkTap: (str, _, __) async {
+        onLinkTap: (str, _, _) async {
           final url = str.toString();
           if (await canLaunchUrlString(url)) await launchUrlString(url);
         },
@@ -64,7 +64,7 @@ class HtmlWidget extends StatelessWidget {
                   fit: BoxFit.contain,
                   height: double.tryParse(ctx.attributes['height'] ?? ''),
                   width: double.tryParse(ctx.attributes['width'] ?? ''),
-                  placeholder: (_, __) => Center(child: const CircularProgressIndicator()),
+                  placeholder: (_, _) => Center(child: const CircularProgressIndicator()),
                 );
               } else if (isBase64) {
                 final data = src.split(',').last;

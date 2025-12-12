@@ -250,7 +250,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                           Text('Toggle all'),
                           ValueListenableBuilder<Set<T>>(
                             valueListenable: selectedValues,
-                            builder: (_, selectedVals, __) => Checkbox(
+                            builder: (_, selectedVals, _) => Checkbox(
                               value: selectedVals.length >= values.length,
                               onChanged: (_) {
                                 if (selectedVals.length >= values.length) {
@@ -300,9 +300,9 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                           ),
                         ValueListenableBuilder<Set<T>>(
                           valueListenable: selectedValues,
-                          builder: (_, selectedVals, __) => ValueListenableBuilder(
+                          builder: (_, selectedVals, _) => ValueListenableBuilder(
                             valueListenable: visibleValues,
-                            builder: (context, visibleValues, __) => Column(
+                            builder: (context, visibleValues, _) => Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: visibleValues
                                   .map(
@@ -506,7 +506,7 @@ class ProjectFilterWidget extends StatelessWidget {
           : CachedNetworkImage(
               imageUrl: project.defaultTeamImageUrl!,
               httpHeaders: api.headers,
-              errorWidget: (_, __, ___) => Icon(DevOpsIcons.project),
+              errorWidget: (_, _, _) => Icon(DevOpsIcons.project),
             ),
     );
   }

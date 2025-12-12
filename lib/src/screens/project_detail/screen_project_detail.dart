@@ -18,7 +18,7 @@ class _ProjectDetailScreen extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           child: ValueListenableBuilder(
             valueListenable: ctrl.project,
-            builder: (_, project, __) =>
+            builder: (_, project, _) =>
                 project?.data?.project.defaultTeam?.id != null && ctrl.api.organization.isNotEmpty
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(100),
@@ -26,7 +26,7 @@ class _ProjectDetailScreen extends StatelessWidget {
                           imageUrl:
                               '${ctrl.api.basePath}/_apis/GraphProfile/MemberAvatars/${project!.data!.project.defaultTeam!.id}?overrideDisplayName=${project.data!.project.name}&size=large',
                           httpHeaders: ctrl.api.headers,
-                          errorWidget: (_, __, ___) => const SizedBox(),
+                          errorWidget: (_, _, _) => const SizedBox(),
                         ),
                       )
                     : const SizedBox(),

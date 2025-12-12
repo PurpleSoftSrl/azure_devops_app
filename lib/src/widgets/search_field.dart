@@ -23,7 +23,7 @@ class DevOpsAnimatedSearchField extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: isSearching,
-      builder: (context, isSearching, __) => SizedBox(
+      builder: (context, isSearching, _) => SizedBox(
         height: 70,
         child: AnimatedSwitcher(
           duration: Duration(milliseconds: 250),

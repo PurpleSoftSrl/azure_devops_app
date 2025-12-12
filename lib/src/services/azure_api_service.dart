@@ -2016,7 +2016,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final editRes = await _patch(
       prPath,
       body: {
-        if (isDraft != null) 'isDraft': isDraft,
+        'isDraft': ?isDraft,
         if (status != null) 'status': status.name,
         if (status == PullRequestStatus.completed) 'lastMergeSourceCommit': {'commitId': commitId},
         if (autocomplete != null)
@@ -2075,7 +2075,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final commentBody = {
       'content': text,
       'commentType': 1,
-      if (parentCommentId != null) 'parentCommentId': parentCommentId,
+      'parentCommentId': ?parentCommentId,
     };
 
     final fileStart = isRightFile ? 'rightFileStart' : 'leftFileStart';

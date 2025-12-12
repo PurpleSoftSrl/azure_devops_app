@@ -16,7 +16,7 @@ class _Actions extends StatelessWidget {
         margin: const EdgeInsets.only(left: 56, right: 16),
         child: ValueListenableBuilder(
           valueListenable: ctrl.sprintWithItems,
-          builder: (_, sprint, __) => Row(
+          builder: (_, sprint, _) => Row(
             mainAxisSize: MainAxisSize.min,
             children: sprint == null
                 ? const []
@@ -46,7 +46,7 @@ class _Filters extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: ctrl.sprintWithItems,
-      builder: (_, sprint, __) => FiltersRow(
+      builder: (_, sprint, _) => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: sprint == null
             ? const []

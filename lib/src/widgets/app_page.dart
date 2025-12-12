@@ -203,7 +203,7 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
       child: Scaffold(
         body: ValueListenableBuilder<ApiResponse<T?>?>(
           valueListenable: widget.notifier!,
-          builder: (_, response, __) => Stack(
+          builder: (_, response, _) => Stack(
             alignment: Alignment.center,
             children: [
               SafeArea(

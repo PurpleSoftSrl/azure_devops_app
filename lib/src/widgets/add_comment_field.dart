@@ -116,7 +116,7 @@ Future<bool> showEditor(
     title: title,
     topRight: ValueListenableBuilder<bool>(
       valueListenable: hasChanged,
-      builder: (context, changed, __) => SizedBox(
+      builder: (context, changed, _) => SizedBox(
         width: 80,
         height: 20,
         child: !changed

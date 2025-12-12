@@ -19,7 +19,7 @@ class _ChooseSubscriptionScreen extends StatelessWidget {
 
         return ValueListenableBuilder(
           valueListenable: ctrl.isPurchasing,
-          builder: (_, isPurchasing, __) => IgnorePointer(
+          builder: (_, isPurchasing, _) => IgnorePointer(
             ignoring: isPurchasing,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +33,7 @@ class _ChooseSubscriptionScreen extends StatelessWidget {
                   ...purchasedProducts.map(
                     (p) => ValueListenableBuilder(
                       valueListenable: ctrl.purchasingMap[p.id]!,
-                      builder: (_, isPurchasing, __) => _SubscriptionCard(
+                      builder: (_, isPurchasing, _) => _SubscriptionCard(
                         product: p,
                         onTap: (_) => OverlayService.snackbar('You are already subscribed to ${p.title}'),
                         isPurchasingThisProduct: isPurchasing,
@@ -51,7 +51,7 @@ class _ChooseSubscriptionScreen extends StatelessWidget {
                   ...availableProducts.map(
                     (p) => ValueListenableBuilder(
                       valueListenable: ctrl.purchasingMap[p.id]!,
-                      builder: (_, isPurchasing, __) => _SubscriptionCard(
+                      builder: (_, isPurchasing, _) => _SubscriptionCard(
                         product: p,
                         onTap: ctrl.purchaseProduct,
                         isPurchasingThisProduct: isPurchasing,

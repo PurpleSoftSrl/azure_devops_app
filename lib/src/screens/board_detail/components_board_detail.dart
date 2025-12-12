@@ -16,7 +16,7 @@ class _Actions extends StatelessWidget {
         margin: const EdgeInsets.only(left: 56, right: 16),
         child: ValueListenableBuilder(
           valueListenable: ctrl.boardWithItems,
-          builder: (_, board, __) => Row(
+          builder: (_, board, _) => Row(
             mainAxisSize: MainAxisSize.min,
             children: board == null
                 ? const []
@@ -46,7 +46,7 @@ class _Filters extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: ctrl.boardWithItems,
-      builder: (_, board, __) => FiltersRow(
+      builder: (_, board, _) => FiltersRow(
         resetFilters: ctrl.resetFilters,
         filters: board == null
             ? const []

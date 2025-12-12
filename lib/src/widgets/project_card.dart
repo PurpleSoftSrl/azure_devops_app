@@ -39,7 +39,7 @@ class ProjectCard extends StatelessWidget {
                   : CachedNetworkImage(
                       imageUrl: project.defaultTeamImageUrl!,
                       httpHeaders: api.headers,
-                      errorWidget: (_, __, ___) => Icon(DevOpsIcons.project),
+                      errorWidget: (_, _, _) => Icon(DevOpsIcons.project),
                       width: 30,
                       height: 30,
                     ),

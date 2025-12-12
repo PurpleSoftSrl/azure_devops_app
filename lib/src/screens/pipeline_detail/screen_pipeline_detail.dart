@@ -19,7 +19,7 @@ class _PipelineDetailScreen extends StatelessWidget {
         actions: [
           ListenableBuilder(
             listenable: ctrl.buildDetail,
-            builder: (_, __) => ctrl.buildDetail.value?.data?.pipeline == null
+            builder: (_, _) => ctrl.buildDetail.value?.data?.pipeline == null
                 ? const SizedBox()
                 : DevOpsPopupMenu(
                     tooltip: 'Pipeline actions',
@@ -194,7 +194,7 @@ class _PipelineDetailScreen extends StatelessWidget {
                 ),
                 ValueListenableBuilder<List<_Stage>?>(
                   valueListenable: ctrl.pipeStages,
-                  builder: (_, records, __) => records == null
+                  builder: (_, records, _) => records == null
                       ? Padding(
                           padding: const EdgeInsets.only(top: 20),
                           child: Center(child: const CircularProgressIndicator()),

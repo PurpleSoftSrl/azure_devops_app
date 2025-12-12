@@ -53,7 +53,7 @@ class _Image extends StatelessWidget {
     return Image.memory(
       Uint8List.fromList(imageBytes),
       height: imageHeight,
-      frameBuilder: (_, child, frame, __) => frame == null
+      frameBuilder: (_, child, frame, _) => frame == null
           ? SizedBox(
               height: imageHeight,
               child: Center(

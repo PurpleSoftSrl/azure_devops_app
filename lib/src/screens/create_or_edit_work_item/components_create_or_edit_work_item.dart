@@ -208,7 +208,7 @@ class _AddTagBottomsheet extends StatelessWidget {
           validator: (_) => null,
           suffix: ValueListenableBuilder(
             valueListenable: newTagController,
-            builder: (_, tagCtrl, ___) => IconButton(
+            builder: (_, tagCtrl, _) => IconButton(
               onPressed: tagCtrl.text.isEmpty ? null : _onSubmit,
               color: Colors.blue,
               disabledColor: Colors.transparent,
@@ -222,13 +222,13 @@ class _AddTagBottomsheet extends StatelessWidget {
         ),
         ValueListenableBuilder(
           valueListenable: projectTags,
-          builder: (_, tags, __) => switch (tags) {
+          builder: (_, tags, _) => switch (tags) {
             null => const CircularProgressIndicator(),
             [] => const Text('No tags available'),
             _ => Expanded(
                 child: ListView.separated(
                   itemCount: tags.length,
-                  separatorBuilder: (_, __) => const Divider(),
+                  separatorBuilder: (_, _) => const Divider(),
                   itemBuilder: (context, index) {
                     final t = tags.toList().sortedBy((t) => t.toLowerCase())[index];
                     return GestureDetector(
@@ -369,7 +369,7 @@ class _AddLinkBottomsheetState extends State<_AddLinkBottomsheet> {
           ),
           ValueListenableBuilder(
             valueListenable: _hasSelectedWorkItem,
-            builder: (_, hasSelected, __) => DevOpsFormField(
+            builder: (_, hasSelected, _) => DevOpsFormField(
               label: 'Linked work item',
               maxLines: 1,
               onChanged: _getWorkItems,
@@ -378,7 +378,7 @@ class _AddLinkBottomsheetState extends State<_AddLinkBottomsheet> {
               readOnly: hasSelected,
               suffix: ValueListenableBuilder(
                 valueListenable: _linkedItemController,
-                builder: (_, ctrl, ___) => IconButton(
+                builder: (_, ctrl, _) => IconButton(
                   onPressed: ctrl.text.isEmpty ? null : _removeSelectedWorkItem,
                   color: Colors.blue,
                   disabledColor: Colors.transparent,
@@ -392,7 +392,7 @@ class _AddLinkBottomsheetState extends State<_AddLinkBottomsheet> {
           ),
           ValueListenableBuilder(
             valueListenable: _workItems,
-            builder: (_, items, __) => AnimatedContainer(
+            builder: (_, items, _) => AnimatedContainer(
               height: _height,
               duration: Duration(milliseconds: 250),
               child: switch (items) {
@@ -404,7 +404,7 @@ class _AddLinkBottomsheetState extends State<_AddLinkBottomsheet> {
                   ),
                 _ => ListView.separated(
                     itemCount: items.length,
-                    separatorBuilder: (_, __) => const Divider(),
+                    separatorBuilder: (_, _) => const Divider(),
                     itemBuilder: (context, index) {
                       final item = items[index];
 
@@ -445,7 +445,7 @@ class _AddLinkBottomsheetState extends State<_AddLinkBottomsheet> {
             validator: (_) => null,
             suffix: ValueListenableBuilder(
               valueListenable: _commentController,
-              builder: (_, ctrl, ___) => IconButton(
+              builder: (_, ctrl, _) => IconButton(
                 onPressed: ctrl.text.isEmpty ? null : _commentController.clear,
                 color: Colors.blue,
                 disabledColor: Colors.transparent,

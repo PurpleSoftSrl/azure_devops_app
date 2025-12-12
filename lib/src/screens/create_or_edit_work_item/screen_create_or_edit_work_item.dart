@@ -17,7 +17,7 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
       actions: [
         ValueListenableBuilder(
           valueListenable: ctrl.hasChanged,
-          builder: (_, hasChanged, __) => hasChanged?.data ?? false
+          builder: (_, hasChanged, _) => hasChanged?.data ?? false
               ? TextButton(
                   onPressed: ctrl.confirm,
                   child: Text(

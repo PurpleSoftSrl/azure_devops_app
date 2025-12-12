@@ -438,8 +438,8 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
 
     logAnalytics('pr_edit', {
       if (status != null) 'status': status.name,
-      if (isDraft != null) 'isDraft': isDraft,
-      if (autocomplete != null) 'autocomplete': autocomplete,
+      'isDraft': ?isDraft,
+      'autocomplete': ?autocomplete,
       'is_error': res.isError,
     });
 

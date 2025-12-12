@@ -19,7 +19,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
           actions: [
             ListenableBuilder(
               listenable: ctrl.itemDetail,
-              builder: (_, __) => ctrl.itemDetail.value?.data?.item == null
+              builder: (_, _) => ctrl.itemDetail.value?.data?.item == null
                   ? const SizedBox()
                   : DevOpsPopupMenu(
                       tooltip: 'work item actions',
@@ -373,7 +373,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                         onVisibilityChanged: ctrl.onHistoryVisibilityChanged,
                         child: ValueListenableBuilder(
                           valueListenable: ctrl.showUpdatesReversed,
-                          builder: (_, showUpdatesReversed, __) {
+                          builder: (_, showUpdatesReversed, _) {
                             final updates = showUpdatesReversed ? ctrl.updates.reversed.toList() : ctrl.updates;
                             return _History(
                               updates: updates,
@@ -384,7 +384,7 @@ class _WorkItemDetailScreen extends StatelessWidget {
                       ),
                       ValueListenableBuilder(
                         valueListenable: ctrl.showCommentField,
-                        builder: (_, value, __) => SizedBox(
+                        builder: (_, value, _) => SizedBox(
                           height: value ? 100 : 0,
                         ),
                       ),

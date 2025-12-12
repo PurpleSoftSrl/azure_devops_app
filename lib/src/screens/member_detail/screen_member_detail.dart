@@ -55,7 +55,7 @@ class _MemberDetailScreen extends StatelessWidget {
           ),
           ValueListenableBuilder(
             valueListenable: ctrl.recentCommits,
-            builder: (_, commits, __) {
+            builder: (_, commits, _) {
               if (commits == null) {
                 return Padding(
                   padding: const EdgeInsets.only(top: 100),

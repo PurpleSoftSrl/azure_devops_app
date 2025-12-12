@@ -28,7 +28,7 @@ class _WorkItemsScreen extends StatelessWidget {
         if (ctrl.hasSavedQuery) {
           return ValueListenableBuilder(
             valueListenable: ctrl.savedQuery,
-            builder: (_, query, __) => ShortcutLabel(
+            builder: (_, query, _) => ShortcutLabel(
               label: query?.name ?? '',
             ),
           );
@@ -111,7 +111,7 @@ class _WorkItemsScreen extends StatelessWidget {
                 currentFilter: ctrl.iterationFilter,
                 body: ValueListenableBuilder(
                   valueListenable: ctrl.showActiveIterations,
-                  builder: (_, showActive, __) => Column(
+                  builder: (_, showActive, _) => Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,

@@ -57,7 +57,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
                           ),
                           ValueListenableBuilder<bool>(
                             valueListenable: ctrl.chooseAllVisible,
-                            builder: (_, chooseAllVisible, __) => Row(
+                            builder: (_, chooseAllVisible, _) => Row(
                               children: [
                                 Text(
                                   chooseAllVisible ? 'Unselect all' : 'Select all',
@@ -95,7 +95,7 @@ class _ChooseProjectsScreen extends StatelessWidget {
             left: 0,
             child: ValueListenableBuilder<ApiResponse<List<Project>?>?>(
               valueListenable: ctrl.chosenProjects,
-              builder: (_, projects, __) => projects?.data == null || projects!.data!.isEmpty
+              builder: (_, projects, _) => projects?.data == null || projects!.data!.isEmpty
                   ? const SizedBox()
                   : LoadingButton(
                       onPressed: ctrl.goToHome,
