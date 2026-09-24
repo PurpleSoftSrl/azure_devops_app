@@ -280,15 +280,27 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
 
       final responseBody = res.errorResponse?.body ?? '';
 
+      // [issue #67] Parse Azure's error body ONCE, defensively — a malformed body
+      // must never turn a create failure into an unhandled exception.
+      Map<String, dynamic>? apiError;
+      try {
+        if (responseBody.isNotEmpty) apiError = jsonDecode(responseBody) as Map<String, dynamic>;
+      } catch (e, s) {
+        logError(e, s);
+      }
+
+      var appended = false;
       if (isInherited) {
         if (responseBody.isEmpty) {
           description += '\nInherited processes are not fully supported yet.';
+          appended = true;
         } else {
-          final apiErrorMessage = jsonDecode(responseBody) as Map<String, dynamic>;
-          final msg = apiErrorMessage['customProperties']?['ErrorMessage'] as String? ?? '';
+          final msg = apiError?['customProperties']?['ErrorMessage'] as String? ?? '';
           final firstMsg = msg.isEmpty ? '' : msg.substring(msg.indexOf(':') + 1).split('.').first;
-
-          description += '\n$firstMsg';
+          if (firstMsg.isNotEmpty) {
+            description += '\n$firstMsg';
+            appended = true;
+          }
           if (msg.contains('ReadOnly')) {
             description += ', the field is read-only.';
           } else if (msg.contains('Required')) {
@@ -297,15 +309,21 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
         }
       }
 
-      if (responseBody.isNotEmpty) {
-        final apiErrorMessage = jsonDecode(responseBody) as Map<String, dynamic>;
-        final type = apiErrorMessage['typeKey'] as String? ?? '';
-        if (['WorkItemLinkAddExtraParentException', 'WorkItemLinkCircularException'].contains(type)) {
-          final msg = apiErrorMessage['message'] as String? ?? '';
-          description += '\n${msg.split(':').lastOrNull?.trim()}';
-        }
+      final type = apiError?['typeKey'] as String? ?? '';
+      final message = apiError?['message'] as String? ?? '';
+      if (['WorkItemLinkAddExtraParentException', 'WorkItemLinkCircularException'].contains(type)) {
+        description += '\n${message.split(':').lastOrNull?.trim()}';
+        appended = true;
       }
 
+      // [issue #67] Fallback: if nothing specific was surfaced, show Azure's REAL
+      // `message` — the Basic/Agile/Scrum case that previously showed only the bare
+      // "Work item not created." with no reason. Now a failure always says WHY.
+      if (!appended && message.isNotEmpty) description += '\n$message';
+
+      logErrorMessage(
+        'work item ${isEditing ? 'edit' : 'create'} failed (${res.errorResponse?.statusCode}): $responseBody',
+      );
       return OverlayService.error('Error', description: description);
     }
 
