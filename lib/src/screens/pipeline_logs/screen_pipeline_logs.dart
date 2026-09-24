@@ -36,11 +36,12 @@ class _PipelineLogsScreen extends StatelessWidget {
                   .split('\n')
                   .map(ctrl.trimDate)
                   .map(
-                    (l) => Text(
-                      l.replaceAll('##[section]', ''),
-                      style: context.textTheme.bodySmall!.copyWith(
-                        fontWeight: FontWeight.normal,
-                        color: ctrl.logColor(l),
+                    (l) => Text.rich(
+                      TextSpan(
+                        children: ctrl.parseLogLine(
+                          l,
+                          context.textTheme.bodySmall!.copyWith(fontWeight: FontWeight.normal),
+                        ),
                       ),
                     ),
                   ),
