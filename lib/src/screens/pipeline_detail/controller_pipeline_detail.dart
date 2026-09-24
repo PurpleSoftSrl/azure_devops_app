@@ -11,6 +11,9 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
 
   final pipeStages = ValueNotifier<List<_Stage>?>(null);
 
+  /// Graph descriptors identifying the current user as an approver (own descriptor + groups).
+  Set<String> _approverDescriptors = {};
+
   Timer? _timer;
 
   Pipeline get pipeline => buildDetail.value!.data!.pipeline;
@@ -59,6 +62,11 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
 
     final approvals = await api.getPipelineApprovals(pipeline: res.data!.pipeline);
     res.data!.pipeline.approvals = approvals.data ?? [];
+
+    if (approvals.data?.isNotEmpty ?? false) {
+      final descriptors = await api.getCurrentUserApproverDescriptors();
+      _approverDescriptors = descriptors.data ?? {};
+    }
 
     buildDetail.value = res;
 
@@ -262,21 +270,21 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
   }
 
   bool _canApprove(Approval approval) {
-    final pendingStep = approval.steps.firstWhereOrNull((s) => s.isPending);
-    if (pendingStep == null) return false;
+    if (_isBlockedApprover(approval)) return false;
 
-    final userEmail = api.user!.emailAddress;
-
-    return !_isBlockedApprover(approval) && (pendingStep.assignedApprover.uniqueName == userEmail);
+    return approval.steps.any((s) => s.isPending && _isCurrentUser(s.assignedApprover));
   }
 
-  bool _isBlockedApprover(Approval approval) {
-    final pendingStep = approval.steps.firstWhereOrNull((s) => s.isPending);
-    if (pendingStep == null) return false;
+  bool _isBlockedApprover(Approval approval) => approval.blockedApprovers.any(_isCurrentUser);
 
-    final userEmail = api.user!.emailAddress;
+  /// Whether [approver] represents the current user, either directly or via a group membership.
+  bool _isCurrentUser(AssignedApprover approver) {
+    final user = api.user!;
+    final email = user.emailAddress?.toLowerCase();
 
-    return approval.blockedApprovers.map((a) => a.uniqueName).contains(userEmail);
+    return (email != null && approver.uniqueName.toLowerCase() == email) ||
+        (approver.id.isNotEmpty && approver.id == user.id) ||
+        (approver.descriptor.isNotEmpty && _approverDescriptors.contains(approver.descriptor));
   }
 
   Future<void> _approveApproval(Approval approval) async {

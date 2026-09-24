@@ -260,6 +260,10 @@ abstract class AzureApiService {
 
   Future<ApiResponse<bool>> rejectPipelineApproval({required Approval approval, required String projectId});
 
+  /// Returns the graph descriptors that identify the current user as an approver:
+  /// the user's own descriptor plus every group the user belongs to (transitively).
+  Future<ApiResponse<Set<String>>> getCurrentUserApproverDescriptors();
+
   Future<ApiResponse<PipelineWithTimeline>> getPipeline({required String projectName, required int id});
 
   Future<ApiResponse<String>> getPipelineTaskLogs({
@@ -417,6 +421,10 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   @override
   List<GraphUser> get allUsers => _allUsers;
   List<GraphUser> _allUsers = [];
+
+  /// Cached set of graph descriptors identifying the current user as an approver
+  /// (own descriptor + all groups they belong to). Computed at most once per session.
+  Set<String>? _userApproverDescriptors;
 
   @override
   bool get isImageUnauthorized => _isImageUnauthorized;
@@ -2472,6 +2480,37 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
   }
 
   @override
+  Future<ApiResponse<Set<String>>> getCurrentUserApproverDescriptors() async {
+    if (_userApproverDescriptors != null) return ApiResponse.ok(_userApproverDescriptors!);
+
+    if (_allUsers.isEmpty) await _getUsers();
+
+    final email = user?.emailAddress;
+    final descriptor = _allUsers.firstWhereOrNull((u) => u.mailAddress == email)?.descriptor;
+    if (descriptor == null) return ApiResponse.ok(<String>{});
+
+    final descriptors = <String>{descriptor};
+    // Walk the membership graph upwards to collect every (transitive) group the user belongs to.
+    final toVisit = <String>[descriptor];
+    while (toVisit.isNotEmpty) {
+      final current = toVisit.removeLast();
+      final res = await _get(
+        '$_usersBasePath/$_organization/_apis/graph/memberships/$current?direction=up&$_apiVersion-preview',
+      );
+      if (res.isError) continue;
+
+      final value = (jsonDecode(res.body) as Map<String, dynamic>)['value'] as List<dynamic>? ?? [];
+      for (final membership in value) {
+        final container = (membership as Map<String, dynamic>)['containerDescriptor'] as String?;
+        if (container != null && descriptors.add(container)) toVisit.add(container);
+      }
+    }
+
+    _userApproverDescriptors = descriptors;
+    return ApiResponse.ok(descriptors);
+  }
+
+  @override
   Future<ApiResponse<GraphUser>> getUserFromDisplayName({required String name}) async {
     if (_allUsers.isEmpty) await _getUsers();
 
@@ -2509,6 +2548,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     _organization = '';
     _chosenProjects = null;
     _allUsers.clear();
+    _userApproverDescriptors = null;
     _user = null;
     dispose();
   }

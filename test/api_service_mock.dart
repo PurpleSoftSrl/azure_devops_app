@@ -178,6 +178,11 @@ class AzureApiServiceMock implements AzureApiService {
   }
 
   @override
+  Future<ApiResponse<Set<String>>> getCurrentUserApproverDescriptors() async {
+    return ApiResponse.ok(<String>{});
+  }
+
+  @override
   Future<ApiResponse<List<Commit>>> getRecentCommits({
     Set<Project>? projects,
     Set<String>? authors,
