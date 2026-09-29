@@ -94,6 +94,62 @@ class _TaskRow extends StatelessWidget {
   }
 }
 
+class _ManualValidationsBottomSheet extends StatelessWidget {
+  const _ManualValidationsBottomSheet({
+    required this.validations,
+    required this.canAct,
+    required this.onResume,
+    required this.onReject,
+  });
+
+  final List<({Record task, Approval approval})> validations;
+  final bool Function(Approval) canAct;
+  final void Function(Approval) onResume;
+  final void Function(Approval) onReject;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      itemCount: validations.length,
+      separatorBuilder: (_, _) => const Divider(height: 32),
+      itemBuilder: (_, index) {
+        final validation = validations[index];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(validation.task.name, style: context.textTheme.titleMedium),
+            const SizedBox(height: 12),
+            if (validation.approval.instructions.isNotEmpty) ...[
+              Text('Instructions'),
+              const SizedBox(height: 5),
+              Text(validation.approval.instructions, style: context.textTheme.bodySmall),
+              const SizedBox(height: 12),
+            ],
+            if (canAct(validation.approval))
+              Row(
+                children: [
+                  TextButton.icon(
+                    onPressed: () => onResume(validation.approval),
+                    icon: const Icon(DevOpsIcons.success),
+                    label: const Text('Resume'),
+                  ),
+                  const SizedBox(width: 12),
+                  TextButton.icon(
+                    onPressed: () => onReject(validation.approval),
+                    icon: const Icon(DevOpsIcons.failed),
+                    label: const Text('Reject'),
+                  ),
+                ],
+              )
+            else
+              Text('You cannot act on this validation.', style: context.textTheme.bodySmall),
+          ],
+        );
+      },
+    );
+  }
+}
+
 class _PendingApprovalsBottomSheet extends StatelessWidget {
   const _PendingApprovalsBottomSheet({
     required this.approvals,

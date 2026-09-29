@@ -93,7 +93,7 @@ class _PipelineLogsController with ShareMixin {
     final clean = line.replaceAll('##[section]', '');
 
     final spans = <InlineSpan>[];
-    Color? color = defaultColor;
+    var color = defaultColor;
     var bold = false;
     var last = 0;
 

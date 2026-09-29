@@ -621,12 +621,11 @@ packages:
   msal_auth:
     dependency: "direct main"
     description:
-      path: "."
-      ref: main
-      resolved-ref: "66bd93eee2960f34751818425949236a48aeee72"
-      url: "https://github.com/PurpleSoftSrl/msal_auth"
-    source: git
-    version: "3.2.5"
+      name: msal_auth
+      sha256: a794a139695fc16201f30b818f7c54baff83ec3c9f5c8c4203634092a0a4e064
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.5.3"
   numberpicker:
     dependency: transitive
     description:

@@ -60,7 +60,8 @@ class _PipelineDetailScreen extends StatelessWidget {
                     const Spacer(),
                     Text(pipeline.queueTime!.minutesAgo),
                     const SizedBox(width: 10),
-                    if (pipeline.status == PipelineStatus.inProgress && ctrl.pendingApprovals.isNotEmpty)
+                    if (pipeline.status == PipelineStatus.inProgress &&
+                        (ctrl.hasPendingApprovals || ctrl.pendingManualValidations.isNotEmpty))
                       Icon(Icons.warning, color: Colors.orange)
                     else
                       pipeline.status == PipelineStatus.completed ? pipeline.result.icon : pipeline.status.icon,
@@ -79,6 +80,25 @@ class _PipelineDetailScreen extends StatelessWidget {
                       children: [
                         Expanded(child: Text(ctrl.getPendingApprovalText())),
                         NavigationButton(onTap: ctrl.viewPendingApprovals, child: Text('View')),
+                      ],
+                    ),
+                  ),
+                if (ctrl.pendingManualValidations.isNotEmpty)
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(AppTheme.radius),
+                      border: Border.all(color: Colors.orange),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.symmetric(vertical: 12),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '${ctrl.pendingManualValidations.length} manual validation${ctrl.pendingManualValidations.length == 1 ? '' : 's'} awaiting review',
+                          ),
+                        ),
+                        NavigationButton(onTap: ctrl.viewManualValidations, child: Text('View')),
                       ],
                     ),
                   ),
@@ -178,12 +198,24 @@ class _PipelineDetailScreen extends StatelessWidget {
                                               ),
                                               const SizedBox(height: 5),
                                               ...job.tasks.map(
-                                                (task) => InkWell(
-                                                  onTap: () => ctrl.seeLogs(task),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(bottom: 5, left: 20),
-                                                    child: _TaskRow(task: task),
-                                                  ),
+                                                (task) => Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: InkWell(
+                                                        onTap: () => ctrl.seeLogs(task),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.only(bottom: 5, left: 20),
+                                                          child: _TaskRow(task: task),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    if (ctrl.pendingManualValidations.any((v) => v.task.id == task.id))
+                                                      IconButton(
+                                                        tooltip: 'Review manual validation',
+                                                        onPressed: () => ctrl.viewManualValidations(task),
+                                                        icon: const Icon(DevOpsIcons.task),
+                                                      ),
+                                                  ],
                                                 ),
                                               ),
                                             ],

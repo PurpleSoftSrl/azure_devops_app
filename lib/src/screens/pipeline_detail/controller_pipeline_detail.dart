@@ -18,10 +18,39 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
 
   Pipeline get pipeline => buildDetail.value!.data!.pipeline;
 
-  List<Approval> get pendingApprovals => pipeline.approvals.where((a) => a.isPending).toList();
+  Set<String> get _manualApprovalIds =>
+      buildDetail.value?.data?.timeline
+          .where((record) => record.type == 'Task' && record.task?.name == 'ManualValidation')
+          .map((record) => record.identifier)
+          .whereType<String>()
+          .toSet() ??
+      {};
+
+  List<Approval> get _stageApprovals {
+    final manualIds = _manualApprovalIds;
+    return pipeline.approvals.where((a) => !manualIds.contains(a.id)).toList();
+  }
+
+  List<({Record task, Approval approval})> get pendingManualValidations {
+    final data = buildDetail.value?.data;
+    if (data == null) return [];
+
+    return [
+      for (final task in data.timeline)
+        if (task.type == 'Task' && task.task?.name == 'ManualValidation' && task.state == TaskStatus.inProgress)
+          if (data.pipeline.approvals.firstWhereOrNull((a) => a.id == task.identifier && a.isPending)
+              case final approval?)
+            (task: task, approval: approval),
+    ];
+  }
+
+  List<Approval> get pendingApprovals {
+    return _stageApprovals.where((a) => a.isPending).toList();
+  }
+
   bool get hasPendingApprovals => pendingApprovals.isNotEmpty;
 
-  bool get hasApprovals => pipeline.approvals.isNotEmpty;
+  bool get hasApprovals => _stageApprovals.isNotEmpty;
 
   GlobalKey visibilityKey;
   var _hasStoppedTimer = false;
@@ -244,7 +273,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
       title: 'Approvals',
       isScrollControlled: true,
       builder: (_) => _PendingApprovalsBottomSheet(
-        approvals: pipeline.approvals,
+        approvals: _stageApprovals,
         canApprove: (_) => false,
         isBlockedApprover: (_) => false,
         onApprove: (_) {},
@@ -268,6 +297,63 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
       ),
     );
   }
+
+  void viewManualValidations([Record? task]) {
+    final validations = pendingManualValidations.where((v) => task == null || v.task.id == task.id).toList();
+    if (validations.isEmpty) return;
+
+    OverlayService.bottomsheet(
+      title: 'Manual validations',
+      isScrollControlled: true,
+      builder: (_) => _ManualValidationsBottomSheet(
+        validations: validations,
+        canAct: (approval) => !_isBlockedApprover(approval),
+        onResume: (approval) => _actOnManualValidation(approval, resume: true),
+        onReject: (approval) => _actOnManualValidation(approval, resume: false),
+      ),
+    );
+  }
+
+  Future<void> _actOnManualValidation(Approval approval, {required bool resume}) async {
+    if (_manualActionInProgress || !pendingManualValidations.any((v) => v.approval.id == approval.id)) return;
+    if (_isBlockedApprover(approval)) return;
+
+    _manualActionInProgress = true;
+    try {
+      final verb = resume ? 'resume' : 'reject';
+      final confirmed = await OverlayService.confirm(
+        'Attention',
+        description: 'Do you really want to $verb this manual validation?',
+      );
+      if (!confirmed) return;
+
+      final current = pendingManualValidations.firstWhereOrNull((v) => v.approval.id == approval.id)?.approval;
+      if (current == null || _isBlockedApprover(current)) return;
+
+      final res = resume
+          ? await api.approvePipelineApproval(approval: current, projectId: pipeline.project!.id!)
+          : await api.rejectPipelineApproval(approval: current, projectId: pipeline.project!.id!);
+
+      if (res.data != true) {
+        final message = res.errorResponse == null ? 'Try again' : getErrorMessage(res.errorResponse!);
+        await OverlayService.error(
+          'Manual validation not ${resume ? 'resumed' : 'rejected'}',
+          description: message.isEmpty
+              ? 'It may have timed out or you may not have permission. Refresh and try again.'
+              : message,
+        );
+        return;
+      }
+
+      AppRouter.popRoute();
+      await _init();
+      OverlayService.snackbar('Manual validation ${resume ? 'resumed' : 'rejected'} successfully');
+    } finally {
+      _manualActionInProgress = false;
+    }
+  }
+
+  bool _manualActionInProgress = false;
 
   bool _canApprove(Approval approval) {
     if (_isBlockedApprover(approval)) return false;

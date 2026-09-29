@@ -2221,9 +2221,9 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     );
     if (approvalsRes.isError) return ApiResponse.error(approvalsRes);
 
-    final approvals = GetPipelineApprovalsResponse.fromResponse(approvalsRes)
-        .where((a) => a.pipeline.owner.id == pipeline.id)
-        .toList();
+    final approvals = GetPipelineApprovalsResponse.fromResponse(
+      approvalsRes,
+    ).where((a) => a.pipeline.owner.id == pipeline.id).toList();
 
     return ApiResponse.ok(approvals);
   }
@@ -2493,7 +2493,7 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
   @override
   Future<ApiResponse<Set<String>>> getCurrentUserApproverDescriptors() async {
-    if (_userApproverDescriptors != null) return ApiResponse.ok(_userApproverDescriptors!);
+    if (_userApproverDescriptors != null) return ApiResponse.ok(_userApproverDescriptors);
 
     if (_allUsers.isEmpty) await _getUsers();
 
