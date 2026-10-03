@@ -1,4 +1,4 @@
-part of saved_queries;
+part of 'base_saved_queries.dart';
 
 class _SavedQueriesScreen extends StatelessWidget {
   const _SavedQueriesScreen(this.ctrl, this.parameters);

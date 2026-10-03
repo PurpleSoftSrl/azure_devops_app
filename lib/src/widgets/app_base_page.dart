@@ -2,7 +2,7 @@ import 'package:azure_devops/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class AppBasePage<T> extends StatefulWidget {
-  const AppBasePage({required this.initState, required this.smartphone, required this.tablet});
+  const AppBasePage({super.key, required this.initState, required this.smartphone, required this.tablet});
 
   final T Function() initState;
   final Widget Function(T) smartphone;
@@ -28,7 +28,7 @@ class _AppBasePageState<T> extends State<AppBasePage<T>> {
 }
 
 class AppLayoutBuilder extends StatelessWidget {
-  const AppLayoutBuilder({required this.smartphone, required this.tablet});
+  const AppLayoutBuilder({super.key, required this.smartphone, required this.tablet});
 
   final Widget smartphone;
   final Widget tablet;

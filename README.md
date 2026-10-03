@@ -21,6 +21,22 @@ Features:
 
 Follow [this guide](https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows) to generate a new Personal Acces Token. Be sure to select 'All accessible organizations', otherwise you will have to manually input the organization name.
 
+# Self-hosted Azure DevOps Server
+
+The app can connect to Azure DevOps Services and self-hosted Azure DevOps Server instances from the same installation.
+
+To add a self-hosted server:
+
+1. Open Settings -> Azure DevOps Connections.
+2. Choose Self-hosted Azure DevOps Server.
+3. Enter the Server URL.
+4. Enter the Collection.
+5. Enter your Personal Access Token.
+6. Select Test Connection.
+7. Save the connection.
+
+`DefaultCollection` is only a default suggestion. Change it if your Azure DevOps Server uses another project collection name. Self-hosted PAT authentication uses HTTP Basic authentication over HTTPS with the PAT as the password value.
+
 # App Downloads
 
 To try the app you can download it from your favorite app store:

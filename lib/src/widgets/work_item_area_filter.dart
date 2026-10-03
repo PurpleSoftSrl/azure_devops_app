@@ -7,7 +7,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class AreaFilterBody extends StatelessWidget {
-  const AreaFilterBody({
+  const AreaFilterBody({super.key,
     required this.areasToShow,
     required this.currentFilter,
     required this.onTap,

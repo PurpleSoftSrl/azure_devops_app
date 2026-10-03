@@ -3,7 +3,7 @@ import 'package:azure_devops/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class NavigationButton extends StatelessWidget {
-  const NavigationButton({
+  const NavigationButton({super.key,
     required this.child,
     this.onTap,
     this.padding = const EdgeInsets.all(15),

@@ -1,4 +1,4 @@
-part of repository_detail;
+part of 'base_repository_detail.dart';
 
 class _RepositoryDetailController {
   _RepositoryDetailController._(this.api, this.args);

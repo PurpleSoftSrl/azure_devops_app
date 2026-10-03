@@ -1,1 +1,1 @@
-part of project_boards;
+part of 'base_project_boards.dart';

@@ -1,4 +1,4 @@
-part of home;
+part of 'base_home.dart';
 
 class _HomeScreen extends StatelessWidget {
   const _HomeScreen(this.ctrl, this.parameters);

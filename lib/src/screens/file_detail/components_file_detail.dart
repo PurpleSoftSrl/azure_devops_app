@@ -1,1 +1,1 @@
-part of file_detail;
+part of 'base_file_detail.dart';

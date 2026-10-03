@@ -1,4 +1,4 @@
-part of create_or_edit_work_item;
+part of 'base_create_or_edit_work_item.dart';
 
 class _CreateOrEditWorkItemScreen extends StatelessWidget {
   const _CreateOrEditWorkItemScreen(this.ctrl, this.parameters);

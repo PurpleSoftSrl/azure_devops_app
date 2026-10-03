@@ -1,4 +1,4 @@
-part of settings;
+part of 'base_settings.dart';
 
 class _ThemeModeRadio extends StatelessWidget {
   const _ThemeModeRadio({required this.mode, required this.icon});
@@ -12,11 +12,16 @@ class _ThemeModeRadio extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          Icon(icon, color: isSelected ? null : context.colorScheme.onSecondary),
+          Icon(
+            icon,
+            color: isSelected ? null : context.colorScheme.onSecondary,
+          ),
           const SizedBox(height: 5),
           Text(
             mode,
-            style: context.textTheme.titleSmall!.copyWith(color: isSelected ? null : context.colorScheme.onSecondary),
+            style: context.textTheme.titleSmall!.copyWith(
+              color: isSelected ? null : context.colorScheme.onSecondary,
+            ),
           ),
           Radio<String>(
             value: mode,
@@ -33,7 +38,10 @@ class _ThemeModeRadio extends StatelessWidget {
 }
 
 class _SwitchDirectoryWidget extends StatelessWidget {
-  const _SwitchDirectoryWidget({required this.directories, required this.onSwitch});
+  const _SwitchDirectoryWidget({
+    required this.directories,
+    required this.onSwitch,
+  });
 
   final List<UserTenant> directories;
   final Future<void> Function(UserTenant) onSwitch;
@@ -46,30 +54,49 @@ class _SwitchDirectoryWidget extends StatelessWidget {
         if (currentDirectory != null) ...[
           Text(
             'Current directory',
-            style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+            style: context.textTheme.titleSmall!.copyWith(
+              color: context.colorScheme.onSecondary,
+            ),
           ),
           ListTile(
-            title: Text(currentDirectory.displayName, style: context.textTheme.bodyMedium),
+            title: Text(
+              currentDirectory.displayName,
+              style: context.textTheme.bodyMedium,
+            ),
             contentPadding: EdgeInsets.zero,
           ),
         ],
         const SizedBox(height: 20),
         Text(
           'Other directories',
-          style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+          style: context.textTheme.titleSmall!.copyWith(
+            color: context.colorScheme.onSecondary,
+          ),
         ),
-        ...ListTile.divideTiles(
-          context: context,
-          tiles: [
-            for (final tenant in directories.where((d) => !d.isCurrent))
-              ListTile(
-                title: Text(tenant.displayName, style: context.textTheme.bodyMedium),
-                trailing: Icon(Icons.arrow_forward_ios),
-                onTap: () => onSwitch(tenant),
-                contentPadding: EdgeInsets.zero,
-              ),
-          ],
-        ),
+        if (directories.where((d) => !d.isCurrent).isEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Text(
+              'No other tenants are available for this account.',
+              style: context.textTheme.bodyMedium,
+            ),
+          )
+        else
+          ...ListTile.divideTiles(
+            context: context,
+            tiles: [
+              for (final tenant in directories.where((d) => !d.isCurrent))
+                ListTile(
+                  title: Text(
+                    tenant.displayName,
+                    style: context.textTheme.bodyMedium,
+                  ),
+                  trailing: Icon(Icons.arrow_forward_ios),
+                  onTap: () => onSwitch(tenant),
+                  contentPadding: EdgeInsets.zero,
+                ),
+            ],
+          ),
       ],
     );
   }

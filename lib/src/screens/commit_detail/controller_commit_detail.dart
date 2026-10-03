@@ -1,4 +1,4 @@
-part of commit_detail;
+part of 'base_commit_detail.dart';
 
 class _CommitDetailController with ShareMixin {
   _CommitDetailController._(this.args, this.api);

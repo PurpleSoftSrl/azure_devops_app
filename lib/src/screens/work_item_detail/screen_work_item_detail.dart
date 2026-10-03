@@ -1,4 +1,4 @@
-part of work_item_detail;
+part of 'base_work_item_detail.dart';
 
 class _WorkItemDetailScreen extends StatelessWidget {
   const _WorkItemDetailScreen(this.ctrl, this.parameters);

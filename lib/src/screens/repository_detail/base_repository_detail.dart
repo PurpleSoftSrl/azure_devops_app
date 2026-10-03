@@ -1,4 +1,4 @@
-library repository_detail;
+library;
 
 import 'package:azure_devops/src/extensions/commit_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
@@ -21,7 +21,7 @@ part 'parameters_repository_detail.dart';
 part 'screen_repository_detail.dart';
 
 class RepositoryDetailPage extends StatelessWidget {
-  const RepositoryDetailPage();
+  const RepositoryDetailPage({super.key});
 
   static const _smartphoneParameters = _RepositoryDetailParameters();
   static const _tabletParameters = _RepositoryDetailParameters();

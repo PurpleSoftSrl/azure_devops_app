@@ -1,4 +1,4 @@
-part of boards;
+part of 'base_boards.dart';
 
 class _BoardsController {
   _BoardsController._(this.storage);

@@ -1,4 +1,4 @@
-part of pipeline_detail;
+part of 'base_pipeline_detail.dart';
 
 class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
   _PipelineDetailController._(this.args, this.api, this.ads) : visibilityKey = GlobalKey();

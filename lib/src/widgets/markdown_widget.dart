@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
 class AppMarkdownWidget extends StatelessWidget {
-  const AppMarkdownWidget({
+  const AppMarkdownWidget({super.key,
     required this.data,
     this.styleSheet,
     this.onTapLink,

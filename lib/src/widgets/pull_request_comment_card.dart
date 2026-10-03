@@ -9,7 +9,7 @@ import 'package:azure_devops/src/widgets/popup_menu.dart';
 import 'package:flutter/material.dart';
 
 class PullRequestCommentCard extends StatelessWidget {
-  const PullRequestCommentCard({
+  const PullRequestCommentCard({super.key,
     required this.comment,
     required this.threadId,
     required this.borderRadiusBottom,

@@ -3,7 +3,7 @@ import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
 
 class EmptyPage extends StatelessWidget {
-  const EmptyPage({required this.widget, required this.onRefresh});
+  const EmptyPage({super.key, required this.widget, required this.onRefresh});
 
   final AppPage widget;
   final VoidCallback onRefresh;

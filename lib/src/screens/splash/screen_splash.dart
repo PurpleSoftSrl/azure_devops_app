@@ -1,4 +1,4 @@
-part of splash;
+part of 'base_splash.dart';
 
 class _SplashScreen extends StatelessWidget {
   const _SplashScreen(this.ctrl, this.parameters);

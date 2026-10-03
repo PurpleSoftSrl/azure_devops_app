@@ -1,4 +1,4 @@
-part of sprint_detail;
+part of 'base_sprint_detail.dart';
 
 class _Actions extends StatelessWidget {
   const _Actions({required this.ctrl});

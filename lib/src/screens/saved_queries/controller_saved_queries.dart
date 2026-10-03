@@ -1,4 +1,4 @@
-part of saved_queries;
+part of 'base_saved_queries.dart';
 
 class _SavedQueriesController with AdsMixin {
   _SavedQueriesController._(this.args, this.api, this.ads);

@@ -1,4 +1,4 @@
-part of project_boards;
+part of 'base_project_boards.dart';
 
 class _ProjectBoardsController {
   _ProjectBoardsController._(this.api, this.projectName);

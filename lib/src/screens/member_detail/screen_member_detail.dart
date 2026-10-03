@@ -1,4 +1,4 @@
-part of member_detail;
+part of 'base_member_detail.dart';
 
 class _MemberDetailScreen extends StatelessWidget {
   const _MemberDetailScreen(this.ctrl, this.parameters);

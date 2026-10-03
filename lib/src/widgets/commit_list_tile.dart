@@ -73,7 +73,7 @@ class CommitListTile extends StatelessWidget {
 }
 
 class TagChip extends StatelessWidget {
-  const TagChip({required this.tag});
+  const TagChip({super.key, required this.tag});
 
   final Tag tag;
 
@@ -98,7 +98,7 @@ class TagChip extends StatelessWidget {
 }
 
 class TagChipMultiple extends StatelessWidget {
-  const TagChipMultiple({required this.tags});
+  const TagChipMultiple({super.key, required this.tags});
 
   final List<Tag> tags;
 

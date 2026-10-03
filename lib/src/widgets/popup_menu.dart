@@ -3,7 +3,7 @@ import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:flutter/material.dart';
 
 class DevOpsPopupMenu extends StatelessWidget {
-  const DevOpsPopupMenu({
+  const DevOpsPopupMenu({super.key,
     required this.tooltip,
     required this.items,
     this.offset = const Offset(0, 40),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class InProgressPipelineIcon extends StatefulWidget {
-  const InProgressPipelineIcon({required this.child});
+  const InProgressPipelineIcon({super.key, required this.child});
 
   final Widget child;
 

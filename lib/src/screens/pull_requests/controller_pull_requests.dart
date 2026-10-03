@@ -1,4 +1,4 @@
-part of pull_requests;
+part of 'base_pull_requests.dart';
 
 class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
   _PullRequestsController._(this.api, this.storage, this.args, this.ads) {

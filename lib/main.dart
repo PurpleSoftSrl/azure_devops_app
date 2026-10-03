@@ -26,17 +26,24 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (useFirebase) {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await StorageServiceCore().init();
 
-  PurpleThemeHandler().init(defaultTheme: AppTheme.darkTheme, allThemes: AppTheme.allThemes);
+  PurpleThemeHandler().init(
+    defaultTheme: AppTheme.darkTheme,
+    allThemes: AppTheme.allThemes,
+  );
 
-  // ignore: unawaited_futures, to speed up app start
-  AdsServiceImpl().init();
+  if (useAds) {
+    // ignore: unawaited_futures, to speed up app start
+    AdsServiceImpl().init();
+  }
 
   if (_sentryDns.isEmpty || kDebugMode) {
     runApp(const AzureDevOps());
@@ -76,7 +83,11 @@ Future<void> main() async {
           };
       },
       appRunner: () async {
-        runApp(SentryScreenshotWidget(child: SentryUserInteractionWidget(child: const AzureDevOps())));
+        runApp(
+          SentryScreenshotWidget(
+            child: SentryUserInteractionWidget(child: const AzureDevOps()),
+          ),
+        );
       },
     );
   }

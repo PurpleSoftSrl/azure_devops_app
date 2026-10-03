@@ -1,4 +1,4 @@
-part of tabs;
+part of 'base_tabs.dart';
 
 class _TabsController {
   _TabsController._();

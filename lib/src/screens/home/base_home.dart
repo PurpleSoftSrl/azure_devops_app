@@ -1,4 +1,4 @@
-library home;
+library;
 
 import 'dart:async';
 import 'dart:io';
@@ -37,7 +37,7 @@ part 'parameters_home.dart';
 part 'screen_home.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage();
+  const HomePage({super.key});
 
   static const _smartphoneParameters = _HomeParameters(gridItemAspectRatio: 1.4);
   static const _tabletParameters = _HomeParameters(gridItemAspectRatio: 2.4, projectCardHeight: 60);

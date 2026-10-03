@@ -1,4 +1,4 @@
-part of board_detail;
+part of 'base_board_detail.dart';
 
 class _Actions extends StatelessWidget {
   const _Actions({required this.ctrl});

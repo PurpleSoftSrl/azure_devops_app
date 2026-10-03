@@ -1,4 +1,4 @@
-part of pipelines;
+part of 'base_pipelines.dart';
 
 class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
   _PipelinesController._(this.api, this.storage, this.args, this.ads) {

@@ -77,21 +77,32 @@ android {
     
     buildTypes {
         debug {
-           manifestPlaceholders.msalDebugPath = dartEnvironmentVariables.MSAL_DEBUG_PATH + "="
-           manifestPlaceholders.msalProdPath = dartEnvironmentVariables.MSAL_PROD_PATH + "="
-           manifestPlaceholders.admobAppId = dartEnvironmentVariables.ADMOB_APPID_ANDROID
+            def msalDebug = (dartEnvironmentVariables.MSAL_DEBUG_PATH ?: "/debug")
+            def msalProd  = (dartEnvironmentVariables.MSAL_PROD_PATH ?: "/prod")
+            def admobId   = (dartEnvironmentVariables.ADMOB_APPID_ANDROID ?: "ca-app-pub-3940256099942544~3347511713")
+
+            manifestPlaceholders.msalDebugPath = msalDebug + "="
+            manifestPlaceholders.msalProdPath  = msalProd + "="
+            manifestPlaceholders.admobAppId    = admobId
         }
         
         profile {
-           manifestPlaceholders.msalDebugPath = dartEnvironmentVariables.MSAL_DEBUG_PATH + "="
-           manifestPlaceholders.msalProdPath = dartEnvironmentVariables.MSAL_PROD_PATH + "="
-           manifestPlaceholders.admobAppId = dartEnvironmentVariables.ADMOB_APPID_ANDROID
+            def msalDebug = (dartEnvironmentVariables.MSAL_DEBUG_PATH ?: "/debug")
+            def msalProd  = (dartEnvironmentVariables.MSAL_PROD_PATH ?: "/prod")
+            def admobId   = (dartEnvironmentVariables.ADMOB_APPID_ANDROID ?: "ca-app-pub-3940256099942544~3347511713")
+
+            manifestPlaceholders.msalDebugPath = msalDebug + "="
+            manifestPlaceholders.msalProdPath  = msalProd + "="
+            manifestPlaceholders.admobAppId    = admobId
         }
 
         release {
            signingConfig signingConfigs.release
-           manifestPlaceholders.msalProdPath = dartEnvironmentVariables.MSAL_PROD_PATH + "="
-           manifestPlaceholders.admobAppId = dartEnvironmentVariables.ADMOB_APPID_ANDROID
+           def msalProd  = (dartEnvironmentVariables.MSAL_PROD_PATH ?: "/prod")
+           def admobId   = (dartEnvironmentVariables.ADMOB_APPID_ANDROID ?: "ca-app-pub-3940256099942544~3347511713")
+
+           manifestPlaceholders.msalProdPath  = msalProd + "="
+           manifestPlaceholders.admobAppId    = admobId
            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

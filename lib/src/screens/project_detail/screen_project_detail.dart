@@ -1,4 +1,4 @@
-part of project_detail;
+part of 'base_project_detail.dart';
 
 class _ProjectDetailScreen extends StatelessWidget {
   const _ProjectDetailScreen(this.ctrl, this.parameters);

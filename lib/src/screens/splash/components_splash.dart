@@ -1,1 +1,1 @@
-part of splash;
+part of 'base_splash.dart';

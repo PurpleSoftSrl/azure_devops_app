@@ -1,4 +1,4 @@
-part of sprint_detail;
+part of 'base_sprint_detail.dart';
 
 class _SprintDetailScreen extends StatelessWidget {
   const _SprintDetailScreen(this.ctrl, this.parameters);

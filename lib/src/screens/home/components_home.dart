@@ -1,4 +1,4 @@
-part of home;
+part of 'base_home.dart';
 
 class _ShortcutRow extends StatelessWidget {
   const _ShortcutRow({

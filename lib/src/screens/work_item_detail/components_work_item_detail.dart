@@ -1,4 +1,4 @@
-part of work_item_detail;
+part of 'base_work_item_detail.dart';
 
 class _History extends StatelessWidget {
   const _History({required this.updates, required this.ctrl});

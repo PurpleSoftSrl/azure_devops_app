@@ -1,1 +1,1 @@
-part of pipelines;
+part of 'base_pipelines.dart';

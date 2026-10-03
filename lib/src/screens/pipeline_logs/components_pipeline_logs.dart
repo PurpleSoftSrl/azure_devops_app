@@ -1,1 +1,1 @@
-part of pipeline_logs;
+part of 'base_pipeline_logs.dart';

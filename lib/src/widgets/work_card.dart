@@ -3,7 +3,7 @@ import 'package:azure_devops/src/widgets/navigation_button.dart';
 import 'package:flutter/material.dart';
 
 class WorkCard extends StatelessWidget {
-  const WorkCard({required this.title, required this.onTap, required this.icon, required this.index});
+  const WorkCard({super.key, required this.title, required this.onTap, required this.icon, required this.index});
 
   final String title;
   final VoidCallback onTap;

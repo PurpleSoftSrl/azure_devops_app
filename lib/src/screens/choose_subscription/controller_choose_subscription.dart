@@ -1,4 +1,4 @@
-part of choose_subscription;
+part of 'base_choose_subscription.dart';
 
 class _ChooseSubscriptionController {
   _ChooseSubscriptionController._(this.purchase);

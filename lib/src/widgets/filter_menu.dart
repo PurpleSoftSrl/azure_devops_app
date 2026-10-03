@@ -14,7 +14,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class FiltersRow extends StatelessWidget {
-  const FiltersRow({required this.filters, required this.resetFilters, this.saveFilters});
+  const FiltersRow({super.key, required this.filters, required this.resetFilters, this.saveFilters});
 
   final List<FilterMenu<Object?>> filters;
   final VoidCallback resetFilters;
@@ -54,7 +54,7 @@ class FiltersRow extends StatelessWidget {
 }
 
 class FilterMenu<T> extends StatelessWidget {
-  const FilterMenu({
+  const FilterMenu({super.key,
     required this.title,
     required this.values,
     required this.currentFilter,
@@ -70,7 +70,7 @@ class FilterMenu<T> extends StatelessWidget {
        onSelectedMultiple = null,
        _isMultiple = false;
 
-  const FilterMenu.custom({
+  const FilterMenu.custom({super.key,
     required this.body,
     required this.title,
     required this.currentFilter,
@@ -86,7 +86,7 @@ class FilterMenu<T> extends StatelessWidget {
        showLeading = true,
        _isMultiple = false;
 
-  const FilterMenu.multiple({
+  const FilterMenu.multiple({super.key,
     this.body,
     required this.title,
     this.formatLabel,
@@ -126,7 +126,7 @@ class FilterMenu<T> extends StatelessWidget {
         currentFilters!.length > 1
             ? '$title - ${currentFilters!.length}'
             : formatLabel?.call(currentFilters!.single) ?? currentFilters!.single.toString(),
-      _ => formatLabel?.call(currentFilter!) ?? currentFilter.toString(),
+      _ => formatLabel?.call(currentFilter as T) ?? currentFilter.toString(),
     };
 
     final chip = Chip(
@@ -212,7 +212,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
         final isSearchable = onSearchChanged != null;
 
         if (isSearchable && !isDefaultFilter && !isMultiple) {
-          final query = formatLabel?.call(currentFilter!) ?? '';
+          final query = formatLabel?.call(currentFilter as T) ?? '';
           visibleValues.value = onSearchChanged!.call(query);
         }
 
@@ -287,7 +287,7 @@ class _FilterBottomsheet<T> extends StatelessWidget {
                                 visibleValues.value = allValues;
                               },
                               hint: 'Search',
-                              initialValue: isDefaultFilter || isMultiple ? null : formatLabel?.call(currentFilter!),
+                              initialValue: isDefaultFilter || isMultiple ? null : formatLabel?.call(currentFilter as T),
                             ),
                           ),
                         ValueListenableBuilder<Set<T>>(
@@ -395,7 +395,7 @@ class _FiltersActionsMenu extends StatelessWidget {
 }
 
 class UserFilterWidget extends StatelessWidget {
-  const UserFilterWidget({required this.user});
+  const UserFilterWidget({super.key, required this.user});
 
   final GraphUser user;
 
@@ -406,7 +406,7 @@ class UserFilterWidget extends StatelessWidget {
 }
 
 class WorkItemTypeFilter extends StatelessWidget {
-  const WorkItemTypeFilter({required this.type});
+  const WorkItemTypeFilter({super.key, required this.type});
 
   final WorkItemType type;
 
@@ -420,7 +420,7 @@ class WorkItemTypeFilter extends StatelessWidget {
 }
 
 class WorkItemStateFilterWidget extends StatelessWidget {
-  const WorkItemStateFilterWidget({required this.state});
+  const WorkItemStateFilterWidget({super.key, required this.state});
 
   final WorkItemState state;
 
@@ -439,7 +439,7 @@ class WorkItemStateFilterWidget extends StatelessWidget {
 }
 
 class WorkItemStateCategoryFilterWidget extends StatelessWidget {
-  const WorkItemStateCategoryFilterWidget({required this.category});
+  const WorkItemStateCategoryFilterWidget({super.key, required this.category});
 
   final WorkItemStateCategory category;
 
@@ -461,7 +461,7 @@ class WorkItemStateCategoryFilterWidget extends StatelessWidget {
 }
 
 class ProjectFilterWidget extends StatelessWidget {
-  const ProjectFilterWidget({required this.project});
+  const ProjectFilterWidget({super.key, required this.project});
 
   final Project project;
 
@@ -483,7 +483,7 @@ class ProjectFilterWidget extends StatelessWidget {
 
 /// Used only to skip test work item types in a single point
 class WorkItemTypeFilterMenu extends FilterMenu<WorkItemType> {
-  WorkItemTypeFilterMenu({
+  WorkItemTypeFilterMenu({super.key,
     required super.title,
     required List<WorkItemType> values,
     required super.currentFilter,
@@ -493,7 +493,7 @@ class WorkItemTypeFilterMenu extends FilterMenu<WorkItemType> {
     super.formatLabel,
   }) : super(values: values.where((t) => !_typesToSkip.contains(t.name)).toList());
 
-  WorkItemTypeFilterMenu.multiple({
+  WorkItemTypeFilterMenu.multiple({super.key,
     required super.title,
     required List<WorkItemType> values,
     required super.currentFilters,

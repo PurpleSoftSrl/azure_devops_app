@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 
 class DevOpsHtmlEditor extends StatefulWidget {
-  const DevOpsHtmlEditor({
+  const DevOpsHtmlEditor({super.key,
     required this.editorController,
     this.initialText,
     this.onKeyUp,

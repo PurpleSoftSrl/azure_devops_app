@@ -1,4 +1,4 @@
-part of login;
+part of 'base_login.dart';
 
 class _LoginController with AppLogger {
   _LoginController._(this.api, this.storage);
@@ -25,16 +25,27 @@ class _LoginController with AppLogger {
   Future<void> login() async {
     final isValid = formFieldKey.currentState!.validate();
     if (!isValid) return;
-
-    await _loginAndNavigate(LoginResponse(accessToken: pat, tenantId: ''), isPat: true);
+    await _loginAndNavigate(
+      LoginResponse(accessToken: pat, tenantId: ''),
+      isPat: true,
+    );
   }
 
-  Future<void> _loginAndNavigate(LoginResponse loginResponse, {required bool isPat}) async {
+  Future<void> _loginAndNavigate(
+    LoginResponse loginResponse, {
+    required bool isPat,
+  }) async {
     final isLogged = await api.login(loginResponse.accessToken);
 
-    final isFailed = [LoginStatus.failed, LoginStatus.unauthorized].contains(isLogged);
+    final isFailed = [
+      LoginStatus.failed,
+      LoginStatus.unauthorized,
+    ].contains(isLogged);
 
-    logAnalytics('signin_with_${isPat ? 'pat' : 'microsoft'}_${isFailed ? 'failed' : 'success'}', {});
+    logAnalytics(
+      'signin_with_${isPat ? 'pat' : 'microsoft'}_${isFailed ? 'failed' : 'success'}',
+      {},
+    );
 
     if (isLogged == LoginStatus.failed) {
       _showLoginErrorAlert();
@@ -66,12 +77,18 @@ class _LoginController with AppLogger {
       description:
           'Your PAT is stored on your device and is only used as an http header to communicate with Azure API, '
           "it's not stored anywhere else.\n\n"
-          "Check that your PAT has 'User Profile' read enabled, otherwise it won't work.",
+          'For a self-hosted Azure DevOps Server, the PAT must have access to the selected collection and at least Project and Team Read permissions.',
     );
   }
 
   void _showLoginErrorAlert() {
-    OverlayService.error('Login error', description: 'Check that your PAT is correct and retry');
+    final details = api.lastLoginError;
+    OverlayService.error(
+      'Login error',
+      description: details.isEmpty
+          ? 'Check that your PAT is correct and retry.'
+          : details,
+    );
   }
 
   Future<bool> _setOrgManually() async {

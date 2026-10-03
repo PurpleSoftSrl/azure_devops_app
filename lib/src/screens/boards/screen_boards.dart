@@ -1,4 +1,4 @@
-part of boards;
+part of 'base_boards.dart';
 
 class _BoardsScreen extends StatelessWidget {
   const _BoardsScreen(this.ctrl, this.parameters);

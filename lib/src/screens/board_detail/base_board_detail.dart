@@ -1,4 +1,4 @@
-library board_detail;
+library;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/ads_mixin.dart';
@@ -30,7 +30,7 @@ part 'screen_board_detail.dart';
 typedef _BoardDetailParameters = ();
 
 class BoardDetailPage extends StatelessWidget {
-  const BoardDetailPage();
+  const BoardDetailPage({super.key});
 
   static const _BoardDetailParameters _smartphoneParameters = ();
   static const _BoardDetailParameters _tabletParameters = ();

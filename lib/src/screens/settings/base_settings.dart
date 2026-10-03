@@ -1,23 +1,30 @@
-library settings;
+library;
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:azure_devops/azdo_base_url_controller.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/mixins/share_mixin.dart';
+import 'package:azure_devops/src/models/azure_devops_connection.dart';
 import 'package:azure_devops/src/models/directory.dart';
 import 'package:azure_devops/src/models/organization.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
+import 'package:azure_devops/src/services/azure_devops_auth_provider.dart';
+import 'package:azure_devops/src/services/azure_devops_endpoint_resolver.dart';
 import 'package:azure_devops/src/services/msal_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
+import 'package:azure_devops/src/services/purchase_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:azure_devops/src/utils/utils.dart';
 import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
+import 'package:azure_devops/src/widgets/form_field.dart';
 import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:azure_devops/src/widgets/markdown_widget.dart';
 import 'package:azure_devops/src/widgets/navigation_button.dart';
@@ -26,6 +33,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:http/http.dart' as http;
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:purple_theme/purple_theme.dart';
@@ -38,7 +46,7 @@ part 'parameters_settings.dart';
 part 'screen_settings.dart';
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage();
+  const SettingsPage({super.key});
 
   static const _smartphoneParameters = _SettingsParameters();
   static const _tabletParameters = _SettingsParameters();

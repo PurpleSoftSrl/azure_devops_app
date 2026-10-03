@@ -2,7 +2,7 @@ import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:flutter/material.dart';
 
 class SectionHeader extends StatelessWidget {
-  const SectionHeader({
+  const SectionHeader({super.key,
     required this.text,
     this.textHeight,
     this.iconSize,
@@ -10,7 +10,7 @@ class SectionHeader extends StatelessWidget {
   }) : icon = null,
        marginTop = 24;
 
-  const SectionHeader.withIcon({
+  const SectionHeader.withIcon({super.key,
     required this.text,
     required this.icon,
     this.marginTop = 24,
@@ -19,7 +19,7 @@ class SectionHeader extends StatelessWidget {
     this.mainAxisAlignment = MainAxisAlignment.start,
   });
 
-  const SectionHeader.noMargin({
+  const SectionHeader.noMargin({super.key,
     required this.text,
     this.icon,
     this.textHeight,

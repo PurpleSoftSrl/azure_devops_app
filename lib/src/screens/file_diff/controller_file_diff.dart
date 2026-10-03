@@ -1,4 +1,4 @@
-part of file_diff;
+part of 'base_file_diff.dart';
 
 class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixin {
   _FileDiffController._(this.api, this.args, this.ads);

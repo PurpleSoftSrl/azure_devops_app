@@ -1,4 +1,4 @@
-part of profile;
+part of 'base_profile.dart';
 
 class _ProfileController with FilterMixin, AdsMixin {
   _ProfileController._(this.api, this.storage, this.ads);

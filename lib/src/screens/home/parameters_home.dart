@@ -1,4 +1,4 @@
-part of home;
+part of 'base_home.dart';
 
 class _HomeParameters {
   const _HomeParameters({required this.gridItemAspectRatio, this.projectCardHeight});

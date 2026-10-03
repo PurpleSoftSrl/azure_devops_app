@@ -1,4 +1,4 @@
-part of file_detail;
+part of 'base_file_detail.dart';
 
 class _FileDetailController with ShareMixin {
   _FileDetailController._(this.api, this.args);

@@ -1,4 +1,4 @@
-library sprint_detail;
+library;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
@@ -26,7 +26,7 @@ part 'screen_sprint_detail.dart';
 typedef _SprintDetailParameters = ();
 
 class SprintDetailPage extends StatelessWidget {
-  const SprintDetailPage();
+  const SprintDetailPage({super.key});
 
   static const _SprintDetailParameters _smartphoneParameters = ();
   static const _SprintDetailParameters _tabletParameters = ();

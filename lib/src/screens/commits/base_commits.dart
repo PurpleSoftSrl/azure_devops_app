@@ -1,4 +1,4 @@
-library commits;
+library;
 
 import 'package:azure_devops/src/extensions/commit_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
@@ -34,7 +34,7 @@ part 'parameters_commits.dart';
 part 'screen_commits.dart';
 
 class CommitsPage extends StatelessWidget {
-  const CommitsPage();
+  const CommitsPage({super.key});
 
   static const _smartphoneParameters = _CommitsParameters();
   static const _tabletParameters = _CommitsParameters();

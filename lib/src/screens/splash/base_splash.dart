@@ -1,4 +1,4 @@
-library splash;
+library;
 
 import 'dart:async';
 import 'dart:io';
@@ -20,7 +20,7 @@ part 'parameters_splash.dart';
 part 'screen_splash.dart';
 
 class SplashPage extends StatelessWidget {
-  const SplashPage();
+  const SplashPage({super.key});
 
   static const _smartphoneParameters = _SplashParameters();
   static const _tabletParameters = _SplashParameters();

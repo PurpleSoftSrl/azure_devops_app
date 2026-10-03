@@ -1,4 +1,4 @@
-part of project_detail;
+part of 'base_project_detail.dart';
 
 class _ProjectDetailController with ApiErrorHelper {
   _ProjectDetailController._(this.api, this.projectName);

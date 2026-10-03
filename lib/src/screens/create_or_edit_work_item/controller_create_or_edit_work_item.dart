@@ -1,4 +1,4 @@
-part of create_or_edit_work_item;
+part of 'base_create_or_edit_work_item.dart';
 
 class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
   _CreateOrEditWorkItemController._(this.api, this.args, this.storage, this.ads) {

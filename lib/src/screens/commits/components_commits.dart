@@ -1,4 +1,4 @@
-part of commits;
+part of 'base_commits.dart';
 
 class _RepositoryFilterBody extends StatelessWidget {
   const _RepositoryFilterBody({required this.repositories, required this.onTap, required this.selectedRepository});

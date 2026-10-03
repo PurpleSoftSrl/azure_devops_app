@@ -1,4 +1,4 @@
-library choose_projects;
+library;
 
 import 'dart:async';
 import 'dart:math';
@@ -25,7 +25,7 @@ part 'parameters_choose_projects.dart';
 part 'screen_choose_projects.dart';
 
 class ChooseProjectsPage extends StatelessWidget {
-  const ChooseProjectsPage();
+  const ChooseProjectsPage({super.key});
 
   static const _smartphoneParameters = _ChooseProjectsParameters();
   static const _tabletParameters = _ChooseProjectsParameters();

@@ -1,4 +1,4 @@
-part of repository_detail;
+part of 'base_repository_detail.dart';
 
 class _RepositoryDetailScreen extends StatelessWidget {
   const _RepositoryDetailScreen(this.ctrl, this.parameters);

@@ -1,4 +1,4 @@
-part of settings;
+part of 'base_settings.dart';
 
 class _SettingsScreen extends StatelessWidget {
   const _SettingsScreen(this.ctrl, this.parameters);
@@ -12,7 +12,9 @@ class _SettingsScreen extends StatelessWidget {
       init: ctrl.init,
       title: 'Settings',
       notifier: ctrl.directories,
-      actions: [IconButton(onPressed: ctrl.shareApp, icon: Icon(DevOpsIcons.share))],
+      actions: [
+        IconButton(onPressed: ctrl.shareApp, icon: Icon(DevOpsIcons.share)),
+      ],
       builder: (directories) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -23,7 +25,9 @@ class _SettingsScreen extends StatelessWidget {
               children: [
                 Text(
                   'Git username',
-                  style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                  style: context.textTheme.titleSmall!.copyWith(
+                    color: context.colorScheme.onSecondary,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Text(ctrl.gitUsername),
@@ -40,7 +44,9 @@ class _SettingsScreen extends StatelessWidget {
                       const SizedBox(height: 10),
                       Text(
                         'Current plan',
-                        style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                        style: context.textTheme.titleSmall!.copyWith(
+                          color: context.colorScheme.onSecondary,
+                        ),
                       ),
                       const SizedBox(height: 10),
                       Text(entitlementName),
@@ -50,19 +56,21 @@ class _SettingsScreen extends StatelessWidget {
                 : const SizedBox(),
           ),
           SectionHeader(text: 'App management'),
-          NavigationButton(
-            onTap: ctrl.goToChooseSubscription,
-            child: Row(
-              children: [
-                Icon(DevOpsIcons.crown),
-                const SizedBox(width: 20),
-                Text('Choose plan', style: context.textTheme.bodyLarge),
-                const Spacer(),
-                Icon(Icons.arrow_forward_ios),
-              ],
+          if (usePurchases) ...[
+            NavigationButton(
+              onTap: ctrl.goToChooseSubscription,
+              child: Row(
+                children: [
+                  Icon(DevOpsIcons.crown),
+                  const SizedBox(width: 20),
+                  Text('Choose plan', style: context.textTheme.bodyLarge),
+                  const Spacer(),
+                  Icon(Icons.arrow_forward_ios),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
+          ],
           NavigationButton(
             onTap: ctrl.seeChosenProjects,
             child: Row(
@@ -75,21 +83,51 @@ class _SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
-          if (directories.length > 1) ...[
-            const SizedBox(height: 20),
-            NavigationButton(
-              onTap: ctrl.chooseDirectory,
-              child: Row(
-                children: [
-                  Icon(DevOpsIcons.repository),
-                  const SizedBox(width: 20),
-                  Text('Switch directory', style: context.textTheme.bodyLarge),
-                  const Spacer(),
-                  Icon(Icons.arrow_forward_ios),
-                ],
-              ),
+          const SizedBox(height: 20),
+          NavigationButton(
+            onTap: ctrl.changeDefaultCollection,
+            child: Row(
+              children: [
+                Icon(Icons.dns_outlined),
+                const SizedBox(width: 20),
+                Text('Change default collection', style: context.textTheme.bodyLarge),
+                const Spacer(),
+                Icon(Icons.arrow_forward_ios),
+              ],
             ),
-          ],
+          ),
+          const SizedBox(height: 20),
+          NavigationButton(
+            onTap: ctrl.manageConnections,
+            child: Row(
+              children: [
+                Icon(Icons.cloud_queue),
+                const SizedBox(width: 20),
+                Text(
+                  'Azure DevOps Connections',
+                  style: context.textTheme.bodyLarge,
+                ),
+                const Spacer(),
+                Icon(Icons.arrow_forward_ios),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          NavigationButton(
+            onTap: ctrl.chooseDirectory,
+            child: Row(
+              children: [
+                Icon(DevOpsIcons.repository),
+                const SizedBox(width: 20),
+                Text(
+                  'Switch tenant / directory',
+                  style: context.textTheme.bodyLarge,
+                ),
+                const Spacer(),
+                Icon(Icons.arrow_forward_ios),
+              ],
+            ),
+          ),
           const SizedBox(height: 20),
           NavigationButton(
             onTap: ctrl.chooseAccount,
@@ -126,7 +164,10 @@ class _SettingsScreen extends StatelessWidget {
                 onTap: link,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [Text('GitHub repository'), Icon(DevOpsIcons.github)],
+                  children: const [
+                    Text('GitHub repository'),
+                    Icon(DevOpsIcons.github),
+                  ],
                 ),
               ),
             ),
@@ -134,12 +175,17 @@ class _SettingsScreen extends StatelessWidget {
           const SizedBox(height: 20),
           NavigationButton(
             child: Link(
-              uri: Uri.parse('https://www.purplesoft.io?utm_source=azdevops_app&utm_medium=app&utm_campaign=azdevops'),
+              uri: Uri.parse(
+                'https://www.purplesoft.io?utm_source=azdevops_app&utm_medium=app&utm_campaign=azdevops',
+              ),
               builder: (_, link) => InkWell(
                 onTap: () => ctrl.openPurplesoftWebsite(link),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [Text('Made with \u2764 by PurpleSoft Srl'), Icon(DevOpsIcons.link)],
+                  children: const [
+                    Text('Made with \u2764 by PurpleSoft Srl'),
+                    Icon(DevOpsIcons.link),
+                  ],
                 ),
               ),
             ),
@@ -149,7 +195,10 @@ class _SettingsScreen extends StatelessWidget {
             onTap: ctrl.openAppStore,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [Text('Leave a review'), Icon(Icons.rate_review_outlined)],
+              children: const [
+                Text('Leave a review'),
+                Icon(Icons.rate_review_outlined),
+              ],
             ),
           ),
           const SizedBox(height: 20),
@@ -173,7 +222,10 @@ class _SettingsScreen extends StatelessWidget {
             onTap: ctrl.clearLocalStorage,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [Text('Clear cache'), Icon(Icons.cleaning_services)],
+              children: const [
+                Text('Clear cache'),
+                Icon(Icons.cleaning_services),
+              ],
             ),
           ),
           SectionHeader(text: 'Policies'),
@@ -195,7 +247,9 @@ class _SettingsScreen extends StatelessWidget {
           const SizedBox(height: 40),
           Text(
             'Version ${ctrl.appVersion}',
-            style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+            style: context.textTheme.titleSmall!.copyWith(
+              color: context.colorScheme.onSecondary,
+            ),
           ),
         ],
       ),

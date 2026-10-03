@@ -1,1 +1,1 @@
-part of member_detail;
+part of 'base_member_detail.dart';

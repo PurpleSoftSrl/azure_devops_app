@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class WorkItemTypeIcon extends StatelessWidget {
-  const WorkItemTypeIcon({this.type, this.size = 20});
+  const WorkItemTypeIcon({super.key, this.type, this.size = 20});
 
   final WorkItemType? type;
   final double size;

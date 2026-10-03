@@ -1,4 +1,4 @@
-part of project_detail;
+part of 'base_project_detail.dart';
 
 class _StatsChip extends StatelessWidget {
   const _StatsChip({required this.name, required this.value});

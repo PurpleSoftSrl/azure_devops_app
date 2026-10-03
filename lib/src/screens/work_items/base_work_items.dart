@@ -1,4 +1,4 @@
-library work_items;
+library;
 
 import 'package:azure_devops/src/extensions/area_or_iteration_extension.dart';
 import 'package:azure_devops/src/extensions/child_query_extension.dart';
@@ -39,7 +39,7 @@ part 'parameters_work_items.dart';
 part 'screen_work_items.dart';
 
 class WorkItemsPage extends StatelessWidget {
-  const WorkItemsPage();
+  const WorkItemsPage({super.key});
 
   static const _smartphoneParameters = _WorkItemsParameters();
   static const _tabletParameters = _WorkItemsParameters();

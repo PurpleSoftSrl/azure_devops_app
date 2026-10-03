@@ -1,4 +1,4 @@
-library pipeline_detail;
+library;
 
 import 'dart:async';
 import 'dart:math';
@@ -41,7 +41,7 @@ part 'parameters_pipeline_detail.dart';
 part 'screen_pipeline_detail.dart';
 
 class PipelineDetailPage extends StatelessWidget {
-  const PipelineDetailPage();
+  const PipelineDetailPage({super.key});
 
   static const _smartphoneParameters = _PipelineDetailParameters();
   static const _tabletParameters = _PipelineDetailParameters();

@@ -1,6 +1,7 @@
 # See https://dart.dev/guides/libraries/private-files
 
 .dart_tool/
+.pub-cache/
 .packages
 build/
 pubspec.lock  # Except for application packages
@@ -33,3 +34,4 @@ dart-define-production.json
 dart-define-production-local.json
 ios/Flutter/Environment*.xcconfig
 ios/prebuild.log
+/android

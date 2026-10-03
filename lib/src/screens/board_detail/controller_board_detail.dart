@@ -1,4 +1,4 @@
-part of board_detail;
+part of 'base_board_detail.dart';
 
 class _BoardDetailController with ApiErrorHelper, AdsMixin, FilterMixin {
   _BoardDetailController._(this.api, this.args, this.ads);

@@ -1,4 +1,4 @@
-part of repository_detail;
+part of 'base_repository_detail.dart';
 
 class _BranchRow extends StatelessWidget {
   const _BranchRow({required this.ctrl});

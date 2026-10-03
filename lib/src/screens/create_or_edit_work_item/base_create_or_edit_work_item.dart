@@ -1,4 +1,4 @@
-library create_or_edit_work_item;
+library;
 
 import 'dart:async';
 import 'dart:convert';
@@ -42,7 +42,7 @@ part 'parameters_create_or_edit_work_item.dart';
 part 'screen_create_or_edit_work_item.dart';
 
 class CreateOrEditWorkItemPage extends StatelessWidget {
-  const CreateOrEditWorkItemPage();
+  const CreateOrEditWorkItemPage({super.key});
 
   static const _smartphoneParameters = _CreateOrEditWorkItemParameters();
   static const _tabletParameters = _CreateOrEditWorkItemParameters();

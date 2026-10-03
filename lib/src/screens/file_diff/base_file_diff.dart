@@ -1,4 +1,4 @@
-library file_diff;
+library;
 
 import 'dart:math';
 
@@ -32,7 +32,7 @@ part 'parameters_file_diff.dart';
 part 'screen_file_diff.dart';
 
 class FileDiffPage extends StatelessWidget {
-  const FileDiffPage();
+  const FileDiffPage({super.key});
 
   static const _smartphoneParameters = _FileDiffParameters();
   static const _tabletParameters = _FileDiffParameters();

@@ -1,4 +1,4 @@
-part of file_diff;
+part of 'base_file_diff.dart';
 
 /// Image diff, with original and modified version of the image.
 class _ImageDiff extends StatelessWidget {

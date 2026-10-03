@@ -1,4 +1,4 @@
-part of splash;
+part of 'base_splash.dart';
 
 class _SplashController {
   _SplashController._(this.api);

@@ -1,4 +1,4 @@
-library project_detail;
+library;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/api_error_mixin.dart';
@@ -29,7 +29,7 @@ part 'parameters_project_detail.dart';
 part 'screen_project_detail.dart';
 
 class ProjectDetailPage extends StatelessWidget {
-  const ProjectDetailPage();
+  const ProjectDetailPage({super.key});
 
   static const _smartphoneParameters = _ProjectDetailParameters(gridItemAspectRatio: 1.4, memberAvatarSize: 50);
   static const _tabletParameters = _ProjectDetailParameters(gridItemAspectRatio: 2.4, memberAvatarSize: 75);

@@ -1,4 +1,4 @@
-part of work_item_detail;
+part of 'base_work_item_detail.dart';
 
 typedef _MentionGuidWithName = ({String guid, String name});
 

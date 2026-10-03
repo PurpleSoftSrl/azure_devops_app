@@ -1,1 +1,1 @@
-part of profile;
+part of 'base_profile.dart';

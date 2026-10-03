@@ -1,4 +1,4 @@
-library pipeline_logs;
+library;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
@@ -16,7 +16,7 @@ part 'parameters_pipeline_logs.dart';
 part 'screen_pipeline_logs.dart';
 
 class PipelineLogsPage extends StatelessWidget {
-  const PipelineLogsPage();
+  const PipelineLogsPage({super.key});
 
   static const _smartphoneParameters = _PipelineLogsParameters();
   static const _tabletParameters = _PipelineLogsParameters();

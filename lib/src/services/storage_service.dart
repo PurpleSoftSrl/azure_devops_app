@@ -1,12 +1,19 @@
 import 'dart:convert';
 
+import 'package:azure_devops/src/models/azure_devops_connection.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class StorageService {
   String getOrganization();
+  void setBaseUrl(String url);
+  String? getBaseUrl();
+
+  void setUserBaseUrl(String url);
+  String? getUserBaseUrl();
   void setOrganization(String organization);
 
   Iterable<Project> getChosenProjects();
@@ -20,6 +27,18 @@ abstract class StorageService {
 
   String getToken();
   void setToken(String accessToken);
+  String getConnectionCredential(String profileId);
+  void setConnectionCredential(String profileId, String credential);
+  void deleteConnectionCredential(String profileId);
+
+  List<AzureDevOpsConnectionProfile> getConnectionProfiles();
+  void setConnectionProfiles(List<AzureDevOpsConnectionProfile> profiles);
+  AzureDevOpsConnectionProfile? getActiveConnectionProfile();
+  void setActiveConnectionProfileId(String id);
+  String getActiveConnectionProfileId();
+  AzureDevOpsConnectionProfile ensureDefaultConnectionProfile({
+    AzureDevOpsAuthType authType = AzureDevOpsAuthType.microsoft,
+  });
 
   void clearNoToken();
 
@@ -31,13 +50,23 @@ abstract class StorageService {
 
   List<StorageFilter> getFilters();
 
-  void saveFilter(String organization, String area, String filterAttribute, Set<String> filters);
+  void saveFilter(
+    String organization,
+    String area,
+    String filterAttribute,
+    Set<String> filters,
+  );
 
   void resetFilter(String organization, String area);
 
   List<SavedShortcut> getSavedShortcuts();
 
-  void saveShortcut(String organization, String area, String label, Map<String, Set<String>> filtersWithAttribute);
+  void saveShortcut(
+    String organization,
+    String area,
+    String label,
+    Map<String, Set<String>> filtersWithAttribute,
+  );
 
   void renameShortcut(SavedShortcut shortcut, String newLabel);
 
@@ -69,11 +98,34 @@ class StorageServiceCore implements StorageService {
 
   Future<void> init() async {
     await _helper.init();
+    await _helper.initSecure();
+    await _migrateLegacyToken();
+    ensureDefaultConnectionProfile();
   }
 
   @override
   String getOrganization() {
     return _helper.getString(_Keys.org) ?? '';
+  }
+
+  @override
+  void setBaseUrl(String url) {
+    _helper.setString(_Keys.baseurl, url);
+  }
+
+  @override
+  String? getBaseUrl() {
+    return _helper.getString(_Keys.baseurl);
+  }
+
+  @override
+  void setUserBaseUrl(String url) {
+    _helper.setString(_Keys.baseuserurl, url);
+  }
+
+  @override
+  String? getUserBaseUrl() {
+    return _helper.getString(_Keys.baseuserurl);
   }
 
   @override
@@ -93,21 +145,32 @@ class StorageServiceCore implements StorageService {
 
   @override
   Iterable<Project> getChosenProjects() {
-    final strings = _helper.getStringList(_Keys.chosenProjects) ?? [];
-    return strings.map((p) => Project.fromJson(jsonDecode(p) as Map<String, dynamic>));
+    final strings = _helper.getStringList(_activeScopedKey(_Keys.chosenProjects)) ??
+        _helper.getStringList(_Keys.chosenProjects) ??
+        [];
+    return strings.map(
+      (p) => Project.fromJson(jsonDecode(p) as Map<String, dynamic>),
+    );
   }
 
   @override
   void setChosenProjects(Iterable<Project> projects) {
-    _helper.setStringList(_Keys.chosenProjects, projects.map(jsonEncode).toList());
+    _helper.setStringList(
+      _activeScopedKey(_Keys.chosenProjects),
+      projects.map(jsonEncode).toList(),
+    );
   }
 
   @override
   Iterable<Project> getTenantChosenProjects(String tenant) {
-    final string = _helper.getString(_Keys.tenantChosenProjects) ?? '{}';
+    final string = _helper.getString(_activeScopedKey(_Keys.tenantChosenProjects)) ??
+        _helper.getString(_Keys.tenantChosenProjects) ??
+        '{}';
     final decoded = jsonDecode(string) as Map<String, dynamic>;
     final projects = (decoded[tenant] as List<dynamic>?)?.cast<String>() ?? [];
-    return projects.map((p) => Project.fromJson(jsonDecode(p) as Map<String, dynamic>));
+    return projects.map(
+      (p) => Project.fromJson(jsonDecode(p) as Map<String, dynamic>),
+    );
   }
 
   @override
@@ -118,7 +181,7 @@ class StorageServiceCore implements StorageService {
     final tenantProjects = projects.map(jsonEncode).toList();
     allProjects[tenant] = tenantProjects;
 
-    _helper.setString(_Keys.tenantChosenProjects, jsonEncode(allProjects));
+    _helper.setString(_activeScopedKey(_Keys.tenantChosenProjects), jsonEncode(allProjects));
   }
 
   @override
@@ -133,12 +196,90 @@ class StorageServiceCore implements StorageService {
 
   @override
   String getToken() {
-    return _helper.getString(_Keys.token) ?? '';
+    final activeId = getActiveConnectionProfileId();
+    final activeCredential = activeId.isEmpty ? '' : getConnectionCredential(activeId);
+    return activeCredential.isNotEmpty ? activeCredential : _helper.getSecureString(_Keys.token) ?? '';
   }
 
   @override
   void setToken(String accessToken) {
-    _helper.setString(_Keys.token, accessToken);
+    final activeId = getActiveConnectionProfileId();
+    if (activeId.isNotEmpty) {
+      setConnectionCredential(activeId, accessToken);
+    } else {
+      _helper.setSecureString(_Keys.token, accessToken);
+    }
+  }
+
+  @override
+  String getConnectionCredential(String profileId) {
+    return _helper.getSecureString(_credentialKey(profileId)) ?? '';
+  }
+
+  @override
+  void setConnectionCredential(String profileId, String credential) {
+    _helper.setSecureString(_credentialKey(profileId), credential);
+  }
+
+  @override
+  void deleteConnectionCredential(String profileId) {
+    _helper.removeSecure(_credentialKey(profileId));
+  }
+
+  @override
+  List<AzureDevOpsConnectionProfile> getConnectionProfiles() {
+    final profiles = _helper.getStringList(_Keys.connectionProfiles) ?? [];
+    return profiles.map(AzureDevOpsConnectionProfile.fromJson).toList();
+  }
+
+  @override
+  void setConnectionProfiles(List<AzureDevOpsConnectionProfile> profiles) {
+    final activeId = getActiveConnectionProfileId();
+    final normalized = profiles.map((profile) {
+      final isDefault = profile.id == activeId || (activeId.isEmpty && profile.isDefault);
+      return profile.copyWith(isDefault: isDefault);
+    }).toList();
+    _helper.setStringList(_Keys.connectionProfiles, normalized.map((p) => p.toJson()).toList());
+  }
+
+  @override
+  AzureDevOpsConnectionProfile? getActiveConnectionProfile() {
+    final profiles = getConnectionProfiles();
+    if (profiles.isEmpty) return null;
+
+    final activeId = getActiveConnectionProfileId();
+    return profiles.firstWhereOrNull((p) => p.id == activeId) ?? profiles.firstWhereOrNull((p) => p.isDefault) ?? profiles.first;
+  }
+
+  @override
+  void setActiveConnectionProfileId(String id) {
+    _helper.setString(_Keys.activeConnectionProfileId, id);
+    setConnectionProfiles(
+      getConnectionProfiles().map((p) => p.copyWith(isDefault: p.id == id)).toList(),
+    );
+  }
+
+  @override
+  String getActiveConnectionProfileId() {
+    return _helper.getString(_Keys.activeConnectionProfileId) ?? '';
+  }
+
+  @override
+  AzureDevOpsConnectionProfile ensureDefaultConnectionProfile({
+    AzureDevOpsAuthType authType = AzureDevOpsAuthType.microsoft,
+  }) {
+    final existing = getActiveConnectionProfile();
+    if (existing != null) return existing;
+
+    final org = getOrganization();
+    final profile = AzureDevOpsConnectionProfile.cloud(
+      id: _newProfileId(),
+      organization: org,
+      authType: authType,
+    );
+    setConnectionProfiles([profile]);
+    setActiveConnectionProfileId(profile.id);
+    return profile;
   }
 
   @override
@@ -146,7 +287,15 @@ class StorageServiceCore implements StorageService {
     final keys = _helper.getKeys();
 
     for (final k in keys) {
-      if ([_Keys.token, _Keys.theme, _Keys.filters].contains(k)) continue;
+      if ([
+        _Keys.token,
+        _Keys.theme,
+        _Keys.filters,
+        _Keys.connectionProfiles,
+        _Keys.activeConnectionProfileId,
+      ].contains(k)) {
+        continue;
+      }
 
       _helper.remove(k);
     }
@@ -155,6 +304,24 @@ class StorageServiceCore implements StorageService {
   @override
   void clear() {
     _helper.clear();
+    _helper.clearSecure();
+  }
+
+  Future<void> _migrateLegacyToken() async {
+    final legacy = _helper.getString(_Keys.token);
+    if (legacy == null || legacy.isEmpty) return;
+
+    _helper.setSecureString(_Keys.token, legacy);
+    _helper.remove(_Keys.token);
+  }
+
+  String _credentialKey(String profileId) => 'azure_devops_connection_${profileId}_credential';
+
+  String _newProfileId() => 'azdo_${DateTime.now().microsecondsSinceEpoch}';
+
+  String _activeScopedKey(String key) {
+    final activeId = getActiveConnectionProfileId();
+    return activeId.isEmpty ? key : '$activeId:$key';
   }
 
   @override
@@ -172,11 +339,19 @@ class StorageServiceCore implements StorageService {
   }
 
   @override
-  void saveFilter(String organization, String area, String attribute, Set<String> filters) {
+  void saveFilter(
+    String organization,
+    String area,
+    String attribute,
+    Set<String> filters,
+  ) {
     final savedFilters = getFilters();
 
     final attributeFilters = savedFilters.firstWhereOrNull(
-      (f) => f.organization == organization && f.area == area && f.attribute == attribute,
+      (f) =>
+          f.organization == organization &&
+          f.area == area &&
+          f.attribute == attribute,
     );
     final hasAttributeFilters = attributeFilters != null;
     if (hasAttributeFilters) {
@@ -193,16 +368,24 @@ class StorageServiceCore implements StorageService {
       savedFilters.add(filterToSave);
     }
 
-    _helper.setStringList(_Keys.filters, savedFilters.map((f) => f.toJson()).toList());
+    _helper.setStringList(
+      _Keys.filters,
+      savedFilters.map((f) => f.toJson()).toList(),
+    );
   }
 
   @override
   void resetFilter(String organization, String area) {
     final savedFilters = getFilters();
 
-    final otherFilters = savedFilters.whereNot((f) => f.organization == organization && f.area == area);
+    final otherFilters = savedFilters.whereNot(
+      (f) => f.organization == organization && f.area == area,
+    );
 
-    _helper.setStringList(_Keys.filters, otherFilters.map((f) => f.toJson()).toList());
+    _helper.setStringList(
+      _Keys.filters,
+      otherFilters.map((f) => f.toJson()).toList(),
+    );
   }
 
   @override
@@ -212,15 +395,26 @@ class StorageServiceCore implements StorageService {
   }
 
   @override
-  void saveShortcut(String organization, String area, String label, Map<String, Set<String>> filtersWithAttribute) {
+  void saveShortcut(
+    String organization,
+    String area,
+    String label,
+    Map<String, Set<String>> filtersWithAttribute,
+  ) {
     final savedShortcuts = getSavedShortcuts();
 
     final shortcutWithLabel = savedShortcuts.firstWhereOrNull(
-      (f) => f.organization == organization && f.area == area && f.label == label,
+      (f) =>
+          f.organization == organization && f.area == area && f.label == label,
     );
 
     final mappedFilters = filtersWithAttribute.entries.map(
-      (entry) => StorageFilter(organization: organization, area: area, attribute: entry.key, filters: entry.value),
+      (entry) => StorageFilter(
+        organization: organization,
+        area: area,
+        attribute: entry.key,
+        filters: entry.value,
+      ),
     );
 
     final hasShortcutWithLabel = shortcutWithLabel != null;
@@ -238,7 +432,10 @@ class StorageServiceCore implements StorageService {
       savedShortcuts.add(shortcutToSave);
     }
 
-    _helper.setStringList(_Keys.shortcuts, savedShortcuts.map((f) => f.toJson()).toList());
+    _helper.setStringList(
+      _Keys.shortcuts,
+      savedShortcuts.map((f) => f.toJson()).toList(),
+    );
   }
 
   @override
@@ -247,10 +444,16 @@ class StorageServiceCore implements StorageService {
 
     final editedShortcuts = savedShortcuts
       ..firstWhereOrNull(
-        (f) => f.organization == shortcut.organization && f.area == shortcut.area && f.label == shortcut.label,
+        (f) =>
+            f.organization == shortcut.organization &&
+            f.area == shortcut.area &&
+            f.label == shortcut.label,
       )?.label = newLabel;
 
-    _helper.setStringList(_Keys.shortcuts, editedShortcuts.map((f) => f.toJson()).toList());
+    _helper.setStringList(
+      _Keys.shortcuts,
+      editedShortcuts.map((f) => f.toJson()).toList(),
+    );
   }
 
   @override
@@ -258,14 +461,19 @@ class StorageServiceCore implements StorageService {
     final savedShortcuts = getSavedShortcuts();
 
     final otherShortcuts = savedShortcuts.whereNot(
-      (f) => f.organization == shortcut.organization && f.label == shortcut.label,
+      (f) =>
+          f.organization == shortcut.organization && f.label == shortcut.label,
     );
 
-    _helper.setStringList(_Keys.shortcuts, otherShortcuts.map((f) => f.toJson()).toList());
+    _helper.setStringList(
+      _Keys.shortcuts,
+      otherShortcuts.map((f) => f.toJson()).toList(),
+    );
   }
 
   @override
-  bool get hasSeenSubscriptionAddedBottomsheet => _helper.getBool(_Keys.hasSeenSubscriptionAddedBottomsheet) ?? false;
+  bool get hasSeenSubscriptionAddedBottomsheet =>
+      _helper.getBool(_Keys.hasSeenSubscriptionAddedBottomsheet) ?? false;
 
   @override
   void setHasSeenSubscriptionAddedBottomsheet() {
@@ -287,10 +495,19 @@ class _StorageServiceHelper {
   }
 
   static SharedPreferences? _instance;
+  static const FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  static final Map<String, String> _secureCache = {};
 
   Future<void> init() async {
     _StorageServiceHelper();
     _instance = await SharedPreferences.getInstance();
+  }
+
+  Future<void> initSecure() async {
+    final all = await _secureStorage.readAll();
+    _secureCache
+      ..clear()
+      ..addAll(all);
   }
 
   void setString(String key, String value) {
@@ -343,13 +560,35 @@ class _StorageServiceHelper {
     _instance!.remove(key);
   }
 
+  String? getSecureString(String key) {
+    return _secureCache[key];
+  }
+
+  void setSecureString(String key, String value) {
+    _secureCache[key] = value;
+    _secureStorage.write(key: key, value: value);
+  }
+
+  void removeSecure(String key) {
+    _secureCache.remove(key);
+    _secureStorage.delete(key: key);
+  }
+
+  void clearSecure() {
+    _secureCache.clear();
+    _secureStorage.deleteAll();
+  }
+
   void clear() {
     _assertIsInitialized();
     _instance!.clear();
   }
 
   void _assertIsInitialized() {
-    assert(_instance != null, 'Storage service must be initialized calling init()');
+    assert(
+      _instance != null,
+      'Storage service must be initialized calling init()',
+    );
   }
 }
 
@@ -363,11 +602,20 @@ class _Keys {
   static const numberOfSessions = 'numberOfSessions';
   static const filters = 'filters';
   static const shortcuts = 'shortcuts';
-  static const hasSeenSubscriptionAddedBottomsheet = 'hasSeenSubscriptionAddedBottomsheet';
+  static const baseurl = 'baseurl';
+  static const baseuserurl = 'baseuserurl';
+  static const connectionProfiles = 'azureDevOpsConnectionProfiles';
+  static const activeConnectionProfileId = 'activeAzureDevOpsConnectionProfileId';
+  static const hasSeenSubscriptionAddedBottomsheet =
+      'hasSeenSubscriptionAddedBottomsheet';
 }
 
 class StorageServiceWidget extends InheritedWidget {
-  const StorageServiceWidget({super.key, required this.storage, required super.child});
+  const StorageServiceWidget({
+    super.key,
+    required this.storage,
+    required super.child,
+  });
 
   final StorageService storage;
 
@@ -385,7 +633,12 @@ class StorageServiceWidget extends InheritedWidget {
 /// area can be one of (commits, pipelines, workItems, pullRequests) and
 /// attribute can be one of (projects, authors, states, etc.).
 class StorageFilter {
-  StorageFilter({required this.organization, required this.area, required this.attribute, required this.filters});
+  StorageFilter({
+    required this.organization,
+    required this.area,
+    required this.attribute,
+    required this.filters,
+  });
 
   factory StorageFilter.fromMap(Map<String, dynamic> map) {
     return StorageFilter(
@@ -396,7 +649,8 @@ class StorageFilter {
     );
   }
 
-  factory StorageFilter.fromJson(String source) => StorageFilter.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory StorageFilter.fromJson(String source) =>
+      StorageFilter.fromMap(json.decode(source) as Map<String, dynamic>);
 
   final String organization;
   final String area;
@@ -414,7 +668,10 @@ class StorageFilter {
 
   String toJson() => json.encode(toMap());
 
-  static List<StorageFilter>? listFromJson(String json, {bool growable = false}) {
+  static List<StorageFilter>? listFromJson(
+    String json, {
+    bool growable = false,
+  }) {
     final list = jsonDecode(json) as List<dynamic>?;
     final result = <StorageFilter>[];
     if (list != null) {
@@ -429,18 +686,29 @@ class StorageFilter {
 
 /// Shortcuts are labeled lists of filters which belongs to an area inside an organization.
 class SavedShortcut {
-  SavedShortcut({required this.organization, required this.area, required this.label, required this.filters});
+  SavedShortcut({
+    required this.organization,
+    required this.area,
+    required this.label,
+    required this.filters,
+  });
 
   factory SavedShortcut.fromMap(Map<String, dynamic> map) {
     return SavedShortcut(
       organization: map['organization'] as String,
       area: map['area'] as String,
       label: map['label'] as String,
-      filters: StorageFilter.listFromJson(jsonEncode(map['filters']), growable: true) ?? [],
+      filters:
+          StorageFilter.listFromJson(
+            jsonEncode(map['filters']),
+            growable: true,
+          ) ??
+          [],
     );
   }
 
-  factory SavedShortcut.fromJson(String source) => SavedShortcut.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory SavedShortcut.fromJson(String source) =>
+      SavedShortcut.fromMap(json.decode(source) as Map<String, dynamic>);
 
   final String organization;
   final String area;
@@ -448,12 +716,20 @@ class SavedShortcut {
   final List<StorageFilter> filters;
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{'organization': organization, 'area': area, 'label': label, 'filters': filters.toList()};
+    return <String, dynamic>{
+      'organization': organization,
+      'area': area,
+      'label': label,
+      'filters': filters.toList(),
+    };
   }
 
   String toJson() => json.encode(toMap());
 
-  static List<SavedShortcut>? listFromJson(String json, {bool growable = false}) {
+  static List<SavedShortcut>? listFromJson(
+    String json, {
+    bool growable = false,
+  }) {
     final list = jsonDecode(json) as List<dynamic>?;
     final result = <SavedShortcut>[];
     if (list != null) {

@@ -1,4 +1,4 @@
-library pull_request_detail;
+library;
 
 import 'dart:async';
 import 'dart:convert';
@@ -51,7 +51,7 @@ part 'parameters_pull_request_detail.dart';
 part 'screen_pull_request_detail.dart';
 
 class PullRequestDetailPage extends StatelessWidget {
-  const PullRequestDetailPage();
+  const PullRequestDetailPage({super.key});
 
   static const _smartphoneParameters = _PullRequestDetailParameters();
   static const _tabletParameters = _PullRequestDetailParameters();

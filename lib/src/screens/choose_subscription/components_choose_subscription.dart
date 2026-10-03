@@ -1,4 +1,4 @@
-part of choose_subscription;
+part of 'base_choose_subscription.dart';
 
 class _SubscriptionCard extends StatelessWidget {
   const _SubscriptionCard({required this.product, required this.onTap, required this.isPurchasingThisProduct});

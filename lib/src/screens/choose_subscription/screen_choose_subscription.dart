@@ -1,4 +1,4 @@
-part of choose_subscription;
+part of 'base_choose_subscription.dart';
 
 class _ChooseSubscriptionScreen extends StatelessWidget {
   const _ChooseSubscriptionScreen(this.ctrl, this.parameters);

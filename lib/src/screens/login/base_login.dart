@@ -1,4 +1,4 @@
-library login;
+library;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
@@ -21,7 +21,7 @@ part 'parameters_login.dart';
 part 'screen_login.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage();
+  const LoginPage({super.key});
 
   static const _smartphoneParameters = _LoginParameters();
   static const _tabletParameters = _LoginParameters();

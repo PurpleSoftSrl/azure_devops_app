@@ -1,4 +1,4 @@
-library pipelines;
+library;
 
 import 'dart:async';
 
@@ -26,7 +26,7 @@ import 'package:azure_devops/src/widgets/pipeline_list_tile.dart';
 import 'package:azure_devops/src/widgets/shortcut_label.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:http/src/response.dart';
+import 'package:http/http.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 part 'components_pipelines.dart';
@@ -35,7 +35,7 @@ part 'parameters_pipelines.dart';
 part 'screen_pipelines.dart';
 
 class PipelinesPage extends StatelessWidget {
-  const PipelinesPage();
+  const PipelinesPage({super.key});
 
   static const _smartphoneParameters = _PipelinesParameters();
   static const _tabletParameters = _PipelinesParameters();

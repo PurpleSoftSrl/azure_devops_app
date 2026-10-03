@@ -2,7 +2,7 @@ import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:flutter/material.dart';
 
 class TextTitleDescription extends StatelessWidget {
-  const TextTitleDescription({required this.title, required this.description});
+  const TextTitleDescription({super.key, required this.title, required this.description});
 
   final String title;
   final String description;

@@ -1,4 +1,4 @@
-part of login;
+part of 'base_login.dart';
 
 class _LoginScreen extends StatelessWidget {
   const _LoginScreen(this.ctrl, this.parameters);
@@ -10,7 +10,8 @@ class _LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop, _) => AppRouter.askBeforeClosingApp(didPop: didPop),
+      onPopInvokedWithResult: (didPop, _) =>
+          AppRouter.askBeforeClosingApp(didPop: didPop),
       child: AppPage(
         init: () async => true,
         title: 'Az DevOps',
@@ -26,8 +27,16 @@ class _LoginScreen extends StatelessWidget {
             const SizedBox(height: 40),
             Row(
               children: [
-                Expanded(child: Text('Sign in with your Personal Access Token', style: context.textTheme.titleMedium)),
-                IconButton(onPressed: ctrl.showInfo, icon: Icon(Icons.info_outline)),
+                Expanded(
+                  child: Text(
+                    'Sign in with your Personal Access Token',
+                    style: context.textTheme.titleMedium,
+                  ),
+                ),
+                IconButton(
+                  onPressed: ctrl.showInfo,
+                  icon: Icon(Icons.info_outline),
+                ),
               ],
             ),
             const SizedBox(height: 10),
@@ -53,7 +62,9 @@ class _LoginScreen extends StatelessWidget {
                           children: [
                             Text(
                               'How to create a PAT?',
-                              style: context.textTheme.titleSmall!.copyWith(decoration: TextDecoration.underline),
+                              style: context.textTheme.titleSmall!.copyWith(
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
                           ],
                         ),
@@ -77,7 +88,10 @@ class _LoginScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 50),
-            LoadingButton(onPressed: ctrl.loginWithMicrosoft, text: 'Sign in with Microsoft'),
+            LoadingButton(
+              onPressed: ctrl.loginWithMicrosoft,
+              text: 'Sign in with Microsoft',
+            ),
             const SizedBox(height: 100),
             Link(
               uri: Uri.parse('https://github.com/PurpleSoftSrl/azure_devops_app'),
@@ -96,7 +110,9 @@ class _LoginScreen extends StatelessWidget {
                       ),
                       TextSpan(
                         text: 'GitHub repository',
-                        style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
+                        style: context.textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
@@ -105,7 +121,9 @@ class _LoginScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Link(
-              uri: Uri.parse('https://www.purplesoft.io?utm_source=azdevops_app&utm_medium=app&utm_campaign=azdevops'),
+              uri: Uri.parse(
+                'https://www.purplesoft.io?utm_source=azdevops_app&utm_medium=app&utm_campaign=azdevops',
+              ),
               builder: (_, link) => InkWell(
                 onTap: () => ctrl.openPurplesoftWebsite(link),
                 child: Text.rich(
@@ -121,7 +139,9 @@ class _LoginScreen extends StatelessWidget {
                       ),
                       TextSpan(
                         text: 'PurpleSoft Srl',
-                        style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
+                        style: context.textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),

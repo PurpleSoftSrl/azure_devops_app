@@ -1,4 +1,4 @@
-part of tabs;
+part of 'base_tabs.dart';
 
 class _TabsScreen extends StatelessWidget {
   const _TabsScreen(this.ctrl, this.parameters);

@@ -1,4 +1,4 @@
-part of pipeline_logs;
+part of 'base_pipeline_logs.dart';
 
 class _PipelineLogsController with ShareMixin {
   _PipelineLogsController._(this.api, this.args);

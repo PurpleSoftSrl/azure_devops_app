@@ -1,4 +1,4 @@
-part of commit_detail;
+part of 'base_commit_detail.dart';
 
 class _CommitDetailScreen extends StatelessWidget {
   const _CommitDetailScreen(this.ctrl, this.parameters);

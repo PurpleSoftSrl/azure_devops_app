@@ -1,4 +1,4 @@
-part of file_diff;
+part of 'base_file_diff.dart';
 
 class _FileDiffScreen extends StatelessWidget {
   const _FileDiffScreen(this.ctrl, this.parameters);

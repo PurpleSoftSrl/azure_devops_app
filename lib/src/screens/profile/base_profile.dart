@@ -1,4 +1,4 @@
-library profile;
+library;
 
 import 'dart:async';
 
@@ -31,7 +31,7 @@ part 'parameters_profile.dart';
 part 'screen_profile.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage();
+  const ProfilePage({super.key});
 
   static const _smartphoneParameters = _ProfileParameters();
   static const _tabletParameters = _ProfileParameters();

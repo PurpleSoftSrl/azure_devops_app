@@ -1,5 +1,6 @@
-include: package:purple_lints/all.yaml
+include: package:flutter_lints/flutter.yaml
 
 analyzer:
   errors:
+    implementation_imports: ignore
     library_private_types_in_public_api: ignore

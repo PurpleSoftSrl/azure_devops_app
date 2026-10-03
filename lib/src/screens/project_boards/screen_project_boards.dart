@@ -1,4 +1,4 @@
-part of project_boards;
+part of 'base_project_boards.dart';
 
 class _ProjectBoardsScreen extends StatelessWidget {
   const _ProjectBoardsScreen(this.ctrl, this.parameters);

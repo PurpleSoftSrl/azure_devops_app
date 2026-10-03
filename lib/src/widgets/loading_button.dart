@@ -3,7 +3,7 @@ import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:flutter/material.dart';
 
 class LoadingButton extends StatefulWidget {
-  const LoadingButton({required this.onPressed, required this.text, this.backgroundColor, this.textColor, this.margin});
+  const LoadingButton({super.key, required this.onPressed, required this.text, this.backgroundColor, this.textColor, this.margin});
 
   final dynamic Function() onPressed;
   final String text;

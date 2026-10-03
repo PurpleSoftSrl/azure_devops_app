@@ -3,7 +3,7 @@ import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:flutter/material.dart';
 
 class GroupedFiles extends StatelessWidget {
-  const GroupedFiles({required this.groupedFiles, this.onTap, this.bottomSpace = true});
+  const GroupedFiles({super.key, required this.groupedFiles, this.onTap, this.bottomSpace = true});
 
   final Map<String, Set<ChangedFileDiff>> groupedFiles;
   final dynamic Function(ChangedFileDiff)? onTap;

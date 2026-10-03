@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 typedef AdWithKey = ({AdWithView ad, GlobalKey key});
 
 class CustomAdWidget extends StatelessWidget {
-  const CustomAdWidget({required this.item});
+  const CustomAdWidget({super.key, required this.item});
 
   final Object item;
 
@@ -25,7 +25,7 @@ class CustomAdWidget extends StatelessWidget {
 }
 
 class NativeAdWidget extends StatelessWidget {
-  const NativeAdWidget({required this.ad});
+  const NativeAdWidget({super.key, required this.ad});
 
   final AdWithKey ad;
 
@@ -42,7 +42,7 @@ class NativeAdWidget extends StatelessWidget {
 }
 
 class AmazonAdWidget extends StatelessWidget {
-  const AmazonAdWidget({required this.item});
+  const AmazonAdWidget({super.key, required this.item});
 
   final AmazonItem item;
 

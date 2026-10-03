@@ -1,1 +1,1 @@
-part of saved_queries;
+part of 'base_saved_queries.dart';

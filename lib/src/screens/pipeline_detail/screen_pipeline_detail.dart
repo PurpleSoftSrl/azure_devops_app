@@ -1,4 +1,4 @@
-part of pipeline_detail;
+part of 'base_pipeline_detail.dart';
 
 class _PipelineDetailScreen extends StatelessWidget {
   const _PipelineDetailScreen(this.ctrl, this.parameters);

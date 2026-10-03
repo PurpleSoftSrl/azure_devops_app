@@ -1,4 +1,4 @@
-library saved_queries;
+library;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/ads_mixin.dart';
@@ -22,7 +22,7 @@ part 'screen_saved_queries.dart';
 typedef _SavedQueriesParameters = ();
 
 class SavedQueriesPage extends StatelessWidget {
-  const SavedQueriesPage();
+  const SavedQueriesPage({super.key});
 
   static const _SavedQueriesParameters _smartphoneParameters = ();
   static const _SavedQueriesParameters _tabletParameters = ();

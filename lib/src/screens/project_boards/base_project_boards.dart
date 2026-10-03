@@ -1,4 +1,4 @@
-library project_boards;
+library;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/string_extension.dart';
@@ -23,7 +23,7 @@ part 'screen_project_boards.dart';
 typedef _ProjectBoardsParameters = ();
 
 class ProjectBoardsPage extends StatelessWidget {
-  const ProjectBoardsPage();
+  const ProjectBoardsPage({super.key});
 
   static const _ProjectBoardsParameters _smartphoneParameters = ();
   static const _ProjectBoardsParameters _tabletParameters = ();

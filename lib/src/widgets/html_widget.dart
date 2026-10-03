@@ -9,7 +9,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class HtmlWidget extends StatelessWidget {
-  const HtmlWidget({required this.data, this.padding = EdgeInsets.zero, this.style});
+  const HtmlWidget({super.key, required this.data, this.padding = EdgeInsets.zero, this.style});
 
   final String data;
   final EdgeInsets padding;

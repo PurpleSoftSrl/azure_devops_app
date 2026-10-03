@@ -1,3 +1,4 @@
+import 'package:azure_devops/azdo_base_url_overlay.dart';
 import 'package:azure_devops/main.dart';
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/screens/splash/base_splash.dart';
@@ -49,13 +50,22 @@ class AzureDevOps extends StatelessWidget {
                         theme: AppTheme.lightTheme,
                         darkTheme: AppTheme.darkTheme,
                         debugShowCheckedModeBanner: false,
-                        scaffoldMessengerKey: OverlayService.scaffoldMessengerKey,
+                        builder: (context, child) => AzdoBaseUrlOverlay(
+                          navigatorKey: AppRouter.navigatorKey,
+                          scaffoldMessengerKey:
+                              OverlayService.scaffoldMessengerKey,
+                          child: child,
+                        ),
+                        scaffoldMessengerKey:
+                            OverlayService.scaffoldMessengerKey,
                         navigatorObservers: [
                           SentryNavigatorObserver(),
                           if (useFirebase)
                             FirebaseAnalyticsObserver(
                               analytics: FirebaseAnalytics.instance,
-                              routeFilter: (route) => route?.settings.name != null && route!.settings.name != '/',
+                              routeFilter: (route) =>
+                                  route?.settings.name != null &&
+                                  route!.settings.name != '/',
                             ),
                         ],
                         home: const SplashPage(),

@@ -1,4 +1,4 @@
-part of commits;
+part of 'base_commits.dart';
 
 class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
   _CommitsController._(this.api, this.storage, this.args, this.ads) {

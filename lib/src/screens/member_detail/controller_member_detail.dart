@@ -1,4 +1,4 @@
-part of member_detail;
+part of 'base_member_detail.dart';
 
 class _MemberDetailController {
   _MemberDetailController._(this.userDescriptor, this.api);

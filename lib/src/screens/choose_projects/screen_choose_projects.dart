@@ -1,4 +1,4 @@
-part of choose_projects;
+part of 'base_choose_projects.dart';
 
 class _ChooseProjectsScreen extends StatelessWidget {
   const _ChooseProjectsScreen(this.ctrl, this.parameters);

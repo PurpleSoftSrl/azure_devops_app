@@ -1,1 +1,1 @@
-part of tabs;
+part of 'base_tabs.dart';

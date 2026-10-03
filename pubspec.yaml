@@ -13,6 +13,7 @@ dependencies:
   google_fonts: ^6.1.0
   http: ^1.1.0
   shared_preferences: ^2.1.1
+  flutter_secure_storage: ^9.2.4
   pull_to_refresh_flutter3: ^2.0.1
   intl: ^0.20.1
   url_launcher: ^6.1.11
@@ -41,11 +42,8 @@ dependencies:
   visibility_detector: ^0.4.0
   firebase_core: ^4.2.1
   firebase_analytics: ^12.0.4
-  file_picker: ^10.2.0
-  msal_auth:
-   git:
-    url: https://github.com/PurpleSoftSrl/msal_auth
-    ref: main  
+  file_picker: ^10.3.10
+  msal_auth: 3.2.5
   xml: ^6.3.0
   purple_theme:
    git:
@@ -57,10 +55,7 @@ dependencies:
 dev_dependencies:
   flutter_test: { sdk: flutter }
   flutter_launcher_icons: ^0.14.2
-  purple_lints:
-    git:
-      url: https://github.com/PurpleSoftSrl/flutter_lints
-      ref: main
+  flutter_lints: ^6.0.0
 
 
 flutter:

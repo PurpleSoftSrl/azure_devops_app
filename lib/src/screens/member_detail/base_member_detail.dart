@@ -1,4 +1,4 @@
-library member_detail;
+library;
 
 import 'package:azure_devops/src/extensions/commit_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
@@ -22,7 +22,7 @@ part 'parameters_member_detail.dart';
 part 'screen_member_detail.dart';
 
 class MemberDetailPage extends StatelessWidget {
-  const MemberDetailPage();
+  const MemberDetailPage({super.key});
 
   static const _smartphoneParameters = _MemberDetailParameters();
   static const _tabletParameters = _MemberDetailParameters();

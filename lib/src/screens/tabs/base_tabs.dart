@@ -1,4 +1,4 @@
-library tabs;
+library;
 
 import 'package:azure_devops/main.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
@@ -17,7 +17,7 @@ part 'parameters_tabs.dart';
 part 'screen_tabs.dart';
 
 class TabsPage extends StatelessWidget {
-  const TabsPage();
+  const TabsPage({super.key});
 
   static const _smartphoneParameters = _TabsParameters(tabBarHeight: 50);
   static const _tabletParameters = _TabsParameters(tabBarHeight: 80, tabIconHeight: 40);

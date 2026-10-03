@@ -1,4 +1,4 @@
-part of pull_request_detail;
+part of 'base_pull_request_detail.dart';
 
 class _PullRequestDetailScreen extends StatelessWidget {
   const _PullRequestDetailScreen(this.ctrl, this.parameters);

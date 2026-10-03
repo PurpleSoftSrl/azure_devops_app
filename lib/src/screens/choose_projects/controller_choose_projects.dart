@@ -1,4 +1,4 @@
-part of choose_projects;
+part of 'base_choose_projects.dart';
 
 class _ChooseProjectsController {
   _ChooseProjectsController._(this.api, this.removeRoutes, this.storage);

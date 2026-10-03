@@ -1,4 +1,4 @@
-library work_item_detail;
+library;
 
 import 'dart:async';
 import 'dart:io';
@@ -52,7 +52,7 @@ part 'parameters_work_item_detail.dart';
 part 'screen_work_item_detail.dart';
 
 class WorkItemDetailPage extends StatelessWidget {
-  const WorkItemDetailPage();
+  const WorkItemDetailPage({super.key});
 
   static const _smartphoneParameters = _WorkItemDetailParameters();
   static const _tabletParameters = _WorkItemDetailParameters();

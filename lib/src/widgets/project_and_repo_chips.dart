@@ -2,7 +2,7 @@ import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:flutter/material.dart';
 
 class ProjectChip extends StatelessWidget {
-  const ProjectChip({required this.onTap, required this.projectName});
+  const ProjectChip({super.key, required this.onTap, required this.projectName});
 
   final VoidCallback onTap;
   final String projectName;
@@ -14,7 +14,7 @@ class ProjectChip extends StatelessWidget {
 }
 
 class RepositoryChip extends StatelessWidget {
-  const RepositoryChip({required this.onTap, required this.repositoryName});
+  const RepositoryChip({super.key, required this.onTap, required this.repositoryName});
 
   final VoidCallback onTap;
   final String? repositoryName;

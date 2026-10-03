@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 
 class AddCommentField extends StatefulWidget {
-  const AddCommentField({required this.isVisible, required this.onTap});
+  const AddCommentField({super.key, required this.isVisible, required this.onTap});
 
   final ValueNotifier<bool> isVisible;
   final Future<void> Function() onTap;

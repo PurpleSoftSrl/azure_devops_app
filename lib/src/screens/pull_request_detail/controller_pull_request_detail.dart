@@ -1,4 +1,4 @@
-part of pull_request_detail;
+part of 'base_pull_request_detail.dart';
 
 class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper, AdsMixin {
   _PullRequestDetailController._(this.args, this.api, this.ads);

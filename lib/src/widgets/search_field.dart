@@ -3,7 +3,7 @@ import 'package:azure_devops/src/widgets/form_field.dart';
 import 'package:flutter/material.dart';
 
 class DevOpsAnimatedSearchField extends StatelessWidget {
-  const DevOpsAnimatedSearchField({
+  const DevOpsAnimatedSearchField({super.key,
     required this.isSearching,
     required this.onChanged,
     required this.onResetSearch,
@@ -41,7 +41,7 @@ class DevOpsAnimatedSearchField extends StatelessWidget {
 }
 
 class DevOpsSearchField extends StatefulWidget {
-  const DevOpsSearchField({
+  const DevOpsSearchField({super.key,
     required this.onChanged,
     required this.onResetSearch,
     required this.hint,
@@ -86,7 +86,7 @@ class _DevOpsSearchFieldState extends State<DevOpsSearchField> {
 }
 
 class SearchButton extends StatelessWidget {
-  const SearchButton({required this.isSearching});
+  const SearchButton({super.key, required this.isSearching});
 
   final ValueNotifier<bool> isSearching;
 

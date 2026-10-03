@@ -1,4 +1,4 @@
-part of work_items;
+part of 'base_work_items.dart';
 
 class _Actions extends StatelessWidget {
   const _Actions({required this.ctrl});

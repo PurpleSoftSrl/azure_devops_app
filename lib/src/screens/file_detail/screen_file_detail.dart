@@ -1,4 +1,4 @@
-part of file_detail;
+part of 'base_file_detail.dart';
 
 class _FileDetailScreen extends StatelessWidget {
   const _FileDetailScreen(this.ctrl, this.parameters);

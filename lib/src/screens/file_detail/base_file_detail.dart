@@ -1,4 +1,4 @@
-library file_detail;
+library;
 
 import 'dart:typed_data';
 
@@ -23,7 +23,7 @@ part 'parameters_file_detail.dart';
 part 'screen_file_detail.dart';
 
 class FileDetailPage extends StatelessWidget {
-  const FileDetailPage();
+  const FileDetailPage({super.key});
 
   static const _smartphoneParameters = _FileDetailParameters();
   static const _tabletParameters = _FileDetailParameters();

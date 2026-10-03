@@ -10,8 +10,10 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 const _revenueCatApiKeyIos = String.fromEnvironment('REVENUE_CAT_API_KEY_IOS');
 const _revenueCatApiKeyAndroid = String.fromEnvironment('REVENUE_CAT_API_KEY_ANDROID');
+const usePurchases = bool.fromEnvironment('PURCHASES');
 
 abstract interface class PurchaseService {
+  bool get isEnabled;
   ValueNotifier<String> get entitlementName;
   Future<void> init({String? userId, String? userName});
   Future<List<AppProduct>> getProducts();
@@ -44,6 +46,13 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   List<String> _activeSubscriptions = [];
   List<StoreProduct> _products = [];
+  bool _isConfigured = false;
+
+  String get _apiKey =>
+      Platform.isIOS ? _revenueCatApiKeyIos : _revenueCatApiKeyAndroid;
+
+  @override
+  bool get isEnabled => usePurchases && _apiKey.isNotEmpty;
 
   @override
   ValueNotifier<String> get entitlementName => _entitlementName;
@@ -61,8 +70,14 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
   Future<void> init({String? userId, String? userName}) async {
     setTag(_tag);
 
+    if (!isEnabled) {
+      logInfo('Purchases disabled for this build.');
+      return;
+    }
+
     try {
       await _configureSDK(userId, userName);
+      _isConfigured = true;
     } catch (e, s) {
       logError('Failed to configure Purchases SDK: $e', s);
     }
@@ -71,7 +86,7 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
   Future<void> _configureSDK(String? userId, String? userName) async {
     await Purchases.setLogLevel(LogLevel.debug);
 
-    final configuration = PurchasesConfiguration(Platform.isIOS ? _revenueCatApiKeyIos : _revenueCatApiKeyAndroid)
+    final configuration = PurchasesConfiguration(_apiKey)
       ..appUserID = userId
       ..purchasesAreCompletedBy = const PurchasesAreCompletedByRevenueCat();
 
@@ -85,6 +100,7 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   @override
   Future<List<AppProduct>> getProducts() async {
+    if (!_isConfigured) return [];
     _products = await Purchases.getProducts([_noAdsMonthly, _noAdsYearly]);
 
     for (final product in _products) {
@@ -110,6 +126,7 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   @override
   Future<PurchaseResult> buySubscription(AppProduct product) async {
+    if (!_isConfigured) return PurchaseResult.failed;
     try {
       final storeProduct = _products.firstWhere((p) => p.identifier == product.id);
       final res = await Purchases.purchase(PurchaseParams.storeProduct(storeProduct));
@@ -131,6 +148,7 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   @override
   Future<bool> restorePurchases() async {
+    if (!_isConfigured) return false;
     try {
       final info = await Purchases.restorePurchases();
       _activeSubscriptions = [...info.activeSubscriptions];
@@ -143,6 +161,12 @@ class PurchaseServiceImpl with AppLogger implements PurchaseService {
 
   @override
   Future<bool> hasSubscription() async {
+    if (!_isConfigured) {
+      _activeSubscriptions = [];
+      _entitlementName.value = '';
+      _reactivateAds();
+      return false;
+    }
     final info = await Purchases.getCustomerInfo();
     logDebug('activeSubscriptions: ${info.activeSubscriptions}');
     _activeSubscriptions = [...info.activeSubscriptions];

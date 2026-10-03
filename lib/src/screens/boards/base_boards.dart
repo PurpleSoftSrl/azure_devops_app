@@ -1,4 +1,4 @@
-library boards;
+library;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/models/project.dart';
@@ -17,7 +17,7 @@ part 'screen_boards.dart';
 typedef _BoardsParameters = ({double? projectCardHeight});
 
 class BoardsPage extends StatelessWidget {
-  const BoardsPage();
+  const BoardsPage({super.key});
 
   static const _BoardsParameters _smartphoneParameters = (projectCardHeight: null);
   static const _BoardsParameters _tabletParameters = (projectCardHeight: 60);

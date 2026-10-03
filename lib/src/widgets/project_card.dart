@@ -6,7 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ProjectCard extends StatelessWidget {
-  const ProjectCard({required this.height, required this.project, required this.onTap});
+  const ProjectCard({super.key, required this.height, required this.project, required this.onTap});
 
   final double? height;
   final Project project;

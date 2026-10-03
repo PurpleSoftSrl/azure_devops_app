@@ -1,4 +1,4 @@
-part of home;
+part of 'base_home.dart';
 
 class _HomeController with AppLogger {
   _HomeController._(this.api, this.storage, this.purchase);
@@ -54,9 +54,11 @@ class _HomeController with AppLogger {
 
     _logSession();
 
-    final hasSubscription = await purchase.checkSubscription();
-    if (!hasSubscription) {
-      _maybeShowSubscriptionBottomsheet();
+    if (purchase.isEnabled) {
+      final hasSubscription = await purchase.checkSubscription();
+      if (!hasSubscription) {
+        _maybeShowSubscriptionBottomsheet();
+      }
     }
 
     if (Platform.isAndroid) {

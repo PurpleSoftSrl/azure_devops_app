@@ -50,7 +50,7 @@ class _LifecycleListenerState extends State<LifecycleListener> with WidgetsBindi
       final now = DateTime.now();
       final shouldCheck = now.difference(_lastSubscriptionCheck) > Duration(hours: 1);
 
-      if (shouldCheck && user != null) {
+      if (shouldCheck && user != null && context.purchase.isEnabled) {
         logDebug('Session resumed');
         _checkSubscription();
         _lastSubscriptionCheck = now;

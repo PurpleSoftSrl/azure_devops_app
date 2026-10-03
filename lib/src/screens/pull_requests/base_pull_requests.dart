@@ -1,4 +1,4 @@
-library pull_requests;
+library;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/mixins/ads_mixin.dart';
@@ -29,7 +29,7 @@ part 'parameters_pull_requests.dart';
 part 'screen_pull_requests.dart';
 
 class PullRequestsPage extends StatelessWidget {
-  const PullRequestsPage();
+  const PullRequestsPage({super.key});
 
   static const _smartphoneParameters = _PullRequestsParameters();
   static const _tabletParameters = _PullRequestsParameters();

@@ -1,4 +1,4 @@
-part of work_items;
+part of 'base_work_items.dart';
 
 class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
   _WorkItemsController._(this.api, this.storage, this.args, this.ads) {

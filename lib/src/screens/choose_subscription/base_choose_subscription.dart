@@ -1,4 +1,4 @@
-library choose_subscription;
+library;
 
 import 'dart:async';
 
@@ -21,7 +21,7 @@ part 'screen_choose_subscription.dart';
 typedef _ChooseSubscriptionParameters = ();
 
 class ChooseSubscriptionPage extends StatelessWidget {
-  const ChooseSubscriptionPage();
+  const ChooseSubscriptionPage({super.key});
 
   static const _ChooseSubscriptionParameters _smartphoneParameters = ();
   static const _ChooseSubscriptionParameters _tabletParameters = ();

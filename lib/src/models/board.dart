@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:azure_devops/src/models/work_items.dart';
-import 'package:http/src/response.dart';
+import 'package:http/http.dart';
 
 class BoardsResponse {
   BoardsResponse({required this.boards});

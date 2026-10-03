@@ -1,4 +1,4 @@
-part of project_detail;
+part of 'base_project_detail.dart';
 
 class _ProjectDetailParameters {
   const _ProjectDetailParameters({required this.gridItemAspectRatio, required this.memberAvatarSize});

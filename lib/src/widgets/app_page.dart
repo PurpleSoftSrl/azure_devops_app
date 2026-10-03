@@ -260,8 +260,8 @@ class _AppPageStateListenable<T> extends State<AppPage<T>> with AppLogger {
                           SliverPadding(
                             padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: 16),
                             sliver:
-                                widget.sliverBuilder?.call(widget.notifier!.value!.data!) ??
-                                SliverToBoxAdapter(child: widget.builder!(widget.notifier!.value!.data!)),
+                                widget.sliverBuilder?.call(widget.notifier!.value!.data as T) ??
+                                SliverToBoxAdapter(child: widget.builder!(widget.notifier!.value!.data as T)),
                           ),
                         SliverToBoxAdapter(child: const SizedBox(height: 40)),
                       ],

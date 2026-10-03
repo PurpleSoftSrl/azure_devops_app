@@ -24,4 +24,20 @@ plugins {
     id "com.google.gms.google-services" version "4.3.15" apply false
 }
 
+// file_picker 10.3.10 declares AGP 8.5.1 in its legacy Android buildscript.
+// That version requests a removed layoutlib artifact. Keep the app's AGP 8.9.1
+// and substitute only the obsolete plugin request during resolution.
+gradle.beforeProject { project ->
+    project.buildscript.configurations.matching { it.name == "classpath" }.all { configuration ->
+        configuration.resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == "com.android.tools.build" &&
+                    details.requested.name == "gradle" &&
+                    details.requested.version == "8.5.1") {
+                details.useVersion "8.9.1"
+                details.because "file_picker 10.3.10 pins an obsolete AGP release."
+            }
+        }
+    }
+}
+
 include ":app"

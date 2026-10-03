@@ -10,7 +10,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class BoardWidget extends StatelessWidget {
-  const BoardWidget({
+  const BoardWidget({super.key,
     required this.maxHeight,
     required this.columnItems,
     required this.onTapItem,

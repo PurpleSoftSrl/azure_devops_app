@@ -15,6 +15,7 @@ const _androidInterstitialAdId = String.fromEnvironment('ADMOB_INTERSTITIAL_ADID
 const _iosInterstitialAdId = String.fromEnvironment('ADMOB_INTERSTITIAL_ADID_IOS');
 const _androidNativeAdId = String.fromEnvironment('ADMOB_NATIVE_ADID_ANDROID');
 const _iosNativeAdId = String.fromEnvironment('ADMOB_NATIVE_ADID_IOS');
+const useAds = bool.fromEnvironment('ADS');
 
 abstract interface class AdsService {
   bool get hasAmazonAds;
@@ -43,12 +44,16 @@ class AdsServiceImpl with AppLogger implements AdsService {
   bool _showAds = true;
 
   @override
-  bool get hasAmazonAds => _hasAmazonAds;
+  bool get hasAmazonAds => useAds && _hasAmazonAds;
   bool _hasAmazonAds = true;
 
   @override
   Future<void> init() async {
     setTag(_tag);
+    if (!useAds) {
+      logInfo('Ads disabled for this build.');
+      return;
+    }
 
     await MobileAds.instance.initialize();
 
@@ -78,6 +83,10 @@ class AdsServiceImpl with AppLogger implements AdsService {
 
   @override
   Future<void> showInterstitialAd({VoidCallback? onDismiss}) async {
+    if (!useAds) {
+      onDismiss?.call();
+      return;
+    }
     if (!_showAds) {
       logDebug('Ads are disabled');
       onDismiss?.call();
@@ -125,6 +134,7 @@ class AdsServiceImpl with AppLogger implements AdsService {
 
   @override
   Future<List<AdWithView>> getNewNativeAds() async {
+    if (!useAds) return [];
     if (!_showAds) return [];
 
     final ctx = AppRouter.navigatorKey.currentContext!;
@@ -176,6 +186,7 @@ class AdsServiceImpl with AppLogger implements AdsService {
 
   @override
   Future<List<AmazonItem>> getNewAmazonAds() async {
+    if (!useAds) return [];
     if (!_showAds) return [];
     if (!_hasAmazonAds) return [];
 

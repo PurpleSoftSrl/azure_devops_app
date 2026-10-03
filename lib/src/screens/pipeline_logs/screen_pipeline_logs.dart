@@ -1,4 +1,4 @@
-part of pipeline_logs;
+part of 'base_pipeline_logs.dart';
 
 class _PipelineLogsScreen extends StatelessWidget {
   const _PipelineLogsScreen(this.ctrl, this.parameters);
